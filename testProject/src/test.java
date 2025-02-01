@@ -9,7 +9,7 @@ public class test {
         System.out.println("Hello, World!");
         try (Scanner console = new Scanner (System.in)){
             String input = console.nextLine();
-            System.out.println(input);
+            System.out.println(input); //what is this?
         }
     }
 }
