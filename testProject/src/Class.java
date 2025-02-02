@@ -55,15 +55,15 @@ public class Class {
     /**
      * Attempts to rename an attribute in the set
      * @param attribute name of the attribute the user wants to rename
-     * @param name name the user wants to give to the attribute
+     * @param newName name the user wants to give to the attribute
      * @return true if the attribute wasw renamed, false otherwise
      */
-    boolean renameAttribute (String attribute, String name)
+    boolean renameAttribute (String attribute, String newName)
     {
-        if (attributes.contains(attribute) && !attributes.contains(name))
+        if (attributes.contains(attribute) && !attributes.contains(newName))
         {
             attributes.remove(attribute);
-            attributes.add(name);
+            attributes.add(newName);
             return true;
         }
         return false;
