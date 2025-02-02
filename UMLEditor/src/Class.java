@@ -3,6 +3,7 @@ import java.util.TreeSet;
 public class Class {
     private String name;
     private TreeSet<String> attributes;
+    private String allowedCharacters = " _aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-";
 
     /**
      * Constructs a new Class object with a name and empty set of attributes
@@ -10,8 +11,24 @@ public class Class {
      */
     Class(String name)
     {
+        validateCharacters(name);
         this.name = name;
         attributes = new TreeSet<String>();
+    }
+
+    /**
+     * Throws an IllegalArgumentException if the user provides a string that contains illegal characters
+     * @param name name of the new class/attribute the user desires
+     */
+    void validateCharacters(String name)
+    {
+        for (char c : name.toCharArray())
+        {
+            if (!allowedCharacters.contains(""+c))
+            {
+                throw new IllegalArgumentException("That string contains invalid characters");
+            }
+        }
     }
 
     /**
@@ -29,6 +46,7 @@ public class Class {
      */
     void renameClass(String name)
     {
+        validateCharacters(name);
         this.name = name;
     }
 
@@ -39,6 +57,7 @@ public class Class {
      */
     boolean addAttribute (String attribute)
     {
+        validateCharacters(attribute);
         return attributes.add(attribute);
     }
 
@@ -60,6 +79,7 @@ public class Class {
      */
     boolean renameAttribute (String attribute, String newName)
     {
+        validateCharacters(newName);
         if (attributes.contains(attribute) && !attributes.contains(newName))
         {
             attributes.remove(attribute);
