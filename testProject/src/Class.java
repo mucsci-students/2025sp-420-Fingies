@@ -56,7 +56,7 @@ public class Class {
      * Attempts to rename an attribute in the set
      * @param attribute name of the attribute the user wants to rename
      * @param newName name the user wants to give to the attribute
-     * @return true if the attribute wasw renamed, false otherwise
+     * @return true if the attribute was renamed, false otherwise
      */
     boolean renameAttribute (String attribute, String newName)
     {
