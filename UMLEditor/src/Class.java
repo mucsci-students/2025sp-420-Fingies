@@ -69,5 +69,12 @@ public class Class {
         return false;
     }
 
-
+    /**
+     * Returns the list of attributes to the user
+     * @return the list of attributes to the user
+     */
+    TreeSet<String> getAllAttributes()
+    {
+        return attributes;
+    }
 }
