@@ -1,4 +1,4 @@
-import java.util.Set;
+import java.util.TreeSet;
 /**
  * Relationship Handler class to add, delete and get relationships
  * @author Nick Hayes & Lincoln Craddock
@@ -6,7 +6,7 @@ import java.util.Set;
 public class RelationshipHandler
 {
     //Tree Set for no duplicates and it is sorted
-    private TreeSet<Relationship> relationships;
+    private static TreeSet<Relationship> relationships;
 
     /**
      * @throws IllegalArgumentException when trying to add a relationship that already exists
@@ -14,10 +14,10 @@ public class RelationshipHandler
      */
     static void addRelationship(String src, String dest)
     {
-        if(exists(src) && exists(dest))
+        if(ClassHandler.exists(src) && ClassHandler.exists(dest))
         {
             Relationship r = new Relationship(src, dest);
-            if(relationship.contains(r))
+            if(relationships.contains(r))
             {
                 throw new IllegalArgumentException("This relationship already exists");
             }
