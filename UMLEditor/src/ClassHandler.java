@@ -1,6 +1,9 @@
 import java.util.HashMap; 
 import java.util.TreeSet;
 
+/**
+ * 
+ */
 public class ClassHandler {
     private static HashMap<String, Class> classes;
 
@@ -62,4 +65,26 @@ public class ClassHandler {
         }
         return classesSet;
     }
+    
+    
+    /**
+     * Gets a class given its name.
+     * @param name The name of the class.
+     * @return the class.
+     */
+    static Class getClass(String name)
+    {
+    	return classes.get(name);
+    }
+    
+    /**
+     * Checks whether a class exists given its name.
+     * @param name True if the class exists.
+     * @return the class.
+     */
+    static boolean exists(String name)
+    {
+    	return classes.containsKey(name);
+    }
+    
 }
