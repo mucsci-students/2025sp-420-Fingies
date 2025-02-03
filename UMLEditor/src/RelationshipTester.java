@@ -54,20 +54,20 @@ public class RelationshipTester {
     public void RelationshipsAreEqual ()
     {
     	Relationship rCopy = new Relationship ("Class1", "Class2");
-    	assertTrue (r.equals(rCopy), "Two relationships between Class1 and Class2 should be equal.");
+    	assertTrue ("Two relationships between Class1 and Class2 should be equal.", r.equals(rCopy));
     }
     
     @Test
     public void RelationshipsAreEqual2 ()
     {
     	Relationship rCopy = new Relationship ("Class1", "Class2");
-    	assertTrue (rCopy.equals(r), "Two relationships between Class1 and Class2 should be equal.");
+    	assertTrue ("Two relationships between Class1 and Class2 should be equal.", rCopy.equals(r));
     }
     
     @Test
     public void RelationshipsAreNotEqual2 ()
     {
-    	assertFalse (r2.equals(r), r2 + " should not equals " + r);
+    	assertFalse (r2 + " should not equals " + r, r2.equals(r));
     }
     
     @Test
