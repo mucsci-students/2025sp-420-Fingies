@@ -1,15 +1,12 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.TreeSet;
-
 import static org.junit.Assert.assertFalse;
 
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * A bunch of tests cases to make sure the relationhip class works.
+ * A bunch of test cases to make sure the Relationship class works.
  * 
  * @author Lincoln Craddock
  */
@@ -21,66 +18,74 @@ public class RelationshipTester {
     @Before
     public void setUp()
     {
-        r = new Relationship ("Class1", "Class2");
-        r2 = new Relationship ("Jeremy", "Jane");
-        
+        ClassHandler.createClass("Class1");
+        ClassHandler.createClass("Class2");
+        ClassHandler.createClass("Jeremy");
+        ClassHandler.createClass("Jane");
+        r = new Relationship("Class1", "Class2");
+        r2 = new Relationship("Jeremy", "Jane");
     }
     
     @Test
-    public void RelationshipHasCorrectSrc ()
+    public void RelationshipHasCorrectSrc()
     {
-    	assertEquals (r.getSrc(), "Class1", "The name of the src should be \"Class1\"");
+        assertEquals("The name of the src should be \"Class1\"", "Class1", r.getSrc());
     }
     
     @Test
-    public void RelationshipHasCorrectSrc2 ()
+    public void RelationshipHasCorrectSrc2()
     {
-    	assertEquals (r2.getSrc(), "Jeremy", "The name of the src should be \"Jeremy\"");
+        assertEquals("The name of the src should be \"Jeremy\"", "Jeremy", r2.getSrc());
     }
     
     @Test
-    public void RelationshipHasCorrectDest ()
+    public void RelationshipHasCorrectDest()
     {
-    	assertEquals (r.getDest(), "Class1", "The name of the src should be \"Class1\"");
+        assertEquals("The name of the dest should be \"Class2\"", "Class2", r.getDest());
     }
     
     @Test
-    public void RelationshipHasCorrectDest2 ()
+    public void RelationshipHasCorrectDest2()
     {
-    	assertEquals (r2.getDest(), "Jeremy", "The name of the src should be \"Jeremy\"");
+        assertEquals("The name of the dest should be \"Jane\"", "Jane", r2.getDest());
     }
     
     @Test
-    public void RelationshipsAreEqual ()
+    public void RelationshipsAreEqual()
     {
-    	Relationship rCopy = new Relationship ("Class1", "Class2");
-    	assertTrue ("Two relationships between Class1 and Class2 should be equal.", r.equals(rCopy));
+        Relationship rCopy = new Relationship("Class1", "Class2");
+        assertTrue("Two relationships between Class1 and Class2 should be equal.", r.equals(rCopy));
     }
     
     @Test
-    public void RelationshipsAreEqual2 ()
+    public void RelationshipsAreEqual2()
     {
-    	Relationship rCopy = new Relationship ("Class1", "Class2");
-    	assertTrue ("Two relationships between Class1 and Class2 should be equal.", rCopy.equals(r));
+        Relationship rCopy = new Relationship("Class1", "Class2");
+        assertTrue("Two relationships between Class1 and Class2 should be equal.", rCopy.equals(r));
     }
     
     @Test
-    public void RelationshipsAreNotEqual2 ()
+    public void RelationshipsAreNotEqual()
     {
-    	assertFalse (r2 + " should not equals " + r, r2.equals(r));
+        assertFalse(r + " should not equal " + r2, r.equals(r2));
     }
     
     @Test
-    public void RelationshipToStringWorks ()
+    public void RelationshipsAreNotEqual2()
     {
-    	assertEquals (r.toString(), "Class1 --> Class2");
+        assertFalse(r2 + " should not equal " + r, r2.equals(r));
     }
     
     @Test
-    public void RelationshipToStringWorks2 ()
+    public void RelationshipToStringWorks()
     {
-    	assertEquals (r.toString(), "Jeremy --> Jane");
+        assertEquals("The string representation should be \"Class1 --> Class2\"", "Class1 --> Class2", r.toString());
     }
-
-
+    
+    @Test
+    public void RelationshipToStringWorks2()
+    {
+        assertEquals("The string representation should be \"Jeremy --> Jane\"", "Jeremy --> Jane", r2.toString());
+    }
+   
 }

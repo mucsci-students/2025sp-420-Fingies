@@ -5,7 +5,7 @@ import java.util.TreeSet;
  * 
  */
 public class ClassHandler {
-    private static HashMap<String, Class> classes;
+    private static HashMap<String, Class> classes = new HashMap<>();
 
     /**
      * Attemps to create a new class
