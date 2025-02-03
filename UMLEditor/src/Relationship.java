@@ -14,7 +14,7 @@ public class Relationship
      */
     Relationship(String src, String dest)
     {
-        if(exists(src))
+        if(ClassHandler.exists(src))
         {
             this.src = src;
         }
@@ -22,7 +22,7 @@ public class Relationship
         {
             throw new IllegalArgumentException("Source does not exist");
         }
-        if(exists(dest))
+        if(ClassHandler.exists(dest))
         {
             this.dest = dest;
         }
@@ -51,28 +51,28 @@ public class Relationship
     }
 
     @Override
-    boolean equals(object obj)
+    public boolean equals(Object obj)
     {
-        if(obj != null && obj.getClass == this.getClass)
+        if(obj != null && obj.getClass() == this.getClass())
         {
             Relationship r = (Relationship)obj;
             if(this.src == r.src && this.dest == r.dest)
             {
                 return true;
             }
-            return false;
         }
+        return false;
     }
 
     @Override 
     public String toString()
     {
-        System.out.println(this.src + " --> " + this.dest);
+        return this.src + " --> " + this.dest;
     }
 
     @Override
     public int hashCode()
     {
-        return this.src.hashCode * 5 + this.dest.hashCode * 7;
+        return this.src.hashCode() * 5 + this.dest.hashCode() * 7;
     }
 }    
