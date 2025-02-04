@@ -4,6 +4,7 @@ public class Class {
     private String name;
     private TreeSet<String> attributes;
     private String allowedCharacters = " _aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-";
+    private TreeSet<Relationship> relationships;
 
     /**
      * Constructs a new Class object with a name and empty set of attributes
@@ -14,6 +15,7 @@ public class Class {
         validateCharacters(name);
         this.name = name;
         attributes = new TreeSet<String>();
+        relationships = new TreeSet<Relationship>();
     }
 
     /**
@@ -96,5 +98,24 @@ public class Class {
     TreeSet<String> getAllAttributes()
     {
         return attributes;
+    }
+
+    void addRelationship (Relationship r)
+    {
+        if (r.getSrc().equals(name) || r.getDest().equals(name))
+            if (relationships.contains(r))
+                throw new IllegalArgumentException("This class already has that relationship.");
+            else
+                relationships.add(r);
+        else
+            throw new IllegalArgumentException ("This class must be either the source or destination of its own relationship.");
+    }
+
+    void deleteRelationship (Relationship r)
+    {
+        if (r.getSrc().equals(name) || r.getDest().equals(name))
+            relationships.remove(r);
+        else
+            throw new IllegalArgumentException ("This class must be either the source or destination of its own relationship.");
     }
 }
