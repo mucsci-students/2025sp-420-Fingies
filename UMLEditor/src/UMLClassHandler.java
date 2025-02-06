@@ -1,11 +1,11 @@
 import java.util.HashMap; 
-import java.util.TreeSet;
+import java.util.HashSet;
 
 /**
  * 
  */
-public class ClassHandler {
-    private static HashMap<String, Class> classes = new HashMap<>();
+public class UMLClassHandler {
+    private static HashMap<String, UMLClass> classes = new HashMap<>();
 
     /**
      * Attemps to create a new class
@@ -16,7 +16,7 @@ public class ClassHandler {
     {
         if (!classes.containsKey(name))
         {
-            Class c = new Class(name);
+            UMLClass c = new UMLClass(name);
             classes.put(name, c);
             return true;
         }
@@ -28,9 +28,24 @@ public class ClassHandler {
      * @param name name of the class that the user wants to remove
      * @return true if the class was deleted, false otherwise
      */
-    static boolean deleteClass(String name)
+    static boolean removeClass(String name)
     {
-        //TODO: delete all relationship for which it is a dest
+        if (!exists(name))
+        {
+            return false;
+        }
+        // C -- > A
+        for (String inc : classes.get(name).getIncoming())
+        {
+            classes.get(inc).removeRelationship(inc, name);
+        }
+
+        // A --> B
+        for (String out : classes.get(name).getOutgoing())
+        {
+            classes.get(out).removeRelationship(name, out);
+        }
+
         return classes.remove(name) != null;
     }
 
@@ -42,10 +57,10 @@ public class ClassHandler {
      */
     static boolean renameClass(String className, String newName)
     {
-        if (classes.containsKey(className))
+        if (classes.containsKey(className) && !classes.containsKey(newName))
         {
-            Class c = classes.get(className);
-            c.renameClass (newName);
+            UMLClass c = classes.get(className);
+            c.renameClass(newName);
             classes.remove(className);
             classes.put(newName, c);
             return true;
@@ -57,10 +72,10 @@ public class ClassHandler {
      * Creates a treeset of all of the classes in the classes hashmap
      * @return a treeset of all of the classes in the classes hashmap
      */
-    static TreeSet<Class> getAllClasses()
+    static HashSet<UMLClass> getAllClasses()
     {
-        TreeSet<Class> classesSet = new TreeSet<Class>();
-        for (Class c : classes.values())
+        HashSet<UMLClass> classesSet = new HashSet<UMLClass>();
+        for (UMLClass c : classes.values())
         {
             classesSet.add (c);
         }
@@ -72,10 +87,15 @@ public class ClassHandler {
      * Gets a class given its name.
      * @param name The name of the class.
      * @return the class.
+     * @throws NullPointerException if the class does not exist
      */
-    static Class getClass(String name)
+    static UMLClass getClass(String name)
     {
-    	return classes.get(name);
+        if (exists(name))
+        {
+            return classes.get(name);
+        }
+        throw new IllegalArgumentException("Class does not exist");
     }
     
     /**
@@ -94,22 +114,19 @@ public class ClassHandler {
      */
     static void addRelationship(String src, String dest)
     {
-        Relationship r = new Relationship(src, dest);
 
-        Class srcClass = getClass(src);
-        Class destClass = getClass(dest);
-        srcClass.addRelationship (r);
-        destClass.addRelationship (r);
+        UMLClass srcClass = getClass(src);
+        UMLClass destClass = getClass(dest);
+        srcClass.addRelationship (src, dest);
+        destClass.addRelationship (src, dest);
     }
 
-    static void deleteRelationship(String src, String dest)
+    static void removeRelationship(String src, String dest)
     {
-        Relationship r = new Relationship(src, dest);
-
-        Class srcClass = getClass(src);
-        Class destClass = getClass(dest);
-        srcClass.deleteRelationship (r);
-        destClass.deleteRelationship (r);
+        UMLClass srcClass = getClass(src);
+        UMLClass destClass = getClass(dest);
+        srcClass.removeRelationship (src, dest);
+        destClass.removeRelationship (src, dest);
     }
 }
 

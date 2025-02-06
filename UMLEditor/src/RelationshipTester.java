@@ -18,10 +18,10 @@ public class RelationshipTester {
     @Before
     public void setUp()
     {
-        ClassHandler.createClass("Class1");
-        ClassHandler.createClass("Class2");
-        ClassHandler.createClass("Jeremy");
-        ClassHandler.createClass("Jane");
+        UMLClassHandler.createClass("Class1");
+        UMLClassHandler.createClass("Class2");
+        UMLClassHandler.createClass("Jeremy");
+        UMLClassHandler.createClass("Jane");
         r = new Relationship("Class1", "Class2");
         r2 = new Relationship("Jeremy", "Jane");
     }
