@@ -14,7 +14,7 @@ public class Relationship
      */
     Relationship(String src, String dest)
     {
-        if(ClassHandler.exists(src))
+        if(UMLClassHandler.exists(src))
         {
             this.src = src;
         }
@@ -22,7 +22,7 @@ public class Relationship
         {
             throw new IllegalArgumentException("Source does not exist");
         }
-        if(ClassHandler.exists(dest))
+        if(UMLClassHandler.exists(dest))
         {
             this.dest = dest;
         }
