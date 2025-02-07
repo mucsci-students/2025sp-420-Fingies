@@ -1,13 +1,14 @@
+import java.io.File;
 import java.io.FileWriter;
 import java.lang.reflect.Modifier;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Main model class for UMLEditor. Contains JSON interaction & helpful filesystem-related methods.
@@ -15,7 +16,18 @@ import java.nio.file.Paths;
  */
 public class JModel {
     private final String LOG_PATH = "/umleditor-debug.log";
+    private String latestError;
+
+    //GSON is built to ignore fields with "final" modifier.
     private Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL).create();
+
+    /**
+     * Gets the latest error message from the model
+     * @return the latest error message
+     */
+    public String getLatestError() {
+        return latestError;
+    }
 
     /**
      * Checks if the file at the specified filepath exists.
@@ -23,11 +35,16 @@ public class JModel {
      * @return true if file exists, false otherwise.
      */
     public boolean fileExist(String filepath) {
-        if (filepath == null) return false;
+        if (filepath == null) {
+            latestError = "Invalid Argument: null, for fileExist - JModel:27";
+            return false;
+        };
         try {
             File f = new File(filepath);
             return (f.exists() ? true : false);
         } catch (Exception e) {
+            writeToLog(e.toString());
+            latestError = e.toString();
             return false;
         }
     }
@@ -41,6 +58,8 @@ public class JModel {
             Path currentRelativePath = Paths.get("");
             return(currentRelativePath.toAbsolutePath().toString());
         } catch(Exception e) {
+            writeToLog(e.toString());
+            latestError = e.toString();
             return null;
         }
     }
@@ -53,19 +72,24 @@ public class JModel {
     public boolean writeToLog(String message) {
         //Get filepath to log file
         String programPath = getProgramDirectory();
-        if (programPath == null) return false;
+        if (programPath == null) {
+            latestError = "Error retrieving program path - JModel: 58";
+            return false;
+        };
         String fullLogPath = programPath + LOG_PATH;
         try {
-            //Get current time in mm/dd/yy hh:mm:ss format
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy hh:mm:ss");
+            //Get current time in mm/dd/yy HH:mm:ss format (24hr time).
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yy HH:mm:ss");
             String dt = LocalDateTime.now().format(formatter);
 
+            //Writes message to debug log with a timestamp, appends message onto previous messages.
             FileWriter writer = new FileWriter(fullLogPath, true);
             writer.write("[" + dt + "]: " + message);
             writer.write(System.lineSeparator());
             writer.close();
             return true;
         } catch(Exception e) {
+            latestError = e.toString();
             return false;
         }
     }
@@ -76,7 +100,10 @@ public class JModel {
      * @return True if successfully saved, false otherwise.
      */
     public boolean saveData(String filepath) {
-        if (filepath == null) return false;
+        if (filepath == null) {
+            latestError = "Invalid Argument: null, in saveData - JModel:83"; 
+            return false;
+        };
         try {
             //Using UMLClassHandler object is crucial for loading data, don't change.
             UMLClassHandler classHandler = new UMLClassHandler();
@@ -88,6 +115,8 @@ public class JModel {
             writer.close();
             return true;
         } catch (Exception e) {
+            writeToLog(e.toString());
+            latestError = e.toString();
             return false;
         }
     }
@@ -99,8 +128,14 @@ public class JModel {
      */
     public UMLClassHandler loadData(String filepath) {
         // check if argument is null, or filepath is invalid
-        if (filepath == null) return null;
-        if (!fileExist(filepath)) return null;
+        if (filepath == null) {
+            latestError = "Invalid Argument: null, in loadData - JModel:110";
+            return null;
+        };
+        if (!fileExist(filepath)) {
+            latestError = "Tried to load data from non-existant file!";
+            return null;
+        };
         try {
             //Read data from json using scanner
             Scanner in = new Scanner(new File(filepath));
@@ -112,6 +147,8 @@ public class JModel {
             UMLClassHandler data = gson.fromJson(jsonData, UMLClassHandler.class);
             return data;
         } catch (Exception e) {
+            writeToLog(e.toString());
+            latestError = e.toString();
             return null;
         }
     }
