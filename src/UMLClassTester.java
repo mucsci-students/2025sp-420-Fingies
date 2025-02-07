@@ -64,7 +64,10 @@ public class UMLClassTester {
     @Test
     public void addEngineAttributeToNonexistantClass()
     {
+<<<<<<< HEAD
         // what is this testing??
+=======
+>>>>>>> 34bf545 (fixed project-in-a-project issue (hopefully))
         UMLClass DNE = null;
         try
         {
