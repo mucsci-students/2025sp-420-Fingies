@@ -64,6 +64,7 @@ public class UMLClassTester {
     @Test
     public void addEngineAttributeToNonexistantClass()
     {
+        // what is this testing??
         UMLClass DNE = null;
         try
         {
