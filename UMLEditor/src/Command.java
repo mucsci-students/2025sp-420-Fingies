@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -8,49 +9,9 @@ import java.util.List;
  * a list of arguments given by the user.
  */
 public class Command {
-
-	/**
-	 * An enum that represents an action the user can take with the program.
-	 * 
-	 * Contains a method for parsing user input into a corresponding Action.
-	 */
-	public enum Action {
-			
-		/** Creates a new class. */
-		ADD_CLASS,
-		/** Removes a class that exists. */
-		REMOVE_CLASS,
-		/** Gives a class a new name. */
-		RENAME_CLASS,
-		/** Creates a relationship between two classes. */
-		ADD_RELATIONSHIP,
-		/** Removes a relationship. */
-		REMOVE_RELATIONSHIP,
-		/** Creates a new class. */
-		ADD_ATTRIBUTE,
-		/** Removes a class that exists. */
-		REMOVE_ATTRIVUTE,
-		/** Gives a class a new name. */
-		RENAME_ATTRIBUTE,
-		/** Creates a relationship between two classes. */
-		SAVE,
-		/** Removes a relationship. */
-		LOAD,
-		/** Displays all of the classes and their contents. */
-		LIST_CLASSES,
-		/** Lists all of the contents of a particular class. */
-		LIST_CLASS,
-		/** Displays a list of all of the relationships between classes. */
-		LIST_RELATIONSHIPS,
-		/** Gives the user instructions on how to use the program, or help with a specific command. */
-		HELP,
-		/** Closes the program. */
-		EXIT;
-			
-	}
 	
 	Action action;
-	List<String> arguments;
+	String[] arguments;
 	
 	public static final String[] COMMANDS = {
 		    "add class", "remove class", "rename class",
@@ -86,7 +47,7 @@ public class Command {
 		    COMMANDS[14] + " \n" + COMMANDS_SHORTHAND[14] + " "
 		};
 	
-	Command (Action a, List<String> args)
+	Command (Action a, String[] args)
 	{
 		action = a;
 		arguments = args;
@@ -97,12 +58,14 @@ public class Command {
 		// parse command
 		input = input.trim();
 		Action a = null;
+		int cmdLen = 0;
 		for (int i = 0; i < COMMANDS.length && a == null; ++i)
 		{
 			if (input.startsWith(COMMANDS[i]))
 			{
 				a = Action.values()[i];
-				input = input.substring(COMMANDS[i].length() + 1);
+				cmdLen = COMMANDS[i].length();
+				
 			}
 		}
 		for (int i = 0; i < COMMANDS_SHORTHAND.length && a == null; ++i)
@@ -110,13 +73,17 @@ public class Command {
 			if (input.startsWith(COMMANDS_SHORTHAND[i]))
 			{
 				a = Action.values()[i];
-				input = input.substring(COMMANDS_SHORTHAND[i].length() + 1);
+				cmdLen = COMMANDS_SHORTHAND[i].length();
 			}
 		}
 		if (a == null)
 			return null;
 		
 		// parse arguments
+		if (input.length() > cmdLen)
+			input = input.substring(cmdLen + 1);
+		else
+			input = "";
 		boolean quote = false;
 		String token = "";
 		List<String> args = new ArrayList<String>();
@@ -131,9 +98,10 @@ public class Command {
 					token = "";
 				}
 			}
-			else if (c == ' ' && token.length() > 0 && !quote)
+			else if (c == ' ' && !quote)
 			{
-				args.add(token);
+				if (token.length() > 0)
+					args.add(token);
 				token = "";
 			}
 			else
@@ -141,8 +109,18 @@ public class Command {
 				token += c;
 			}
 		}
+		if (token.length() > 0)
+			args.add(token);
+		if (quote)
+			throw new IllegalArgumentException ("Every quote should have an end-quote.");
 		
-		return new Command (a, args);
+		return new Command (a, args.toArray(new String[0]));
+	}
+	
+	@Override
+	public String toString()
+	{
+		return action + ": " + Arrays.toString(arguments);
 	}
 
 }
