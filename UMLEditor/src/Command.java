@@ -13,6 +13,9 @@ public class Command {
 	Action action;
 	String[] arguments;
 	
+	/**
+	 * An array storing the keyword that represents each command.
+	 */
 	public static final String[] COMMANDS = {
 		    "add class", "remove class", "rename class",
 		    "add relationship", "remove relationship", "add attribute",
@@ -21,6 +24,9 @@ public class Command {
 		    "list relationships", "help", "exit"
 		};
 	
+	/**
+	 * A shorter version of each keyword that can be used instead.
+	 */
 	public static final String[] COMMANDS_SHORTHAND = {
 		    "addc", "rmc", "rnc",         	   // add class, remove class, rename class
 		    "addr", "rmr", "adda",             // add relationship, remove relationship, add attribute
@@ -29,6 +35,9 @@ public class Command {
 		    "listr", "h", "quit"               // list relationships, help, exit
 		};
 	
+	/**
+	 * An array of Strings containing a brief description of the format for every command.
+	 */
 	public static final String[] COMMAND_FORMAT = {
 		    COMMANDS[0] + " CLASS_NAME \n" + COMMANDS_SHORTHAND[0] + " CLASS_NAME ",
 		    COMMANDS[1] + " CLASS_NAME \n" + COMMANDS_SHORTHAND[1] + " CLASS_NAME ",
@@ -53,6 +62,18 @@ public class Command {
 		arguments = args;
 	}
 	
+	/**
+	 * Parses the string argument as a Command.
+	 * 
+	 * Commands should be formatted 'command ARGS' where 'command' is the keyword or
+	 * shorthand keyword for that command, and ARGS is the list of arguments for that
+	 * command, separated by spaces. Arguments can be surrounded with double quotes
+	 * so specify argument names with spaces in them (ex. 'add class "Hello World"').
+	 * 
+	 * 
+	 * @param input
+	 * @return
+	 */
 	public static Command parseCommand(String input)
 	{
 		// parse command
@@ -79,11 +100,17 @@ public class Command {
 		if (a == null)
 			return null;
 		
-		// parse arguments
+		// trim 'input' to be just the arguments
 		if (input.length() > cmdLen)
+		{
+			if (input.charAt(cmdLen) != ' ')
+				throw new IllegalArgumentException("Commands must be followed by a space.");
 			input = input.substring(cmdLen + 1);
+		}
 		else
 			input = "";
+		
+		// parse arguments
 		boolean quote = false;
 		String token = "";
 		List<String> args = new ArrayList<String>();
@@ -120,7 +147,27 @@ public class Command {
 	@Override
 	public String toString()
 	{
-		return action + ": " + Arrays.toString(arguments);
+		return action + " " + Arrays.toString(arguments);
+	}
+	
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o == null || o.getClass() != getClass())
+			return false;
+		Command c = (Command) o;
+		if (c.action != action || c.arguments.length != arguments.length)
+			return false;
+		for (int i = 0; i < arguments.length; ++i)
+			if (!arguments[i].equals(c.arguments[i]))
+				return false;
+		return true;
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return action.hashCode() * 3 + arguments.hashCode() * 5;
 	}
 
 }
