@@ -1,5 +1,7 @@
 import java.util.function.Predicate;
 
+// We probably won't need to use this class for a while... but it's here now in case we do.
+
 /**
  * An InputCheck can be used to check whether a string satisfies a certain condition or not.
  * This could be especially useful when getting input from the user, such as for requiring
