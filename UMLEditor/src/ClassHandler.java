@@ -30,6 +30,7 @@ public class ClassHandler {
      */
     static boolean deleteClass(String name)
     {
+        //TODO: delete all relationship for which it is a dest
         return classes.remove(name) != null;
     }
 
@@ -87,4 +88,28 @@ public class ClassHandler {
     	return classes.containsKey(name);
     }
     
+    /**
+     * @throws IllegalArgumentException when trying to add a relationship that already exists
+     * @throws IllegalArgumentException when trying to add a relationship between at least 1 non existing class
+     */
+    static void addRelationship(String src, String dest)
+    {
+        Relationship r = new Relationship(src, dest);
+
+        Class srcClass = getClass(src);
+        Class destClass = getClass(dest);
+        srcClass.addRelationship (r);
+        destClass.addRelationship (r);
+    }
+
+    static void deleteRelationship(String src, String dest)
+    {
+        Relationship r = new Relationship(src, dest);
+
+        Class srcClass = getClass(src);
+        Class destClass = getClass(dest);
+        srcClass.deleteRelationship (r);
+        destClass.deleteRelationship (r);
+    }
 }
+
