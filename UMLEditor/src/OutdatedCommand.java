@@ -1,4 +1,4 @@
-public enum Command {
+public enum OutdatedCommand {
     ADDCLASS,
     DELETECLASS,
     RENAMECLASS,
