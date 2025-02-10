@@ -21,7 +21,7 @@ public interface View {
 	 * 
 	 * @return A string representation of the user's input.
 	 */
-	String getInput();
+	Command nextCommand();
 	
 	/**
 	 * Displays a message to the user and stalls the program until they respond.
@@ -71,7 +71,7 @@ public interface View {
 	 * @param checks A list of checks representing the what sort of responses should be accepted.
 	 * @return The user's answer to each question.
 	 */
-	List<String> promptForInput(List<String> messages, List<InputCheck> checks);
+	List<String> promptForInput(List<String> messages, List<InputCheck> checks); // this will probably remain unimplemented until we need it.
 	
 	/**
 	 * Gives the user feedback to let them know that their most recent command was successful.
