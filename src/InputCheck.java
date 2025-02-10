@@ -1,5 +1,3 @@
-import java.util.function.Predicate;
-
 // We probably won't need to use this class for a while... but it's here now in case we do.
 
 /**
