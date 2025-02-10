@@ -21,11 +21,7 @@ public interface View {
 	 * 
 	 * @return A string representation of the user's input.
 	 */
-<<<<<<< HEAD
-	String getInput();
-=======
 	Command nextCommand();
->>>>>>> 34bf545 (fixed project-in-a-project issue (hopefully))
 	
 	/**
 	 * Displays a message to the user and stalls the program until they respond.
@@ -75,11 +71,7 @@ public interface View {
 	 * @param checks A list of checks representing the what sort of responses should be accepted.
 	 * @return The user's answer to each question.
 	 */
-<<<<<<< HEAD
-	List<String> promptForInput(List<String> messages, List<InputCheck> checks);
-=======
 	List<String> promptForInput(List<String> messages, List<InputCheck> checks); // this will probably remain unimplemented until we need it.
->>>>>>> 34bf545 (fixed project-in-a-project issue (hopefully))
 	
 	/**
 	 * Gives the user feedback to let them know that their most recent command was successful.

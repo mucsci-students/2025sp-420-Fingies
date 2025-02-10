@@ -10,8 +10,8 @@ import java.util.List;
  */
 public class Command {
 	
-	Action action;
-	String[] arguments;
+	public final Action action;
+	public final String[] arguments;
 	
 	/**
 	 * An array storing the keyword that represents each command.
