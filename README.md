@@ -9,6 +9,6 @@ TODO
 ## Team Fingies
 - Nick Hayes
 - William Wick
-- Tristian Rush
+- Tristan Rush
 - Kevin Dichter
 - Lincoln Craddock

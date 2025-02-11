@@ -1,5 +1,7 @@
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -52,5 +54,10 @@ public class JModelTest {
     @Test
     public void loadSave() {
         assertNotNull(model.loadData(path));
+        HashSet<UMLClass> umlClasses = UMLClassHandler.getAllClasses();
+        for (UMLClass umlClass : umlClasses) {
+            System.out.print(umlClass.getName() + " ");
+        }
+        System.out.println();
     }
 }
