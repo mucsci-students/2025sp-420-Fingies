@@ -112,21 +112,18 @@ public class UMLClassHandler {
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      * @throws IllegalArgumentException when trying to add a relationship between at least 1 non existing class
      */
-    static void addRelationship(String src, String dest)
+    static boolean addRelationship(String src, String dest)
     {
-
         UMLClass srcClass = getClass(src);
         UMLClass destClass = getClass(dest);
-        srcClass.addRelationship (src, dest);
-        destClass.addRelationship (src, dest);
+        return srcClass.addRelationship (srcClass, destClass) && destClass.addRelationship (srcClass, destClass);
     }
 
-    static void removeRelationship(String src, String dest)
+    static boolean removeRelationship(String src, String dest)
     {
         UMLClass srcClass = getClass(src);
         UMLClass destClass = getClass(dest);
-        srcClass.removeRelationship (src, dest);
-        destClass.removeRelationship (src, dest);
+        return srcClass.removeRelationship (srcClass, destClass) && destRemove = destClass.removeRelationship (srcClass, destClass);
     }
 
     /**
