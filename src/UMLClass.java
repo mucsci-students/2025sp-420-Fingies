@@ -16,8 +16,8 @@ public class UMLClass {
         validateCharacters(name);
         this.name = name;
         attributes = new HashSet<String>();
-        incoming = new HashSet<String>();
-        outgoing = new HashSet<String>();
+        incoming = new HashSet<UMLClass>();
+        outgoing = new HashSet<UMLClass>();
     }
 
     /**
@@ -117,7 +117,7 @@ public class UMLClass {
     boolean addRelationship (UMLClass src, UMLClass dest)
     {
         // B --> C
-        if (!src.equals(name) && !dest.equals(name))
+        if (!src.getName().equals(name) && !dest.getName().equals(name))
         {
             throw new IllegalArgumentException("Wrong class for relationship");
         }
@@ -152,7 +152,7 @@ public class UMLClass {
     boolean removeRelationship (UMLClass src, UMLClass dest)
     {
        // B --> C
-       if (!src.equals(name) && !dest.equals(name))
+       if (!src.getName().equals(name) && !dest.getName().equals(name))
        {
            throw new IllegalArgumentException("Relationship does not exist");
        }

@@ -35,15 +35,15 @@ public class UMLClassHandler {
             return false;
         }
         // C -- > A
-        for (String inc : classes.get(name).getIncoming())
+        for (UMLClass inc : classes.get(name).getIncoming())
         {
-            classes.get(inc).removeRelationship(inc, name);
+            inc.removeRelationship(inc, classes.get(name));
         }
 
         // A --> B
-        for (String out : classes.get(name).getOutgoing())
+        for (UMLClass out : classes.get(name).getOutgoing())
         {
-            classes.get(out).removeRelationship(name, out);
+            out.removeRelationship(classes.get(name), out);
         }
 
         return classes.remove(name) != null;
@@ -123,7 +123,7 @@ public class UMLClassHandler {
     {
         UMLClass srcClass = getClass(src);
         UMLClass destClass = getClass(dest);
-        return srcClass.removeRelationship (srcClass, destClass) && destRemove = destClass.removeRelationship (srcClass, destClass);
+        return srcClass.removeRelationship (srcClass, destClass) && destClass.removeRelationship (srcClass, destClass);
     }
 
     /**
