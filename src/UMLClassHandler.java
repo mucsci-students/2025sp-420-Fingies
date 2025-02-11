@@ -128,5 +128,14 @@ public class UMLClassHandler {
         srcClass.removeRelationship (src, dest);
         destClass.removeRelationship (src, dest);
     }
+
+    /**
+     * Resets all classes, attributes, and relationships
+     * @author trush
+     */
+    static void reset() {
+        HashMap<String, UMLClass> reset = new HashMap<>();
+        classes = reset;
+    }
 }
 
