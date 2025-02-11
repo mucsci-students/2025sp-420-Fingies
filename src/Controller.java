@@ -1,11 +1,15 @@
-public class Controller {
-    private View view;
-    private JModel model;
+import java.util.HashSet;
 
-    Controller (View view, JModel model)
+public class Controller {
+    private CLIView view;
+    private JModel model;
+    UMLClassHandler data;
+
+    Controller (CLIView view, JModel model)
     {
         this.view = view;
         this.model = model;
+        data = null;
     }
 
     public boolean doAddClass(String className) 
@@ -13,7 +17,7 @@ public class Controller {
         return UMLClassHandler.createClass(className);
     }
 
-    public boolean doDeleteClass(String className) 
+    public boolean doRemoveClass(String className) 
     {
         return UMLClassHandler.removeClass(className);
     }
@@ -28,7 +32,7 @@ public class Controller {
         UMLClassHandler.addRelationship(srcClass, destClass);
     }
 
-    public void doDeleteRelationship(String srcClass, String destClass) 
+    public void doRemoveRelationship(String srcClass, String destClass) 
     {
         UMLClassHandler.removeRelationship(srcClass, destClass);
     }
@@ -38,7 +42,7 @@ public class Controller {
         return UMLClassHandler.getClass(srcClass).addAttribute(attribute);
     }
 
-    public boolean doDeleteAttribute(String srcClass, String attribute) 
+    public boolean doRemoveAttribute(String srcClass, String attribute) 
     {
         return UMLClassHandler.getClass(srcClass).removeAttribute(attribute);
     }
@@ -58,66 +62,156 @@ public class Controller {
         return model.loadData(filepath);
     }
 
-    public void doListClasses() {}
-    public void doListClass() {}
-    public void doListRelationships() {}
-    public void doHelp() {}
+    public void doListClasses() 
+    {
+        HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
+        for (UMLClass c : classes)
+        {
+            doListClass(c.getName());
+        }
+    }
+    public void doListClass(String className) 
+    {
+        UMLClass c = UMLClassHandler.getClass(className);
+        System.out.print(c + ": ");
+        for (String atr : c.getAllAttributes())
+        {
+            System.out.print(", " + atr);
+        }
+    }
+    public void doListRelationships() 
+    {
+        HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
+        for (UMLClass c : classes)
+        {
+            HashSet<String> outgoing = c.getOutgoing();
+            for (String out : outgoing)
+            {
+                System.out.println(c + ": " + out);
+            }
+            System.out.println();
+        }
+    }
+    public void doHelp() 
+    {
+        Command.help();
+    }
 
     /**
-     * Starts program and checks/follows commands until exit.
+     * Promts the user to either load in an existing JSON file with data or create a new one
+     */
+    public boolean getData()
+    {
+        String result = view.promptForInput("Do you want to load a JSON file for storing your UML diagram? Y/N");
+        if (result.equals("Y") || result.equals("y"))
+        {
+            while (true)
+            {
+                String filepath = view.promptForInput("Enter a valid filepath");
+                if (filepath != null)
+                {
+                    data = doLoad(filepath);
+                    return true; 
+                }
+                String again = view.promptForInput("Invalid filepath. Type \'T\' to try again, \'E\' to exit, or any other key to make a new JSON file instead");
+                if (again.equals("E") && !again.equals("e"))
+                    return false;
+                else if (!again.equals("T") && !again.equals("t"))
+                    break;
+            }
+        }
+        data = new UMLClassHandler();
+        return true;
+        
+    }
+
+    /**
+     * Runs the program by infinitely looping and executing commands until the user types EXIT
      */
     public void run ()
     {
-        Action action = null;
+        if(!getData())
+            return;
+        Command command;
+        Action action;
         do {
-            //acquire command from view
+            command = view.nextCommand();
+            action = command.action;
             switch(action) {
                 case ADD_CLASS:
-                    //do stuff
+                    if (command.arguments.length == 1)
+                        if (doAddClass(command.arguments[0]))
+                            view.notifySuccess();
                     break;
                 case REMOVE_CLASS:
-                    //do stuff
+                    if (command.arguments.length == 1)
+                        if (doRemoveClass(command.arguments[0]))
+                            view.notifySuccess();
                     break;
                 case RENAME_CLASS:
-                    //do stuff
+                    if (command.arguments.length == 2)
+                        if (doRenameClass(command.arguments[0], command.arguments[1]))
+                            view.notifySuccess();
                     break;
                 case ADD_RELATIONSHIP:
-                    //do stuff
+                    if (command.arguments.length == 2)
+                        doAddRelationship(command.arguments[0], command.arguments[1]);
                     break;
                 case REMOVE_RELATIONSHIP:
-                    //do stuff
+                    if (command.arguments.length == 2)
+                        doRemoveRelationship(command.arguments[0], command.arguments[1]);
                     break;
                 case ADD_ATTRIBUTE:
-                    //do stuff
+                    if (command.arguments.length == 2)
+                        if (doAddAttribute(command.arguments[0], command.arguments[1]))
+                            view.notifySuccess();
                     break;
                 case REMOVE_ATTRIVUTE:
-                    //do stuff
+                    if (command.arguments.length == 2)
+                        if (doAddAttribute(command.arguments[0], command.arguments[1]))
+                            view.notifySuccess();
                     break;
                 case RENAME_ATTRIBUTE:
-                    //do stuff
+                    if (command.arguments.length == 3)
+                        if (doRenameAttribute(command.arguments[0], command.arguments[1], command.arguments[2]))
+                            view.notifySuccess();
                     break;
                 case SAVE:
-                    //do stuff
+                    if (command.arguments.length == 1)
+                    {
+                        String result = view.promptForInput("Are you sure that you want to save? Y/N");
+                        if (result.equals("Y") || result.equals("y"))
+                            doSave(command.arguments[0]);
+                    }
                     break;
                 case LOAD:
-                    //do stuff
+                    if (command.arguments.length == 1)
+                    {
+                        String result = view.promptForInput("Are you sure that you want to load? Y/N");
+                        if (result.equals("Y") || result.equals("y"))
+                        data = doLoad(command.arguments[0]);
+                    }
                     break;
                 case LIST_CLASSES:
-                    //do stuff
+                    if (command.arguments.length == 0)
+                        doListClasses();
                     break;
                 case LIST_CLASS:
-                    //do stuff
+                    if (command.arguments.length == 1)
+                        doListClass(command.arguments[0]);
                     break;
                 case LIST_RELATIONSHIPS:
-                    //do stuff
+                    if (command.arguments.length == 0)
+                        doListRelationships();
                     break;
                 case HELP:
-                    //do stuff
+                    if (command.arguments.length == 0)
+                        doHelp();
                     break;
                 case EXIT:
                     break;
             }
-        } while (!action.equals(action.EXIT));
+        } while (!action.equals(Action.EXIT));
     }
  }
  

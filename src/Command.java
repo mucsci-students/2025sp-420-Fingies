@@ -63,6 +63,16 @@ public class Command {
 	}
 	
 	/**
+	 * Prints all of the possible commands the user can write
+	 */
+	public static void help()
+	{
+		for (String s : COMMAND_FORMAT)
+		{
+			System.out.println(s);
+		}
+	}
+	/**
 	 * Parses the string argument as a Command.
 	 * 
 	 * Commands should be formatted 'command ARGS' where 'command' is the keyword or

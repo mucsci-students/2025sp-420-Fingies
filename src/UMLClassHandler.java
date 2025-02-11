@@ -69,8 +69,8 @@ public class UMLClassHandler {
     }
 
     /**
-     * Creates a treeset of all of the classes in the classes hashmap
-     * @return a treeset of all of the classes in the classes hashmap
+     * Creates a hashset of all of the classes in the classes hashmap
+     * @return a hashset of all of the classes in the classes hashmap
      */
     static HashSet<UMLClass> getAllClasses()
     {
