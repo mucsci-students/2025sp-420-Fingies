@@ -128,5 +128,38 @@ public class UMLClassHandler {
         srcClass.removeRelationship (src, dest);
         destClass.removeRelationship (src, dest);
     }
+
+    static void listClasses()
+    {
+        // HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
+        for (UMLClass c : classes.values())
+        {
+            listClass(c.getName());
+        }
+    }
+
+    static void listClass(String className)
+    {
+        UMLClass c = getClass(className);
+        System.out.print(c + ": ");
+        for (String atr : c.getAllAttributes())
+        {
+            System.out.print(", " + atr);
+        }
+    }
+
+    static void listRelationships()
+    {
+        // HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
+        for (UMLClass c : classes.values())
+        {
+            HashSet<String> outgoing = c.getOutgoing();
+            for (String out : outgoing)
+            {
+                System.out.println(c + ": " + out);
+            }
+            System.out.println();
+        }
+    }
 }
 

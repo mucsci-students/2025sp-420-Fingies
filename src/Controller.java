@@ -64,33 +64,15 @@ public class Controller {
 
     public void doListClasses() 
     {
-        HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
-        for (UMLClass c : classes)
-        {
-            doListClass(c.getName());
-        }
+        UMLClassHandler.listClasses();
     }
     public void doListClass(String className) 
     {
-        UMLClass c = UMLClassHandler.getClass(className);
-        System.out.print(c + ": ");
-        for (String atr : c.getAllAttributes())
-        {
-            System.out.print(", " + atr);
-        }
+        UMLClassHandler.listClass(className);
     }
     public void doListRelationships() 
     {
-        HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
-        for (UMLClass c : classes)
-        {
-            HashSet<String> outgoing = c.getOutgoing();
-            for (String out : outgoing)
-            {
-                System.out.println(c + ": " + out);
-            }
-            System.out.println();
-        }
+        UMLClassHandler.listRelationships();
     }
     public void doHelp() 
     {
