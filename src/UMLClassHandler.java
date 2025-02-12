@@ -35,15 +35,15 @@ public class UMLClassHandler {
             return false;
         }
         // C -- > A
-        for (String inc : classes.get(name).getIncoming())
+        for (UMLClass inc : classes.get(name).getIncoming())
         {
-            classes.get(inc).removeRelationship(inc, name);
+            inc.removeRelationship(inc, classes.get(name));
         }
 
         // A --> B
-        for (String out : classes.get(name).getOutgoing())
+        for (UMLClass out : classes.get(name).getOutgoing())
         {
-            classes.get(out).removeRelationship(name, out);
+            out.removeRelationship(classes.get(name), out);
         }
 
         return classes.remove(name) != null;
@@ -112,21 +112,18 @@ public class UMLClassHandler {
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      * @throws IllegalArgumentException when trying to add a relationship between at least 1 non existing class
      */
-    static void addRelationship(String src, String dest)
+    static boolean addRelationship(String src, String dest)
     {
-
         UMLClass srcClass = getClass(src);
         UMLClass destClass = getClass(dest);
-        srcClass.addRelationship (src, dest);
-        destClass.addRelationship (src, dest);
+        return srcClass.addRelationship (srcClass, destClass) && destClass.addRelationship (srcClass, destClass);
     }
 
-    static void removeRelationship(String src, String dest)
+    static boolean removeRelationship(String src, String dest)
     {
         UMLClass srcClass = getClass(src);
         UMLClass destClass = getClass(dest);
-        srcClass.removeRelationship (src, dest);
-        destClass.removeRelationship (src, dest);
+        return srcClass.removeRelationship (srcClass, destClass) && destClass.removeRelationship (srcClass, destClass);
     }
 
     static void listClasses()
@@ -153,8 +150,8 @@ public class UMLClassHandler {
         // HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
         for (UMLClass c : classes.values())
         {
-            HashSet<String> outgoing = c.getOutgoing();
-            for (String out : outgoing)
+            HashSet<UMLClass> outgoing = c.getOutgoing();
+            for (UMLClass out : outgoing)
             {
                 System.out.println(c + ": " + out);
             }

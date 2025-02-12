@@ -73,8 +73,8 @@ public class UMLCLassHandlerTester {
     public void addRelationshipBetweenCarAndFoodClasses()
     {
         UMLClassHandler.addRelationship("Car", "Food");
-        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains("Food"));
-        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains("Car"));
+        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food")));
+        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car")));
     }
 
     @Test
@@ -97,8 +97,8 @@ public class UMLCLassHandlerTester {
     public void removeRelationshpBetweenExistingCarAndFoodClasses()
     {
         UMLClassHandler.addRelationship("Car", "Food");
-        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains("Food"));
-        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains("Car"));
+        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food")));
+        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car")));
 
         UMLClassHandler.removeRelationship("Car", "Food");
         assertTrue(UMLClassHandler.getClass("Car").getOutgoing().isEmpty());
@@ -131,8 +131,8 @@ public class UMLCLassHandlerTester {
     public void removeTheCarClassAfterAddingARelationshipBetweenTheCarAndAnimalClasses()
     {
         UMLClassHandler.addRelationship("Car", "Food");
-        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains("Food"));
-        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains("Car"));
+        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food")));
+        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car")));
 
         UMLClassHandler.removeClass("Car");
         assertFalse(UMLClassHandler.exists("Car"));
