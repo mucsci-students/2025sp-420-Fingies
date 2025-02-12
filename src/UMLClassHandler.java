@@ -161,5 +161,14 @@ public class UMLClassHandler {
             System.out.println();
         }
     }
+
+    /**
+     * Resets all classes, attributes, and relationships
+     * @author trush
+     */
+    static void reset() {
+        HashMap<String, UMLClass> reset = new HashMap<>();
+        classes = reset;
+    }
 }
 

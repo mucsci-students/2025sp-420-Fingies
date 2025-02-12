@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import java.util.HashSet;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -122,7 +123,7 @@ public class JModel {
     }
 
     /**
-     * Loads data from the desired filepath.
+     * Loads data from the desired filepath, Checks for field constraints as well.
      * @param filepath The desired filepath to load the data from.
      * @return UMLClassHandler class if successful, null otherwise.
      */
@@ -145,6 +146,14 @@ public class JModel {
             if (jsonData.isEmpty()) return null;
             //Try to parse data from string. Throws exception if incorrect format
             UMLClassHandler data = gson.fromJson(jsonData, UMLClassHandler.class);
+            HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
+            for (UMLClass umlClass : classes) {
+                umlClass.validateCharacters(umlClass.getName());
+                HashSet<String> attributes = umlClass.getAllAttributes();
+                for (String attribute : attributes) {
+                    umlClass.validateCharacters(attribute);
+                }
+            }
             return data;
         } catch (Exception e) {
             writeToLog(e.toString());
