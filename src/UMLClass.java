@@ -3,8 +3,8 @@ import java.util.HashSet;
 public class UMLClass {
     private String name;
     private HashSet<String> attributes;
-    private HashSet<String> incoming;
-    private HashSet<String> outgoing;
+    private HashSet<UMLClass> incoming;
+    private HashSet<UMLClass> outgoing;
     private final String allowedCharacters = " _aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-";
 
     /**
@@ -16,8 +16,8 @@ public class UMLClass {
         validateCharacters(name);
         this.name = name;
         attributes = new HashSet<String>();
-        incoming = new HashSet<String>();
-        outgoing = new HashSet<String>();
+        incoming = new HashSet<UMLClass>();
+        outgoing = new HashSet<UMLClass>();
     }
 
     /**
@@ -114,28 +114,27 @@ public class UMLClass {
      * @param src source class
      * @param dest desination class
      */
-    void addRelationship (String src, String dest)
+    boolean addRelationship (UMLClass src, UMLClass dest)
     {
         // B --> C
-        if (!src.equals(name) && !dest.equals(name))
+        if (!src.getName().equals(name) && !dest.getName().equals(name))
         {
             throw new IllegalArgumentException("Wrong class for relationship");
         }
         // A --> A
-        if (src.equals(name) && dest.equals(name))
+        if (src.getName().equals(name) && dest.getName().equals(name))
         {
-            incoming.add(src);
-            outgoing.add(dest);
+            return incoming.add(src) && outgoing.add(dest);
         }
         // A --> B
-        else if (src.equals(name))
+        else if (src.getName().equals(name))
         {
-            outgoing.add(dest);
+            return outgoing.add(dest);
         }
         // C --> A
-        else if (dest.equals(name))
+        else if (dest.getName().equals(name))
         {
-            incoming.add(src);
+            return incoming.add(src);
         }
         else
         {
@@ -150,28 +149,27 @@ public class UMLClass {
      * @param src source class
      * @param dest destination class
      */
-    void removeRelationship (String src, String dest)
+    boolean removeRelationship (UMLClass src, UMLClass dest)
     {
        // B --> C
-       if (!src.equals(name) && !dest.equals(name))
+       if (!src.getName().equals(name) && !dest.getName().equals(name))
        {
            throw new IllegalArgumentException("Relationship does not exist");
        }
        // A --> A
-       if (src.equals(name) && dest.equals(name))
+       if (src.getName().equals(name) && dest.getName().equals(name))
        {
-           incoming.remove(src);
-           outgoing.remove(dest);
+           return incoming.remove(src) && outgoing.remove(dest);
        }
        // A --> B
-       else if (src.equals(name))
+       else if (src.getName().equals(name))
        {
-           outgoing.remove(dest);
+           return outgoing.remove(dest);
        }
        // C --> A
-       else if (dest.equals(name))
+       else if (dest.getName().equals(name))
        {
-           incoming.remove(src);
+           return incoming.remove(src);
        }
        else
        {
@@ -183,7 +181,7 @@ public class UMLClass {
      * Returns the incoming hashset
      * @return the incoming hashset
      */
-    HashSet<String> getIncoming()
+    HashSet<UMLClass> getIncoming()
     {
         return incoming;
     }
@@ -192,7 +190,7 @@ public class UMLClass {
      * Returns the outgoing hashset
      * @return the outgoing hashset
      */
-    HashSet<String> getOutgoing()
+    HashSet<UMLClass> getOutgoing()
     {
         return outgoing;
     }

@@ -1,4 +1,7 @@
 import static org.junit.Assert.assertTrue;
+
+import java.util.HashSet;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
@@ -70,8 +73,8 @@ public class UMLCLassHandlerTester {
     public void addRelationshipBetweenCarAndFoodClasses()
     {
         UMLClassHandler.addRelationship("Car", "Food");
-        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains("Food"));
-        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains("Car"));
+        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food")));
+        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car")));
     }
 
     @Test
@@ -94,8 +97,8 @@ public class UMLCLassHandlerTester {
     public void removeRelationshpBetweenExistingCarAndFoodClasses()
     {
         UMLClassHandler.addRelationship("Car", "Food");
-        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains("Food"));
-        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains("Car"));
+        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food")));
+        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car")));
 
         UMLClassHandler.removeRelationship("Car", "Food");
         assertTrue(UMLClassHandler.getClass("Car").getOutgoing().isEmpty());
@@ -128,8 +131,8 @@ public class UMLCLassHandlerTester {
     public void removeTheCarClassAfterAddingARelationshipBetweenTheCarAndAnimalClasses()
     {
         UMLClassHandler.addRelationship("Car", "Food");
-        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains("Food"));
-        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains("Car"));
+        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food")));
+        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car")));
 
         UMLClassHandler.removeClass("Car");
         assertFalse(UMLClassHandler.exists("Car"));
@@ -140,5 +143,27 @@ public class UMLCLassHandlerTester {
     public void removeAClassThatDoesntExist()
     {
         assertFalse(UMLClassHandler.removeClass("Class1"));
+    }
+
+    
+    // --------------------- DELETE ATTRIBUTE ---------------------
+    @Test
+    public void testResetFunction() {
+        UMLClassHandler.createClass("Car");
+            UMLClassHandler.getClass("Car").addAttribute("Engine");
+            UMLClassHandler.getClass("Car").addAttribute("Wheel");
+            UMLClassHandler.getClass("Car").addAttribute("Pedal");
+        UMLClassHandler.createClass("Animal");
+            UMLClassHandler.getClass("Animal").addAttribute("Cat");
+            UMLClassHandler.getClass("Animal").addAttribute("Dog");
+        UMLClassHandler.createClass("Food");
+            UMLClassHandler.getClass("Food").addAttribute("Breakfast");
+            UMLClassHandler.getClass("Food").addAttribute("Lunch");
+            UMLClassHandler.getClass("Food").addAttribute("Dinner");
+        UMLClassHandler.addRelationship("Car", "Food");
+
+        UMLClassHandler.reset();
+        HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
+        assertTrue(classes.isEmpty());
     }
 }
