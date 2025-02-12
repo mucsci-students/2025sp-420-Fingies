@@ -2,9 +2,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * A short test program for testing each of the methods in the CLIView class.
+ * 
+ * Enter the name of a method to test it.
+ */
 public class CLITester {
 	
 	public static final String[] methods = {"next command", "prompt for input", "prompt for input 2", "prompt for input 3", "notify success", "notify success 2", "notify fail", "display"};
+	
+	// Constants to be used in the program text to color it cyan
 	public static final String COLOR = "\u001B[36m";
 	public static final String RESET = "\u001B[0m";
 	
@@ -13,7 +20,7 @@ public class CLITester {
 	{
 		Scanner sc = new Scanner (System.in);
 		CLIView cli = new CLIView();
-		Arrays.sort(methods);
+		Arrays.sort(methods); // sorted so that binary search can be used later
 		
 		System.out.println(COLOR + "CLIView Methods:\n"
 				+ "next command\n"
@@ -31,6 +38,7 @@ public class CLITester {
 			int idx = Arrays.binarySearch(methods, sc.nextLine());
 			if (idx >= 0)
 			{
+				// call the method in CLIView
 				if (methods[idx].equals("next command"))
 				{
 					System.out.println(COLOR + "Result: " + RESET + cli.nextCommand());
@@ -81,6 +89,7 @@ public class CLITester {
 			}
 			else
 			{
+				// the method entered does not exist
 				System.out.println(COLOR + "Unknown method." + RESET);
 			}
 		}
