@@ -1,5 +1,3 @@
-import java.util.HashSet;
-
 public class Controller {
     private CLIView view;
     private JModel model;
@@ -12,42 +10,106 @@ public class Controller {
 
     public boolean doAddClass(String className) 
     {
-        return UMLClassHandler.createClass(className);
+        try
+        {
+            return UMLClassHandler.createClass(className);
+        }
+        catch (Exception e)
+        {
+            view.notifyFail(e.toString());
+            return false;
+        }
     }
 
     public boolean doRemoveClass(String className) 
     {
-        return UMLClassHandler.removeClass(className);
+        try
+        {
+            return UMLClassHandler.removeClass(className);
+        }
+        catch (Exception e)
+        {
+            view.notifyFail(e.toString());
+            return false;
+        }
     }
 
     public boolean doRenameClass(String className, String newName) 
     {
-        return UMLClassHandler.renameClass(className, newName);
+        try
+        {
+            return UMLClassHandler.renameClass(className, newName);
+        }
+        catch (Exception e)
+        {
+            view.notifyFail(e.toString());
+            return false;
+        }
     }
 
-    public void doAddRelationship(String srcClass, String destClass) 
+    public boolean doAddRelationship(String srcClass, String destClass) 
     {
-        UMLClassHandler.addRelationship(srcClass, destClass);
+        try
+        {
+            return UMLClassHandler.addRelationship(srcClass, destClass);
+        }
+        catch (Exception e)
+        {
+            view.notifyFail(e.toString());
+            return false;
+        }
     }
 
-    public void doRemoveRelationship(String srcClass, String destClass) 
+    public boolean doRemoveRelationship(String srcClass, String destClass) 
     {
-        UMLClassHandler.removeRelationship(srcClass, destClass);
+        try
+        {
+            return UMLClassHandler.removeRelationship(srcClass, destClass);
+        }
+        catch (Exception e)
+        {
+            view.notifyFail(e.toString());
+            return false;
+        }
     }
 
     public boolean doAddAttribute(String srcClass, String attribute) 
     {
-        return UMLClassHandler.getClass(srcClass).addAttribute(attribute);
+        try
+        {
+            return UMLClassHandler.getClass(srcClass).addAttribute(attribute);
+        }
+        catch (Exception e)
+        {
+            view.notifyFail(e.toString());
+            return false;
+        }
     }
 
     public boolean doRemoveAttribute(String srcClass, String attribute) 
     {
-        return UMLClassHandler.getClass(srcClass).removeAttribute(attribute);
+        try
+        {
+            return UMLClassHandler.getClass(srcClass).removeAttribute(attribute);
+        }
+        catch (Exception e)
+        {
+            view.notifyFail(e.toString());
+            return false;
+        }
     }
 
     public boolean doRenameAttribute(String srcClass, String oldAttribute, String newAttribute) 
     {
-        return UMLClassHandler.getClass(srcClass).renameAttribute(oldAttribute, newAttribute);
+        try
+        {
+            return UMLClassHandler.getClass(srcClass).renameAttribute(oldAttribute, newAttribute);
+        }
+        catch (Exception e)
+        {
+            view.notifyFail(e.toString());
+            return false;
+        }
     }
 
     public boolean doSave(String filepath) 
@@ -66,7 +128,14 @@ public class Controller {
     }
     public void doListClass(String className) 
     {
-        UMLClassHandler.listClass(className);
+        try
+        {
+            UMLClassHandler.listClass(className);
+        }
+        catch (Exception e)
+        {
+            view.notifyFail(e.toString());
+        }
     }
     public void doListRelationships() 
     {
@@ -82,7 +151,7 @@ public class Controller {
      */
     public boolean getData()
     {
-        String result = view.promptForInput("Do you want to load a JSON file for storing your UML diagram? Y/N");
+        String result = view.promptForInput("Do you want to load a JSON file for storing your UML diagram? Type Y for yes or any other key to make a new JSON file instead");
         if (result.equals("Y") || result.equals("y"))
         {
             while (true)
@@ -94,7 +163,7 @@ public class Controller {
                     doLoad(filepath);
                     return true; 
                 }
-                String again = view.promptForInput("Invalid filepath. Type \'T\' to try again, \'E\' to exit, or any other key to make a new JSON file instead");
+                String again = view.promptForInput("Invalid filepath. Type T to try again, E to exit, or any other key to make a new JSON file instead");
                 if (again.equals("E") && !again.equals("e"))
                     return false;
                 else if (!again.equals("T") && !again.equals("t"))
@@ -118,82 +187,99 @@ public class Controller {
         do {
             command = view.nextCommand();
             action = command.action;
-            switch(action) {
-                case ADD_CLASS:
-                    if (command.arguments.length == 1)
-                        if (doAddClass(command.arguments[0]))
-                            view.notifySuccess();
-                    break;
-                case REMOVE_CLASS:
-                    if (command.arguments.length == 1)
-                        if (doRemoveClass(command.arguments[0]))
-                            view.notifySuccess();
-                    break;
-                case RENAME_CLASS:
-                    if (command.arguments.length == 2)
-                        if (doRenameClass(command.arguments[0], command.arguments[1]))
-                            view.notifySuccess();
-                    break;
-                case ADD_RELATIONSHIP:
-                    if (command.arguments.length == 2)
-                        doAddRelationship(command.arguments[0], command.arguments[1]);
-                    break;
-                case REMOVE_RELATIONSHIP:
-                    if (command.arguments.length == 2)
-                        doRemoveRelationship(command.arguments[0], command.arguments[1]);
-                    break;
-                case ADD_ATTRIBUTE:
-                    if (command.arguments.length == 2)
-                        if (doAddAttribute(command.arguments[0], command.arguments[1]))
-                            view.notifySuccess();
-                    break;
-                case REMOVE_ATTRIVUTE:
-                    if (command.arguments.length == 2)
-                        if (doAddAttribute(command.arguments[0], command.arguments[1]))
-                            view.notifySuccess();
-                    break;
-                case RENAME_ATTRIBUTE:
-                    if (command.arguments.length == 3)
-                        if (doRenameAttribute(command.arguments[0], command.arguments[1], command.arguments[2]))
-                            view.notifySuccess();
-                    break;
-                case SAVE:
-                    if (command.arguments.length == 1)
-                    {
-                        String result = view.promptForInput("Are you sure that you want to save? Y/N");
-                        if (result.equals("Y") || result.equals("y"))
-                            doSave(command.arguments[0]);
-                    }
-                    break;
-                case LOAD:
-                    if (command.arguments.length == 1)
-                    {
-                        String result = view.promptForInput("Are you sure that you want to load? Y/N");
-                        if (result.equals("Y") || result.equals("y"))
-                            //data = doLoad(command.arguments[0]);
-                            doLoad(command.arguments[0]);
-                    }
-                    break;
-                case LIST_CLASSES:
-                    if (command.arguments.length == 0)
-                        doListClasses();
-                    break;
-                case LIST_CLASS:
-                    if (command.arguments.length == 1)
-                        doListClass(command.arguments[0]);
-                    break;
-                case LIST_RELATIONSHIPS:
-                    if (command.arguments.length == 0)
-                        doListRelationships();
-                    break;
-                case HELP:
-                    if (command.arguments.length == 0)
-                        doHelp();
-                    break;
-                case EXIT:
-                    break;
-            }
+            runHelper (action, command.arguments);
         } while (!action.equals(Action.EXIT));
+    }
+
+    /**
+     * Executes the action with the commands arguments as inputs
+     * @param command command with arguments
+     * @param action action the user wishes to take
+     */
+    public void runHelper(Action action, String[] args)
+    {
+        switch(action) {
+            case ADD_CLASS:
+                if (args.length == 1)
+                    if (doAddClass(args[0]))
+                        view.notifySuccess();
+                break;
+            case REMOVE_CLASS:
+                if (args.length == 1)
+                    if (doRemoveClass(args[0]))
+                        view.notifySuccess();
+                break;
+            case RENAME_CLASS:
+                if (args.length == 2)
+                    if (doRenameClass(args[0], args[1]))
+                        view.notifySuccess();
+                break;
+            case ADD_RELATIONSHIP:
+                if (args.length == 2)
+                    if (doAddRelationship(args[0], args[1]))
+                        view.notifySuccess();
+                break;
+            case REMOVE_RELATIONSHIP:
+                if (args.length == 2)
+                    if (doRemoveRelationship(args[0], args[1]))
+                        view.notifySuccess();
+                break;
+            case ADD_ATTRIBUTE:
+                if (args.length == 2)
+                    if (doAddAttribute(args[0], args[1]))
+                        view.notifySuccess();
+                break;
+            case REMOVE_ATTRIVUTE:
+                if (args.length == 2)
+                    if (doAddAttribute(args[0], args[1]))
+                        view.notifySuccess();
+                break;
+            case RENAME_ATTRIBUTE:
+                if (args.length == 3)
+                    if (doRenameAttribute(args[0], args[1], args[2]))
+                        view.notifySuccess();
+                break;
+            case SAVE:
+                if (args.length == 1)
+                {
+                    String result = view.promptForInput("Are you sure that you want to save? Y/N");
+                    if (result.equals("Y") || result.equals("y"))
+                    {
+                        doSave(args[0]);
+                        view.notifySuccess();
+                    }   
+                }
+                break;
+            case LOAD:
+                if (args.length == 1)
+                {
+                    String result = view.promptForInput("Are you sure that you want to load? Y/N");
+                    if (result.equals("Y") || result.equals("y"))
+                    {
+                        doLoad(args[0]);;
+                        view.notifySuccess();
+                    }
+                }
+                break;
+            case LIST_CLASSES:
+                if (args.length == 0)
+                    doListClasses();
+                break;
+            case LIST_CLASS:
+                if (args.length == 1)
+                    doListClass(args[0]);
+                break;
+            case LIST_RELATIONSHIPS:
+                if (args.length == 0)
+                    doListRelationships();
+                break;
+            case HELP:
+                if (args.length == 0)
+                    doHelp();
+                break;
+            case EXIT:
+                break;
+        }
     }
  }
  

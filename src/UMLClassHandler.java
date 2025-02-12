@@ -109,8 +109,10 @@ public class UMLClassHandler {
     }
     
     /**
-     * @throws IllegalArgumentException when trying to add a relationship that already exists
-     * @throws IllegalArgumentException when trying to add a relationship between at least 1 non existing class
+     * adds a relationship from both the src and dest classes
+     * @param src src class 
+     * @param dest dest class
+     * @return true if the relationship was successfully added, false otherwise
      */
     static boolean addRelationship(String src, String dest)
     {
@@ -119,6 +121,12 @@ public class UMLClassHandler {
         return srcClass.addRelationship (srcClass, destClass) && destClass.addRelationship (srcClass, destClass);
     }
 
+    /**
+     * removes a relationship from both the src and dest classes
+     * @param src src class 
+     * @param dest dest class
+     * @return true if the relationship was successfully removed, false otherwise
+     */
     static boolean removeRelationship(String src, String dest)
     {
         UMLClass srcClass = getClass(src);
@@ -128,7 +136,11 @@ public class UMLClassHandler {
 
     static void listClasses()
     {
-        // HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
+        if (classes.isEmpty())
+        {
+            System.out.println("No current classes exist");
+            return;
+        }
         for (UMLClass c : classes.values())
         {
             listClass(c.getName());
@@ -147,15 +159,21 @@ public class UMLClassHandler {
 
     static void listRelationships()
     {
-        // HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
+        boolean isAllEmpty = true;
         for (UMLClass c : classes.values())
         {
             HashSet<UMLClass> outgoing = c.getOutgoing();
+            // checking to see if every class has no outgoing relationships
+            if (isAllEmpty && !outgoing.isEmpty())
+                isAllEmpty = false;
             for (UMLClass out : outgoing)
             {
                 System.out.println(c + ": " + out);
             }
-            System.out.println();
+        }
+        if (isAllEmpty)
+        {
+            System.out.println("No current relationships exist");
         }
     }
 
