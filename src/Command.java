@@ -72,7 +72,7 @@ public class Command {
 	 * 
 	 * 
 	 * @param input
-	 * @return
+	 * @return null if invalid input was provided; otherwise, a Command representing the input command.
 	 */
 	public static Command parseCommand(String input)
 	{
@@ -104,7 +104,7 @@ public class Command {
 		if (input.length() > cmdLen)
 		{
 			if (input.charAt(cmdLen) != ' ')
-				throw new IllegalArgumentException("Commands must be followed by a space.");
+				return null;
 			input = input.substring(cmdLen + 1);
 		}
 		else
