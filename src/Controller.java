@@ -3,13 +3,11 @@ import java.util.HashSet;
 public class Controller {
     private CLIView view;
     private JModel model;
-    UMLClassHandler data;
 
     Controller (CLIView view, JModel model)
     {
         this.view = view;
         this.model = model;
-        data = null;
     }
 
     public boolean doAddClass(String className) 
@@ -92,7 +90,8 @@ public class Controller {
                 String filepath = view.promptForInput("Enter a valid filepath");
                 if (filepath != null)
                 {
-                    data = doLoad(filepath);
+                    //data = doLoad(filepath);
+                    doLoad(filepath);
                     return true; 
                 }
                 String again = view.promptForInput("Invalid filepath. Type \'T\' to try again, \'E\' to exit, or any other key to make a new JSON file instead");
@@ -102,7 +101,7 @@ public class Controller {
                     break;
             }
         }
-        data = new UMLClassHandler();
+        //data = new UMLClassHandler();
         return true;
         
     }
@@ -171,7 +170,8 @@ public class Controller {
                     {
                         String result = view.promptForInput("Are you sure that you want to load? Y/N");
                         if (result.equals("Y") || result.equals("y"))
-                        data = doLoad(command.arguments[0]);
+                            //data = doLoad(command.arguments[0]);
+                            doLoad(command.arguments[0]);
                     }
                     break;
                 case LIST_CLASSES:
