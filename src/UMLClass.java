@@ -100,6 +100,16 @@ public class UMLClass {
     }
 
     /**
+     * Returns whether or not an attribute exists in the attribute list or not
+     * @param attribute attribute to test whether it exists
+     * @return true if the attribute exists, false otherwise
+     */
+    boolean exists(String attribute)
+    {
+        return attributes.contains(attribute);
+    }
+
+    /**
      * Returns the list of attributes to the user
      * @return the list of attributes to the user
      */

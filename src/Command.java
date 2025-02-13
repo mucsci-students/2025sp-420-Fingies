@@ -14,7 +14,7 @@ public class Command {
 	public final String[] arguments;
 	
 	/**
-	 * An array storing the keyword that represents each command.
+	 * An array storing the keywords that represents each command.
 	 */
 	public static final String[] COMMANDS = {
 		    "add class", "remove class", "rename class",
@@ -36,7 +36,7 @@ public class Command {
 		};
 	
 	/**
-	 * An array of Strings containing a brief description of the format for every command.
+	 * An array of strings describing the format for every command.
 	 */
 	public static final String[] COMMAND_FORMAT = {
 		    COMMANDS[0] + " CLASS_NAME \n" + COMMANDS_SHORTHAND[0] + " CLASS_NAME ",
@@ -60,6 +60,51 @@ public class Command {
 	{
 		action = a;
 		arguments = args;
+	}
+	
+	/**
+	 * Returns the index of a specific command in the array of commands.
+	 * 
+	 * @param command The name of the command to get the index for.
+	 * @return The index of the specified command, or -1 if the command doesn't exist.
+	 */
+	public static int indexOfCommand(String command)
+	{
+		for (int i = 0; i < COMMANDS.length; ++i)
+			if (COMMANDS[i].equals(command))
+				return i;
+		
+		for (int i = 0; i < COMMANDS_SHORTHAND.length; ++i)
+			if (COMMANDS_SHORTHAND[i].equals(command))
+				return i;
+		
+		return -1;
+	}
+	
+	/**
+	 * Returns a string containing a description for the format of every command.
+	 * 
+	 * @return A string containing a description of the format for every command.
+	 */
+	public static String help()
+	{
+		String str = "";
+		for (String s : COMMAND_FORMAT)
+		{
+			str += s + "\n\n";
+		}
+		return str.substring(0, str.length() - 2); // trim the last two \n off the string
+	}
+	
+	/**
+	 * Returns a string containing a description of the format for a specific command.
+	 * 
+	 * @param index The index of the command.
+	 * @return A string containing a description of the format for a specific command.
+	 */
+	public static String help(int index)
+	{
+		return COMMAND_FORMAT[index];
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 import java.util.HashMap; 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -69,8 +70,8 @@ public class UMLClassHandler {
     }
 
     /**
-     * Creates a treeset of all of the classes in the classes hashmap
-     * @return a treeset of all of the classes in the classes hashmap
+     * Creates a hashset of all of the classes in the classes hashmap
+     * @return a hashset of all of the classes in the classes hashmap
      */
     static HashSet<UMLClass> getAllClasses()
     {
@@ -109,8 +110,10 @@ public class UMLClassHandler {
     }
     
     /**
-     * @throws IllegalArgumentException when trying to add a relationship that already exists
-     * @throws IllegalArgumentException when trying to add a relationship between at least 1 non existing class
+     * adds a relationship from both the src and dest classes
+     * @param src src class 
+     * @param dest dest class
+     * @return true if the relationship was successfully added, false otherwise
      */
     static boolean addRelationship(String src, String dest)
     {
@@ -119,6 +122,12 @@ public class UMLClassHandler {
         return srcClass.addRelationship (srcClass, destClass) && destClass.addRelationship (srcClass, destClass);
     }
 
+    /**
+     * removes a relationship from both the src and dest classes
+     * @param src src class 
+     * @param dest dest class
+     * @return true if the relationship was successfully removed, false otherwise
+     */
     static boolean removeRelationship(String src, String dest)
     {
         UMLClass srcClass = getClass(src);
@@ -127,7 +136,73 @@ public class UMLClassHandler {
     }
 
     /**
+     * Returns a string that lists all of the classes & their attributes.
+     * 
+     * @return A string containing a list of classes & their attributes.
+     */
+    static String listClasses()
+    {
+        if (classes.isEmpty())
+            return "No current classes exist";
+        
+        String str = "";
+        for (UMLClass c : classes.values())
+        {
+            str += listClass(c) + "\n";
+        }
+        return str.substring(0, str.length() - 1); // trim off the extra \n
+    }
+
+    /**
+     * Returns a string listing the attributes of a class.
+     * 
+     * @param className The name of the class to list the attributes for.
+     * @return A string containing a list of attributes for a class.
+     */
+    static String listClass(UMLClass c)
+    {
+    	String str = c.getName();
+        Set<String> attributes = c.getAllAttributes();
+        
+        if (attributes.isEmpty())
+	        return str;
+        
+        str += ":";
+    	for (String atr : attributes)
+        {
+            str += " " + atr + ",";
+        }
+    	str = str.substring(0, str.length() - 1); // trim off the extra comma
+        return str;
+    }
+
+    /**
+     * Returns a list of the relationships between classes. The string will contain
+     * each class's outgoing relationships.
+     * 
+     * @return A string containing a list of each class's outgoing relationships.
+     */
+    static String listRelationships()
+    {
+    	String str = "";
+        for (UMLClass c : classes.values())
+        {
+            Set<UMLClass> outgoing = c.getOutgoing();
+            for (UMLClass out : outgoing)
+            {
+                str += c + ": " + out;
+            }
+        }
+        
+        if (str.isEmpty())
+            return "No current relationships exist";
+        else
+        	return str;
+    }
+
+    /**
      * Resets all classes, attributes, and relationships
+     * 
      * @author trush
      */
     static void reset() {
