@@ -33,8 +33,7 @@ public class CLITester {
 				+ "display" + RESET);
 		while(true)
 		{
-			System.out.print(COLOR + "\nEnter the name of the method to test: " + RESET);
-			System.out.println();
+			System.out.print(COLOR + "\nEnter the name of the method to test: \n> " + RESET);
 			int idx = Arrays.binarySearch(methods, sc.nextLine());
 			if (idx >= 0)
 			{
