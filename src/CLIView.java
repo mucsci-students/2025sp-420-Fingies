@@ -40,6 +40,7 @@ public class CLIView implements View
 	};
     
     // color related fields, constants, etc
+
     private boolean color = false;
     private String failStyle = "";
     private String successStyle = "";
@@ -66,6 +67,7 @@ public class CLIView implements View
     public Command nextCommand() 
     {
     	System.out.print(caret + " ");
+
     	String in = sc.nextLine();
         Command c = Command.parseCommand(in);
         while(c == null)
