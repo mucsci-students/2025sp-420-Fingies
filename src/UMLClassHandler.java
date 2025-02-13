@@ -148,9 +148,9 @@ public class UMLClassHandler {
         String str = "";
         for (UMLClass c : classes.values())
         {
-            str += listClass(c);
+            str += listClass(c) + "\n";
         }
-        return str;
+        return str.substring(0, str.length() - 1); // trim off the extra \n
     }
 
     /**
@@ -164,7 +164,7 @@ public class UMLClassHandler {
     	String str = c.getName();
         Set<String> attributes = c.getAllAttributes();
         
-        if (!attributes.isEmpty())
+        if (attributes.isEmpty())
 	        return str;
         
         str += ":";

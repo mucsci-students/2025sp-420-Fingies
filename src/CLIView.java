@@ -11,11 +11,33 @@ public class CLIView implements View
     public String caret = ">";
     
     // termianl specific commands
-    public final String TOGGLE_COLOR_COMMAND = "toggle color";
-    public final String TOGGLE_COLOR_COMMAND_SHORTHAND = "tc";
+    public static final String TOGGLE_COLOR_COMMAND = "toggle color";
+    public static final String TOGGLE_COLOR_COMMAND_SHORTHAND = "tc";
     
-    public final String CLEAR_COMMAND = "clear";
-    public final String CLEAR_COMMAND_SHORTHAND = "clr";
+    public static final String CLEAR_COMMAND = "clear";
+    public static final String CLEAR_COMMAND_SHORTHAND = "clr";
+    
+    /**
+	 * An array storing the keywords for the commands specific to the CLI.
+	 */
+	public static final String[] COMMANDS = {
+			TOGGLE_COLOR_COMMAND, CLEAR_COMMAND
+	};
+	
+	/**
+	 * A shorter version of each command specific to the CLI.
+	 */
+	public static final String[] COMMANDS_SHORTHAND = {
+			TOGGLE_COLOR_COMMAND_SHORTHAND, CLEAR_COMMAND_SHORTHAND
+	};
+	
+	/**
+	 * An array of strings describing the format for every CLI-specific command.
+	 */
+	public static final String[] COMMAND_FORMAT = {
+			COMMANDS[0] + " \n" + COMMANDS_SHORTHAND[0] + " ",
+		    COMMANDS[1] + " \n" + COMMANDS_SHORTHAND[1] + " " 
+	};
     
     // color related fields, constants, etc
     private boolean color = false;
@@ -134,6 +156,37 @@ public class CLIView implements View
         System.out.println(displayStyle + message + stopStyle);
     }
     
+    @Override
+	public int indexOfCommand(String command)
+	{
+		for (int i = 0; i < COMMANDS.length; ++i)
+			if (COMMANDS[i].equals(command))
+				return i;
+		
+		for (int i = 0; i < COMMANDS_SHORTHAND.length; ++i)
+			if (COMMANDS_SHORTHAND[i].equals(command))
+				return i;
+		
+		return -1;
+	}
+	
+    @Override
+	public String help()
+	{
+		String str = "";
+		for (String s : COMMAND_FORMAT)
+		{
+			str += s + "\n\n";
+		}
+		return str.substring(0, str.length() - 2); // trim the last two \n off the string
+	}
+    
+    @Override
+	public String help(int index)
+	{
+		return COMMAND_FORMAT[index];
+	}
+    
     
     /**
      * Turns on/off color text, and other visual niceties in the terminal.
@@ -165,6 +218,12 @@ public class CLIView implements View
     	System.out.println(CLEAR);
     }
     
+    /**
+     * Colors a string of text rainbow.
+     * 
+     * @param str The text to color.
+     * @return The same string but colored rainbow.
+     */
     private String rainbowify(String str)
     {
     	String result = "";

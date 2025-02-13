@@ -56,28 +56,6 @@ public class Command {
 		    COMMANDS[14] + " \n" + COMMANDS_SHORTHAND[14] + " ",
 		};
 	
-	/**
-	 * An array storing the keywords for the commands specific to the CLI.
-	 */
-	public static final String[] CLI_COMMANDS = {
-			"toggle color", "clear"
-	};
-	
-	/**
-	 * A shorter version of each command specific to the CLI.
-	 */
-	public static final String[] CLI_COMMANDS_SHORTHAND = {
-			"tc", "clr"
-	};
-	
-	/**
-	 * An array of strings describing the format for every CLI-specific command.
-	 */
-	public static final String[] CLI_COMMAND_FORMAT = {
-			CLI_COMMANDS[0] + " \n" + CLI_COMMANDS_SHORTHAND[0] + " ",
-		    CLI_COMMANDS[1] + " \n" + CLI_COMMANDS_SHORTHAND[1] + " " 
-	};
-	
 	Command (Action a, String[] args)
 	{
 		action = a;

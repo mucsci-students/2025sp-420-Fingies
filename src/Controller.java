@@ -148,15 +148,30 @@ public class Controller {
     
     public void doHelp() 
     {
-        String msg = Command.help();
-        view.display(msg);
+        String commandHelp = Command.help();
+        String viewCommandHelp = view.help();
+        if (!viewCommandHelp.isEmpty())
+        	view.display(commandHelp + "\n\n" + viewCommandHelp);
+        else
+        	view.display(commandHelp);
     }
     
     public void doSpecificCommandHelp(String command)
     {
     	int idx = Command.indexOfCommand(command);
     	if (idx == -1)
-    		view.notifyFail("The command \"" + command + "\" does not exist.");
+    	{
+    		idx = view.indexOfCommand(command);
+			if (idx == -1)
+			{
+    			view.notifyFail("The command \"" + command + "\" does not exist.");
+			}
+			else
+			{
+				String msg = view.help(idx);
+	        	view.display(msg);
+			}
+    	}
     	else
     	{
     		String msg = Command.help(idx);
