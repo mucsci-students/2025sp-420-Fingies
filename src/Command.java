@@ -14,14 +14,14 @@ public class Command {
 	public final String[] arguments;
 	
 	/**
-	 * An array storing the keyword that represents each command.
+	 * An array storing the keywords that represents each command.
 	 */
 	public static final String[] COMMANDS = {
 		    "add class", "remove class", "rename class",
 		    "add relationship", "remove relationship", "add attribute",
 		    "remove attribute", "rename attribute", "save",
 		    "load", "list classes", "list class",
-		    "list relationships", "help", "exit"
+		    "list relationships", "help", "exit",
 		};
 	
 	/**
@@ -32,11 +32,11 @@ public class Command {
 		    "addr", "rmr", "adda",             // add relationship, remove relationship, add attribute
 		    "rma", "rna", "sv",                // remove attribute, rename attribute, save
 		    "ld", "listcls", "listcl",         // load, list classes, list class
-		    "listr", "h", "quit"               // list relationships, help, exit
+		    "listr", "h", "quit",              // list relationships, help, exit
 		};
 	
 	/**
-	 * An array of Strings containing a brief description of the format for every command.
+	 * An array of strings describing the format for every command.
 	 */
 	public static final String[] COMMAND_FORMAT = {
 		    COMMANDS[0] + " CLASS_NAME \n" + COMMANDS_SHORTHAND[0] + " CLASS_NAME ",
@@ -53,8 +53,30 @@ public class Command {
 		    COMMANDS[11] + " CLASS_NAME \n" + COMMANDS_SHORTHAND[11] + " CLASS_NAME ",
 		    COMMANDS[12] + " \n" + COMMANDS_SHORTHAND[12] + " ",
 		    COMMANDS[13] + " [ COMMAND ] \n" + COMMANDS_SHORTHAND[13] + " [ COMMAND ] ",
-		    COMMANDS[14] + " \n" + COMMANDS_SHORTHAND[14] + " "
+		    COMMANDS[14] + " \n" + COMMANDS_SHORTHAND[14] + " ",
 		};
+	
+	/**
+	 * An array storing the keywords for the commands specific to the CLI.
+	 */
+	public static final String[] CLI_COMMANDS = {
+			"toggle color", "clear"
+	};
+	
+	/**
+	 * A shorter version of each command specific to the CLI.
+	 */
+	public static final String[] CLI_COMMANDS_SHORTHAND = {
+			"tc", "clr"
+	};
+	
+	/**
+	 * An array of strings describing the format for every CLI-specific command.
+	 */
+	public static final String[] CLI_COMMAND_FORMAT = {
+			CLI_COMMANDS[0] + " \n" + CLI_COMMANDS_SHORTHAND[0] + " ",
+		    CLI_COMMANDS[1] + " \n" + CLI_COMMANDS_SHORTHAND[1] + " " 
+	};
 	
 	Command (Action a, String[] args)
 	{
@@ -63,15 +85,50 @@ public class Command {
 	}
 	
 	/**
-	 * Prints all of the possible commands the user can write
+	 * Returns the index of a specific command in the array of commands.
+	 * 
+	 * @param command The name of the command to get the index for.
+	 * @return The index of the specified command, or -1 if the command doesn't exist.
 	 */
-	public static void help()
+	public static int indexOfCommand(String command)
 	{
+		for (int i = 0; i < COMMANDS.length; ++i)
+			if (COMMANDS[i].equals(command))
+				return i;
+		
+		for (int i = 0; i < COMMANDS_SHORTHAND.length; ++i)
+			if (COMMANDS_SHORTHAND[i].equals(command))
+				return i;
+		
+		return -1;
+	}
+	
+	/**
+	 * Returns a string containing a description for the format of every command.
+	 * 
+	 * @return A string containing a description of the format for every command.
+	 */
+	public static String help()
+	{
+		String str = "";
 		for (String s : COMMAND_FORMAT)
 		{
-			System.out.println(s);
+			str += s + "\n\n";
 		}
+		return str.substring(0, str.length() - 2); // trim the last two \n off the string
 	}
+	
+	/**
+	 * Returns a string containing a description of the format for a specific command.
+	 * 
+	 * @param index The index of the command.
+	 * @return A string containing a description of the format for a specific command.
+	 */
+	public static String help(int index)
+	{
+		return COMMAND_FORMAT[index];
+	}
+	
 	/**
 	 * Parses the string argument as a Command.
 	 * 

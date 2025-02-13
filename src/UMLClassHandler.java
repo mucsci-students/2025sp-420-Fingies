@@ -1,5 +1,6 @@
 import java.util.HashMap; 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 
@@ -134,51 +135,74 @@ public class UMLClassHandler {
         return srcClass.removeRelationship (srcClass, destClass) && destClass.removeRelationship (srcClass, destClass);
     }
 
-    static void listClasses()
+    /**
+     * Returns a string that lists all of the classes & their attributes.
+     * 
+     * @return A string containing a list of classes & their attributes.
+     */
+    static String listClasses()
     {
         if (classes.isEmpty())
-        {
-            System.out.println("No current classes exist");
-            return;
-        }
+            return "No current classes exist";
+        
+        String str = "";
         for (UMLClass c : classes.values())
         {
-            listClass(c.getName());
+            str += listClass(c);
         }
+        return str;
     }
 
-    static void listClass(String className)
+    /**
+     * Returns a string listing the attributes of a class.
+     * 
+     * @param className The name of the class to list the attributes for.
+     * @return A string containing a list of attributes for a class.
+     */
+    static String listClass(UMLClass c)
     {
-        UMLClass c = getClass(className);
-        System.out.print(c + ": ");
-        for (String atr : c.getAllAttributes())
+    	String str = c.getName();
+        Set<String> attributes = c.getAllAttributes();
+        
+        if (!attributes.isEmpty())
+	        return str;
+        
+        str += ":";
+    	for (String atr : attributes)
         {
-            System.out.print(", " + atr);
+            str += " " + atr + ",";
         }
+    	str = str.substring(0, str.length() - 1); // trim off the extra comma
+        return str;
     }
 
-    static void listRelationships()
+    /**
+     * Returns a list of the relationships between classes. The string will contain
+     * each class's outgoing relationships.
+     * 
+     * @return A string containing a list of each class's outgoing relationships.
+     */
+    static String listRelationships()
     {
-        boolean isAllEmpty = true;
+    	String str = "";
         for (UMLClass c : classes.values())
         {
-            HashSet<UMLClass> outgoing = c.getOutgoing();
-            // checking to see if every class has no outgoing relationships
-            if (isAllEmpty && !outgoing.isEmpty())
-                isAllEmpty = false;
+            Set<UMLClass> outgoing = c.getOutgoing();
             for (UMLClass out : outgoing)
             {
-                System.out.println(c + ": " + out);
+                str += c + ": " + out;
             }
         }
-        if (isAllEmpty)
-        {
-            System.out.println("No current relationships exist");
-        }
+        
+        if (str.isEmpty())
+            return "No current relationships exist";
+        else
+        	return str;
     }
 
     /**
      * Resets all classes, attributes, and relationships
+     * 
      * @author trush
      */
     static void reset() {

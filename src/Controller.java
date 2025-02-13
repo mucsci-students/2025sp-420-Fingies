@@ -124,13 +124,16 @@ public class Controller {
 
     public void doListClasses() 
     {
-        UMLClassHandler.listClasses();
+        String lst = UMLClassHandler.listClasses();
+        view.display(lst);
     }
     public void doListClass(String className) 
     {
         try
         {
-            UMLClassHandler.listClass(className);
+        	UMLClass c = UMLClassHandler.getClass(className);
+        	String lst = UMLClassHandler.listClass(c);
+        	view.display(lst);
         }
         catch (Exception e)
         {
@@ -139,11 +142,26 @@ public class Controller {
     }
     public void doListRelationships() 
     {
-        UMLClassHandler.listRelationships();
+    	String lst = UMLClassHandler.listRelationships();
+        view.display(lst);
     }
+    
     public void doHelp() 
     {
-        Command.help();
+        String msg = Command.help();
+        view.display(msg);
+    }
+    
+    public void doSpecificCommandHelp(String command)
+    {
+    	int idx = Command.indexOfCommand(command);
+    	if (idx == -1)
+    		view.notifyFail("The command \"" + command + "\" does not exist.");
+    	else
+    	{
+    		String msg = Command.help(idx);
+        	view.display(msg);
+    	}
     }
 
     /**
@@ -193,6 +211,7 @@ public class Controller {
 
     /**
      * Executes the action with the commands arguments as inputs
+     * 
      * @param command command with arguments
      * @param action action the user wishes to take
      */
@@ -201,43 +220,91 @@ public class Controller {
         switch(action) {
             case ADD_CLASS:
                 if (args.length == 1)
+                {
                     if (doAddClass(args[0]))
                         view.notifySuccess();
+                }
+                else
+                {
+                	view.notifyFail("add class should have exactly 1 argument.");
+                }
                 break;
             case REMOVE_CLASS:
                 if (args.length == 1)
+                {
                     if (doRemoveClass(args[0]))
                         view.notifySuccess();
+                }
+                else
+                {
+                	view.notifyFail("remove class should have exactly 1 argument.");
+                }
                 break;
             case RENAME_CLASS:
                 if (args.length == 2)
+                {
                     if (doRenameClass(args[0], args[1]))
                         view.notifySuccess();
+                }
+                else
+                {
+                	view.notifyFail("rename class should have exactly 2 arguments.");
+                }
                 break;
             case ADD_RELATIONSHIP:
                 if (args.length == 2)
+                {
                     if (doAddRelationship(args[0], args[1]))
                         view.notifySuccess();
+                }
+                else
+                {
+                	view.notifyFail("add relationship should have exactly 2 arguments.");
+                }
                 break;
             case REMOVE_RELATIONSHIP:
                 if (args.length == 2)
+                {
                     if (doRemoveRelationship(args[0], args[1]))
                         view.notifySuccess();
+                }
+                else
+                {
+                	view.notifyFail("remove relationship should have exactly 2 arguments.");
+                }
                 break;
             case ADD_ATTRIBUTE:
                 if (args.length == 2)
+                {
                     if (doAddAttribute(args[0], args[1]))
                         view.notifySuccess();
+                }
+                else
+                {
+                	view.notifyFail("add attribute should have exactly 2 arguments.");
+                }
                 break;
             case REMOVE_ATTRIVUTE:
                 if (args.length == 2)
+                {
                     if (doAddAttribute(args[0], args[1]))
                         view.notifySuccess();
+                }
+                else
+                {
+                	view.notifyFail("remove attribute should have exactly 2 arguments.");
+                }
                 break;
             case RENAME_ATTRIBUTE:
                 if (args.length == 3)
+                {
                     if (doRenameAttribute(args[0], args[1], args[2]))
                         view.notifySuccess();
+                }
+                else
+                {
+                	view.notifyFail("rename attribute should have exactly 3 arguments.");
+                }
                 break;
             case SAVE:
                 if (args.length == 1)
@@ -247,7 +314,15 @@ public class Controller {
                     {
                         doSave(args[0]);
                         view.notifySuccess();
-                    }   
+                    }
+                    else
+                    {
+                    	view.notifyFail("Cancelled save.");
+                    }
+                }
+                else
+                {
+                	view.notifyFail("save should have exactly 1 argument.");
                 }
                 break;
             case LOAD:
@@ -260,26 +335,59 @@ public class Controller {
                         view.notifySuccess();
                     }
                 }
+                else
+                {
+                	view.notifyFail("load should have exactly 1 argument.");
+                }
                 break;
             case LIST_CLASSES:
                 if (args.length == 0)
+                {
                     doListClasses();
+                }
+                else
+                {
+                	view.notifyFail("list classes shouldn't have any arguments.");
+                }
                 break;
             case LIST_CLASS:
                 if (args.length == 1)
+                {
                     doListClass(args[0]);
+                }
+                else
+                {
+                	view.notifyFail("list class should have exactly 1 argument.");
+                }
                 break;
             case LIST_RELATIONSHIPS:
                 if (args.length == 0)
+                {
                     doListRelationships();
+                }
+                else
+                {
+                	view.notifyFail("list relationships shouldn't have any arguments.");
+                }
                 break;
             case HELP:
                 if (args.length == 0)
+                {
                     doHelp();
+                }
+                else if (args.length == 1)
+                {
+                	doSpecificCommandHelp(args[0]);
+                }
+                else
+                {
+                	view.notifyFail("help should have 0 or 1 arguments.");
+                }
                 break;
             case EXIT:
                 break;
         }
     }
+    
  }
  
