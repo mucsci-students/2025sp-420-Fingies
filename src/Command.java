@@ -53,7 +53,7 @@ public class Command {
 		    COMMANDS[11] + " CLASS_NAME \n" + COMMANDS_SHORTHAND[11] + " CLASS_NAME ",
 		    COMMANDS[12] + " \n" + COMMANDS_SHORTHAND[12] + " ",
 		    COMMANDS[13] + " [ COMMAND ] \n" + COMMANDS_SHORTHAND[13] + " [ COMMAND ] ",
-		    COMMANDS[14] + " \n" + COMMANDS_SHORTHAND[14] + " ",
+		    COMMANDS[14] + " \n" + COMMANDS_SHORTHAND[14] + " "
 		};
 	
 	Command (Action a, String[] args)
