@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 public class CLIView implements View
 {
-
 	// fields
     private Scanner sc = new Scanner(System.in);
     

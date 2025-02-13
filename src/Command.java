@@ -21,7 +21,7 @@ public class Command {
 		    "add relationship", "remove relationship", "add attribute",
 		    "remove attribute", "rename attribute", "save",
 		    "load", "list classes", "list class",
-		    "list relationships", "help", "exit",
+		    "list relationships", "help", "exit"
 		};
 	
 	/**
@@ -32,7 +32,7 @@ public class Command {
 		    "addr", "rmr", "adda",             // add relationship, remove relationship, add attribute
 		    "rma", "rna", "sv",                // remove attribute, rename attribute, save
 		    "ld", "listcls", "listcl",         // load, list classes, list class
-		    "listr", "h", "quit",              // list relationships, help, exit
+		    "listr", "h", "quit"               // list relationships, help, exit
 		};
 	
 	/**
