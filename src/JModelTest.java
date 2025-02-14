@@ -5,6 +5,7 @@ import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.After;
 
 /**
  * Tests for the JModel.java class
@@ -29,6 +30,11 @@ public class JModelTest {
             UMLClassHandler.getClass("Food").addAttribute("Lunch");
             UMLClassHandler.getClass("Food").addAttribute("Dinner");
         UMLClassHandler.addRelationship("Car", "Food");
+    }
+
+    @After
+    public void resetTest() {
+        UMLClassHandler.reset();
     }
 
     @Test
