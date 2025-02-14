@@ -119,6 +119,8 @@ public class UMLClassHandler {
     {
         UMLClass srcClass = getClass(src);
         UMLClass destClass = getClass(dest);
+        if (src.equals(dest))
+            return srcClass.addRelationship (srcClass, destClass);
         return srcClass.addRelationship (srcClass, destClass) && destClass.addRelationship (srcClass, destClass);
     }
 
@@ -162,7 +164,7 @@ public class UMLClassHandler {
     static String listClass(UMLClass c)
     {
     	String str = c.getName();
-        Set<String> attributes = c.getAllAttributes();
+        HashSet<String> attributes = c.getAllAttributes();
         
         if (attributes.isEmpty())
 	        return str;
@@ -187,17 +189,17 @@ public class UMLClassHandler {
     	String str = "";
         for (UMLClass c : classes.values())
         {
-            Set<UMLClass> outgoing = c.getOutgoing();
+            HashSet<UMLClass> outgoing = c.getOutgoing();
             for (UMLClass out : outgoing)
             {
-                str += c + ": " + out;
+                str += c.getName() + " --> " + out.getName() + "\n";
             }
         }
         
         if (str.isEmpty())
             return "No current relationships exist";
         else
-        	return str;
+        	return str.substring(0, str.length() - 1);
     }
 
     /**

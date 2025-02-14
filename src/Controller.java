@@ -124,8 +124,15 @@ public class Controller {
 
     public void doListClasses() 
     {
-        String lst = UMLClassHandler.listClasses();
-        view.display(lst);
+        try
+        {
+            String lst = UMLClassHandler.listClasses();
+            view.display(lst);
+        }
+        catch (Exception e)
+        {
+            view.notifyFail(e.toString());
+        }
     }
     public void doListClass(String className) 
     {

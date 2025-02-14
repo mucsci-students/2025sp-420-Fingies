@@ -1,6 +1,6 @@
 
 /**
- * The Main class for the entire UNL editor program.
+ * The Main class for the entire UML editor program.
  */
 public class Main {
 
