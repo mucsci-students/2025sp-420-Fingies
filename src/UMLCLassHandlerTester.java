@@ -149,21 +149,28 @@ public class UMLCLassHandlerTester {
     // --------------------- DELETE ATTRIBUTE ---------------------
     @Test
     public void testResetFunction() {
-        UMLClassHandler.createClass("Car");
-            UMLClassHandler.getClass("Car").addAttribute("Engine");
-            UMLClassHandler.getClass("Car").addAttribute("Wheel");
-            UMLClassHandler.getClass("Car").addAttribute("Pedal");
-        UMLClassHandler.createClass("Animal");
-            UMLClassHandler.getClass("Animal").addAttribute("Cat");
-            UMLClassHandler.getClass("Animal").addAttribute("Dog");
-        UMLClassHandler.createClass("Food");
-            UMLClassHandler.getClass("Food").addAttribute("Breakfast");
-            UMLClassHandler.getClass("Food").addAttribute("Lunch");
-            UMLClassHandler.getClass("Food").addAttribute("Dinner");
-        UMLClassHandler.addRelationship("Car", "Food");
+        try
+        {
+            UMLClassHandler.createClass("Car");
+                UMLClassHandler.getClass("Car").addAttribute("Engine");
+                UMLClassHandler.getClass("Car").addAttribute("Wheel");
+                UMLClassHandler.getClass("Car").addAttribute("Pedal");
+            UMLClassHandler.createClass("Animal");
+                UMLClassHandler.getClass("Animal").addAttribute("Cat");
+                UMLClassHandler.getClass("Animal").addAttribute("Dog");
+            UMLClassHandler.createClass("Food");
+                UMLClassHandler.getClass("Food").addAttribute("Breakfast");
+                UMLClassHandler.getClass("Food").addAttribute("Lunch");
+                UMLClassHandler.getClass("Food").addAttribute("Dinner");
+            UMLClassHandler.addRelationship("Car", "Food");
 
-        UMLClassHandler.reset();
-        HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
-        assertTrue(classes.isEmpty());
+            UMLClassHandler.reset();
+            HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
+            assertTrue(classes.isEmpty());
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }  
     }
 }

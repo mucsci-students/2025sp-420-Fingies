@@ -134,16 +134,22 @@ public class UMLClass {
         // A --> A
         if (src.getName().equals(name) && dest.getName().equals(name))
         {
+            if (incoming.contains(src) && outgoing.contains(dest))
+                throw new IllegalArgumentException("Relationship already exists");
             return incoming.add(src) && outgoing.add(dest);
         }
         // A --> B
         else if (src.getName().equals(name))
         {
+            if (outgoing.contains(dest))
+                throw new IllegalArgumentException("Relationship already exists");
             return outgoing.add(dest);
         }
         // C --> A
         else if (dest.getName().equals(name))
         {
+            if (incoming.contains(src))
+                throw new IllegalArgumentException("Relationship already exists");
             return incoming.add(src);
         }
         else
