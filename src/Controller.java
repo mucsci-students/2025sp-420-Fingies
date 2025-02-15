@@ -1,11 +1,13 @@
 public class Controller {
     private CLIView view;
     private JModel model;
+    private boolean madeChange;
 
     Controller (CLIView view, JModel model)
     {
         this.view = view;
         this.model = model;
+        madeChange = false;
     }
 
     public boolean doAddClass(String className) 
@@ -155,12 +157,7 @@ public class Controller {
     
     public void doHelp() 
     {
-        String commandHelp = Command.help();
-        String viewCommandHelp = view.help();
-        if (!viewCommandHelp.isEmpty())
-        	view.display(commandHelp + "\n\n" + viewCommandHelp);
-        else
-        	view.display(commandHelp);
+        view.help();
     }
     
     public void doSpecificCommandHelp(String command)
@@ -226,7 +223,7 @@ public class Controller {
         Action action;
         do {
             command = view.nextCommand();
-            action = command.action;
+            action = command.action;   
             runHelper (action, command.arguments);
         } while (!action.equals(Action.EXIT));
     }
@@ -244,122 +241,158 @@ public class Controller {
                 if (args.length == 1)
                 {
                     if (doAddClass(args[0]))
-                        view.notifySuccess();
+                    {
+                        view.notifySuccess("Successfully added class " + args[0]);
+                        madeChange = true;
+                    }
+                        
                 }
                 else
                 {
-                	view.notifyFail("add class should have exactly 1 argument.");
+                	view.notifyFail("Add class should have exactly 1 argument.");
                 }
                 break;
             case REMOVE_CLASS:
                 if (args.length == 1)
                 {
                     if (doRemoveClass(args[0]))
-                        view.notifySuccess();
+                    {
+                        view.notifySuccess("Successfully removed class " + args[0]);
+                        madeChange = true;
+                    }
+                        
                 }
                 else
                 {
-                	view.notifyFail("remove class should have exactly 1 argument.");
+                	view.notifyFail("Remove class should have exactly 1 argument.");
                 }
                 break;
             case RENAME_CLASS:
                 if (args.length == 2)
                 {
                     if (doRenameClass(args[0], args[1]))
-                        view.notifySuccess();
+                    {
+                        view.notifySuccess("Successfully renamed class " + args[0] + " to " + args[1]);
+                        madeChange = true;
+                    }
                 }
                 else
                 {
-                	view.notifyFail("rename class should have exactly 2 arguments.");
+                	view.notifyFail("Rename class should have exactly 2 arguments.");
                 }
                 break;
             case ADD_RELATIONSHIP:
                 if (args.length == 2)
                 {
                     if (doAddRelationship(args[0], args[1]))
-                        view.notifySuccess();
+                    {
+                        view.notifySuccess("Successfully added relationship " + args[0] + " --> " + args[1]);
+                        madeChange = true;
+                    }
                 }
                 else
                 {
-                	view.notifyFail("add relationship should have exactly 2 arguments.");
+                	view.notifyFail("Add relationship should have exactly 2 arguments.");
                 }
                 break;
             case REMOVE_RELATIONSHIP:
                 if (args.length == 2)
                 {
                     if (doRemoveRelationship(args[0], args[1]))
-                        view.notifySuccess();
+                    {
+                        view.notifySuccess("Successfully removed relationship " + args[0] + " --> " + args[1]);
+                        madeChange = true;
+                    }
                 }
                 else
                 {
-                	view.notifyFail("remove relationship should have exactly 2 arguments.");
+                	view.notifyFail("Remove relationship should have exactly 2 arguments.");
                 }
                 break;
             case ADD_ATTRIBUTE:
                 if (args.length == 2)
                 {
                     if (doAddAttribute(args[0], args[1]))
-                        view.notifySuccess();
+                    {
+                        view.notifySuccess("Successfully added attribute " + args[1] + " to class " + args[0]);
+                        madeChange = true;
+                    }
                 }
                 else
                 {
-                	view.notifyFail("add attribute should have exactly 2 arguments.");
+                	view.notifyFail("Add attribute should have exactly 2 arguments.");
                 }
                 break;
             case REMOVE_ATTRIVUTE:
                 if (args.length == 2)
                 {
                     if (doAddAttribute(args[0], args[1]))
-                        view.notifySuccess();
+                    {
+                        view.notifySuccess("Successfully removed attribute " + args[1] + " from class " + args[0]);
+                        madeChange = true;
+                    }
                 }
                 else
                 {
-                	view.notifyFail("remove attribute should have exactly 2 arguments.");
+                	view.notifyFail("Remove attribute should have exactly 2 arguments.");
                 }
                 break;
             case RENAME_ATTRIBUTE:
                 if (args.length == 3)
                 {
                     if (doRenameAttribute(args[0], args[1], args[2]))
-                        view.notifySuccess();
+                    {
+                        view.notifySuccess("Successfully renamed attribute " + args[1] + " to " + args[2] + " in class " + args[0]);
+                        madeChange = true;
+                    }
                 }
                 else
                 {
-                	view.notifyFail("rename attribute should have exactly 3 arguments.");
+                	view.notifyFail("Rename attribute should have exactly 3 arguments.");
                 }
                 break;
             case SAVE:
                 if (args.length == 1)
                 {
-                    String result = view.promptForInput("Are you sure that you want to save? Y/N");
-                    if (result.equals("Y") || result.equals("y"))
+                    if (doSave(args[0]))
                     {
-                        doSave(args[0]);
-                        view.notifySuccess();
-                    }
-                    else
-                    {
-                    	view.notifyFail("Cancelled save.");
+                        madeChange = false;
+                        view.notifySuccess("Successfully saved your file");
                     }
                 }
                 else
                 {
-                	view.notifyFail("save should have exactly 1 argument.");
+                	view.notifyFail("Save should have exactly 1 argument.");
                 }
                 break;
             case LOAD:
                 if (args.length == 1)
                 {
-                    String result = view.promptForInput("Are you sure that you want to load? Y/N");
-                    if (result.equals("Y") || result.equals("y"))
+                    if (madeChange)
                     {
-                        doLoad(args[0]);;
-                        view.notifySuccess();
+                        String result = view.promptForInput("Are you sure that you want to load without saving? Type Y for yes or any other key to save before loading");
+                        if (result.equals("Y") || result.equals("y"))
+                        {
+                            doLoad(args[0]);
+                            madeChange = false;
+                            view.notifySuccess("Successfully loaded your file");
+                        }
+                        else
+                        {
+                            //needs to be changed for overload with 0 arguments ... could prompt for a new path
+                            doSave(args[0]);
+                            madeChange = false;
+                            view.notifySuccess("Successfully saved your file");
+
+                            doLoad(args[0]);
+                            view.notifySuccess("Successfully loaded your file");
+                        }
                     }
+                    
                 }
                 else
                 {
-                	view.notifyFail("load should have exactly 1 argument.");
+                	view.notifyFail("Load should have exactly 1 argument.");
                 }
                 break;
             case LIST_CLASSES:
@@ -369,7 +402,7 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("list classes shouldn't have any arguments.");
+                	view.notifyFail("List classes shouldn't have any arguments.");
                 }
                 break;
             case LIST_CLASS:
@@ -379,7 +412,7 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("list class should have exactly 1 argument.");
+                	view.notifyFail("List class should have exactly 1 argument.");
                 }
                 break;
             case LIST_RELATIONSHIPS:
@@ -389,7 +422,7 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("list relationships shouldn't have any arguments.");
+                	view.notifyFail("List relationships shouldn't have any arguments.");
                 }
                 break;
             case HELP:
@@ -403,10 +436,19 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("help should have 0 or 1 arguments.");
+                	view.notifyFail("Help should have 0 or 1 arguments.");
                 }
                 break;
             case EXIT:
+                if (madeChange)
+                {
+                    String result = view.promptForInput("Are you sure that you want to exit without saving? Type Y for yes or any other key to save before exiting");
+                    if (!result.equals("Y") && !result.equals("y"))
+                    {
+                        //needs to be changed for overload with 0 arguments ... could prompt for a new path
+                        doSave(args[0]);
+                    }
+                }
                 break;
         }
     }
