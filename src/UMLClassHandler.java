@@ -64,6 +64,24 @@ public class UMLClassHandler {
             c.renameClass(newName);
             classes.remove(className);
             classes.put(newName, c);
+            
+            // hot fix--updates incoming/outgoing relationships with the new name
+            for(UMLClass cl : classes.values())
+            {
+            	HashSet<String> incoming = cl.getIncoming();
+            	if (incoming.contains(className))
+            	{
+            		incoming.remove(className);
+            		incoming.add(newName);
+            	}
+            	HashSet<String> outgoing = cl.getOutgoing();
+            	if (outgoing.contains(className))
+            	{
+            		outgoing.remove(className);
+            		outgoing.add(newName);
+            	}
+            }
+            
             return true;
         }
         return false;
