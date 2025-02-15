@@ -126,26 +126,13 @@ public interface View {
 	void display(String message);
 	
 	/**
-	 * Returns the index of a view-specific command in its the array of commands.
-	 * 
-	 * @param command The name of the command to get the index for.
-	 * @return The index of the specified command, or -1 if the command doesn't exist.
+	 * Tells the user how to use the program.
 	 */
-	int indexOfCommand(String command);
+	void help();
 	
 	/**
-	 * Returns a string containing a description for the format of each view-specific command.
-	 * 
-	 * @return A string containing a description of the format for each view-specific command.
+	 * Tells the user how to use a specific command.
 	 */
-	String help();
-	
-	/**
-	 * Returns a string containing a description of the format for a view-specific command.
-	 * 
-	 * @param index The index of the command.
-	 * @return A string containing a description of the format for a command.
-	 */
-	String help(int index);
+	void help(String command);
 	
 }

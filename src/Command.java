@@ -36,24 +36,46 @@ public class Command {
 		};
 	
 	/**
-	 * An array of strings describing the format for every command.
+	 * The expected arguments for each command.
 	 */
-	public static final String[] COMMAND_FORMAT = {
-		    COMMANDS[0] + " CLASS_NAME \n" + COMMANDS_SHORTHAND[0] + " CLASS_NAME ",
-		    COMMANDS[1] + " CLASS_NAME \n" + COMMANDS_SHORTHAND[1] + " CLASS_NAME ",
-		    COMMANDS[2] + " CLASS_NAME NEW_NAME \n" + COMMANDS_SHORTHAND[2] + " CLASS_NAME NEW_NAME ",
-		    COMMANDS[3] + " SRC_CLASS DEST_CLASS \n" + COMMANDS_SHORTHAND[3] + " SRC_CLASS DEST_CLASS ",
-		    COMMANDS[4] + " SRC_CLASS DEST_CLASS \n" + COMMANDS_SHORTHAND[4] + " SRC_CLASS DEST_CLASS ",
-		    COMMANDS[5] + " CLASS_NAME ATTRIBUTE \n" + COMMANDS_SHORTHAND[5] + " CLASS_NAME ATTRIBUTE ",
-		    COMMANDS[6] + " CLASS_NAME ATTRIBUTE \n" + COMMANDS_SHORTHAND[6] + " CLASS_NAME ATTRIBUTE ",
-		    COMMANDS[7] + " CLASS_NAME ATTRIBUTE_NAME NEW_NAME \n" + COMMANDS_SHORTHAND[7] + " CLASS_NAME ATTRIBUTE_NAME NEW_NAME ",
-		    COMMANDS[8] + " \n" + COMMANDS_SHORTHAND[8] + " ",
-		    COMMANDS[9] + " FILE_PATH \n" + COMMANDS_SHORTHAND[9] + " FILE_PATH ",
-		    COMMANDS[10] + " \n" + COMMANDS_SHORTHAND[10] + " ",
-		    COMMANDS[11] + " CLASS_NAME \n" + COMMANDS_SHORTHAND[11] + " CLASS_NAME ",
-		    COMMANDS[12] + " \n" + COMMANDS_SHORTHAND[12] + " ",
-		    COMMANDS[13] + " [ COMMAND ] \n" + COMMANDS_SHORTHAND[13] + " [ COMMAND ] ",
-		    COMMANDS[14] + " \n" + COMMANDS_SHORTHAND[14] + " "
+	public static final String[] COMMAND_ARGS = {
+			"CLASS_NAME",
+			"CLASS_NAME",
+			"CLASS_NAME NEW_NAME",
+			"SRC_CLASS DEST_CLASS",
+			"SRC_CLASS DEST_CLASS",
+			"CLASS_NAME ATTRIBUTE",
+			"CLASS_NAME ATTRIBUTE",
+			"CLASS_NAME ATTRIBUTE_NAME NEW_NAME",
+			"FILE_PATH",
+			"FILE_PATH",
+			"",
+			"CLASS_NAME",
+			"",
+			"[ COMMAND ]",
+			""
+		};
+	
+	/**
+	 * A description for each command.
+	 */
+	public static final String[] COMMAND_DESCRIPTION = {
+			"Creates a new class.",
+			"Removes a class from the diagram.",
+			"Gives a class a new name.",
+			"Creates a directed relationship from one class to another.",
+			"Removes the relationship going from one class to another.",
+			"Adds an attribute to a class.",
+			"Removes an attribute from a class.",
+			"Gives an attribute of a class a new name.",
+			"Saves the current diagram.",
+			"Loads a diagram into the editor from your files.",
+			"Prints a list of all of the classes in the diagram.",
+			"Prints all of the attributes in a class.",
+			"Lists all of the relationships between classes in the diagram.",
+			"Prints a list of commands and their shorthand versions.\n"
+			+ "If the name of a command is supplied as an argument, prints a description of a single command.",
+			"Exits the program."
 		};
 	
 	Command (Action a, String[] args)
@@ -79,32 +101,6 @@ public class Command {
 				return i;
 		
 		return -1;
-	}
-	
-	/**
-	 * Returns a string containing a description for the format of every command.
-	 * 
-	 * @return A string containing a description of the format for every command.
-	 */
-	public static String help()
-	{
-		String str = "";
-		for (String s : COMMAND_FORMAT)
-		{
-			str += s + "\n\n";
-		}
-		return str.substring(0, str.length() - 2); // trim the last two \n off the string
-	}
-	
-	/**
-	 * Returns a string containing a description of the format for a specific command.
-	 * 
-	 * @param index The index of the command.
-	 * @return A string containing a description of the format for a specific command.
-	 */
-	public static String help(int index)
-	{
-		return COMMAND_FORMAT[index];
 	}
 	
 	/**
