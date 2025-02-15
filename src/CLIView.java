@@ -2,6 +2,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Handles the Command Line Interface View
+ * @author Nick Hayes, Lincoln Craddock
+ */
 public class CLIView implements View
 {
 	// fields
@@ -9,7 +13,7 @@ public class CLIView implements View
     
     public String caret = ">";
     
-    // termianl specific commands
+    // terminal specific commands
     public static final String TOGGLE_COLOR_COMMAND = "toggle color";
     public static final String TOGGLE_COLOR_COMMAND_SHORTHAND = "tc";
     

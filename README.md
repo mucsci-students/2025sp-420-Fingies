@@ -19,7 +19,7 @@ Clone the project and use ``java`` to run ``Main``.
 
 ## Team Fingies
 - Nick Hayes
-- William Wick
+- William Wickenheiser
 - Tristan Rush
 - Kevin Dichter
 - Lincoln Craddock

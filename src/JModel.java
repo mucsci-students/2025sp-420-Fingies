@@ -16,11 +16,44 @@ import com.google.gson.GsonBuilder;
  * @author trush
  */
 public class JModel {
+
     private final String LOG_PATH = "/umleditor-debug.log";
+    private String filepath;
     private String latestError;
 
     //GSON is built to ignore fields with "final" modifier.
     private Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL).create();
+
+    /**
+     * Default constructor, does not set a filepath! Please ensure to set a filepath before attempting to save
+     */
+    public JModel() {
+        filepath = null;
+    }
+
+    /**
+     * Constructor to initialize model with a known filepath for the JSON... Does not do any file validation!
+     * @param filepath Path to valid json file
+     */
+    public JModel(String filepath) {
+        this.filepath = filepath;
+    }
+
+    /**
+     * Mutator method for filepath field
+     * @param filepath The filepath to save data to
+     */
+    public void setFilepath(String filepath) {
+        this.filepath = filepath;
+    }
+
+    /**
+     * Accessor method for filepath field
+     * @return the current filepath for the model
+     */
+    public String getFilepath() {
+        return filepath;
+    }
 
     /**
      * Gets the latest error message from the model
@@ -37,7 +70,7 @@ public class JModel {
      */
     public boolean fileExist(String filepath) {
         if (filepath == null) {
-            latestError = "Invalid Argument: null, for fileExist - JModel:27";
+            latestError = "Invalid Argument: null, for fileExist";
             return false;
         };
         try {
@@ -74,7 +107,7 @@ public class JModel {
         //Get filepath to log file
         String programPath = getProgramDirectory();
         if (programPath == null) {
-            latestError = "Error retrieving program path - JModel: 58";
+            latestError = "Error retrieving program path";
             return false;
         };
         String fullLogPath = programPath + LOG_PATH;
@@ -97,12 +130,11 @@ public class JModel {
 
     /**
      * Saves data from the UMLEditor class to the desired filepath. ** ALWAYS OVERWRITES **
-     * @param filepath The desired filepath to save to.
      * @return True if successfully saved, false otherwise.
      */
-    public boolean saveData(String filepath) {
+    public boolean saveData() {
         if (filepath == null) {
-            latestError = "Invalid Argument: null, in saveData - JModel:83"; 
+            latestError = "Invalid Argument: null, in saveData"; 
             return false;
         };
         try {
@@ -123,14 +155,23 @@ public class JModel {
     }
 
     /**
+     * Saves data from the UMLEditor class to the desired filepath. ** ALWAYS OVERWRITES && SETS MODEL FILEPATH **
+     * @param filepath The desired filepath to save to.
+     * @return True if successfully saved, false otherwise.
+     */
+    public boolean saveData(String filepath) {
+        setFilepath(filepath);
+        return saveData();
+    }
+
+    /**
      * Loads data from the desired filepath, Checks for field constraints as well.
-     * @param filepath The desired filepath to load the data from.
      * @return UMLClassHandler class if successful, null otherwise.
      */
-    public UMLClassHandler loadData(String filepath) {
+    public UMLClassHandler loadData() {
         // check if argument is null, or filepath is invalid
         if (filepath == null) {
-            latestError = "Invalid Argument: null, in loadData - JModel:110";
+            latestError = "Invalid Argument: null, in loadData";
             return null;
         };
         if (!fileExist(filepath)) {
@@ -160,5 +201,15 @@ public class JModel {
             latestError = e.toString();
             return null;
         }
+    }
+
+    /**
+     * Loads data from the desired filepath, Checks for field constraints as well.
+     * @param filepath The desired filepath to load the data from.
+     * @return UMLClassHandler class if successful, null otherwise.
+     */
+    public UMLClassHandler loadData(String filepath) {
+        setFilepath(filepath);
+        return loadData();
     }
 }

@@ -1,10 +1,14 @@
 import java.util.HashSet;
 
+/**
+ * Represents a class object in a UML Class Diagram
+ * @author kdichter
+ */
 public class UMLClass {
     private String name;
     private HashSet<String> attributes;
-    private HashSet<UMLClass> incoming;
-    private HashSet<UMLClass> outgoing;
+    private HashSet<String> incoming;
+    private HashSet<String> outgoing;
     private final String allowedCharacters = " _aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-";
 
     /**
@@ -16,8 +20,8 @@ public class UMLClass {
         validateCharacters(name);
         this.name = name;
         attributes = new HashSet<String>();
-        incoming = new HashSet<UMLClass>();
-        outgoing = new HashSet<UMLClass>();
+        incoming = new HashSet<String>();
+        outgoing = new HashSet<String>();
     }
 
     /**
@@ -124,29 +128,29 @@ public class UMLClass {
      * @param src source class
      * @param dest desination class
      */
-    boolean addRelationship (UMLClass src, UMLClass dest)
+    boolean addRelationship (String src, String dest)
     {
         // B --> C
-        if (!src.getName().equals(name) && !dest.getName().equals(name))
+        if (!src.equals(name) && !dest.equals(name))
         {
             throw new IllegalArgumentException("Wrong class for relationship");
         }
         // A --> A
-        if (src.getName().equals(name) && dest.getName().equals(name))
+        if (src.equals(name) && dest.equals(name))
         {
             if (incoming.contains(src) && outgoing.contains(dest))
                 throw new IllegalArgumentException("Relationship already exists");
             return incoming.add(src) && outgoing.add(dest);
         }
         // A --> B
-        else if (src.getName().equals(name))
+        else if (src.equals(name))
         {
             if (outgoing.contains(dest))
                 throw new IllegalArgumentException("Relationship already exists");
             return outgoing.add(dest);
         }
         // C --> A
-        else if (dest.getName().equals(name))
+        else if (dest.equals(name))
         {
             if (incoming.contains(src))
                 throw new IllegalArgumentException("Relationship already exists");
@@ -165,25 +169,25 @@ public class UMLClass {
      * @param src source class
      * @param dest destination class
      */
-    boolean removeRelationship (UMLClass src, UMLClass dest)
+    boolean removeRelationship (String src, String dest)
     {
        // B --> C
-       if (!src.getName().equals(name) && !dest.getName().equals(name))
+       if (!src.equals(name) && !dest.equals(name))
        {
            throw new IllegalArgumentException("Relationship does not exist");
        }
        // A --> A
-       if (src.getName().equals(name) && dest.getName().equals(name))
+       if (src.equals(name) && dest.equals(name))
        {
            return incoming.remove(src) && outgoing.remove(dest);
        }
        // A --> B
-       else if (src.getName().equals(name))
+       else if (src.equals(name))
        {
            return outgoing.remove(dest);
        }
        // C --> A
-       else if (dest.getName().equals(name))
+       else if (dest.equals(name))
        {
            return incoming.remove(src);
        }
@@ -197,7 +201,7 @@ public class UMLClass {
      * Returns the incoming hashset
      * @return the incoming hashset
      */
-    HashSet<UMLClass> getIncoming()
+    HashSet<String> getIncoming()
     {
         return incoming;
     }
@@ -206,7 +210,7 @@ public class UMLClass {
      * Returns the outgoing hashset
      * @return the outgoing hashset
      */
-    HashSet<UMLClass> getOutgoing()
+    HashSet<String> getOutgoing()
     {
         return outgoing;
     }

@@ -7,6 +7,7 @@ import java.util.List;
  * 
  * Contains an enum representing the high-level action they want to take, and
  * a list of arguments given by the user.
+ * @author Lincoln Craddock
  */
 public class Command {
 	

@@ -1,13 +1,12 @@
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.HashSet;
 
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Tests controller functionality
+ * @author kdichter
+ */
 public class ControllerTester {
     private CLIView view;
     private JModel model;
@@ -15,8 +14,8 @@ public class ControllerTester {
 
     @Before
     public void setUp() {
-        view = new CLIView();  // Assuming CLIView has a default constructor
-        model = new JModel();  // Assuming JModel has a default constructor
+        view = new CLIView();
+        model = new JModel();
         controller = new Controller(view, model);
     }
 

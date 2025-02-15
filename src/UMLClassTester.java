@@ -7,6 +7,10 @@ import java.util.HashSet;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Tests for the UMLClass class
+ * @author kdichter
+ */
 public class UMLClassTester {
 
     UMLClass c;
@@ -61,6 +65,7 @@ public class UMLClassTester {
         }
     }
 
+    @SuppressWarnings("null")
     @Test
     public void addEngineAttributeToNonexistantClass()
     {

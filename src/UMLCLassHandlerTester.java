@@ -8,7 +8,11 @@ import static org.junit.Assert.assertFalse;
 import org.junit.Before;
 import org.junit.Test;
 
-public class UMLCLassHandlerTester {
+/**
+ * Tests the UMLClassHandler class
+ * @author kdichter
+ */
+public class UMLClassHandlerTester {
     @Before
     public void setUp()
     {
@@ -73,8 +77,8 @@ public class UMLCLassHandlerTester {
     public void addRelationshipBetweenCarAndFoodClasses()
     {
         UMLClassHandler.addRelationship("Car", "Food");
-        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food")));
-        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car")));
+        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food").getName()));
+        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car").getName()));
     }
 
     @Test
@@ -97,8 +101,8 @@ public class UMLCLassHandlerTester {
     public void removeRelationshpBetweenExistingCarAndFoodClasses()
     {
         UMLClassHandler.addRelationship("Car", "Food");
-        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food")));
-        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car")));
+        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food").getName()));
+        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car").getName()));
 
         UMLClassHandler.removeRelationship("Car", "Food");
         assertTrue(UMLClassHandler.getClass("Car").getOutgoing().isEmpty());
@@ -131,8 +135,8 @@ public class UMLCLassHandlerTester {
     public void removeTheCarClassAfterAddingARelationshipBetweenTheCarAndAnimalClasses()
     {
         UMLClassHandler.addRelationship("Car", "Food");
-        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food")));
-        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car")));
+        assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food").getName()));
+        assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car").getName()));
 
         UMLClassHandler.removeClass("Car");
         assertFalse(UMLClassHandler.exists("Car"));
