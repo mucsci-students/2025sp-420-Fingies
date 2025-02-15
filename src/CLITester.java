@@ -9,7 +9,7 @@ import java.util.Scanner;
  */
 public class CLITester {
 	
-	public static final String[] methods = {"next command", "prompt for input", "prompt for input 2", "prompt for input 3", "notify success", "notify success 2", "notify fail", "display"};
+	public static final String[] methods = {"next command", "prompt for input", "prompt for input 2", "prompt for input 3", "notify success", "notify success 2", "notify fail", "display", "help", "help 2"};
 	
 	// Constants to be used in the program text to color it cyan
 	public static final String COLOR = "\u001B[36m";
@@ -85,6 +85,14 @@ public class CLITester {
 				else if (methods[idx].equals("display"))
 				{
 					cli.display("*message*");
+				}
+				else if (methods[idx].equals("help"))
+				{
+					cli.help();
+				}
+				else if (methods[idx].equals("help 2"))
+				{
+					cli.help("addc");
 				}
 			}
 			else

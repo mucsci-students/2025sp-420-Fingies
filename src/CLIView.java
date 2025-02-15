@@ -31,20 +31,27 @@ public class CLIView implements View
 	};
 	
 	/**
-	 * An array of strings describing the format for every CLI-specific command.
+	 * The expected arguments for each command.
 	 */
-	public static final String[] COMMAND_FORMAT = {
-			COMMANDS[0] + " \n" + COMMANDS_SHORTHAND[0] + " ",
-		    COMMANDS[1] + " \n" + COMMANDS_SHORTHAND[1] + " " 
+	public static final String[] COMMAND_ARGS = {
+			"",
+			""
+	};
+	
+	public static final String[] COMMAND_DESCRIPTION = {
+			"Toggles the color mode to be either on or off.\n"
+			+ "When the color mode is on, messages in the terminal are formatted in a way that's more pleasing to the eye.\n\n"
+			+ "NOTE: Some terminals do not support color mode when it is activated.",
+			"Clears the screen of all text."
 	};
     
     // color related fields, constants, etc
-
-    private boolean color = false;
-    private String failStyle = "";
-    private String successStyle = "";
-    private String displayStyle = "";
-    private String stopStyle = "";
+    private boolean colorMode = true; // enabled by default (set this to false to disable by default)
+    private String failStyle;
+    private String successStyle;
+    private String displayStyle;
+    private String commandStyle;
+    private String stopStyle;
     
     private final String RED = "\u001B[91m";
     private final String GREEN = "\u001B[92m";
@@ -56,11 +63,17 @@ public class CLIView implements View
     private final String[] RAINBOW = {RED, YELLOW, GREEN, CYAN, BLUE, MAGENTA};
     
     private final String ITALLICS = "\u001B[3m";
+    private final String BOLD = "\u001B[1m";
     
     private final String RESET = "\u001B[0m";
     
     private final String CLEAR = "\u001B[2J";
     
+    
+    public CLIView()
+    {
+    	setColorMode(colorMode); // Sets all of the text styles to their initial values.
+    }
 
     @Override
     public Command nextCommand() 
@@ -73,11 +86,12 @@ public class CLIView implements View
         {
         	if (in.equals(TOGGLE_COLOR_COMMAND) || in.equals(TOGGLE_COLOR_COMMAND_SHORTHAND))
         	{
-        		toggleColor();
-        		if(color)
+        		colorMode = !colorMode;
+        		setColorMode(colorMode);
+        		if(colorMode)
         		{
         			notifySuccess();
-        			System.out.println(rainbowify("Color mode activated"));
+        			printRainbow("Color mode activated");
         		}
         		else
         			notifySuccess("Color mode disabled");
@@ -126,7 +140,7 @@ public class CLIView implements View
             while(!checkMsg.equals("")) // This loop will keep prompting the user until they input something that satisfies the check
             {
             	notifyFail(checkMsg);
-                ans = promptForInput("");
+                ans = sc.nextLine();
                 checkMsg = checks.get(i).check(ans);
             }
             result.add(ans);
@@ -156,9 +170,45 @@ public class CLIView implements View
     public void display(String message) {
         System.out.println(displayStyle + message + stopStyle);
     }
+	
+    @Override
+	public void help()
+	{		
+    	// print all commands from Command class
+		for (int i = 0; i < Command.COMMANDS.length; ++i)
+		{
+			System.out.println(commandStyle + Command.COMMANDS[i] + stopStyle + " " + Command.COMMAND_ARGS[i] + "\n"
+					+ commandStyle + Command.COMMANDS_SHORTHAND[i] + stopStyle + " " + Command.COMMAND_ARGS[i] + "\n");
+		}
+		// print all commands from CLIView
+		for (int i = 0; i < COMMANDS.length; ++i)
+		{
+			System.out.println(commandStyle + COMMANDS[i] + stopStyle + " " + COMMAND_ARGS[i] + "\n"
+					+ commandStyle + COMMANDS_SHORTHAND[i] + stopStyle + " " + COMMAND_ARGS[i] + (i == COMMANDS.length - 1 ? "" : "\n"));
+		}
+	}
     
     @Override
-	public int indexOfCommand(String command)
+	public void help(String command)
+	{
+    	int idx = indexOfCommand(command);
+		if (idx != -1) // then print this command from the CLIView
+			System.out.println(commandStyle + COMMANDS[idx] + stopStyle + " " + COMMAND_ARGS[idx] + "\n"
+					+ commandStyle + COMMANDS_SHORTHAND[idx] + stopStyle + " " + COMMAND_ARGS[idx] + "\n\n"
+							+ COMMAND_DESCRIPTION[idx]);
+		else
+		{
+			idx = Command.indexOfCommand(command);
+			if (idx != -1) // then print this command from the Command class
+				System.out.println(commandStyle + Command.COMMANDS[idx] + stopStyle + " " + Command.COMMAND_ARGS[idx] + "\n"
+						+ commandStyle + Command.COMMANDS_SHORTHAND[idx] + stopStyle + " " + Command.COMMAND_ARGS[idx] + "\n\n"
+								+ Command.COMMAND_DESCRIPTION[idx]);
+			else // command doesn't exist
+				notifyFail("The command \"" + command + "\" does not exist.");
+		}
+	}
+    
+    private int indexOfCommand(String command)
 	{
 		for (int i = 0; i < COMMANDS.length; ++i)
 			if (COMMANDS[i].equals(command))
@@ -170,36 +220,20 @@ public class CLIView implements View
 		
 		return -1;
 	}
-	
-    @Override
-	public String help()
-	{
-		String str = "";
-		for (String s : COMMAND_FORMAT)
-		{
-			str += s + "\n\n";
-		}
-		return str.substring(0, str.length() - 2); // trim the last two \n off the string
-	}
-    
-    @Override
-	public String help(int index)
-	{
-		return COMMAND_FORMAT[index];
-	}
-    
     
     /**
-     * Turns on/off color text, and other visual niceties in the terminal.
+     * Updates the text styles to the current color mode.
+     * 
+     * @param m Whether color mode is enabled or not.
      */
-    private void toggleColor()
+    private void setColorMode(boolean m)
     {
-    	color = ! color;
-    	if (color)
+    	if (m)
     	{
     		failStyle = RED + ITALLICS;
     		successStyle = GREEN + ITALLICS;
     		displayStyle = ITALLICS;
+    		commandStyle = CYAN + BOLD;
     		stopStyle = RESET;
     	}
     	else
@@ -207,6 +241,7 @@ public class CLIView implements View
     		failStyle = "";
     		successStyle = "";
     		displayStyle = "";
+    		commandStyle = "";
     		stopStyle = "";
     	}
     }
@@ -225,9 +260,9 @@ public class CLIView implements View
      * @param str The text to color.
      * @return The same string but colored rainbow.
      */
-    private String rainbowify(String str)
+    private void printRainbow(String str)
     {
-    	String result = "";
+    	String result = BOLD;
     	int idx = 0;
     	for (char c : str.toCharArray())
     	{
@@ -235,7 +270,7 @@ public class CLIView implements View
     			idx = 0;
     		result += RAINBOW[idx++] + c;
     	}
-    	return result + RESET;
+    	System.out.println(result + RESET);
     }
     
 }

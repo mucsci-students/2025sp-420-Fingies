@@ -162,25 +162,7 @@ public class Controller {
     
     public void doSpecificCommandHelp(String command)
     {
-    	int idx = Command.indexOfCommand(command);
-    	if (idx == -1)
-    	{
-    		idx = view.indexOfCommand(command);
-			if (idx == -1)
-			{
-    			view.notifyFail("The command \"" + command + "\" does not exist.");
-			}
-			else
-			{
-				String msg = view.help(idx);
-	        	view.display(msg);
-			}
-    	}
-    	else
-    	{
-    		String msg = Command.help(idx);
-        	view.display(msg);
-    	}
+    	view.help(command);
     }
 
     /**
@@ -436,7 +418,7 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Help should have 0 or 1 arguments.");
+                	view.notifyFail("Too many arguments. Arguments with spaces require quotes.");
                 }
                 break;
             case EXIT:
