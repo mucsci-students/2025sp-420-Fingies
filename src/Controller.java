@@ -1,3 +1,8 @@
+
+/**
+ * Controller for UML Editor, handles user input
+ * @author kdichter
+ */
 public class Controller {
     private CLIView view;
     private JModel model;
@@ -18,6 +23,7 @@ public class Controller {
         }
         catch (Exception e)
         {
+            model.writeToLog(e.getMessage());
             view.notifyFail(e.toString());
             return false;
         }
@@ -31,6 +37,7 @@ public class Controller {
         }
         catch (Exception e)
         {
+            model.writeToLog(e.getMessage());
             view.notifyFail(e.toString());
             return false;
         }
@@ -44,6 +51,7 @@ public class Controller {
         }
         catch (Exception e)
         {
+            model.writeToLog(e.getMessage());
             view.notifyFail(e.toString());
             return false;
         }
@@ -57,6 +65,7 @@ public class Controller {
         }
         catch (Exception e)
         {
+            model.writeToLog(e.getMessage());
             view.notifyFail(e.toString());
             return false;
         }
@@ -70,6 +79,7 @@ public class Controller {
         }
         catch (Exception e)
         {
+            model.writeToLog(e.getMessage());
             view.notifyFail(e.toString());
             return false;
         }
@@ -83,6 +93,7 @@ public class Controller {
         }
         catch (Exception e)
         {
+            model.writeToLog(e.getMessage());
             view.notifyFail(e.toString());
             return false;
         }
@@ -96,6 +107,7 @@ public class Controller {
         }
         catch (Exception e)
         {
+            model.writeToLog(e.getMessage());
             view.notifyFail(e.toString());
             return false;
         }
@@ -109,6 +121,7 @@ public class Controller {
         }
         catch (Exception e)
         {
+            model.writeToLog(e.getMessage());
             view.notifyFail(e.toString());
             return false;
         }
@@ -133,6 +146,7 @@ public class Controller {
         }
         catch (Exception e)
         {
+            model.writeToLog(e.getMessage());
             view.notifyFail(e.toString());
         }
     }
@@ -146,6 +160,7 @@ public class Controller {
         }
         catch (Exception e)
         {
+            model.writeToLog(e.getMessage());
             view.notifyFail(e.toString());
         }
     }
@@ -434,6 +449,5 @@ public class Controller {
                 break;
         }
     }
-    
  }
  

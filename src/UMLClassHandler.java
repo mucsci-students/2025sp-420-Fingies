@@ -1,9 +1,9 @@
 import java.util.HashMap; 
 import java.util.HashSet;
-import java.util.Set;
 
 /**
- * 
+ * Handles all interactions made to the classes
+ * @author kdichter, Lincoln Craddock
  */
 public class UMLClassHandler {
     private static HashMap<String, UMLClass> classes = new HashMap<>();
@@ -36,15 +36,15 @@ public class UMLClassHandler {
             return false;
         }
         // C -- > A
-        for (UMLClass inc : classes.get(name).getIncoming())
+        for (String inc : classes.get(name).getIncoming())
         {
-            inc.removeRelationship(inc, classes.get(name));
+            classes.get(inc).removeRelationship(inc, name);
         }
 
         // A --> B
-        for (UMLClass out : classes.get(name).getOutgoing())
+        for (String out : classes.get(name).getOutgoing())
         {
-            out.removeRelationship(classes.get(name), out);
+            classes.get(out).removeRelationship(name, out);
         }
 
         return classes.remove(name) != null;
@@ -64,6 +64,24 @@ public class UMLClassHandler {
             c.renameClass(newName);
             classes.remove(className);
             classes.put(newName, c);
+            
+            // hot fix--updates incoming/outgoing relationships with the new name
+            for(UMLClass cl : classes.values())
+            {
+            	HashSet<String> incoming = cl.getIncoming();
+            	if (incoming.contains(className))
+            	{
+            		incoming.remove(className);
+            		incoming.add(newName);
+            	}
+            	HashSet<String> outgoing = cl.getOutgoing();
+            	if (outgoing.contains(className))
+            	{
+            		outgoing.remove(className);
+            		outgoing.add(newName);
+            	}
+            }
+            
             return true;
         }
         return false;
@@ -120,8 +138,8 @@ public class UMLClassHandler {
         UMLClass srcClass = getClass(src);
         UMLClass destClass = getClass(dest);
         if (src.equals(dest))
-            return srcClass.addRelationship (srcClass, destClass);
-        return srcClass.addRelationship (srcClass, destClass) && destClass.addRelationship (srcClass, destClass);
+            return srcClass.addRelationship (src, dest);
+        return srcClass.addRelationship (src, dest) && destClass.addRelationship (src, dest);
     }
 
     /**
@@ -134,7 +152,7 @@ public class UMLClassHandler {
     {
         UMLClass srcClass = getClass(src);
         UMLClass destClass = getClass(dest);
-        return srcClass.removeRelationship (srcClass, destClass) && destClass.removeRelationship (srcClass, destClass);
+        return srcClass.removeRelationship (src, dest) && destClass.removeRelationship (src, dest);
     }
 
     /**
@@ -189,10 +207,10 @@ public class UMLClassHandler {
     	String str = "";
         for (UMLClass c : classes.values())
         {
-            HashSet<UMLClass> outgoing = c.getOutgoing();
-            for (UMLClass out : outgoing)
+            HashSet<String> outgoing = c.getOutgoing();
+            for (String out : outgoing)
             {
-                str += c.getName() + " --> " + out.getName() + "\n";
+                str += c.getName() + " --> " + out + "\n";
             }
         }
         

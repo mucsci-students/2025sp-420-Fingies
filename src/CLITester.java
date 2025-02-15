@@ -6,6 +6,7 @@ import java.util.Scanner;
  * A short test program for testing each of the methods in the CLIView class.
  * 
  * Enter the name of a method to test it.
+ * @author Lincoln Craddock
  */
 public class CLITester {
 	
@@ -102,5 +103,4 @@ public class CLITester {
 			}
 		}
 	}
-
 }

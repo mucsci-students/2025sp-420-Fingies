@@ -1,6 +1,7 @@
 
 /**
  * The Main class for the entire UML editor program.
+ * @author Lincoln Craddock
  */
 public class Main {
 

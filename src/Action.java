@@ -2,6 +2,7 @@
 	 * An enum that represents an action the user can take with the program.
 	 * 
 	 * Contains a method for parsing user input into a corresponding Action.
+	 * @author Lincoln Craddock
 	 */
 	public enum Action {
 			
