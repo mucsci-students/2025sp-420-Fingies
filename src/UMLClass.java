@@ -82,13 +82,11 @@ public class UMLClass {
      */
     boolean removeAttribute (String attribute)
     {
-        // System.out.println("no attribute here lol.");
         if (!attributes.remove(attribute))
         {
             throw new IllegalArgumentException("Attribute provided does not exist");
         }
         return true;
-        // return attributes.remove(attribute);
     }
 
     /**
