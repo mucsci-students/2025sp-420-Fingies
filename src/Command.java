@@ -69,8 +69,9 @@ public class Command {
 			"Adds an attribute to a class.",
 			"Removes an attribute from a class.",
 			"Gives an attribute of a class a new name.",
-			"Saves the current diagram.",
-			"Loads a diagram into the editor from your files.",
+			"Saves the current diagram given a filepath (C:\\Users\\Zoppetti\\Demos\\Test.txt). \n"
+			+ "Or saves the current diagram without a filepath aftering saving once.",
+			"Loads a diagram into the editor from your files (C:\\\\Users\\\\Zoppetti\\\\Demos\\\\Test.txt).",
 			"Prints a list of all of the classes in the diagram.",
 			"Prints all of the attributes in a class.",
 			"Lists all of the relationships between classes in the diagram.",

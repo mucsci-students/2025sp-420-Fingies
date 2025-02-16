@@ -19,7 +19,7 @@
 		/** Creates a new class. */
 		ADD_ATTRIBUTE,
 		/** Removes a class that exists. */
-		REMOVE_ATTRIVUTE,
+		REMOVE_ATTRIBUTE,
 		/** Gives a class a new name. */
 		RENAME_ATTRIBUTE,
 		/** Creates a relationship between two classes. */

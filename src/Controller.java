@@ -7,12 +7,14 @@ public class Controller {
     private CLIView view;
     private JModel model;
     private boolean madeChange;
+    private boolean hasSaved;
 
     Controller (CLIView view, JModel model)
     {
         this.view = view;
         this.model = model;
         madeChange = false;
+        hasSaved = false;
     }
 
     public boolean doAddClass(String className) 
@@ -127,6 +129,11 @@ public class Controller {
         }
     }
 
+    public boolean doSave() 
+    {
+        return model.saveData();
+    }
+
     public boolean doSave(String filepath) 
     {
         return model.saveData(filepath);
@@ -180,6 +187,27 @@ public class Controller {
     	view.help(command);
     }
 
+    public void saveLoop()
+    {
+        while (true)
+        {
+            String input = view.promptForInput("Enter a valid filepath to save to or type EXIT to quit the program.");
+            if (input.toUpperCase().equals("EXIT"))
+                break;
+            if (doSave(input))
+            {
+                madeChange = false;
+                view.notifySuccess("Successfully loaded your file.");
+                break;
+            }
+            else
+            {
+                view.notifyFail("Invalid filepath. Filepath should look something like this:");
+                view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
+            }
+        }
+    }
+
     /**
      * Promts the user to either load in an existing JSON file with data or create a new one
      */
@@ -191,13 +219,15 @@ public class Controller {
             while (true)
             {
                 String filepath = view.promptForInput("Enter a valid filepath");
-                if (filepath != null)
+                if (model.fileExist(filepath))
                 {
-                    //data = doLoad(filepath);
                     doLoad(filepath);
+                    view.notifySuccess("Successfully loaded your file.");
                     return true; 
                 }
-                String again = view.promptForInput("Invalid filepath. Type T to try again, E to exit, or any other key to make a new JSON file instead");
+                view.notifyFail("Invalid filepath. Filepath should look something like this:");
+                view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
+                String again = view.promptForInput("Type T to try again, E to exit, or any other key to make a new JSON file instead");
                 if (again.equals("E") && !again.equals("e"))
                     return false;
                 else if (!again.equals("T") && !again.equals("t"))
@@ -314,16 +344,20 @@ public class Controller {
                         view.notifySuccess("Successfully added attribute " + args[1] + " to class " + args[0]);
                         madeChange = true;
                     }
+                    else
+                    {
+                        view.notifyFail("Attribute already exists.");
+                    }
                 }
                 else
                 {
                 	view.notifyFail("Add attribute should have exactly 2 arguments.");
                 }
                 break;
-            case REMOVE_ATTRIVUTE:
+            case REMOVE_ATTRIBUTE:
                 if (args.length == 2)
                 {
-                    if (doAddAttribute(args[0], args[1]))
+                    if (doRemoveAttribute(args[0], args[1]))
                     {
                         view.notifySuccess("Successfully removed attribute " + args[1] + " from class " + args[0]);
                         madeChange = true;
@@ -349,17 +383,35 @@ public class Controller {
                 }
                 break;
             case SAVE:
-                if (args.length == 1)
+                if (args.length == 0)
+                {
+                    if (hasSaved)
+                    {
+                        doSave();
+                        madeChange = false;
+                        view.notifySuccess("Successfully saved your file");
+                    }
+                    else
+                    {
+                        view.notifyFail("Cannot save a file with no previous filepath provided.");
+                    }
+                }
+                else if (args.length == 1)
                 {
                     if (doSave(args[0]))
                     {
+                        hasSaved = true;
                         madeChange = false;
                         view.notifySuccess("Successfully saved your file");
+                    }
+                    else
+                    {
+                	    view.notifyFail("Invalid filepath provided.");
                     }
                 }
                 else
                 {
-                	view.notifyFail("Save should have exactly 1 argument.");
+                	view.notifyFail("Save should have either 0 or 1 arguments.");
                 }
                 break;
             case LOAD:
@@ -368,7 +420,7 @@ public class Controller {
                     if (madeChange)
                     {
                         String result = view.promptForInput("Are you sure that you want to load without saving? Type Y for yes or any other key to save before loading");
-                        if (result.equals("Y") || result.equals("y"))
+                        if (result.toLowerCase().equals("y"))
                         {
                             doLoad(args[0]);
                             madeChange = false;
@@ -376,16 +428,24 @@ public class Controller {
                         }
                         else
                         {
-                            //needs to be changed for overload with 0 arguments ... could prompt for a new path
-                            doSave(args[0]);
-                            madeChange = false;
-                            view.notifySuccess("Successfully saved your file");
+                            saveLoop();
 
                             doLoad(args[0]);
-                            view.notifySuccess("Successfully loaded your file");
+                            view.notifySuccess("Successfully loaded your file.");
                         }
                     }
-                    
+                    else
+                    {
+                        if (model.fileExist(args[0]))
+                        {
+                            doLoad(args[0]);
+                            view.notifySuccess("Successfully loaded your file.");
+                        }
+                        else
+                        {
+                            view.notifyFail("Invalid filepath.");
+                        }
+                    }
                 }
                 else
                 {
@@ -440,10 +500,17 @@ public class Controller {
                 if (madeChange)
                 {
                     String result = view.promptForInput("Are you sure that you want to exit without saving? Type Y for yes or any other key to save before exiting");
-                    if (!result.equals("Y") && !result.equals("y"))
+                    if (!result.toLowerCase().equals("y"))
                     {
                         //needs to be changed for overload with 0 arguments ... could prompt for a new path
-                        doSave(args[0]);
+                        if (!hasSaved)
+                        {
+                            saveLoop();
+                        }
+                        else
+                        {
+                            doSave();
+                        }
                     }
                 }
                 break;
