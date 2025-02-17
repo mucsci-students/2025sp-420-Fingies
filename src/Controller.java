@@ -209,28 +209,6 @@ public class Controller {
         }
     }
 
-    public void loadLoop()
-    {
-        while (true)
-        {
-            String input = view.promptForInput("Enter a valid filepath to save to or type EXIT to quit the program.");
-            if (input.toUpperCase().equals("EXIT"))
-                break;
-            if (doSave(input))
-            {
-                madeChange = false;
-                hasSaved = true;
-                view.notifySuccess("Successfully loaded your file.");
-                break;
-            }
-            else
-            {
-                view.notifyFail("Invalid filepath. Filepath should look something like this:");
-                view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
-            }
-        }
-    }
-
     public void loadCheck(String filepath)
     {
         if (doLoad(filepath) != null)
