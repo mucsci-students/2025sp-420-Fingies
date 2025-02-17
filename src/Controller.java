@@ -231,17 +231,19 @@ public class Controller {
         }
     }
 
-    public void loadCheck(String filepath)
+    public boolean loadCheck(String filepath)
     {
         if (doLoad(filepath) != null)
         {
             hasSaved = true;
             madeChange = false;
             view.notifySuccess("Successfully loaded your file");
+            return true;
         }
         else
         {
-            view.notifyFail("Invalid filepath provided.");
+            view.notifyFail("Invalid filepath provided. Filepath should look something like this:");
+            return false;
         }
     }
 
@@ -256,14 +258,12 @@ public class Controller {
             while (true)
             {
                 String filepath = view.promptForInput("Enter a valid filepath");
-                if (model.fileExist(filepath))
+                if (loadCheck(filepath))
                 {
-                    doLoad(filepath);
                     hasSaved = true;
                     view.notifySuccess("Successfully loaded your file.");
                     return true; 
                 }
-                view.notifyFail("Invalid filepath. Filepath should look something like this:");
                 view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
                 String again = view.promptForInput("Type T to try again, E to exit, or any other key to make a new JSON file instead");
                 if (again.equals("E") && !again.equals("e"))
