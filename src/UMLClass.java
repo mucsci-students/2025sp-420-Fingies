@@ -100,9 +100,13 @@ public class UMLClass {
         validateCharacters(newName);
         if (attributes.contains(attribute) && !attributes.contains(newName))
         {
-            attributes.remove(attribute);
-            attributes.add(newName);
-            return true;
+            if (!name.equals(newName)) {
+                attributes.remove(attribute);
+                return attributes.add(newName);
+            }
+            else {
+                return false;
+            }
         }
         return false;
     }

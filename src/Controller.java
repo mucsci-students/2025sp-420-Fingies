@@ -346,7 +346,7 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Attribute already exists.");
+                        view.notifyFail("Attribute couldn't be added.");
                     }
                 }
                 else
