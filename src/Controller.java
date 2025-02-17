@@ -260,8 +260,6 @@ public class Controller {
                 String filepath = view.promptForInput("Enter a valid filepath");
                 if (loadCheck(filepath))
                 {
-                    hasSaved = true;
-                    view.notifySuccess("Successfully loaded your file.");
                     return true; 
                 }
                 view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
