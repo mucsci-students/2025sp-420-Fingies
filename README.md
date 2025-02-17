@@ -18,6 +18,11 @@ Clone the project and use ``java`` to run ``Main``.
 3. Call ``javac -cp "../lib/gson-2.12.0.jar:../lib/hamcrest-core-1.3.jar:../lib/junit-4.13.2.jar:." *.java`` to compile all of the files in ``src/``.
 4. Call ``java -cp "../lib/gson-2.12.0.jar:../lib/hamcrest-core-1.3.jar:../lib/junit-4.13.2.jar:." Main`` to run the program.
 
+## Known issues:
+- Invalid/altered JSON files aren't detected immediately by the program.
+- New files can be saved to invalid filepaths & replace already existing ones.
+- Entering a command with too many arguments (>200,000) can stall the program endlessly.
+
 ## Team Fingies
 - Nick Hayes
 - William Wickenheiser
