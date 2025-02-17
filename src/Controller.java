@@ -197,6 +197,7 @@ public class Controller {
             if (doSave(input))
             {
                 madeChange = false;
+                hasSaved = true;
                 view.notifySuccess("Successfully loaded your file.");
                 break;
             }
@@ -222,6 +223,7 @@ public class Controller {
                 if (model.fileExist(filepath))
                 {
                     doLoad(filepath);
+                    hasSaved = true;
                     view.notifySuccess("Successfully loaded your file.");
                     return true; 
                 }
@@ -272,6 +274,9 @@ public class Controller {
                         view.notifySuccess("Successfully added class " + args[0]);
                         madeChange = true;
                     }
+                    else {
+                        view.notifyFail("Failed to add class " + args[0]);
+                    }
                         
                 }
                 else
@@ -287,6 +292,9 @@ public class Controller {
                         view.notifySuccess("Successfully removed class " + args[0]);
                         madeChange = true;
                     }
+                    else {
+                        view.notifyFail("Failed to remove class " + args[0]);
+                    }
                         
                 }
                 else
@@ -301,6 +309,10 @@ public class Controller {
                     {
                         view.notifySuccess("Successfully renamed class " + args[0] + " to " + args[1]);
                         madeChange = true;
+                    }
+                    else
+                    {
+                        view.notifyFail("Failed to rename class " + args[0] + " to " + args[1]);
                     }
                 }
                 else
@@ -329,6 +341,10 @@ public class Controller {
                     {
                         view.notifySuccess("Successfully removed relationship " + args[0] + " --> " + args[1]);
                         madeChange = true;
+                    }
+                    else
+                    {
+                        view.notifyFail("Failed to remove relationship " + args[0] + " --> " + args[1]);
                     }
                 }
                 else
@@ -362,6 +378,9 @@ public class Controller {
                         view.notifySuccess("Successfully removed attribute " + args[1] + " from class " + args[0]);
                         madeChange = true;
                     }
+                    else {
+                        view.notifyFail("Failed to remove attribute " + args[1] + " from class " + args[0]);
+                    }
                 }
                 else
                 {
@@ -375,6 +394,10 @@ public class Controller {
                     {
                         view.notifySuccess("Successfully renamed attribute " + args[1] + " to " + args[2] + " in class " + args[0]);
                         madeChange = true;
+                    }
+                    else
+                    {
+                        view.notifyFail("Failed to rename attribute " + args[1] + " to " + args[2] + " in class " + args[0]);
                     }
                 }
                 else
@@ -423,6 +446,7 @@ public class Controller {
                         if (result.toLowerCase().equals("y"))
                         {
                             doLoad(args[0]);
+                            hasSaved = true;
                             madeChange = false;
                             view.notifySuccess("Successfully loaded your file");
                         }
@@ -439,6 +463,7 @@ public class Controller {
                         if (model.fileExist(args[0]))
                         {
                             doLoad(args[0]);
+                            hasSaved = true;
                             view.notifySuccess("Successfully loaded your file.");
                         }
                         else
