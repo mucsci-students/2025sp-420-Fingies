@@ -209,6 +209,42 @@ public class Controller {
         }
     }
 
+    public void loadLoop()
+    {
+        while (true)
+        {
+            String input = view.promptForInput("Enter a valid filepath to save to or type EXIT to quit the program.");
+            if (input.toUpperCase().equals("EXIT"))
+                break;
+            if (doSave(input))
+            {
+                madeChange = false;
+                hasSaved = true;
+                view.notifySuccess("Successfully loaded your file.");
+                break;
+            }
+            else
+            {
+                view.notifyFail("Invalid filepath. Filepath should look something like this:");
+                view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
+            }
+        }
+    }
+
+    public void loadCheck(String filepath)
+    {
+        if (doLoad(filepath) != null)
+        {
+            hasSaved = true;
+            madeChange = false;
+            view.notifySuccess("Successfully loaded your file");
+        }
+        else
+        {
+            view.notifyFail("Invalid filepath provided.");
+        }
+    }
+
     /**
      * Promts the user to either load in an existing JSON file with data or create a new one
      */
@@ -445,17 +481,19 @@ public class Controller {
                         String result = view.promptForInput("Are you sure that you want to load without saving? Type Y for yes or any other key to save before loading");
                         if (result.toLowerCase().equals("y"))
                         {
-                            doLoad(args[0]);
-                            hasSaved = true;
-                            madeChange = false;
-                            view.notifySuccess("Successfully loaded your file");
+                            loadCheck(args[0]);
+
+                            // doLoad(args[0]);
+                            // hasSaved = true;
+                            // madeChange = false;
+                            // view.notifySuccess("Successfully loaded your file");
                         }
                         else
                         {
                             saveLoop();
-
-                            doLoad(args[0]);
-                            view.notifySuccess("Successfully loaded your file.");
+                            loadCheck(args[0]);
+                            // doLoad(args[0]);
+                            // view.notifySuccess("Successfully loaded your file.");
                         }
                     }
                     else
