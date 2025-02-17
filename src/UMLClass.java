@@ -82,7 +82,11 @@ public class UMLClass {
      */
     boolean removeAttribute (String attribute)
     {
-        return attributes.remove(attribute);
+        if (!attributes.remove(attribute))
+        {
+            throw new IllegalArgumentException("Attribute provided does not exist");
+        }
+        return true;
     }
 
     /**
@@ -96,9 +100,13 @@ public class UMLClass {
         validateCharacters(newName);
         if (attributes.contains(attribute) && !attributes.contains(newName))
         {
-            attributes.remove(attribute);
-            attributes.add(newName);
-            return true;
+            if (!name.equals(newName)) {
+                attributes.remove(attribute);
+                return attributes.add(newName);
+            }
+            else {
+                return false;
+            }
         }
         return false;
     }

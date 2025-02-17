@@ -126,6 +126,14 @@ public class UMLClassTester {
     @Test
     public void removeEngineAttributeWhenItDoesntExist()
     {
-        assertFalse(c.removeAttribute("Engine"));
+        try
+        {
+            c.removeAttribute("Engine");
+        }
+        catch(IllegalArgumentException e)
+        {
+            assertEquals("Attribute provided does not exist", e.getMessage());
+        }
+        
     }
 }

@@ -5,6 +5,7 @@ import java.util.HashSet;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,6 +28,10 @@ public class UMLClassHandlerTester {
             UMLClassHandler.getClass("Food").addAttribute("Breakfast");
             UMLClassHandler.getClass("Food").addAttribute("Lunch");
             UMLClassHandler.getClass("Food").addAttribute("Dinner");
+    }
+    @After
+    public void resetTest() {
+        UMLClassHandler.reset();
     }
 
     // --------------------- RENAME CLASS ---------------------
