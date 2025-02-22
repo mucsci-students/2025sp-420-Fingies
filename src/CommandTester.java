@@ -1,5 +1,6 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThrows;
 
 import org.junit.Test;
 
@@ -37,13 +38,13 @@ public class CommandTester {
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with the argument \"" + expected + "\".", expected, c.arguments[0]);
 	}
-    
+	
 	
 	// --------------------- WITH MANY ARGUMENTS ---------------------
 
 	@Test
 	public void largeArgCount() {
-	    int cnt = 2000;
+	    int cnt = Command.maxNumArgs;
 
 	    String cmd = Command.COMMANDS[0] + " "; // "add class"
 	    for (int i = 0; i < cnt; ++i)
@@ -55,7 +56,7 @@ public class CommandTester {
 
 	@Test
 	public void manyArgs() {
-	    int cnt = 2000;
+	    int cnt = Command.maxNumArgs;
 
 	    String cmd = Command.COMMANDS[0] + " "; // "add class"
 	    for (int i = 0; i < cnt; ++i)
@@ -73,6 +74,17 @@ public class CommandTester {
 	            c.arguments[i]
 	        );
 	    }
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void tooManyArgs() {
+	    int cnt = Command.maxNumArgs + 1;
+
+	    String cmd = Command.COMMANDS[0] + " "; // "add class"
+	    for (int i = 0; i < cnt; ++i)
+	        cmd += "class" + i + " ";
+	    
+	    Command.parseCommand(cmd);
 	}
 
     
@@ -336,35 +348,35 @@ public class CommandTester {
 
 	@Test
 	public void saveAction() {
-	    String cmd = Command.COMMANDS[8]; // "save"
+	    String cmd = Command.COMMANDS[5]; // "save"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with the SAVE enum.", c.action, Action.SAVE);
 	}
 
 	@Test
 	public void saveArgCount() {
-	    String cmd = Command.COMMANDS[8]; // "save"
+	    String cmd = Command.COMMANDS[5]; // "save"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with no arguments.", 0, c.arguments.length);
 	}
 
 	@Test
 	public void loadAction() {
-	    String cmd = Command.COMMANDS[9] + " filePath"; // "load"
+	    String cmd = Command.COMMANDS[6] + " filePath"; // "load"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with the LOAD enum.", c.action, Action.LOAD);
 	}
 
 	@Test
 	public void loadArgCount() {
-	    String cmd = Command.COMMANDS[9] + " filePath"; // "load"
+	    String cmd = Command.COMMANDS[6] + " filePath"; // "load"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with one argument.", 1, c.arguments.length);
 	}
 
 	@Test
 	public void loadArg() {
-	    String cmd = Command.COMMANDS[9] + " filePath"; // "load"
+	    String cmd = Command.COMMANDS[6] + " filePath"; // "load"
 	    String expected = "filePath";
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return the correct argument.", expected, c.arguments[0]);
@@ -374,22 +386,22 @@ public class CommandTester {
 	// --------------------- USING SHORTHAND COMMANDS ---------------------
     
 	@Test
-	public void shortAddRelationshipAction() {
-	    String cmd = "addr class1 class2";
+	public void addRelationshipActionShorthand() {
+	    String cmd = Command.COMMANDS_SHORTHAND[3] + " class1 class2"; // "add relationship"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with the ADD_RELATIONSHIP enum.", c.action, Action.ADD_RELATIONSHIP);
 	}
 
 	@Test
-	public void shortAddRelationshipArgCount() {
-	    String cmd = "addr class1 class2";
+	public void addRelationshipArgCountShorthand() {
+	    String cmd = Command.COMMANDS_SHORTHAND[3] + " class1 class2"; // "add relationship"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with two arguments.", 2, c.arguments.length);
 	}
 
 	@Test
-	public void shortAddRelationshipArgs() {
-	    String cmd = "addr class1 class2";
+	public void addRelationshipArgsShorthand() {
+	    String cmd = Command.COMMANDS_SHORTHAND[3] + " class1 class2"; // "add relationship"
 	    String[] expected = {"class1", "class2"};
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return the correct arguments.", expected[0], c.arguments[0]);
@@ -397,22 +409,22 @@ public class CommandTester {
 	}
 
 	@Test
-	public void shortRenameClassAction() {
-	    String cmd = "rnc class1 newClassName";
+	public void renameClassActionShorthand() {
+	    String cmd = Command.COMMANDS_SHORTHAND[2] + " class1 newClassName"; // "rename class"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with the RENAME_CLASS enum.", c.action, Action.RENAME_CLASS);
 	}
 
 	@Test
-	public void shortRenameClassArgCount() {
-	    String cmd = "rnc class1 newClassName";
+	public void renameClassArgCountShorthand() {
+	    String cmd = Command.COMMANDS_SHORTHAND[2] + " class1 newClassName"; // "rename class"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with two arguments.", 2, c.arguments.length);
 	}
 
 	@Test
-	public void shortRenameClassArgs() {
-	    String cmd = "rnc class1 newClassName";
+	public void renameClassArgsShorthand() {
+	    String cmd = Command.COMMANDS_SHORTHAND[2] + " class1 newClassName"; // "rename class"
 	    String[] expected = {"class1", "newClassName"};
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return the correct arguments.", expected[0], c.arguments[0]);
@@ -420,36 +432,36 @@ public class CommandTester {
 	}
 
 	@Test
-	public void shortSaveAction() {
-	    String cmd = "sv";
+	public void saveActionShorthand() {
+	    String cmd = Command.COMMANDS_SHORTHAND[5]; // "save"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with the SAVE enum.", c.action, Action.SAVE);
 	}
 
 	@Test
-	public void shortSaveArgCount() {
-	    String cmd = "sv";
+	public void saveArgCountShorthand() {
+	    String cmd = Command.COMMANDS_SHORTHAND[5]; // "save"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with no arguments.", 0, c.arguments.length);
 	}
 
 	@Test
-	public void shortLoadAction() {
-	    String cmd = "ld filePath";
+	public void loadActionShorthand() {
+	    String cmd = Command.COMMANDS_SHORTHAND[6] + " filePath"; // "load"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with the LOAD enum.", c.action, Action.LOAD);
 	}
 
 	@Test
-	public void shortLoadArgCount() {
-	    String cmd = "ld filePath";
+	public void loadArgCountShorthand() {
+	    String cmd = Command.COMMANDS_SHORTHAND[6] + " filePath"; // "load"
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return a command with one argument.", 1, c.arguments.length);
 	}
 
 	@Test
-	public void shortLoadArg() {
-	    String cmd = "ld filePath";
+	public void loadArgShorthand() {
+	    String cmd = Command.COMMANDS_SHORTHAND[6] + " filePath"; // "load"
 	    String expected = "filePath";
 	    Command c = Command.parseCommand(cmd);
 	    assertEquals("Parsing the command \n" + cmd + "\n should return the correct argument.", expected, c.arguments[0]);
