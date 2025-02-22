@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Represents a class object in a UML Class Diagram
@@ -6,9 +8,10 @@ import java.util.HashSet;
  */
 public class UMLClass {
     private String name;
-    private HashSet<String> attributes;
-    private HashSet<String> incoming;
-    private HashSet<String> outgoing;
+    private HashSet<Field> fields;
+    private HashSet<Method> methods;
+    // private HashSet<String> incoming;
+    // private HashSet<String> outgoing;
     private final String allowedCharacters = " _aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-";
 
     /**
@@ -19,9 +22,10 @@ public class UMLClass {
     {
         validateCharacters(name);
         this.name = name;
-        attributes = new HashSet<String>();
-        incoming = new HashSet<String>();
-        outgoing = new HashSet<String>();
+        fields = new HashSet<Field>();
+        methods = new HashSet<Method>();
+        // incoming = new HashSet<String>();
+        // outgoing = new HashSet<String>();
     }
 
     /**
@@ -63,71 +67,169 @@ public class UMLClass {
     }
 
     /**
-     * Attempts to add an attribute to the class
-     * @param attribute name of attribute the user wants to add
-     * @return true if the attribute was added to the set, false otherwise
+     * Returns a field object specified by the field parameter
+     * @param field name of the field
+     * @return the field object specified by the field parameter or null if the object doesn't exist
      */
-    boolean addAttribute (String attribute)
+    Field getField (String field)
     {
-        validateCharacters(attribute);
-        if (name.equals(attribute))
-            return false;
-        return attributes.add(attribute);
-    }
-
-    /**
-     * Attemps to delete an attribute from the class
-     * @param attribute name of the attribute the user wants to delete
-     * @return true if the attribute is deleted, false otherwise
-     */
-    boolean removeAttribute (String attribute)
-    {
-        if (!attributes.remove(attribute))
+        for (Field f : fields)
         {
-            throw new IllegalArgumentException("Attribute provided does not exist");
+            if (f.getName().equals(field))
+                return f;
         }
-        return true;
+        return null;
     }
 
     /**
-     * Attempts to rename an attribute in the set
-     * @param attribute name of the attribute the user wants to rename
-     * @param newName name the user wants to give to the attribute
-     * @return true if the attribute was renamed, false otherwise
+     * Returns a method object specified by the method parameter and paramNum
+     * @param method name of the method
+     * @param paramNum the number of parameters the method must contain
+     * @return the method object specified by the method parameter and paramNum or null if the object doesn't exist
+     */ 
+    Method getMethod (String method, int paramNum)
+    {
+        for (Method m : methods)
+        {
+            if (m.getName().equals(method) && m.getParameters().size() == paramNum)
+            {
+                return m;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Attempts to add a field to the list of fields
+     * @param attribute name of field the user wants to add
+     * @precondition field name is not the name of the class
+     * @return true if the field was added to the set, false otherwise
      */
-    boolean renameAttribute (String attribute, String newName)
+    boolean addField (String field)
+    {
+        validateCharacters(field);
+        if (name.equals(field))
+            return false;
+        return fields.add(new Field(field));
+    }
+
+    /**
+     * Attempts to add a method to the list of methods
+     * @param attribute name of method the user wants to add
+     * @return true if the method was added to the set, false otherwise
+     */
+    boolean addMethod (String method, List<String>parameters)
+    {
+        validateCharacters(method);
+        if (name.equals(method))
+            return false;
+        return methods.add(new Method(method, parameters));
+    }
+
+    /**
+     * Attempts to remove a field from the list of fields
+     * @param attribute name of field the user wants to remove
+     * @return true if the field was removed to the set, false otherwise
+     */
+    boolean removeField (String field)
+    {
+        return fields.remove(getField(field));
+    }
+
+    /**
+     * Attempts to remove a method from the list of methods with paramNum parameters
+     * @param method name of method to be removed
+     * @param paramNum number of parameters of the desired method to remove
+     * @return true if the method was paramNum parameters was removed, false otherwise
+     */
+    boolean removeMethod (String method, int paramNum)
+    {
+        return methods.remove(getMethod(method, paramNum));
+    }
+
+    /**
+     * Attemps to rename an existing field to a new one
+     * @param field name of field to be changed
+     * @param newName new name of field to replace old name
+     * @return true if the name of the field was replaced, false otherwise
+     */
+    boolean renameField (String field, String newName)
     {
         validateCharacters(newName);
-        if (attributes.contains(attribute) && !attributes.contains(newName))
+        Field f = getField(field);
+        Field newF = getField(field);
+
+        if (f == null || newF != null || name.equals(newName))
+            return false;
+        if (fields.contains(f))
         {
-            if (!name.equals(newName)) {
-                attributes.remove(attribute);
-                return attributes.add(newName);
-            }
-            else {
-                return false;
-            }
+            f.renameAttribute(newName);
+            return true;
         }
         return false;
     }
 
     /**
-     * Returns whether or not an attribute exists in the attribute list or not
-     * @param attribute attribute to test whether it exists
-     * @return true if the attribute exists, false otherwise
+     * Attemps to rename an existing method with paramNum parameters to a new one
+     * @param method name of method to be changed
+     * @param paramNum number of parameters
+     * @param newName new name of method to replace old name
+     * @return true if the name of the method was replaced based on paramNum, false otherwise
      */
-    boolean exists(String attribute)
+    boolean renameMethod (String method, int paramNum, String newName)
     {
-        return attributes.contains(attribute);
+        validateCharacters(newName);
+        Method m = getMethod (method, paramNum);
+        Method newM = getMethod (newName, paramNum);
+
+        if (m == null || newM != null)
+            return false;
+        if (methods.contains(m))
+        {
+            m.renameAttribute(newName);
+            return true;
+        }
+        return false;
     }
 
     /**
-     * Returns the list of attributes to the user
-     * @return the list of attributes to the user
+     * Returns whether a method with paramNum parameters exists in methods or not
+     * @param method name of method
+     * @param paramNum number of parameters
+     * @return true if the method with paramNum parameters does exist in methods, false otherwise
      */
-    HashSet<String> getAllAttributes()
+    boolean fieldExists(String field)
     {
-        return attributes;
+        return fields.contains(getField(field));
+    }
+
+    /**
+     * Returns whether a method with paramNum parameters exists in methods or not
+     * @param method name of method
+     * @param paramNum number of parameters
+     * @return true if the method with paramNum parameters does exist in methods, false otherwise
+     */
+    boolean methodExists(String method, int paramNum)
+    {
+        return methods.contains(getMethod(method, paramNum));
+    }
+
+    /**
+     * Returns the list of fields to the user
+     * @return the list of fields to the user
+     */
+    HashSet<Field> getFields()
+    {
+        return fields;
+    }
+
+    /**
+     * Returns the list of methods to the user
+     * @return the list of methods to the user
+     */
+    HashSet<Method> getMethods()
+    {
+        return methods;
     }
 
     /**
@@ -136,90 +238,90 @@ public class UMLClass {
      * @param src source class
      * @param dest desination class
      */
-    boolean addRelationship (String src, String dest)
-    {
-        // B --> C
-        if (!src.equals(name) && !dest.equals(name))
-        {
-            throw new IllegalArgumentException("Wrong class for relationship");
-        }
-        // A --> A
-        if (src.equals(name) && dest.equals(name))
-        {
-            if (incoming.contains(src) && outgoing.contains(dest))
-                throw new IllegalArgumentException("Relationship already exists");
-            return incoming.add(src) && outgoing.add(dest);
-        }
-        // A --> B
-        else if (src.equals(name))
-        {
-            if (outgoing.contains(dest))
-                throw new IllegalArgumentException("Relationship already exists");
-            return outgoing.add(dest);
-        }
-        // C --> A
-        else if (dest.equals(name))
-        {
-            if (incoming.contains(src))
-                throw new IllegalArgumentException("Relationship already exists");
-            return incoming.add(src);
-        }
-        else
-        {
-            throw new IllegalArgumentException("Relationship cannot be created");
-        }
+    // boolean addRelationship (String src, String dest)
+    // {
+    //     // B --> C
+    //     if (!src.equals(name) && !dest.equals(name))
+    //     {
+    //         throw new IllegalArgumentException("Wrong class for relationship");
+    //     }
+    //     // A --> A
+    //     if (src.equals(name) && dest.equals(name))
+    //     {
+    //         if (incoming.contains(src) && outgoing.contains(dest))
+    //             throw new IllegalArgumentException("Relationship already exists");
+    //         return incoming.add(src) && outgoing.add(dest);
+    //     }
+    //     // A --> B
+    //     else if (src.equals(name))
+    //     {
+    //         if (outgoing.contains(dest))
+    //             throw new IllegalArgumentException("Relationship already exists");
+    //         return outgoing.add(dest);
+    //     }
+    //     // C --> A
+    //     else if (dest.equals(name))
+    //     {
+    //         if (incoming.contains(src))
+    //             throw new IllegalArgumentException("Relationship already exists");
+    //         return incoming.add(src);
+    //     }
+    //     else
+    //     {
+    //         throw new IllegalArgumentException("Relationship cannot be created");
+    //     }
         
-    }
+    // }
 
-    /**
-     * Removes an item from either the incoming hashset or the outgoing hashset
-     * depending on what the src and dest are
-     * @param src source class
-     * @param dest destination class
-     */
-    boolean removeRelationship (String src, String dest)
-    {
-       // B --> C
-       if (!src.equals(name) && !dest.equals(name))
-       {
-           throw new IllegalArgumentException("Relationship does not exist");
-       }
-       // A --> A
-       if (src.equals(name) && dest.equals(name))
-       {
-           return incoming.remove(src) && outgoing.remove(dest);
-       }
-       // A --> B
-       else if (src.equals(name))
-       {
-           return outgoing.remove(dest);
-       }
-       // C --> A
-       else if (dest.equals(name))
-       {
-           return incoming.remove(src);
-       }
-       else
-       {
-           throw new IllegalArgumentException("Relationship cannot be removed");
-       }
-    }
+    // /**
+    //  * Removes an item from either the incoming hashset or the outgoing hashset
+    //  * depending on what the src and dest are
+    //  * @param src source class
+    //  * @param dest destination class
+    //  */
+    // boolean removeRelationship (String src, String dest)
+    // {
+    //    // B --> C
+    //    if (!src.equals(name) && !dest.equals(name))
+    //    {
+    //        throw new IllegalArgumentException("Relationship does not exist");
+    //    }
+    //    // A --> A
+    //    if (src.equals(name) && dest.equals(name))
+    //    {
+    //        return incoming.remove(src) && outgoing.remove(dest);
+    //    }
+    //    // A --> B
+    //    else if (src.equals(name))
+    //    {
+    //        return outgoing.remove(dest);
+    //    }
+    //    // C --> A
+    //    else if (dest.equals(name))
+    //    {
+    //        return incoming.remove(src);
+    //    }
+    //    else
+    //    {
+    //        throw new IllegalArgumentException("Relationship cannot be removed");
+    //    }
+    // }
 
-    /**
-     * Returns the incoming hashset
-     * @return the incoming hashset
-     */
-    HashSet<String> getIncoming()
-    {
-        return incoming;
-    }
+    // /**
+    //  * Returns the incoming hashset
+    //  * @return the incoming hashset
+    //  */
+    // HashSet<String> getIncoming()
+    // {
+    //     return incoming;
+    // }
 
-    /**
-     * Returns the outgoing hashset
-     * @return the outgoing hashset
-     */
-    HashSet<String> getOutgoing()
-    {
-        return outgoing;
-    }
+    // /**
+    //  * Returns the outgoing hashset
+    //  * @return the outgoing hashset
+    //  */
+    // HashSet<String> getOutgoing()
+    // {
+    //     return outgoing;
+    // }
 }
