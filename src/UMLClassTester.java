@@ -28,36 +28,33 @@ public class UMLClassTester {
         assertEquals("Car", c.getName());
     }
 
-    // --------------------- ADD ATTRIBUTE ---------------------
+    // --------------------- ADD FIELDS ---------------------
 
     @Test
-    public void createOneAttributeCalledEngine()
+    public void addOneField_ThenClassShouldContainField()
     {
-        c.addAttribute("Engine");
-        HashSet<String> set = c.getAllAttributes();
-        assertTrue(set.contains("Engine"));
+        c.addField("Engine");
+        assertTrue(c.fieldExists("Engine"));
     }
     @Test
-    public void createAttributeWithSameNameAsClass()
+    public void addFieldWithSameNameAsClass_ThenClassShouldFailToAddField()
     {
-        assertFalse(c.addAttribute("UMLClass"));
+        assertFalse(c.addField("UMLClass"));
     }
     @Test
-    public void addEngineAttributeToUMLClassAlreadyContainingEngineAttribute()
+    public void addFieldThatAlreadyExists_ThenClassShouldFailToAddField()
     {
-        c.addAttribute("Engine");
-        HashSet<String> set1 = c.getAllAttributes();
-        assertTrue(set1.contains("Engine"));
-
-        assertFalse(c.addAttribute("Engine"));
+        c.addField("Engine");
+        assertTrue(c.fieldExists("Engine"));
+        assertFalse(c.addField("Engine"));
     }
 
     @Test
-    public void addAttributeWithNonAlphaNumericCharacters()
+    public void addFieldWithNonAlphaNumericCharacters_ThrowsIllegalArgumentException()
     {
         try
         {
-            c.addAttribute("Engine%");
+            c.addField("Engine%");
         }
         catch (IllegalArgumentException e)
         {
@@ -67,13 +64,13 @@ public class UMLClassTester {
 
     @SuppressWarnings("null")
     @Test
-    public void addEngineAttributeToNonexistantClass()
+    public void addFieldToClassThatDNA_ThrowsNullPointerException()
     {
         // what is this testing??
         UMLClass DNE = null;
         try
         {
-            DNE.addAttribute("Engine");
+            DNE.addField("Engine");
         }
         catch (NullPointerException e)
         {
@@ -81,54 +78,52 @@ public class UMLClassTester {
         }
     }
 
-    // --------------------- RENAME ATTRIBUTE ---------------------
+    // --------------------- RENAME FIELDS ---------------------
 
     @Test
-    public void createEngineAttributeAndRenameToWheel()
+    public void addFieldThenRenameIt_ThenFieldShouldBeRenamed()
     {
-        c.addAttribute("Engine");
-        HashSet<String> set1 = c.getAllAttributes();
-        assertTrue(set1.contains("Engine"));
+        c.addField("Engine");
+        assertTrue(c.fieldExists("Engine"));
 
-        c.renameAttribute("Engine", "Wheel");
-        HashSet<String> set2 = c.getAllAttributes();
-        assertTrue(set2.contains("Wheel"));
+        c.renameField("Engine", "Wheel");
+        System.out.println("HELLO");
+        assertTrue(c.fieldExists("Wheel"));
     }
     @Test
-    public void addEngineAttributeAndAddWheelAttributeThenRenameEngineToWheel()
+    public void addTwoFieldsAndRenameOneFieldToOneThatExists_ThenFieldShouldFailToBeRenamed()
     {
-        c.addAttribute("Engine");
-        c.addAttribute("Wheel");
-        assertFalse(c.renameAttribute("Engine", "Wheel"));
-    }
-
-    @Test
-    public void renameEngineAttributeToEngine()
-    {
-        c.addAttribute("Engine");
-        assertFalse(c.renameAttribute("Engine", "Engine"));
-    }
-
-    // --------------------- DELETE ATTRIBUTE ---------------------
-
-    @Test
-    public void createEngineAttributeAndRemoveIt()
-    {
-        c.addAttribute("Engine");
-        HashSet<String> set1 = c.getAllAttributes();
-        assertTrue(set1.contains("Engine"));
-
-        c.removeAttribute("Engine");
-        HashSet<String> set2 = c.getAllAttributes();
-        assertTrue(set2.isEmpty());
+        c.addField("Engine");
+        c.addField("Wheel");
+        assertFalse(c.renameField("Engine", "Wheel"));
     }
 
     @Test
-    public void removeEngineAttributeWhenItDoesntExist()
+    public void renameFieldToSameName_ThenFieldShouldFailToBeRenamed()
+    {
+        c.addField("Engine");
+        assertFalse(c.renameField("Engine", "Engine"));
+    }
+
+    // --------------------- DELETE FIELDS ---------------------
+
+    @Test
+    public void addFieldAndRemoveIt_ThenFieldShouldBeRemoved()
+    {
+        c.addField("Engine");
+        assertTrue(c.fieldExists("Engine"));
+
+        c.removeField("Engine");
+        HashSet<Field> set = c.getFields();
+        assertTrue(set.isEmpty());
+    }
+
+    @Test
+    public void removeFieldThatDNE_ThrowsIllegalArgumentException()
     {
         try
         {
-            c.removeAttribute("Engine");
+            c.removeField("Engine");
         }
         catch(IllegalArgumentException e)
         {

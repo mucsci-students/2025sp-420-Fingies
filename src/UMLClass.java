@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -157,9 +156,9 @@ public class UMLClass {
     {
         validateCharacters(newName);
         Field f = getField(field);
-        Field newF = getField(field);
+        Field newF = getField(newName);
 
-        if (f == null || newF != null || name.equals(newName))
+        if (field.equals(newName) || f == null || newF != null || name.equals(newName))
             return false;
         if (fields.contains(f))
         {
