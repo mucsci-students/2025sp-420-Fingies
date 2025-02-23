@@ -1,62 +1,77 @@
+import java.util.Objects;
+
 /**
  * A class to create a relationship between two other classes
  * @author Nick Hayes & Lincoln Craddock
  */
 public class Relationship 
-{
-    private String src;
-    private String dest;
+{	
+    private UMLClass src;
+    private UMLClass dest;
+    
+    RelationshipType type;
 
     /**
      * Relationship constructor
-     * @param src The name of the source of the relationship
-     * @param dest The name of the destination of the relationship
+     * 
+     * @param src The source of the relationship
+     * @param dest The destination of the relationship
      */
-    Relationship(String src, String dest)
+    Relationship(UMLClass src, UMLClass dest, RelationshipType type)
     {
-        if(UMLClassHandler.exists(src))
-        {
-            this.src = src;
-        }
-        else
-        {
-            throw new IllegalArgumentException("Source does not exist");
-        }
-        if(UMLClassHandler.exists(dest))
-        {
-            this.dest = dest;
-        }
-        else
-        {
-            throw new IllegalArgumentException("Destination does not exist");
-        }
+        this.src = src;
+        this.dest = dest;
+        this.type = type;
     }
 
     /**
      * Getter method for the src field
+     * 
      * @return The src of the object called upon
      */
-    String getSrc()
+    UMLClass getSrc()
     {
         return this.src;
     }
 
     /**
      * Getter method for the dest field
+     * 
      * @return The dest of the object called upon
      */
-    String getDest()
+    UMLClass getDest()
     {
         return this.dest;
     }
+    
+    /**
+     * Getter for the type of the relationship
+     * 
+     * @return The type of this relationship
+     */
+    RelationshipType getType()
+    {
+    	return type;
+    }
+    
+    /**
+     * Setter for the type of this relationship
+     * 
+     * @param newType The new type to give this relationship
+     */
+    void setType(RelationshipType newType)
+    {
+    	type = newType;
+    }
 
+    // Doesn't check the relationship type, only checks the source & destination relationships
     @Override
     public boolean equals(Object obj)
     {
         if(obj != null && obj.getClass() == this.getClass())
         {
             Relationship r = (Relationship)obj;
-            if(this.src == r.src && this.dest == r.dest)
+            if(this.src.getName().equals(r.src.getName()) && this.dest.getName().equals(r.dest.getName()))
             {
                 return true;
             }
@@ -67,12 +82,12 @@ public class Relationship
     @Override 
     public String toString()
     {
-        return this.src + " --> " + this.dest;
+        return this.src.getName() + " " + type + " " + this.dest.getName();
     }
 
     @Override
     public int hashCode()
     {
-        return this.src.hashCode() * 5 + this.dest.hashCode() * 7;
+        return Objects.hash(this.src.hashCode(), this.dest.hashCode());
     }
 }    

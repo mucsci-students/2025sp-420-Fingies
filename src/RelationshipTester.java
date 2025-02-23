@@ -22,45 +22,45 @@ public class RelationshipTester {
         UMLClassHandler.createClass("Class2");
         UMLClassHandler.createClass("Jeremy");
         UMLClassHandler.createClass("Jane");
-        r = new Relationship("Class1", "Class2");
-        r2 = new Relationship("Jeremy", "Jane");
+        r = new Relationship(UMLClassHandler.getClass("Class1"),UMLClassHandler.getClass("Class2"), RelationshipType.COMPOSITION);
+        r2 = new Relationship(UMLClassHandler.getClass("Jeremy"), UMLClassHandler.getClass("Jane"), RelationshipType.INHERITANCE);
     }
     
     @Test
     public void RelationshipHasCorrectSrc()
     {
-        assertEquals("The name of the src should be \"Class1\"", "Class1", r.getSrc());
+        assertEquals("The name of the src should be \"Class1\"", "Class1", r.getSrc().getName());
     }
     
     @Test
     public void RelationshipHasCorrectSrc2()
     {
-        assertEquals("The name of the src should be \"Jeremy\"", "Jeremy", r2.getSrc());
+        assertEquals("The name of the src should be \"Jeremy\"", "Jeremy", r2.getSrc().getName());
     }
     
     @Test
     public void RelationshipHasCorrectDest()
     {
-        assertEquals("The name of the dest should be \"Class2\"", "Class2", r.getDest());
+        assertEquals("The name of the dest should be \"Class2\"", "Class2", r.getDest().getName());
     }
     
     @Test
     public void RelationshipHasCorrectDest2()
     {
-        assertEquals("The name of the dest should be \"Jane\"", "Jane", r2.getDest());
+        assertEquals("The name of the dest should be \"Jane\"", "Jane", r2.getDest().getName());
     }
     
     @Test
     public void RelationshipsAreEqual()
     {
-        Relationship rCopy = new Relationship("Class1", "Class2");
+        Relationship rCopy = new Relationship(UMLClassHandler.getClass("Class1"),UMLClassHandler.getClass("Class2"), RelationshipType.COMPOSITION);
         assertTrue("Two relationships between Class1 and Class2 should be equal.", r.equals(rCopy));
     }
     
     @Test
     public void RelationshipsAreEqual2()
     {
-        Relationship rCopy = new Relationship("Class1", "Class2");
+        Relationship rCopy = new Relationship(UMLClassHandler.getClass("Class1"),UMLClassHandler.getClass("Class2"), RelationshipType.COMPOSITION);
         assertTrue("Two relationships between Class1 and Class2 should be equal.", rCopy.equals(r));
     }
     
@@ -79,13 +79,13 @@ public class RelationshipTester {
     @Test
     public void RelationshipToStringWorks()
     {
-        assertEquals("The string representation should be \"Class1 --> Class2\"", "Class1 --> Class2", r.toString());
+        assertEquals("The string representation should be \"Class1 " + RelationshipType.COMPOSITION + " Class2\"", "Class1 " + RelationshipType.COMPOSITION + " Class2", r.toString());
     }
     
     @Test
     public void RelationshipToStringWorks2()
     {
-        assertEquals("The string representation should be \"Jeremy --> Jane\"", "Jeremy --> Jane", r2.toString());
+        assertEquals("The string representation should be \"Jeremy " + RelationshipType.INHERITANCE + " Jane\"", "Jeremy " + RelationshipType.INHERITANCE + " Jane", r2.toString());
     }
    
 }
