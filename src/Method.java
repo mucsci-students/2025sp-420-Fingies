@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Method extends Attribute {
     private ArrayList<String> parameters;
@@ -32,7 +33,7 @@ public class Method extends Attribute {
     public boolean addParameter (String name)
     {
         validateCharacters(name);
-        if (!exists(name))
+        if (!parameterExists(name))
         {
             parameters.add(name);
             return true;
@@ -72,7 +73,7 @@ public class Method extends Attribute {
      * @param name name of parameter to be checked
      * @return true if the parameter exists, false otherwise
      */
-    public boolean exists (String name)
+    public boolean parameterExists (String name)
     {
         return parameters.contains(name);
     }
@@ -84,5 +85,32 @@ public class Method extends Attribute {
     public ArrayList<String> getParameters ()
     {
         return parameters;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true; // Same object reference
+        if (obj == null || getClass() != obj.getClass()) return false; // Different class
+
+        Method method = (Method) obj;
+        return getName().equals(method.getName()) && parameters.equals(method.parameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), parameters);
+    }
+
+    @Override
+    public String toString()
+    {
+        String str = getName() + "(";
+        for (String parameter : parameters)
+        {
+            str += parameter + ", ";
+        }
+        str = str.substring(0, str.length() - 2); // trim off the extra comma
+        str += ")";
+        return str;
     }
 }

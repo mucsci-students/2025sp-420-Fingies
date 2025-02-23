@@ -162,7 +162,8 @@ public class UMLClass {
             return false;
         if (fields.contains(f))
         {
-            f.renameAttribute(newName);
+            fields.remove(f); // Remove the old field
+            fields.add(new Field(newName)); // Create new Field object and add it to fields
             return true;
         }
         return false;
@@ -185,7 +186,9 @@ public class UMLClass {
             return false;
         if (methods.contains(m))
         {
-            m.renameAttribute(newName);
+            methods.remove(m); // Remove the old method
+            Method newMethod = new Method(newName, m.getParameters()); // Create new Method object
+            methods.add(newMethod); // Add the renamed method
             return true;
         }
         return false;
@@ -230,97 +233,4 @@ public class UMLClass {
     {
         return methods;
     }
-
-    /**
-     * Add an item to either the incoming hashset or the outgoing hashset
-     * depending on what the src and dest are
-     * @param src source class
-     * @param dest desination class
-     */
-    // boolean addRelationship (String src, String dest)
-    // {
-    //     // B --> C
-    //     if (!src.equals(name) && !dest.equals(name))
-    //     {
-    //         throw new IllegalArgumentException("Wrong class for relationship");
-    //     }
-    //     // A --> A
-    //     if (src.equals(name) && dest.equals(name))
-    //     {
-    //         if (incoming.contains(src) && outgoing.contains(dest))
-    //             throw new IllegalArgumentException("Relationship already exists");
-    //         return incoming.add(src) && outgoing.add(dest);
-    //     }
-    //     // A --> B
-    //     else if (src.equals(name))
-    //     {
-    //         if (outgoing.contains(dest))
-    //             throw new IllegalArgumentException("Relationship already exists");
-    //         return outgoing.add(dest);
-    //     }
-    //     // C --> A
-    //     else if (dest.equals(name))
-    //     {
-    //         if (incoming.contains(src))
-    //             throw new IllegalArgumentException("Relationship already exists");
-    //         return incoming.add(src);
-    //     }
-    //     else
-    //     {
-    //         throw new IllegalArgumentException("Relationship cannot be created");
-    //     }
-        
-    // }
-
-    // /**
-    //  * Removes an item from either the incoming hashset or the outgoing hashset
-    //  * depending on what the src and dest are
-    //  * @param src source class
-    //  * @param dest destination class
-    //  */
-    // boolean removeRelationship (String src, String dest)
-    // {
-    //    // B --> C
-    //    if (!src.equals(name) && !dest.equals(name))
-    //    {
-    //        throw new IllegalArgumentException("Relationship does not exist");
-    //    }
-    //    // A --> A
-    //    if (src.equals(name) && dest.equals(name))
-    //    {
-    //        return incoming.remove(src) && outgoing.remove(dest);
-    //    }
-    //    // A --> B
-    //    else if (src.equals(name))
-    //    {
-    //        return outgoing.remove(dest);
-    //    }
-    //    // C --> A
-    //    else if (dest.equals(name))
-    //    {
-    //        return incoming.remove(src);
-    //    }
-    //    else
-    //    {
-    //        throw new IllegalArgumentException("Relationship cannot be removed");
-    //    }
-    // }
-
-    // /**
-    //  * Returns the incoming hashset
-    //  * @return the incoming hashset
-    //  */
-    // HashSet<String> getIncoming()
-    // {
-    //     return incoming;
-    // }
-
-    // /**
-    //  * Returns the outgoing hashset
-    //  * @return the outgoing hashset
-    //  */
-    // HashSet<String> getOutgoing()
-    // {
-    //     return outgoing;
-    // }
 }
