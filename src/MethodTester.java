@@ -36,7 +36,7 @@ public class MethodTester {
     }
 
     @Test
-    public void addOnearameterLongerThan50Characters_ThrowsIllegalArgumentException()
+    public void addOneParameterLongerThan50Characters_ThrowsIllegalArgumentException()
     {
         try{
             m.addParameter("Parameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeter1");
@@ -73,7 +73,7 @@ public class MethodTester {
     // --------------------- RENAME PARAMETERS ---------------------
 
     @Test
-    public void addParamterThenRenameIt_ThenParameterdShouldBeRenamed()
+    public void addParameterThenRenameIt_ThenParameterdShouldBeRenamed()
     {
         m.addParameter("Param1");
         assertTrue(m.parameterExists("Param1"));
@@ -83,7 +83,7 @@ public class MethodTester {
     }
 
     @Test
-    public void addTwoParametersndRenameOneParameteToOneThatExists_ThenParameteShouldFailToBeRenamed()
+    public void addTwoParametersAndRenameOneParameterToOneThatExists_ThenParameterShouldFailToBeRenamed()
     {
         m.addParameter("Param1");
         m.addParameter("Param2");

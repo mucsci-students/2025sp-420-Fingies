@@ -4,6 +4,7 @@ public abstract class Attribute {
 
     public Attribute (String name)
     {
+        validateCharacters(name);
         this.name = name;
     }
 

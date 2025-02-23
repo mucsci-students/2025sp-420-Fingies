@@ -106,7 +106,6 @@ public class UMLClass {
      */
     boolean addField (String field)
     {
-        validateCharacters(field);
         if (name.equals(field))
             return false;
         return fields.add(new Field(field));
@@ -119,7 +118,6 @@ public class UMLClass {
      */
     boolean addMethod (String method, List<String>parameters)
     {
-        validateCharacters(method);
         if (name.equals(method))
             return false;
         return methods.add(new Method(method, parameters));
