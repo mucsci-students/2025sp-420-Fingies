@@ -16,12 +16,6 @@
 		ADD_RELATIONSHIP,
 		/** Removes a relationship. */
 		REMOVE_RELATIONSHIP,
-		/** Creates a new class. */
-		ADD_ATTRIBUTE,
-		/** Removes a class that exists. */
-		REMOVE_ATTRIBUTE,
-		/** Gives a class a new name. */
-		RENAME_ATTRIBUTE,
 		/** Creates a relationship between two classes. */
 		SAVE,
 		/** Removes a relationship. */
@@ -35,6 +29,25 @@
 		/** Gives the user instructions on how to use the program, or help with a specific command. */
 		HELP,
 		/** Closes the program. */
-		EXIT;
+		EXIT,
+		/** Adds a new method to a class. */
+		ADD_METHOD,
+		/** Removes a method from a class. */
+		REMOVE_METHOD,
+		/** Gives a method a new name. */
+		RENAME_METHOD,
+		/** Adds a new field to a class. */
+		ADD_FIELD,
+		/** Removes a field from a class. */
+		REMOVE_FIELD,
+		/** Gives a field a new name. */
+		RENAME_FIELD,
+		/** Adds a list of new parameters to a method */
+		ADD_PARAMETERS,
+		/** Removes a set of parameters from a method */
+		REMOVE_PARAMETERS,
+		/** Changes the name of a parameter to a new one */
+		CHANGE_PARAMETER;
+		
 			
 	}
