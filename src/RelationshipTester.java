@@ -8,7 +8,7 @@ import org.junit.Test;
 /**
  * A bunch of test cases to make sure the Relationship class works.
  * 
- * @author Lincoln Craddock
+ * @author Lincoln Craddock & Nick Hayes
  */
 public class RelationshipTester {
 
@@ -87,5 +87,19 @@ public class RelationshipTester {
     {
         assertEquals("The string representation should be \"Jeremy " + RelationshipType.INHERITANCE + " Jane\"", "Jeremy " + RelationshipType.INHERITANCE + " Jane", r2.toString());
     }
-   
+    
+    @Test
+    public void RelationshipTypeWorks()
+    {
+    	assertEquals(r + " should be the type " + RelationshipType.COMPOSITION, RelationshipType.COMPOSITION, r.getType());
+    }
+    
+    @Test
+    public void RelationshipTypeWorks2()
+    {
+    	r.setType(RelationshipType.AGGREGATION);
+    	assertEquals(r + " should be the type " + RelationshipType.AGGREGATION, RelationshipType.AGGREGATION, r.getType());
+    	r.setType(RelationshipType.COMPOSITION);
+    	assertEquals(r + " should be the type " + RelationshipType.COMPOSITION, RelationshipType.COMPOSITION, r.getType());
+    }  
 }
