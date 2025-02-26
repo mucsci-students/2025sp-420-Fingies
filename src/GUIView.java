@@ -7,6 +7,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
@@ -16,8 +17,9 @@ import javax.swing.JMenu;
 import javax.swing.JPanel;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
+import java.util.List;
 
-public class GUIView extends JFrame implements ActionListener{
+public class GUIView extends JFrame implements ActionListener, View {
 
     private JMenuBar menuBar;
     private JMenu fileMenu;
@@ -25,9 +27,11 @@ public class GUIView extends JFrame implements ActionListener{
     private JMenu removeMenu;
     private JMenu renameMenu;
 
-    private JMenuItem load;
-    private JMenuItem save;
-    private JMenuItem exit;
+    private GUIMenuItem load;
+    private GUIMenuItem save;
+    private GUIMenuItem exit;
+    
+    private Controller controller;
 
     // HashMap with key as name of class and value as GUIUMLClass associated with the name
     private HashMap<String, GUIUMLClass> UMLClasses;
@@ -51,9 +55,9 @@ public class GUIView extends JFrame implements ActionListener{
         menuBar.add(renameMenu);
 
         // Creates JMenu submenus
-        load = new JMenuItem("Open");
-        save = new JMenuItem("Save");
-        exit = new JMenuItem("Exit");
+        load = new GUIMenuItem("Open", Action.LOAD);
+        save = new GUIMenuItem("Save", Action.SAVE);
+        exit = new GUIMenuItem("Exit", Action.EXIT);
 
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
@@ -84,18 +88,19 @@ public class GUIView extends JFrame implements ActionListener{
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == load)
+    	Action a = ((GUIMenuItem) e.getSource()).action;
+    	String[] args = new String[0];
+        if (a == Action.LOAD)
         {
-            System.out.println("loaded file");
+        	final JFileChooser file = new JFileChooser();
+            int returnValue = file.showOpenDialog(this);
+            args = new String[] {file.getSelectedFile().getPath()};
         }
-        else if (e.getSource() == save)
+        else if (a == Action.SAVE || a == Action.EXIT)
         {
-            System.out.println("saved file");
+            // This is meant to be blank
         }
-        else if (e.getSource() == exit)
-        {
-            System.exit(0);
-        }
+        controller.runHelper(a, args);
     }
 
     public void addUMLClass(String name)
@@ -110,14 +115,71 @@ public class GUIView extends JFrame implements ActionListener{
         this.add(newUMLClass.getJLayeredPane());
         UMLClasses.put(name, newUMLClass);
     }
-
-    public static void main (String[] args)
+    
+    @Override
+    public String promptForSaveInput(String message)
     {
-        // Creates the frame
-        GUIView frame = new GUIView();
-        frame.addUMLClass("Class1");
-        frame.addUMLClass("Class2");
+    	final JFileChooser file = new JFileChooser();
+    	file.setDialogTitle(message);
+        int returnValue = file.showSaveDialog(this);
+        return file.getSelectedFile().getName();
     }
+    
+	@Override
+	public Command nextCommand() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public String promptForInput(String message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public List<String> promptForInput(List<String> messages) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public List<String> promptForInput(List<String> messages, List<InputCheck> checks) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void notifySuccess() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void notifySuccess(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void notifyFail(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void display(String message) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void help() {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public void help(String command) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void setController(Controller c)
+	{
+		controller = c;
+	}
   
 }
 

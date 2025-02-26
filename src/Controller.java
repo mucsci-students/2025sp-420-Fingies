@@ -4,12 +4,12 @@
  * @author kdichter
  */
 public class Controller {
-    private CLIView view;
+    private View view;
     private JModel model;
     private boolean madeChange;
     private boolean hasSaved;
 
-    Controller (CLIView view, JModel model)
+    Controller (View view, JModel model)
     {
         this.view = view;
         this.model = model;
@@ -280,6 +280,7 @@ public class Controller {
      */
     public void run ()
     {
+    	//TODO Probably remove this method as we are adding functionality into the Views
         if(!getData())
             return;
         Command command;
@@ -299,6 +300,7 @@ public class Controller {
      */
     public void runHelper(Action action, String[] args)
     {
+    	//TODO Refactor attribute cases and update with fields, and methods
         switch(action) {
             case ADD_CLASS:
                 if (args.length == 1)
@@ -450,7 +452,17 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Cannot save a file with no previous filepath provided.");
+                        args = new String[] {view.promptForSaveInput("Please designate a filepath to save to")};
+                        if (doSave(args[0]))
+                        {
+                            hasSaved = true;
+                            madeChange = false;
+                            view.notifySuccess("Successfully saved your file");
+                        }
+                        else
+                        {
+                    	    view.notifyFail("Invalid filepath provided.");
+                        }
                     }
                 }
                 else if (args.length == 1)

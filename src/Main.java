@@ -6,8 +6,12 @@
 public class Main {
 
 	public static void main(String[] args) {
-		
-		Controller controller = new Controller(new CLIView(), new JModel());
+		GUIView GUIview = new GUIView();
+		Controller controller = new Controller(GUIview, new JModel());
+		GUIview.setController(controller);
+		GUIview.addUMLClass("Class 1");
+		GUIview.addUMLClass("Class 2");
+		GUIview.addUMLClass("Class 3");
 		controller.run();
 	}
 
