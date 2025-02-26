@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,6 +8,7 @@ import java.awt.event.MouseAdapter;
 
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -27,13 +29,13 @@ public class GUIView extends JFrame implements ActionListener{
     private JMenuItem save;
     private JMenuItem exit;
 
-    // Hashmap for creating UMLClasses represented as JLayeredPanes with String for classname and easy identificaton
-    private HashMap<String, JLayeredPane> UMLClasses;
+    // HashMap with key as name of class and value as GUIUMLClass associated with the name
+    private HashMap<String, GUIUMLClass> UMLClasses;
 
     public GUIView ()
     {
         // Creates the list for UMLClasses to be added
-        UMLClasses = new HashMap<String, JLayeredPane>();
+        UMLClasses = new HashMap<String, GUIUMLClass>();
 
         // Creates a JMenuBar and menus
         menuBar = new JMenuBar();
@@ -69,10 +71,11 @@ public class GUIView extends JFrame implements ActionListener{
 
         
 
-        // Sets main attributes of the "frame" itself and adds the JLayeredPane
+        // Sets main attributes of the "frame" (this)
         this.setTitle("UMLEditor");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(null);
+        // this.setLayout(new FlowLayout());
         this.setSize(1000, 1000);
         this.setJMenuBar(menuBar);
 
@@ -97,53 +100,15 @@ public class GUIView extends JFrame implements ActionListener{
 
     public void addUMLClass(String name)
     {
-        // Creates a bunch of different panels
-        JPanel bgPanel = new JPanel();
-        bgPanel.setBackground(Color.BLACK);
-        bgPanel.setBounds(0, 0, 150, 250);
-
-        JPanel classPanel = new JPanel();
-        classPanel.setBackground(Color.RED);
-        classPanel.setBounds(5, 5, 140, 25);
-
-        JPanel fieldsPanel = new JPanel();
-        fieldsPanel.setBackground(Color.GREEN);
-        fieldsPanel.setBounds(5, 35, 140, 75);
-
-        JPanel methodsPanel = new JPanel();
-        methodsPanel.setBackground(Color.BLUE);
-        methodsPanel.setBounds(5, 115, 140, 125);
-
-        /* Here are the different layers in order for a JLayeredPane:
-                JLayeredPane.DEFAULT_LAYER
-                JLayeredPane.PALETTE_LAYER
-                JLayeredPane.MODAL_LAYER
-                JLayeredPane.POPUP_LAYER
-                JLayeredPane.DRAG_LAYER 
-        */
-
-        // Create a JLayeredPane
-        JLayeredPane background = new JLayeredPane();
-        background.setBounds(0, 0, 150, 250);
-
-        // This is here just to see temporary border of JLayeredPane
-        background.setBackground(Color.YELLOW);
-        background.setOpaque(true); // Make it visible
-
-        // Add all panels on top of it including bgPanel
-        background.add(bgPanel, JLayeredPane.DEFAULT_LAYER);
-        background.add(classPanel, JLayeredPane.PALETTE_LAYER);
-        background.add(fieldsPanel, JLayeredPane.PALETTE_LAYER);
-        background.add(methodsPanel, JLayeredPane.PALETTE_LAYER);
-
+        GUIUMLClass newUMLClass = new GUIUMLClass(name);
         // Creates new listener for the newly added JLayeredPane
-        DragListener dragListener = new DragListener(background, this);
-        background.addMouseListener(dragListener);
-        background.addMouseMotionListener(dragListener);
+        DragListener dragListener = new DragListener(newUMLClass.getJLayeredPane(), this);
+        newUMLClass.getJLayeredPane().addMouseListener(dragListener);
+        newUMLClass.getJLayeredPane().addMouseMotionListener(dragListener);
 
         // Adds the JLayeredPane to the Frame (this) and to the HashMap of UMLClasses
-        this.add(background);
-        UMLClasses.put(name, background);
+        this.add(newUMLClass.getJLayeredPane());
+        UMLClasses.put(name, newUMLClass);
     }
 
     public static void main (String[] args)
