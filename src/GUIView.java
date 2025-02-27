@@ -90,12 +90,14 @@ public class GUIView extends JFrame implements ActionListener, View {
     public void actionPerformed(ActionEvent e) {
     	Action a = ((GUIMenuItem) e.getSource()).action;
     	String[] args = new String[0];
+
         if (a == Action.LOAD)
         {
         	final JFileChooser file = new JFileChooser();
             int returnValue = file.showOpenDialog(this);
             args = new String[] {file.getSelectedFile().getPath()};
         }
+        
         else if (a == Action.SAVE || a == Action.EXIT)
         {
             // This is meant to be blank
@@ -114,6 +116,10 @@ public class GUIView extends JFrame implements ActionListener, View {
         // Adds the JLayeredPane to the Frame (this) and to the HashMap of UMLClasses
         this.add(newUMLClass.getJLayeredPane());
         UMLClasses.put(name, newUMLClass);
+
+        // Force the GUI to refresh and update
+        this.revalidate(); // Recalculate layout
+        this.repaint();    // Repaint to reflect changes
     }
     
     @Override

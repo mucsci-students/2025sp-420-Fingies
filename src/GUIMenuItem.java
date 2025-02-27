@@ -1,9 +1,8 @@
-import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 
-public class GUIMenuItem extends JFrame
+public class GUIMenuItem extends JMenuItem
 {
 	public Action action;
-	
 	
 	public GUIMenuItem(String name)
 	{
