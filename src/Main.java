@@ -6,13 +6,13 @@
 public class Main {
 
 	public static void main(String[] args) {
-		GUIView GUIview = new GUIView();
-		Controller controller = new Controller(GUIview, new JModel());
-		GUIview.setController(controller);
-		GUIview.addUMLClass("Class 1");
-		GUIview.addUMLClass("Class 2");
-		GUIview.addUMLClass("Class 3");
-		controller.run();
+		GUIView view = new GUIView();
+		Controller controller = new Controller(view, new JModel());
+		view.setController(controller);
+		view.addUMLClass("Class 1");
+		view.addUMLClass("Class 2");
+		view.addUMLClass("Class 3");
+		view.run();
 	}
 
 }

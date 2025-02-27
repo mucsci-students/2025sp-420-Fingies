@@ -80,38 +80,40 @@ public class CLIView implements View
     }
 
     @Override
-    public Command nextCommand() 
+    public void run() 
     {
-    	System.out.print(caret + " ");
+    	while(true)
+    	{
+    		System.out.print(caret + " ");
 
-    	String in = sc.nextLine();
-        Command c = Command.parseCommand(in);
-        while(c == null)
-        {
-        	if (in.equals(TOGGLE_COLOR_COMMAND) || in.equals(TOGGLE_COLOR_COMMAND_SHORTHAND))
-        	{
-        		colorMode = !colorMode;
-        		setColorMode(colorMode);
-        		if(colorMode)
-        		{
-        			notifySuccess();
-        			printRainbow("Color mode activated");
-        		}
-        		else
-        			notifySuccess("Color mode disabled");
-        	}
-        	else if (in.equals(CLEAR_COMMAND) || in.equals(CLEAR_COMMAND_SHORTHAND))
-        	{
-        		clearScreen();
-        		notifySuccess();
-        	}
-        	else
-        		notifyFail("Invalid comamnd");
-        	System.out.print(caret + " ");
-        	in = sc.nextLine();
-            c = Command.parseCommand(in);
-        }
-        return c;
+        	String in = sc.nextLine();
+            Command c = Command.parseCommand(in);
+            while(c == null)
+            {
+            	if (in.equals(TOGGLE_COLOR_COMMAND) || in.equals(TOGGLE_COLOR_COMMAND_SHORTHAND))
+            	{
+            		colorMode = !colorMode;
+            		setColorMode(colorMode);
+            		if(colorMode)
+            		{
+            			notifySuccess();
+            			printRainbow("Color mode activated");
+            		}
+            		else
+            			notifySuccess("Color mode disabled");
+            	}
+            	else if (in.equals(CLEAR_COMMAND) || in.equals(CLEAR_COMMAND_SHORTHAND))
+            	{
+            		clearScreen();
+            		notifySuccess();
+            	}
+            	else
+            		notifyFail("Invalid comamnd");
+            	System.out.print(caret + " ");
+            	in = sc.nextLine();
+                c = Command.parseCommand(in);
+            }
+    	}
     }
 
     @Override
@@ -276,5 +278,17 @@ public class CLIView implements View
     	}
     	System.out.println(result + RESET);
     }
+
+	@Override
+	public String promptForSaveInput(String message) 
+	{
+		return promptForInput(message);
+	}
+
+	@Override
+	public String promptForOpenInput(String message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

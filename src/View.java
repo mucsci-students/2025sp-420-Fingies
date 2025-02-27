@@ -13,20 +13,18 @@ import java.util.List;
  */
 public interface View {
 	
-	/**
-	 * Stalls the program until the user inputs a command (such as by submitting one through the
-	 * terminal or by taking an action in the GUI).
-	 * 
-	 * Returns the user's input as a string, which can be parsed using the InputParser class.
-	 * 
-	 * @return A string representation of the user's input.
-	 */
-	Command nextCommand();
+	void run();
 	
-	/*
+	/**
 	 * Displays a message to the user asking for a save filepath
 	 */
 	String promptForSaveInput(String message);
+	
+	
+	/**
+	 * Displays a message to the user asking for a open filepath
+	 */
+	String promptForOpenInput(String message);
 	
 	/**
 	 * Displays a message to the user and stalls the program until they respond.

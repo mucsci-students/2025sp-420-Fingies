@@ -32,6 +32,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     private GUIMenuItem exit;
     
     private Controller controller;
+    final JFileChooser fileChooser = new JFileChooser();
 
     // HashMap with key as name of class and value as GUIUMLClass associated with the name
     private HashMap<String, GUIUMLClass> UMLClasses;
@@ -86,22 +87,11 @@ public class GUIView extends JFrame implements ActionListener, View {
         this.setVisible(true);
 
     }
+    
     @Override
     public void actionPerformed(ActionEvent e) {
     	Action a = ((GUIMenuItem) e.getSource()).action;
     	String[] args = new String[0];
-
-        if (a == Action.LOAD)
-        {
-        	final JFileChooser file = new JFileChooser();
-            int returnValue = file.showOpenDialog(this);
-            args = new String[] {file.getSelectedFile().getPath()};
-        }
-        
-        else if (a == Action.SAVE || a == Action.EXIT)
-        {
-            // This is meant to be blank
-        }
         controller.runHelper(a, args);
     }
 
@@ -125,17 +115,13 @@ public class GUIView extends JFrame implements ActionListener, View {
     @Override
     public String promptForSaveInput(String message)
     {
-    	final JFileChooser file = new JFileChooser();
-    	file.setDialogTitle(message);
-        int returnValue = file.showSaveDialog(this);
-        return file.getSelectedFile().getName();
+    	fileChooser.setDialogTitle(message);
+        int returnValue = fileChooser.showSaveDialog(this);
+        if(returnValue != JFileChooser.APPROVE_OPTION)
+        	return null;
+        return fileChooser.getSelectedFile().getName();
     }
     
-	@Override
-	public Command nextCommand() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 	@Override
 	public String promptForInput(String message) {
 		// TODO Auto-generated method stub
@@ -185,6 +171,20 @@ public class GUIView extends JFrame implements ActionListener, View {
 	public void setController(Controller c)
 	{
 		controller = c;
+	}
+	
+	@Override
+	public String promptForOpenInput(String message) {
+    	fileChooser.setDialogTitle(message);
+        int returnValue = fileChooser.showOpenDialog(this);
+        if(returnValue != JFileChooser.APPROVE_OPTION)
+        	return null;
+        return fileChooser.getSelectedFile().getName();
+	}
+	@Override
+	public void run() 
+	{
+		// Nothing to be implemented here
 	}
   
 }
