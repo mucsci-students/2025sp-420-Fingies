@@ -111,6 +111,30 @@ public class GUIView extends JFrame implements ActionListener, View {
         this.revalidate(); // Recalculate layout
         this.repaint();    // Repaint to reflect changes
     }
+
+    public void removeUMLClass(String name)
+    {
+        // this..getContentPane().remove(UMLClasses.get(name).getJLayeredPane());
+        this.remove(UMLClasses.get(name).getJLayeredPane());
+        UMLClasses.remove(name);
+
+        // Force the GUI to refresh and update
+        this.revalidate(); // Recalculate layout
+        this.repaint();    // Repaint to reflect changes
+    }
+
+    public void renameUMLClass(String className, String newName)
+    {
+        GUIUMLClass temp = UMLClasses.get(className);
+        UMLClasses.remove(className);
+        temp.renameClass(newName);
+        UMLClasses.put(newName, temp);
+
+        // Force the GUI to refresh and update
+        this.revalidate(); // Recalculate layout
+        this.repaint();    // Repaint to reflect changes
+    }
+
     
     @Override
     public String promptForSaveInput(String message)
