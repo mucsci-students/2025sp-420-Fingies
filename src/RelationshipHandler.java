@@ -53,7 +53,7 @@ public class RelationshipHandler
         int i = indexOf(src, dest);
         if(i == -1)
         {
-        	throw new IllegalArgumentException("This relationship already exists");
+        	throw new IllegalArgumentException("This relationship does not exist");
         }
         relationships.remove(i);
     }
@@ -72,7 +72,7 @@ public class RelationshipHandler
     	int i = indexOf(src, dest);
     	if (i == -1)
     	{
-    		throw new IllegalArgumentException("This relationship already exists");
+    		throw new IllegalArgumentException("This relationship does not exist");
     	}
     	relationships.get(i).setType(newType);
     }
