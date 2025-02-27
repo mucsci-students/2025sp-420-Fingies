@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.FlowLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -15,29 +16,36 @@ public class GUIUMLClass {
     private JLabel fields;
     private JLabel methods;
     private JLayeredPane background;
+    private Color color;
 
     public GUIUMLClass(String name)
     {
         // Sets the name of the class
         this.name = name;
 
+        // Creates a random color for the class
+        color = new Color((int)(Math.random() * 240 + 15), (int)(Math.random() * 240 + 15), (int)(Math.random() * 240 + 15), 100);
+
         // Creates a bunch of different panels
-        bgPanel = new JPanel();
-        bgPanel.setBackground(Color.BLACK);
-        bgPanel.setBounds(0, 0, 150, 250);
+        // bgPanel = new JPanel();
+        // bgPanel.setBackground(Color.BLACK);
+        // bgPanel.setBounds(0, 0, 150, 250);
 
         classPanel = new JPanel();
-        classPanel.setBackground(Color.RED);
+        // classPanel.setBackground(Color.RED);
+        // classPanel.setBackground(new Color(255, 0, 0, 60));
+        classPanel.setBackground(color);
         classPanel.setBounds(5, 5, 140, 25);
         classPanel.setLayout(null);  // Set layout to null
 
         fieldsPanel = new JPanel();
-        fieldsPanel.setBackground(Color.GREEN);
+        // fieldsPanel.setBackground(Color.GREEN);
+        fieldsPanel.setBackground(color);
         fieldsPanel.setBounds(5, 35, 140, 75);
         fieldsPanel.setLayout(null);  // Set layout to null
 
         methodsPanel = new JPanel();
-        methodsPanel.setBackground(Color.BLUE);
+        methodsPanel.setBackground(color);
         methodsPanel.setBounds(5, 115, 140, 125);
         methodsPanel.setLayout(null);  // Set layout to null
 
@@ -83,11 +91,12 @@ public class GUIUMLClass {
         background.setBounds(0, 0, 150, 250);
 
         // This is here just to see temporary border of JLayeredPane
-        background.setBackground(Color.YELLOW);
+        // background.setBackground(Color.WHITE);
+        background.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5)); // Red border with thickness of 5
         background.setOpaque(true); // Make it visible
 
         // Add all panels on top of it including bgPanel
-        background.add(bgPanel, JLayeredPane.DEFAULT_LAYER);
+        //background.add(bgPanel, JLayeredPane.DEFAULT_LAYER);
         background.add(classPanel, JLayeredPane.PALETTE_LAYER);
         background.add(fieldsPanel, JLayeredPane.PALETTE_LAYER);
         background.add(methodsPanel, JLayeredPane.PALETTE_LAYER);
@@ -101,6 +110,12 @@ public class GUIUMLClass {
     public JLayeredPane getJLayeredPane()
     {
         return background;
+    }
+
+    public void renameClass (String name)
+    {
+        this.name = name;
+        className.setText(name);
     }
 
 }

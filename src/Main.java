@@ -12,6 +12,10 @@ public class Main {
 		view.addUMLClass("Class 1");
 		view.addUMLClass("Class 2");
 		view.addUMLClass("Class 3");
+
+		view.removeUMLClass("Class 2");
+
+		view.renameUMLClass("Class 1", "ClassA");
 		view.run();
 	}
 
