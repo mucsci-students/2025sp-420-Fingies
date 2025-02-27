@@ -23,6 +23,11 @@ public interface View {
 	 */
 	Command nextCommand();
 	
+	/*
+	 * Displays a message to the user asking for a save filepath
+	 */
+	String promptForSaveInput(String message);
+	
 	/**
 	 * Displays a message to the user and stalls the program until they respond.
 	 * 
