@@ -2,7 +2,7 @@ import javax.swing.JMenuItem;
 
 public class GUIMenuItem extends JMenuItem
 {
-	public Action action;
+	public final Action action;
 	
 	public GUIMenuItem(String name)
 	{
