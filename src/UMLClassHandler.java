@@ -35,18 +35,6 @@ public class UMLClassHandler {
         {
             return false;
         }
-        // C -- > A
-        for (String inc : classes.get(name).getIncoming())
-        {
-            classes.get(inc).removeRelationship(inc, name);
-        }
-
-        // A --> B
-        for (String out : classes.get(name).getOutgoing())
-        {
-            classes.get(out).removeRelationship(name, out);
-        }
-
         return classes.remove(name) != null;
     }
 
@@ -64,24 +52,6 @@ public class UMLClassHandler {
             c.renameClass(newName);
             classes.remove(className);
             classes.put(newName, c);
-            
-            // hot fix--updates incoming/outgoing relationships with the new name
-            for(UMLClass cl : classes.values())
-            {
-            	HashSet<String> incoming = cl.getIncoming();
-            	if (incoming.contains(className))
-            	{
-            		incoming.remove(className);
-            		incoming.add(newName);
-            	}
-            	HashSet<String> outgoing = cl.getOutgoing();
-            	if (outgoing.contains(className))
-            	{
-            		outgoing.remove(className);
-            		outgoing.add(newName);
-            	}
-            }
-            
             return true;
         }
         return false;
@@ -126,34 +96,6 @@ public class UMLClassHandler {
     {
     	return classes.containsKey(name);
     }
-    
-    /**
-     * adds a relationship from both the src and dest classes
-     * @param src src class 
-     * @param dest dest class
-     * @return true if the relationship was successfully added, false otherwise
-     */
-    static boolean addRelationship(String src, String dest)
-    {
-        UMLClass srcClass = getClass(src);
-        UMLClass destClass = getClass(dest);
-        if (src.equals(dest))
-            return srcClass.addRelationship (src, dest);
-        return srcClass.addRelationship (src, dest) && destClass.addRelationship (src, dest);
-    }
-
-    /**
-     * removes a relationship from both the src and dest classes
-     * @param src src class 
-     * @param dest dest class
-     * @return true if the relationship was successfully removed, false otherwise
-     */
-    static boolean removeRelationship(String src, String dest)
-    {
-        UMLClass srcClass = getClass(src);
-        UMLClass destClass = getClass(dest);
-        return srcClass.removeRelationship (src, dest) && destClass.removeRelationship (src, dest);
-    }
 
     /**
      * Returns a string that lists all of the classes & their attributes.
@@ -182,42 +124,34 @@ public class UMLClassHandler {
     static String listClass(UMLClass c)
     {
     	String str = c.getName();
-        HashSet<String> attributes = c.getAllAttributes();
+        HashSet<Field> fields = c.getFields();
+        HashSet<Method> methods = c.getMethods();
         
-        if (attributes.isEmpty())
+        if (fields.isEmpty() && methods.isEmpty())
 	        return str;
         
-        str += ":";
-    	for (String atr : attributes)
+        // prints each field if the list of fields isn't empty
+        if (!fields.isEmpty())
         {
-            str += " " + atr + ",";
-        }
-    	str = str.substring(0, str.length() - 1); // trim off the extra comma
-        return str;
-    }
-
-    /**
-     * Returns a list of the relationships between classes. The string will contain
-     * each class's outgoing relationships.
-     * 
-     * @return A string containing a list of each class's outgoing relationships.
-     */
-    static String listRelationships()
-    {
-    	String str = "";
-        for (UMLClass c : classes.values())
-        {
-            HashSet<String> outgoing = c.getOutgoing();
-            for (String out : outgoing)
+            str += ": \n\tfields:";
+            for (Field field : fields)
             {
-                str += c.getName() + " --> " + out + "\n";
+                str += " " + field.getName() + ", ";
             }
+            str = str.substring(0, str.length() - 2); // trim off the extra comma
         }
         
-        if (str.isEmpty())
-            return "No current relationships exist";
-        else
-        	return str.substring(0, str.length() - 1);
+        // prints each method followed a list of it's parameters if the list of methods isn't empty
+        if (!methods.isEmpty())
+        {
+            str += "\n\tmethods:";
+            for (Method method : methods)
+            {
+                str += method + ", ";
+            }
+            str = str.substring(0, str.length() - 2); // trim off the extra comma
+        }
+        return str;
     }
 
     /**
