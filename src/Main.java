@@ -49,7 +49,6 @@ public class Main {
         // Run the GUI
         view.run();
 
-		view.run();
 	}
 
 }
