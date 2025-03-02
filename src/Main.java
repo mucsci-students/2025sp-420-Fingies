@@ -64,7 +64,6 @@ public class Main {
         // Run the GUI
         view.run();
 
-		view.run();
 	}
 >>>>>>> f472cba (added methods to remove a class and rename a class in the GUI and added randomly generated unique colors for each class)
 
