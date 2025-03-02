@@ -97,6 +97,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     	Action a = ((GUIMenuItem) e.getSource()).action;
     	String[] args = new String[0];
         controller.runHelper(a, args);
+        // TODO: actually execute the command based on whether runHelper() succeeds
     }
 
     /**
@@ -149,7 +150,7 @@ public class GUIView extends JFrame implements ActionListener, View {
 
     public void addUMLClass(String name)
     {
-        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(name));
+        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(name), controller);
 
         // Creates new listener for the newly added JLayeredPane
         DragListener dragListener = new DragListener(newUMLClass.getJLayeredPane(), this, this);
@@ -190,15 +191,6 @@ public class GUIView extends JFrame implements ActionListener, View {
     }
 
     
-    @Override
-    public String promptForSaveInput(String message)
-    {
-    	fileChooser.setDialogTitle(message);
-        int returnValue = fileChooser.showSaveDialog(this);
-        if(returnValue != JFileChooser.APPROVE_OPTION)
-        	return null;
-        return fileChooser.getSelectedFile().getName();
-    }
     
 	@Override
 	public String promptForInput(String message) {
@@ -215,6 +207,26 @@ public class GUIView extends JFrame implements ActionListener, View {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+    public String promptForSaveInput(String message)
+    {
+    	fileChooser.setDialogTitle(message);
+        int returnValue = fileChooser.showSaveDialog(this);
+        if(returnValue != JFileChooser.APPROVE_OPTION)
+        	return null;
+        return fileChooser.getSelectedFile().getName();
+    }
+	
+	@Override
+	public String promptForOpenInput(String message) {
+    	fileChooser.setDialogTitle(message);
+        int returnValue = fileChooser.showOpenDialog(this);
+        if(returnValue != JFileChooser.APPROVE_OPTION)
+        	return null;
+        return fileChooser.getSelectedFile().getName();
+	}
+	
 	@Override
 	public void notifySuccess() {
 		// TODO Auto-generated method stub
@@ -246,23 +258,15 @@ public class GUIView extends JFrame implements ActionListener, View {
 		
 	}
 	
-	public void setController(Controller c)
-	{
-		controller = c;
-	}
-	
-	@Override
-	public String promptForOpenInput(String message) {
-    	fileChooser.setDialogTitle(message);
-        int returnValue = fileChooser.showOpenDialog(this);
-        if(returnValue != JFileChooser.APPROVE_OPTION)
-        	return null;
-        return fileChooser.getSelectedFile().getName();
-	}
 	@Override
 	public void run() 
 	{
 		// Nothing to be implemented here
+	}
+	
+	public void setController(Controller c)
+	{
+		controller = c;
 	}
     
     
@@ -284,6 +288,7 @@ class DragListener extends MouseAdapter {
     @Override
     public void mousePressed(MouseEvent e) {
         initialClick = e.getPoint(); // Store initial click position
+        ((JComponent)e.getSource()).requestFocusInWindow();
     }
 
     @Override

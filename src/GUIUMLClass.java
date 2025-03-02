@@ -1,15 +1,14 @@
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Graphics;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+import javax.swing.JTextField;
 
 public class GUIUMLClass {
     private final int PIXELSPERCHARACTER = 8;
@@ -17,17 +16,20 @@ public class GUIUMLClass {
     private JPanel fieldsPanel;
     private JPanel methodsPanel;
     private JLabel className;
+    private JTextField classNameRenamer;
     private JLabel fields;
     private JLabel methods;
     private JLayeredPane background;
     private Color color;
 
     private UMLClass umlclass;
+    private Controller controller;
 
-    public GUIUMLClass(UMLClass umlclass)
+    public GUIUMLClass(UMLClass umlclass, Controller controller)
         
     {
         this.umlclass = umlclass;
+        this.controller = controller;
 
         // Creates a random color for the class
         color = new Color((int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), 100);
@@ -57,6 +59,18 @@ public class GUIUMLClass {
         className.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
         className.setForeground(Color.BLACK);
         className.setBounds(0, 2, 140, 25);  // Set bounds for the class name label
+        
+        classNameRenamer = new JTextField();
+        classNameRenamer.setForeground(Color.BLACK);
+        classNameRenamer.setBounds(0, 0, 147, 25);  // Set bounds for the class name label
+        classNameRenamer.setBackground(color.brighter().brighter().brighter().brighter().brighter().brighter().brighter().brighter()); // we like out JTextFields bright
+        classNameRenamer.setVisible(false);
+        classNameRenamer.setHorizontalAlignment(JTextField.CENTER);
+        
+        // make className & classNameRenamer replace each other when being edited
+        className.addMouseListener(new JLabelDoubleClickListener (classNameRenamer));
+        classNameRenamer.addFocusListener(new JTextFieldFocusLossListener (className, Action.RENAME_CLASS));
+        
 
         // Creates the labels for the different panels
         fields = new JLabel();
@@ -74,8 +88,10 @@ public class GUIUMLClass {
 
         // Add labels
         classPanel.add(className);
+        classPanel.add(classNameRenamer);
         fieldsPanel.add(fields);
         methodsPanel.add(methods);
+        
 
         /* Here are the different layers in order for a JLayeredPane:
                 JLayeredPane.DEFAULT_LAYER
@@ -176,5 +192,63 @@ public class GUIUMLClass {
         }
         methods.setBounds(10, 5, maxLength * PIXELSPERCHARACTER, newHeight);
         methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), maxLength * PIXELSPERCHARACTER, newHeight); // Resize panel
+    }
+    
+    
+    /**
+     * A listener that turns the JLabel invisible and turns a JTextField visible when the label is double clicked
+     */
+    class JLabelDoubleClickListener extends MouseAdapter 
+    {
+    	JTextField field;
+    	
+    	public JLabelDoubleClickListener (JTextField field)
+    	{
+    		this.field = field;
+    	}
+    	
+    	public void mouseClicked(MouseEvent me)
+    	{
+    		if (me.getClickCount() == 2)
+    		{
+    			JLabel src = ((JLabel)me.getSource());
+    			src.setVisible(false);
+    			field.setVisible(true);
+    			field.requestFocusInWindow();
+    		}
+    	}
+    }
+    
+    /**
+     * A listener that turns the JTextField invisible and turns a JLabel visible when the field loses focus
+     * 
+     * Whenever the JTextField loses focus, it also calls runHelper() with the given action & the text in the field as the arguments
+     */
+    class JTextFieldFocusLossListener implements FocusListener
+    {
+    	JLabel label;
+    	Action action;
+    	
+    	public JTextFieldFocusLossListener (JLabel label, Action action)
+    	{
+    		this.label = label;
+    		this.action = action;
+    	}
+    	
+		@Override
+		public void focusGained(FocusEvent e) {
+			JTextField src = ((JTextField)e.getSource());
+			classNameRenamer.setText(className.getText());
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			JTextField src = ((JTextField)e.getSource());
+			//controller.runHelper(action, new String[] {src.getText()});
+			// TODO: decide whether to actually switch back to a JLabel or not based on whether runHelper() succeeds
+			src.setVisible(false);
+        	label.setVisible(true);
+        	label.setText(classNameRenamer.getText());
+		}
     }
 }
