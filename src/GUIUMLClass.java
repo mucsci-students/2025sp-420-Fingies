@@ -131,8 +131,8 @@ public class GUIUMLClass {
         JLabel classLabel = new JLabel(umlclass.getName());
         int labelWidth = umlclass.getName().length() * PIXELS_PER_CHARACTER;
         classLabel.setForeground(Color.BLACK);
-        classLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Red border with thickness of 5
         classLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        // classLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Red border with thickness of 2
 
         classLabel.setBounds((background.getWidth() - labelWidth) / 2 - 4, 2, labelWidth, DEFAULT_CLASS_PANEL_HEIGHT);  // Set bounds for the class name label
         
