@@ -32,6 +32,24 @@ public class GUIView extends JFrame implements ActionListener, View {
     private GUIMenuItem save;
     private GUIMenuItem exit;
     
+    private GUIMenuItem addClass;
+    private GUIMenuItem addField;
+    private GUIMenuItem addMethod;
+    private GUIMenuItem addParameter;
+    private GUIMenuItem addRelationship;
+
+    private GUIMenuItem removeClass;
+    private GUIMenuItem removeField;
+    private GUIMenuItem removeMethod;
+    private GUIMenuItem removeParameter;
+    private GUIMenuItem removeRelationship;
+
+    private GUIMenuItem renameClass;
+    private GUIMenuItem renameField;
+    private GUIMenuItem renameMethod;
+    private GUIMenuItem renameParameter;
+    private GUIMenuItem renameRelationship;
+
     private Controller controller;
     final JFileChooser fileChooser = new JFileChooser();
 
@@ -63,11 +81,50 @@ public class GUIView extends JFrame implements ActionListener, View {
         load = new GUIMenuItem("Open", Action.LOAD);
         save = new GUIMenuItem("Save", Action.SAVE);
         exit = new GUIMenuItem("Exit", Action.EXIT);
+        
+        // ADD
+        addClass = new GUIMenuItem("Class", Action.ADD_CLASS);
+        addField = new GUIMenuItem("Attribute", Action.ADD_FIELD);
+        addMethod = new GUIMenuItem("Method", Action.ADD_METHOD);
+        addParameter = new GUIMenuItem("Parameter", Action.ADD_PARAMETERS);
+        addRelationship = new GUIMenuItem("Relationship", Action.ADD_RELATIONSHIP);
+
+        // REMOVE
+        removeClass = new GUIMenuItem("Class", Action.REMOVE_CLASS);
+        removeField = new GUIMenuItem("Attribute", Action.REMOVE_FIELD);
+        removeMethod = new GUIMenuItem("Method", Action.REMOVE_METHOD);
+        removeParameter = new GUIMenuItem("Parameter", Action.REMOVE_PARAMETERS);
+        removeRelationship = new GUIMenuItem("Relationship", Action.REMOVE_RELATIONSHIP);
+
+        // RENAME
+        renameClass = new GUIMenuItem("Class", Action.RENAME_CLASS);
+        renameField = new GUIMenuItem("Attribute", Action.RENAME_FIELD);
+        renameMethod = new GUIMenuItem("Method", Action.RENAME_METHOD);
+        renameParameter = new GUIMenuItem("Parameter", Action.CHANGE_PARAMETER);
+        renameRelationship = new GUIMenuItem("Relationship", Action.CHANGE_RELATIONSHIP_TYPE);
 
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
         save.addActionListener(this);
         exit.addActionListener(this);
+
+        addClass.addActionListener(this);
+        addField.addActionListener(this);
+        addMethod.addActionListener(this);
+        addParameter.addActionListener(this);
+        addRelationship.addActionListener(this);
+
+        removeClass.addActionListener(this);
+        removeField.addActionListener(this);
+        removeMethod.addActionListener(this);
+        removeParameter.addActionListener(this);
+        renameRelationship.addActionListener(this);
+
+        renameClass.addActionListener(this);
+        renameField.addActionListener(this);
+        renameMethod.addActionListener(this);
+        renameParameter.addActionListener(this);
+        renameRelationship.addActionListener(this);
 
         // Allows the press of a key to do the function of clicking the menu item WHILE in the menu
         save.setMnemonic(KeyEvent.VK_S); // S for save
@@ -77,6 +134,24 @@ public class GUIView extends JFrame implements ActionListener, View {
         fileMenu.add(load);
         fileMenu.add(save);
         fileMenu.add(exit);
+
+        addMenu.add(addClass);
+        addMenu.add(addField);
+        addMenu.add(addMethod);
+        addMenu.add(addParameter);
+        addMenu.add(addRelationship);
+
+        removeMenu.add(removeClass);
+        removeMenu.add(removeField);
+        removeMenu.add(removeMethod);
+        removeMenu.add(removeParameter);
+        removeMenu.add(removeRelationship);
+
+        renameMenu.add(renameClass);
+        renameMenu.add(renameField);
+        renameMenu.add(renameMethod);
+        renameMenu.add(renameParameter);
+        renameMenu.add(renameRelationship);
 
         
 
@@ -95,6 +170,12 @@ public class GUIView extends JFrame implements ActionListener, View {
     @Override
     public void actionPerformed(ActionEvent e) {
     	Action a = ((GUIMenuItem) e.getSource()).action;
+
+        if (e.getSource() == addClass)
+        {
+            
+        }
+
     	String[] args = new String[0];
         controller.runHelper(a, args);
         // TODO: actually execute the command based on whether runHelper() succeeds
@@ -148,9 +229,9 @@ public class GUIView extends JFrame implements ActionListener, View {
         this.repaint();    // Repaint to reflect changes
     }
 
-    public void addUMLClass(String name)
+    public void addUMLClass(String className)
     {
-        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(name), controller);
+        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller);
 
         // Creates new listener for the newly added JLayeredPane
         DragListener dragListener = new DragListener(newUMLClass.getJLayeredPane(), this, this);
@@ -159,15 +240,15 @@ public class GUIView extends JFrame implements ActionListener, View {
 
         // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
         this.add(newUMLClass.getJLayeredPane());
-        GUIUMLClasses.put(name, newUMLClass);
+        GUIUMLClasses.put(className, newUMLClass);
         reload();
     }
 
-    public void removeUMLClass(String name)
+    public void removeUMLClass(String className)
     {
         // this..getContentPane().remove(GUIUMLClasses.get(name).getJLayeredPane());
-        this.remove(GUIUMLClasses.get(name).getJLayeredPane());
-        GUIUMLClasses.remove(name);
+        this.remove(GUIUMLClasses.get(className).getJLayeredPane());
+        GUIUMLClasses.remove(className);
         reload();
     }
 
@@ -186,8 +267,7 @@ public class GUIView extends JFrame implements ActionListener, View {
      */
     public void updateAttributes(String className)
     {
-        GUIUMLClasses.get(className).updateFields();
-        GUIUMLClasses.get(className).updateMethods();
+        GUIUMLClasses.get(className).update();
     }
 
     

@@ -158,6 +158,7 @@ public class UMLClassTester {
         parameters.add("Param1");
         assertTrue(c.addMethod("getEngine", parameters));
         assertTrue(c.methodExists("getEngine", 1));
+        assertTrue(c.getMethod("getEngine", 1).getParameters().contains("Param1"));
     }
 
     // --------------------- RENAME FIELDS ---------------------
