@@ -11,7 +11,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class GUIUMLClass {
-    private final int PIXELSPERCHARACTER = 8;
+    private final int PIXELS_PER_CHARACTER = 8;
+    private final int DEFAULT_CLASS_PANEL_HEIGHT = 25;
+    private final int DEFAULT_FIELD_PANEL_HEIGHT = 75;
+    private final int DEFAULT_METHOD_PANEL_HEIGHT = 125;
+
     private JPanel classPanel;
     private JPanel fieldsPanel;
     private JPanel methodsPanel;
@@ -38,18 +42,18 @@ public class GUIUMLClass {
         // classPanel.setBackground(Color.RED);
         // classPanel.setBackground(new Color(255, 0, 0, 60));
         classPanel.setBackground(color);
-        classPanel.setBounds(5, 5, 140, 25);
+        classPanel.setBounds(5, 5, 140, DEFAULT_CLASS_PANEL_HEIGHT);
         classPanel.setLayout(null);  // Set layout to null
 
         fieldsPanel = new JPanel();
         // fieldsPanel.setBackground(Color.GREEN);
         fieldsPanel.setBackground(color);
-        fieldsPanel.setBounds(5, 35, 140, 75);
+        fieldsPanel.setBounds(5, 35, 140, DEFAULT_FIELD_PANEL_HEIGHT);
         fieldsPanel.setLayout(null);  // Set layout to null
 
         methodsPanel = new JPanel();
         methodsPanel.setBackground(color);
-        methodsPanel.setBounds(5, 115, 140, 125);
+        methodsPanel.setBounds(5, 115, 140, DEFAULT_METHOD_PANEL_HEIGHT);
         methodsPanel.setLayout(null);  // Set layout to null
 
         // Creates the labels for the different panels
@@ -73,24 +77,41 @@ public class GUIUMLClass {
         
 
         // Creates the labels for the different panels
-        fields = new JLabel();
-        fields.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
-        fields.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
-        fields.setForeground(Color.BLACK);
-        // fields.setBounds(0, 0, 140, 25);  // Set bounds for the fields label
+        // fields = new JLabel();
+        // fields.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
+        // fields.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
+        // fields.setForeground(Color.BLACK);
+        // // fields.setBounds(0, 0, 140, 25);  // Set bounds for the fields label
 
-        // Creates the labels for the different panels
-        methods = new JLabel();
-        methods.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
-        methods.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
-        methods.setForeground(Color.BLACK);
+        // // Creates the labels for the different panels
+        // methods = new JLabel();
+        // methods.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
+        // methods.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
+        // methods.setForeground(Color.BLACK);
         // methods.setBounds(0, 0, 140, 25);  // Set bounds for the methods label
 
         // Add labels
         classPanel.add(className);
         classPanel.add(classNameRenamer);
-        fieldsPanel.add(fields);
-        methodsPanel.add(methods);
+        // fieldsPanel.add(fields);
+        // methodsPanel.add(methods);
+
+        // JLabel f1 = new JLabel("");
+        // f1.setText("11111");
+        // f1.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
+        // f1.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
+        // f1.setForeground(Color.BLACK);
+        // f1.setBounds(0, 0, 140, 25);
+
+        // JLabel f2 = new JLabel("");
+        // f2.setText("22222");
+        // f2.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
+        // f2.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
+        // f2.setForeground(Color.BLACK);
+        // f2.setBounds(0, 0, 140, 25);
+
+        // methodsPanel.add(f1);
+        // fieldsPanel.add(f2);
         
 
         /* Here are the different layers in order for a JLayeredPane:
@@ -132,7 +153,7 @@ public class GUIUMLClass {
 
         // Calculate new total height
         int newHeight = classPanel.getHeight() + fieldsPanel.getHeight() + methodsPanel.getHeight() + 20;
-        int newWidth = Math.max(classPanel.getWidth(), Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth())) + 10;
+        int newWidth = Math.max(classPanel.getWidth(), Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
         
         background.setBounds(0, 0, newWidth, newHeight);
         className.setSize(newWidth - 10, classPanel.getHeight());
@@ -158,40 +179,68 @@ public class GUIUMLClass {
     {
         int newHeight = fieldsPanel.getHeight();
         int maxLength = 0;
+        int offset = 0;
+        JLabel txt;
+
         if (!umlclass.getFields().isEmpty())
         {
-            String text = "<html>";
+            // String text = "<html>";
             for (Field field : umlclass.getFields())
             {
                 maxLength = Math.max(maxLength, field.getName().length());
-                text += field.getName() + "<br/>";
+                // text += field.getName() + "<br/>";
+
+                txt = new JLabel();
+                txt.setText(field.getName());
+                txt.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
+                txt.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
+                txt.setForeground(Color.BLACK);
+                txt.setBounds(10, 5 + offset * 20, field.getName().length() * PIXELS_PER_CHARACTER, 25);
+
+                fieldsPanel.add(txt);
+                offset++;
+                
             }
-            text = text.substring(0, text.length() - 5); // trim off the extra \n
-            fields.setText(text + "</html>");
-            newHeight = 20 * umlclass.getFields().size(); // Calculate height dynamically
+            // text = text.substring(0, text.length() - 5); // trim off the extra \n
+            // fields.setText(text + "</html>");
+            newHeight = 25 * umlclass.getFields().size(); // Calculate height dynamically
         }
-        fields.setBounds(10, 5, maxLength * PIXELSPERCHARACTER, newHeight);
-        fieldsPanel.setBounds(5, 35, maxLength * PIXELSPERCHARACTER, newHeight); // Resize panel
+        // fields.setBounds(10, 5, maxLength * PIXELS_PER_CHARACTER, newHeight);
+        fieldsPanel.setBounds(5, 35, maxLength * PIXELS_PER_CHARACTER  - 15, Math.max(DEFAULT_FIELD_PANEL_HEIGHT, newHeight - 20)); // Resize panel
     }
 
     public void updateMethods ()
     {
         int newHeight = methodsPanel.getHeight();
         int maxLength = 0;
+        int offset = 0;
+        JLabel txt;
+
         if (!umlclass.getMethods().isEmpty())
         {
-            String text = "<html>";
+            // String text = "<html>";
             for (Method method : umlclass.getMethods())
             {
-                maxLength = Math.max(maxLength, (method.getName() + method.toString()).length());
-                text += method + "<br/>";
+                maxLength = Math.max(maxLength, method.toString().length());
+                // maxLength = Math.max(maxLength, (method.getName().length() + method.toString().length()));
+                // text += method + "<br/>";
+
+                txt = new JLabel();
+                txt.setText(method.toString());
+                txt.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
+                txt.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
+                txt.setForeground(Color.BLACK);
+                txt.setBounds(10, 5 + offset * 20, method.toString().length() * PIXELS_PER_CHARACTER, 25);
+
+                methodsPanel.add(txt);
+                offset++;
             }
-            text = text.substring(0, text.length() - 5); // trim off the extra \n
-            methods.setText(text + "</html>");
-            newHeight = 20 * umlclass.getFields().size(); // Calculate height dynamically
+            // text = text.substring(0, text.length() - 5); // trim off the extra \n
+            // methods.setText(text + "</html>");
+            newHeight = 25 * umlclass.getMethods().size(); // Calculate height dynamically
         }
-        methods.setBounds(10, 5, maxLength * PIXELSPERCHARACTER, newHeight);
-        methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), maxLength * PIXELSPERCHARACTER, newHeight); // Resize panel
+        // methods.setBounds(10, 5, maxLength * PIXELS_PER_CHARACTER, newHeight);
+        methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), maxLength * PIXELS_PER_CHARACTER - 15, Math.max(DEFAULT_METHOD_PANEL_HEIGHT, newHeight - 20)); // Resize panel
     }
     
     
