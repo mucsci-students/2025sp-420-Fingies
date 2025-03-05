@@ -6,12 +6,16 @@ import java.util.HashSet;
  * @author kdichter, Lincoln Craddock
  */
 public class UMLClassHandler {
+
+    /**
+     * Map of Class Name to Class Object
+     */
     private static HashMap<String, UMLClass> classes = new HashMap<>();
 
     /**
-     * Attemps to create a new class
+     * Attempts to create a new class
      * @param name name the user wants to give to the class
-     * @return true if the class was creasted, false otherwise
+     * @return true if the class was created, false otherwise
      */
     static boolean createClass(String name)
     {
@@ -22,6 +26,24 @@ public class UMLClassHandler {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Attempts to add a UMLClass object to the list of classes
+     * @param classObject The UMLClass to add to the list of UMLClasses
+     * @return true if the class was added, false otherwise
+     * @author trush
+     */
+    static boolean addClassObject(UMLClass classObject) {
+        try {
+            if (!classes.containsKey(classObject.getName())) {
+                classes.put(classObject.getName(), classObject);
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -155,11 +177,10 @@ public class UMLClassHandler {
     }
 
     /**
-     * Resets all classes, attributes, and relationships
-     * 
+     * Resets all classes and attributes
      * @author trush
      */
-    static void reset() {
+    public static void reset() {
         HashMap<String, UMLClass> reset = new HashMap<>();
         classes = reset;
     }

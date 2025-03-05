@@ -6,7 +6,9 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,6 +25,108 @@ public class JModel {
 
     //GSON is built to ignore fields with "final" modifier.
     private Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL).create();
+
+    /**
+     * Model class for saving and loading to standardized JSON format
+     * @author trush
+     */
+    class Model {
+        HashSet<UMLClass> classes;
+        ArrayList<RelationStringAdapter> relationships;
+
+        /**
+         * Constructor for model class.
+         */
+        public Model() {
+            classes = UMLClassHandler.getAllClasses();
+            relationships = new ArrayList<>();
+            List<Relationship> relations = RelationshipHandler.getRelationObjects();
+            for (Relationship relation : relations) {
+                RelationStringAdapter relationString = new RelationStringAdapter(relation);
+                relationships.add(relationString);
+            }
+        }
+
+        /**
+         * Reloads classes into UMLClassHandler from the model class.
+         * @return true if reload succeeded, false otherwise
+         */
+        public boolean reloadClasses() {
+            try {
+                for (UMLClass classObject : classes) {
+                    boolean worked = UMLClassHandler.addClassObject(classObject);
+                    if (!worked) return false;
+                }
+                return true;
+            } catch(Exception e) {
+                writeToLog(e.toString());
+                latestError = e.toString();
+                return false;
+            }
+        }
+
+        /**
+         * Reloads the relations into the RelationshipHandler from the model class.
+         * @return true if reload succeeded, false otherwise
+         */
+        public boolean reloadRelations() {
+            try {
+                for (RelationStringAdapter relationString : relationships) {
+                    RelationshipHandler.addRelationship(relationString.getSource(), relationString.getDestination(), relationString.getType());
+                }
+                return true;
+            } catch(Exception e) {
+                writeToLog(e.toString());
+                latestError = e.toString();
+                return false;
+            }
+        }
+
+        /**
+         * Relationship String Adapter
+         * @author trush
+         */
+        public class RelationStringAdapter {
+
+            String source;
+            String destination;
+            RelationshipType type;
+
+            /**
+             * Takes a relation object and adapts it for saving
+             * @param relation
+             */
+            public RelationStringAdapter(Relationship relation) {
+                source = relation.getSrc().getName();
+                destination = relation.getDest().getName();
+                type = relation.getType();
+            }
+
+            /**
+             * Gets the current source
+             * @return the currents source
+             */
+            public String getSource() {
+                return source;
+            }
+
+            /**
+             * Gets the current destination
+             * @return the currents destination
+             */
+            public String getDestination() {
+                return destination;
+            }
+
+            /**
+             * Gets the current type
+             * @return the currents type
+             */
+            public RelationshipType getType() {
+                return type;
+            }
+        }
+    }
 
     /**
      * Default constructor, does not set a filepath! Please ensure to set a filepath before attempting to save
@@ -139,8 +243,8 @@ public class JModel {
         };
         try {
             //Using UMLClassHandler object is crucial for loading data, don't change.
-            UMLClassHandler classHandler = new UMLClassHandler();
-            String classJson = gson.toJson(classHandler);
+            Model model = new Model();
+            String classJson = gson.toJson(model);
 
             //PrintWriter allows us to write to file. It will **always** overwrite.
             FileWriter writer = new FileWriter(filepath, false);
@@ -165,10 +269,10 @@ public class JModel {
     }
 
     /**
-     * Loads data from the desired filepath, Checks for field constraints as well.
+     * Loads data from the desired filepath, Checks for field constraints as well. **Overwrites any existing data!**
      * @return UMLClassHandler class if successful, null otherwise.
      */
-    public UMLClassHandler loadData() {
+    public Model loadData() {
         // check if argument is null, or filepath is invalid
         if (filepath == null) {
             latestError = "Invalid Argument: null, in loadData";
@@ -186,15 +290,15 @@ public class JModel {
             //Check if content of file is null/empty
             if (jsonData.isEmpty()) return null;
             //Try to parse data from string. Throws exception if incorrect format
-            UMLClassHandler data = gson.fromJson(jsonData, UMLClassHandler.class);
+            UMLClassHandler.reset();
+            RelationshipHandler.reset();
+            Model data = gson.fromJson(jsonData, Model.class);
+            data.reloadClasses();
             HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
             for (UMLClass umlClass : classes) {
                 umlClass.validateCharacters(umlClass.getName());
-                HashSet<String> attributes = umlClass.getAllAttributes();
-                for (String attribute : attributes) {
-                    umlClass.validateCharacters(attribute);
-                }
             }
+            data.reloadRelations();
             return data;
         } catch (Exception e) {
             writeToLog(e.toString());
@@ -208,7 +312,7 @@ public class JModel {
      * @param filepath The desired filepath to load the data from.
      * @return UMLClassHandler class if successful, null otherwise.
      */
-    public UMLClassHandler loadData(String filepath) {
+    public Model loadData(String filepath) {
         setFilepath(filepath);
         return loadData();
     }

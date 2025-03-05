@@ -16,6 +16,7 @@ public class Relationship
      * 
      * @param src The source of the relationship
      * @param dest The destination of the relationship
+     * @param type The relationship type
      */
     Relationship(UMLClass src, UMLClass dest, RelationshipType type)
     {

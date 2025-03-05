@@ -88,9 +88,25 @@ public class RelationshipHandler
     	String lst = "";
     	for (Relationship r : relationships)
     		lst += r + "\n";
-    	lst = lst.substring(lst.length() - 1); // trims the remaining \n
+    	lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
     	return lst;
     }
     
-    
+    /**
+     * Provides the list of all relation objects
+     * @return A list of relationship objects
+     * @author trush
+     */
+    public static List<Relationship> getRelationObjects() 
+    {
+        return relationships;
+    }
+
+    /**
+     * Resets all relationships
+     * @author trush
+     */
+    public static void reset() {
+        relationships = new ArrayList<Relationship>();
+    }
 }
