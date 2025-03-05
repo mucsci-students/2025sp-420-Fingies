@@ -169,8 +169,8 @@ public class GUIView extends JFrame implements ActionListener, View {
         this.setJMenuBar(menuBar);
 
         this.setVisible(true);
-
     }
+    
     public void makeTextBoxes(Action a, String [] placeholders)
     {
         boxes.clear();

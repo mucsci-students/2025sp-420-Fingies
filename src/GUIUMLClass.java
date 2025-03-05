@@ -5,6 +5,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
@@ -151,8 +152,10 @@ public class GUIUMLClass {
         classEditor.setBounds(classLabel.getBounds());
         classEditor.setBackground(Color.WHITE);
         classEditor.setVisible(false);
-
-        classLabel.addMouseListener(new JLabelDoubleClickListener (classEditor));
+        
+        var labelListener = new JLabelDoubleClickListener (classEditor, background);
+        classLabel.addMouseListener(labelListener);
+        classLabel.addMouseMotionListener(labelListener);
         classEditor.addFocusListener(new JTextFieldFocusLossListener (classLabel, Action.RENAME_CLASS));
 
         classPanel.add(classLabel);
@@ -192,7 +195,9 @@ public class GUIUMLClass {
                 fieldEditor.setBackground(Color.WHITE);
                 fieldEditor.setVisible(false);
 
-                fieldLabel.addMouseListener(new JLabelDoubleClickListener(fieldEditor));
+                var labelListener = new JLabelDoubleClickListener (fieldEditor, background);
+                fieldLabel.addMouseListener(labelListener);
+                fieldLabel.addMouseMotionListener(labelListener);
                 fieldEditor.addFocusListener(new JTextFieldFocusLossListener(fieldLabel, Action.RENAME_FIELD));
 
                 fieldsPanel.add(fieldLabel);
@@ -239,7 +244,9 @@ public class GUIUMLClass {
                 methodEditor.setBackground(Color.WHITE);
                 methodEditor.setVisible(false);
 
-                methodLabel.addMouseListener(new JLabelDoubleClickListener(methodEditor));
+                var labelListener = new JLabelDoubleClickListener (methodEditor, background);
+                methodLabel.addMouseListener(labelListener);
+                methodLabel.addMouseMotionListener(labelListener);
                 methodEditor.addFocusListener(new JTextFieldFocusLossListener(methodLabel, Action.RENAME_METHOD));
 
                 methodsPanel.add(methodLabel);
@@ -264,10 +271,12 @@ public class GUIUMLClass {
     class JLabelDoubleClickListener extends MouseAdapter 
     {
     	JTextField field;
+    	JLayeredPane parentPane;
     	
-    	public JLabelDoubleClickListener (JTextField field)
+    	public JLabelDoubleClickListener (JTextField field, JLayeredPane parentPane)
     	{
     		this.field = field;
+    		this.parentPane = parentPane;
     	}
     	
     	public void mouseClicked(MouseEvent me)
@@ -280,6 +289,18 @@ public class GUIUMLClass {
     			field.requestFocusInWindow();
     		}
     	}
+    	
+    	@Override
+        public void mousePressed(MouseEvent e) {
+    		e.setSource(parentPane);
+    		parentPane.dispatchEvent(e);
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+        	e.setSource(parentPane);
+    		parentPane.dispatchEvent(e);
+        }
     }
     
     /**
@@ -307,28 +328,13 @@ public class GUIUMLClass {
 		@Override
 		public void focusLost(FocusEvent e) {
             JTextField src = (JTextField) e.getSource();
-            //controller.runHelper(action, new String[] {src.getText()});
+            //controller.runHelper(action, new String[] {label.getText(), src.getText()});
 			// TODO: decide whether to actually switch back to a JLabel or not based on whether runHelper() succeeds
             label.setText(src.getText()); // Update the label with the new text
             src.setVisible(false);
             label.setVisible(true);
 			
 		}
-
-		// @Override
-		// public void focusGained(FocusEvent e) {
-		// 	JTextField src = ((JTextField)e.getSource());
-		// 	classNameRenamer.setText(className.getText());
-		// }
-
-		// @Override
-		// public void focusLost(FocusEvent e) {
-		// 	JTextField src = ((JTextField)e.getSource());
-		// 	//controller.runHelper(action, new String[] {src.getText()});
-		// 	// TODO: decide whether to actually switch back to a JLabel or not based on whether runHelper() succeeds
-		// 	src.setVisible(false);
-        // 	label.setVisible(true);
-        // 	label.setText(classNameRenamer.getText());
-		// }
     }
+    
 }
