@@ -1,3 +1,4 @@
+import java.util.List;
 
 /**
  * Controller for UML Editor, handles user input
@@ -59,11 +60,11 @@ public class Controller {
         }
     }
 
-    public boolean doAddRelationship(String srcClass, String destClass) 
+    public boolean doAddRelationship(String srcClass, String destClass, RelationshipType type) 
     {
         try
         {
-            return UMLClassHandler.addRelationship(srcClass, destClass);
+            return RelationshipHandler.addRelationship(srcClass, destClass, type);
         }
         catch (Exception e)
         {
@@ -77,7 +78,7 @@ public class Controller {
     {
         try
         {
-            return UMLClassHandler.removeRelationship(srcClass, destClass);
+            return RelationshipHandler.removeRelationship(srcClass, destClass);
         }
         catch (Exception e)
         {
@@ -87,11 +88,11 @@ public class Controller {
         }
     }
 
-    public boolean doAddAttribute(String srcClass, String attribute) 
+    public boolean doChangeRelationshipType(String srcClass, String destClass, RelationshipType newType)
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).addAttribute(attribute);
+            return RelationshipHandler.changeRelationshipType(srcClass, destClass, newType);
         }
         catch (Exception e)
         {
@@ -101,11 +102,11 @@ public class Controller {
         }
     }
 
-    public boolean doRemoveAttribute(String srcClass, String attribute) 
+    public boolean doAddField(String srcClass, String field) 
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).removeAttribute(attribute);
+            return UMLClassHandler.getClass(srcClass).addField(field);
         }
         catch (Exception e)
         {
@@ -115,16 +116,114 @@ public class Controller {
         }
     }
 
-    public boolean doRenameAttribute(String srcClass, String oldAttribute, String newAttribute) 
+    public boolean doAddMethod(String srcClass, String method, List<String> parameters) 
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).renameAttribute(oldAttribute, newAttribute);
+            return UMLClassHandler.getClass(srcClass).addMethod(method, parameters);
         }
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
             view.notifyFail(e.toString());
+            return false;
+        }
+    }
+
+    public boolean doRemoveField(String srcClass, String field) 
+    {
+        try
+        {
+            return UMLClassHandler.getClass(srcClass).removeField(field);
+        }
+        catch (Exception e)
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.toString());
+            return false;
+        }
+    }
+
+    public boolean doRemoveMethod(String srcClass, String method, int paramNum) 
+    {
+        try
+        {
+            return UMLClassHandler.getClass(srcClass).removeMethod(method, paramNum);
+        }
+        catch (Exception e)
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.toString());
+            return false;
+        }
+    }
+
+    public boolean doRenameField(String srcClass, String oldField, String newField) 
+    {
+        try
+        {
+            return UMLClassHandler.getClass(srcClass).renameField(oldField, newField);
+        }
+        catch (Exception e)
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.toString());
+            return false;
+        }
+    }
+
+    public boolean doRenameMethod(String srcClass, String oldMethod,int paramNum, String newMethod) 
+    {
+        try
+        {
+            return UMLClassHandler.getClass(srcClass).renameMethod(oldMethod, paramNum, newMethod);
+        }
+        catch (Exception e)
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.toString());
+            return false;
+        }
+    }
+    
+    public boolean doAddParameters(String srcClass, String method, int paramNum, List<String> params)
+    {
+        try
+        {
+            return UMLClassHandler.getClass(srcClass).addParameters(method, paramNum, params);
+        }
+        catch (Exception e)
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.toString());
+            return false;
+        }
+    }
+
+    public boolean doRemoveParameters(String srcClass, String method, int paramNum, List<String> params)
+    {
+        try
+        {
+            return UMLClassHandler.getClass(srcClass).removeParameters(method, paramNum, params);
+        }
+        catch (Exception e)
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.toString());
+            return false;
+        }
+    }
+    
+    public boolean doRenameParameter(String srcClass, String method, int paramNum, String oldParam, String newParam)
+    {
+        try
+        {
+            return UMLClassHandler.getClass(srcClass).getMethod(method, paramNum).renameParameter(oldParam, newParam);
+        }
+        catch (Exception e)
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -173,7 +272,7 @@ public class Controller {
     }
     public void doListRelationships() 
     {
-    	String lst = UMLClassHandler.listRelationships();
+    	String lst = RelationshipHandler.listRelationships();
         view.display(lst);
     }
     
@@ -248,7 +347,7 @@ public class Controller {
     }
 
     /**
-     * Promts the user to either load in an existing JSON file with data or create a new one
+     * Prompts the user to either load in an existing JSON file with data or create a new one
      */
     public boolean getData()
     {
@@ -278,19 +377,19 @@ public class Controller {
     /**
      * Runs the program by infinitely looping and executing commands until the user types EXIT
      */
-    public void run ()
-    {
-    	//TODO Probably remove this method as we are adding functionality into the Views
-        if(!getData())
-            return;
-        Command command;
-        Action action;
-        do {
-            command = view.nextCommand();
-            action = command.action;   
-            runHelper (action, command.arguments);
-        } while (!action.equals(Action.EXIT));
-    }
+    // public void run ()
+    // {
+    // 	//TODO Probably remove this method as we are adding functionality into the Views
+    //     if(!getData())
+    //         return;
+    //     Command command;
+    //     Action action;
+    //     do {
+    //         command = view.nextCommand();
+    //         action = command.action;   
+    //         runHelper (action, command.arguments);
+    //     } while (!action.equals(Action.EXIT));
+    // }
 
     /**
      * Executes the action with the commands arguments as inputs
@@ -298,7 +397,7 @@ public class Controller {
      * @param command command with arguments
      * @param action action the user wishes to take
      */
-    public void runHelper(Action action, String[] args)
+    public boolean runHelper(Action action, String[] args)
     {
     	//TODO Refactor attribute cases and update with fields, and methods
         switch(action) {
@@ -309,15 +408,18 @@ public class Controller {
                     {
                         view.notifySuccess("Successfully added class " + args[0]);
                         madeChange = true;
+                        return true;
                     }
                     else {
                         view.notifyFail("Failed to add class " + args[0]);
+                        return false;
                     }
                         
                 }
                 else
                 {
                 	view.notifyFail("Add class should have exactly 1 argument.");
+                    return false;
                 }
                 break;
             case REMOVE_CLASS:
@@ -327,15 +429,18 @@ public class Controller {
                     {
                         view.notifySuccess("Successfully removed class " + args[0]);
                         madeChange = true;
+                        return true;
                     }
                     else {
                         view.notifyFail("Failed to remove class " + args[0]);
+                        return false;
                     }
                         
                 }
                 else
                 {
                 	view.notifyFail("Remove class should have exactly 1 argument.");
+                    return false;
                 }
                 break;
             case RENAME_CLASS:
@@ -345,29 +450,34 @@ public class Controller {
                     {
                         view.notifySuccess("Successfully renamed class " + args[0] + " to " + args[1]);
                         madeChange = true;
+                        return true;
                     }
                     else
                     {
                         view.notifyFail("Failed to rename class " + args[0] + " to " + args[1]);
+                        return false;
                     }
                 }
                 else
                 {
                 	view.notifyFail("Rename class should have exactly 2 arguments.");
+                    return false;
                 }
                 break;
             case ADD_RELATIONSHIP:
                 if (args.length == 2)
                 {
-                    if (doAddRelationship(args[0], args[1]))
+                    if (doAddRelationship(args[0], args[1], new RelationshipType(args[2])))
                     {
                         view.notifySuccess("Successfully added relationship " + args[0] + " --> " + args[1]);
                         madeChange = true;
+                        return true;
                     }
                 }
                 else
                 {
                 	view.notifyFail("Add relationship should have exactly 2 arguments.");
+                    return false;
                 }
                 break;
             case REMOVE_RELATIONSHIP:
@@ -377,68 +487,137 @@ public class Controller {
                     {
                         view.notifySuccess("Successfully removed relationship " + args[0] + " --> " + args[1]);
                         madeChange = true;
+                        return true;
                     }
                     else
                     {
                         view.notifyFail("Failed to remove relationship " + args[0] + " --> " + args[1]);
+                        return false;
                     }
                 }
                 else
                 {
                 	view.notifyFail("Remove relationship should have exactly 2 arguments.");
+                    return false;
                 }
                 break;
-            case ADD_ATTRIBUTE:
-                if (args.length == 2)
-                {
-                    if (doAddAttribute(args[0], args[1]))
-                    {
-                        view.notifySuccess("Successfully added attribute " + args[1] + " to class " + args[0]);
-                        madeChange = true;
-                    }
-                    else
-                    {
-                        view.notifyFail("Attribute couldn't be added.");
-                    }
-                }
-                else
-                {
-                	view.notifyFail("Add attribute should have exactly 2 arguments.");
-                }
+            case ADD_METHOD:
+                //todo
                 break;
-            case REMOVE_ATTRIBUTE:
-                if (args.length == 2)
-                {
-                    if (doRemoveAttribute(args[0], args[1]))
-                    {
-                        view.notifySuccess("Successfully removed attribute " + args[1] + " from class " + args[0]);
-                        madeChange = true;
-                    }
-                    else {
-                        view.notifyFail("Failed to remove attribute " + args[1] + " from class " + args[0]);
-                    }
-                }
-                else
-                {
-                	view.notifyFail("Remove attribute should have exactly 2 arguments.");
-                }
-                break;
-            case RENAME_ATTRIBUTE:
+            case REMOVE_METHOD:
                 if (args.length == 3)
                 {
-                    if (doRenameAttribute(args[0], args[1], args[2]))
+                    int arity = Integer.parseInt(args[2]);
+                    if (doRemoveMethod(args[0], args[1], arity))
                     {
-                        view.notifySuccess("Successfully renamed attribute " + args[1] + " to " + args[2] + " in class " + args[0]);
+                        view.notifySuccess("Successfully removed method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         madeChange = true;
+                        return true;
                     }
-                    else
-                    {
-                        view.notifyFail("Failed to rename attribute " + args[1] + " to " + args[2] + " in class " + args[0]);
+                    else {
+                        view.notifyFail("Failed to remove method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
+                        return false;
                     }
                 }
                 else
                 {
-                	view.notifyFail("Rename attribute should have exactly 3 arguments.");
+                    view.notifyFail("Remove method should have exactly 3 arguments.");
+                    return false;
+                }
+                break;
+            case RENAME_METHOD:
+                //todo
+                break;
+            case ADD_FIELD:
+                if (args.length == 2)
+                {
+                    if (doAddField(args[0], args[1]))
+                    {
+                        view.notifySuccess("Successfully added field " + args[1] + " to class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }
+                    else
+                    {
+                        view.notifyFail("Field couldn't be added.");
+                        return false;
+                    }
+                }
+                else
+                {
+                	view.notifyFail("Add field should have exactly 2 arguments.");
+                    return false;
+                }
+                break;
+            case REMOVE_FIELD:
+                if (args.length == 2)
+                {
+                    if (doRemoveField(args[0], args[1]))
+                    {
+                        view.notifySuccess("Successfully removed field " + args[1] + " from class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }
+                    else {
+                        view.notifyFail("Failed to remove field " + args[1] + " from class " + args[0]);
+                        return false;
+                    }
+                }
+                else
+                {
+                	view.notifyFail("Remove field should have exactly 2 arguments.");
+                    return false;
+                }
+                break;
+            case RENAME_FIELD:
+                if (args.length == 3)
+                {
+                    if (doRenameField(args[0], args[1], args[2]))
+                    {
+                        view.notifySuccess("Successfully renamed field " + args[1] + " to " + args[2] + " in class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }
+                    else
+                    {
+                        view.notifyFail("Failed to rename field " + args[1] + " to " + args[2] + " in class " + args[0]);
+                        return false;
+                    }
+                }
+                else
+                {
+                	view.notifyFail("Rename field should have exactly 3 arguments.");
+                    return false;
+                }
+                break;
+            case ADD_PARAMETERS:
+                //todo
+                break;
+            case REMOVE_PARAMETERS:
+                int arity = Integer.parseInt(args[2]);
+                if (args.length == 3)
+                {
+                    //remove all?
+                }
+                else if (args.length >= 4) {
+                    if (doRemoveParameters(args[0], args[1], arity, args[]))
+                }
+                break;
+            // this should be called RENAME_PARAMETER
+            case CHANGE_PARAMETER:
+                if (args.length == 5) {
+                    int arity = Integer.parseInt(args[2]);
+                    if (doRenameParameter(args[0], args[1], arity, args[3], args[4]))
+                    {
+                        view.notifySuccess("Successfully renamed parameter " + args[3] + " with arity " + arity + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
+                        madeChange = true;
+                        return true;
+                    }
+                    else
+                    {
+                        view.notifyFail("Failed to rename parameter " + args[3] + " with arity " + arity + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
+                        return false;
+                    }
                 }
                 break;
             case SAVE:
@@ -458,10 +637,12 @@ public class Controller {
                             hasSaved = true;
                             madeChange = false;
                             view.notifySuccess("Successfully saved your file");
+                            return true;
                         }
                         else
                         {
                     	    view.notifyFail("Invalid filepath provided.");
+                            return false;
                         }
                     }
                 }
@@ -472,15 +653,18 @@ public class Controller {
                         hasSaved = true;
                         madeChange = false;
                         view.notifySuccess("Successfully saved your file");
+                        return true;
                     }
                     else
                     {
                 	    view.notifyFail("Invalid filepath provided.");
+                        return false;
                     }
                 }
                 else
                 {
                 	view.notifyFail("Save should have either 0 or 1 arguments.");
+                    return false;
                 }
                 break;
             case LOAD:
@@ -491,7 +675,7 @@ public class Controller {
                         String result = view.promptForInput("Are you sure that you want to load without saving? Type Y for yes or any other key to save before loading");
                         if (result.toLowerCase().equals("y"))
                         {
-                            loadCheck(args[0]);
+                             return loadCheck(args[0]);
 
                             // doLoad(args[0]);
                             // hasSaved = true;
@@ -501,7 +685,7 @@ public class Controller {
                         else
                         {
                             saveLoop();
-                            loadCheck(args[0]);
+                            return loadCheck(args[0]);
                             // doLoad(args[0]);
                             // view.notifySuccess("Successfully loaded your file.");
                         }
@@ -513,64 +697,79 @@ public class Controller {
                             doLoad(args[0]);
                             hasSaved = true;
                             view.notifySuccess("Successfully loaded your file.");
+                            return true;
                         }
                         else
                         {
                             view.notifyFail("Invalid filepath.");
+                            return false;
                         }
                     }
                 }
                 else
                 {
                 	view.notifyFail("Load should have exactly 1 argument.");
+                    return false;
                 }
                 break;
             case LIST_CLASSES:
                 if (args.length == 0)
                 {
                     doListClasses();
+                    return true;
                 }
                 else
                 {
                 	view.notifyFail("List classes shouldn't have any arguments.");
+                    return false;
                 }
                 break;
             case LIST_CLASS:
                 if (args.length == 1)
                 {
                     doListClass(args[0]);
+                    return true;
                 }
                 else
                 {
                 	view.notifyFail("List class should have exactly 1 argument.");
+                    return false;
                 }
                 break;
             case LIST_RELATIONSHIPS:
                 if (args.length == 0)
                 {
                     doListRelationships();
+                    return true;
                 }
                 else
                 {
                 	view.notifyFail("List relationships shouldn't have any arguments.");
+                    return false;
                 }
                 break;
             case HELP:
                 if (args.length == 0)
                 {
                     doHelp();
+                    return true;
                 }
                 else if (args.length == 1)
                 {
                 	doSpecificCommandHelp(args[0]);
+                    return true;
                 }
                 else
                 {
                 	view.notifyFail("Too many arguments. Arguments with spaces require quotes.");
+                    return true;
                 }
                 break;
             case EXIT:
-                if (madeChange)
+                if (args.length != 0) {
+                    view.notifyFail("Failed to exit program.");
+                }
+                else if (madeChange)
                 {
                     String result = view.promptForInput("Are you sure that you want to exit without saving? Type Y for yes or any other key to save before exiting");
                     if (!result.toLowerCase().equals("y"))
@@ -584,7 +783,9 @@ public class Controller {
                         {
                             doSave();
                         }
+                        return true;
                     }
+                    
                 }
                 break;
         }
