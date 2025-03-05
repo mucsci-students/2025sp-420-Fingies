@@ -91,7 +91,6 @@ public class RelationshipHandler
     	return lst;
     }
     
-<<<<<<< HEAD
     /**
      * Provides the list of all relation objects
      * @return A list of relationship objects
@@ -109,11 +108,4 @@ public class RelationshipHandler
     public static void reset() {
         relationships = new ArrayList<Relationship>();
     }
-=======
-    public static List<Relationship> getRelationships()
-    {
-        return relationships;
-    }
-    
->>>>>>> fd5708a (created lines to be drawn between classes to represent relationships)
 }

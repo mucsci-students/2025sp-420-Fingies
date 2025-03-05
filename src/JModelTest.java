@@ -59,12 +59,39 @@ public class JModelTest {
 
     @Test
     public void loadSave() {
+    	System.out.println("@Test loadSave():");
         //Reset Classes and Relations for testing
         UMLClassHandler.reset();
         RelationshipHandler.reset();
 
         assertNotNull(model.loadData(path));
         HashSet<UMLClass> umlClasses = UMLClassHandler.getAllClasses();
+        for (UMLClass umlClass : umlClasses) {
+            System.out.print(umlClass.getName() + " ");
+        }
+        System.out.println();
+        System.out.println(RelationshipHandler.listRelationships());
+    }
+    
+    @Test
+    public void loadTwice()
+    {
+    	System.out.println("@Test loadTwice() (first time):");
+    	//Reset Classes and Relations for testing
+    	UMLClassHandler.reset();
+        RelationshipHandler.reset();
+        
+        assertNotNull(model.loadData(path));
+        HashSet<UMLClass> umlClasses = UMLClassHandler.getAllClasses();
+        for (UMLClass umlClass : umlClasses) {
+            System.out.print(umlClass.getName() + " ");
+        }
+        System.out.println();
+        System.out.println(RelationshipHandler.listRelationships());
+        
+        System.out.println("@Test loadTwice() (second time):");
+        assertNotNull(model.loadData(path));
+        umlClasses = UMLClassHandler.getAllClasses();
         for (UMLClass umlClass : umlClasses) {
             System.out.print(umlClass.getName() + " ");
         }
