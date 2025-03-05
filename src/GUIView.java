@@ -232,8 +232,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         {
             makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
         }
-
-        if (e.getSource() == removeClass && boxes.isEmpty())
+        else if (e.getSource() == removeClass && boxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name"});
         }
@@ -267,7 +266,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                     boxes.forEach(GUIView.this::remove); // Remove all text fields
                     boxes.clear();
                     repaint(); // Refresh UI
-                    System.out.println("arg0: " + args[0]);
+                    // System.out.println("arg0: " + args[0]);
                     // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
                     // controller.runHelper(action, args);
                 }
@@ -338,7 +337,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         newUMLClass.getJLayeredPane().addMouseMotionListener(dragListener);
 
         // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
-        this.add(newUMLClass.getJLayeredPane());
+        this.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
         GUIUMLClasses.put(className, newUMLClass);
         reload();
     }
@@ -473,6 +472,12 @@ class DragListener extends MouseAdapter {
     @Override
     public void mouseDragged(MouseEvent e) {
         if (initialClick == null) return;
+
+        // Brings current frame being dragged to the front
+        parentFrame.getContentPane().setComponentZOrder(component, JLayeredPane.DEFAULT_LAYER); // Bring to front
+        parentFrame.getContentPane().revalidate();
+        parentFrame.getContentPane().repaint();
+        
 
         // Get current location of the JLayeredPane
         int x = component.getX() + e.getX() - initialClick.x;

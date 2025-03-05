@@ -27,8 +27,8 @@ public class ArrowComponent extends JComponent {
             g2d.setStroke(new BasicStroke(2));  // Line thickness
 
             // Define a dashed line pattern (10 pixels of dash, 10 pixels of space)
-            float[] dashPattern = {10f, 10f};
-            g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dashPattern, 0));
+            // float[] dashPattern = {10f, 10f};
+            // g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dashPattern, 0));
 
             // Dotted Line
             // float[] dotPattern = { 1f, 5f };  // Dots of size 1, with gaps of size 5
