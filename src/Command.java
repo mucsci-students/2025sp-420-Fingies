@@ -15,14 +15,21 @@ public class Command {
 	public final String[] arguments;
 	
 	/**
+	 * The maximum number of arguments Command.parseCommand() will read.
+	 */
+	public static final int maxNumArgs = 100;
+	
+	/**
 	 * An array storing the keywords that represents each command.
 	 */
 	public static final String[] COMMANDS = {
 		    "add class", "remove class", "rename class",
-		    "add relationship", "remove relationship", "add attribute",
-		    "remove attribute", "rename attribute", "save",
+		    "add relationship", "remove relationship", "save",
 		    "load", "list classes", "list class",
-		    "list relationships", "help", "exit"
+		    "list relationships", "help", "exit",
+		    "add method", "remove method", "rename method",
+		    "add field", "remove field", "rename field",
+		    "add parameters", "remove parameters", "change parameter"
 		};
 	
 	/**
@@ -30,10 +37,12 @@ public class Command {
 	 */
 	public static final String[] COMMANDS_SHORTHAND = {
 		    "addc", "rmc", "rnc",         	   // add class, remove class, rename class
-		    "addr", "rmr", "adda",             // add relationship, remove relationship, add attribute
-		    "rma", "rna", "sv",                // remove attribute, rename attribute, save
+		    "addr", "rmr", "sv",               // add relationship, remove relationship, save
 		    "ld", "listcls", "listcl",         // load, list classes, list class
-		    "listr", "h", "quit"               // list relationships, help, exit
+		    "listr", "h", "quit",              // list relationships, help, exit
+		    "addm", "rmm", "rnm",              // add method, remove method, rename method
+		    "addf", "rmf", "rnf",              // add field, remove field, rename field
+		    "addp", "rmp", "rnp"              // add parameters, remove parameters, rename parameter
 		};
 	
 	/**
@@ -45,16 +54,22 @@ public class Command {
 			"CLASS_NAME NEW_NAME",
 			"SRC_CLASS DEST_CLASS",
 			"SRC_CLASS DEST_CLASS",
-			"CLASS_NAME ATTRIBUTE",
-			"CLASS_NAME ATTRIBUTE",
-			"CLASS_NAME ATTRIBUTE_NAME NEW_NAME",
-			"FILE_PATH",
+			"[ FILE_PATH ]",
 			"FILE_PATH",
 			"",
 			"CLASS_NAME",
 			"",
 			"[ COMMAND ]",
-			""
+			"",
+			"CLASS_NAME METHOD [ PARAMETER ... ]",
+			"CLASS_NAME METHOD NUM_PARAMETERS",
+			"CLASS_NAME METHOD_NAME NUM_PARAMETERS NEW_NAME",
+			"CLASS_NAME FIELD",
+			"CLASS_NAME FIELD",
+			"CLASS_NAME FIELD_NAME NEW_NAME",
+			"CLASS_NAME PARAMETER1 [ PARAMETER2 ... ]",
+			"CLASS_NAME PARAMETER1 [ PARAMETER2 ... ]",
+			"CLASS_NAME PARAMETER_NAME NEW_NAME",
 		};
 	
 	/**
@@ -66,18 +81,24 @@ public class Command {
 			"Gives a class a new name.",
 			"Creates a directed relationship from one class to another.",
 			"Removes the relationship going from one class to another.",
-			"Adds an attribute to a class.",
-			"Removes an attribute from a class.",
-			"Gives an attribute of a class a new name.",
 			"Saves the current diagram given a filepath (C:\\Users\\Zoppetti\\Demos\\Test.txt). \n"
-			+ "Or saves the current diagram without a filepath aftering saving once.",
+			+ "Or saves the current diagram without a filepath after saving once.",
 			"Loads a diagram into the editor from your files (C:\\\\Users\\\\Zoppetti\\\\Demos\\\\Test.txt).",
 			"Prints a list of all of the classes in the diagram.",
 			"Prints all of the attributes in a class.",
 			"Lists all of the relationships between classes in the diagram.",
 			"Prints a list of commands and their shorthand versions.\n"
 			+ "If the name of a command is supplied as an argument, prints a description of a single command.",
-			"Exits the program."
+			"Exits the program.",
+			"Adds a method to a class.",
+			"Removes a method from a class.",
+			"Gives a method of a class a new name.",
+			"Adds a field to a class.",
+			"Removes a field from a class.",
+			"Gives a field of a class a new name.",
+			"Adds a set of parameters to a method of a class.",
+			"Removes a set of parameters from a method of a class.",
+			"Gives a parameter of a method a new name."
 		};
 	
 	Command (Action a, String[] args)
@@ -165,13 +186,19 @@ public class Command {
 				if (token.length() > 0)
 				{
 					args.add(token);
+					if (args.size() > maxNumArgs)
+						throw new IllegalArgumentException ("Commands can't have more than " + maxNumArgs + " arguments.");
 					token = "";
 				}
 			}
 			else if (c == ' ' && !quote)
 			{
 				if (token.length() > 0)
+				{
 					args.add(token);
+					if (args.size() > maxNumArgs)
+						throw new IllegalArgumentException ("Commands can't have more than " + maxNumArgs + " arguments.");
+				}
 				token = "";
 			}
 			else
@@ -180,7 +207,11 @@ public class Command {
 			}
 		}
 		if (token.length() > 0)
+		{
 			args.add(token);
+			if (args.size() > maxNumArgs)
+				throw new IllegalArgumentException ("Commands can't have more than " + maxNumArgs + " arguments.");
+		}
 		if (quote)
 			throw new IllegalArgumentException ("Every quote should have an end-quote.");
 		
