@@ -92,5 +92,9 @@ public class RelationshipHandler
     	return lst;
     }
     
+    public static List<Relationship> getRelationships()
+    {
+        return relationships;
+    }
     
 }

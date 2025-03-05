@@ -139,7 +139,7 @@ public class Method extends Attribute {
     @Override
     public String toString()
     {
-        String str = getName() + "(";
+        String str = getName() + " (";
         for (String parameter : parameters)
         {
             str += parameter + ", ";

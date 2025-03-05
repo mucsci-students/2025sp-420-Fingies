@@ -1,14 +1,18 @@
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class GUIUMLClass {
-    String name;
-    private JPanel bgPanel;
+    private final int PIXELSPERCHARACTER = 8;
     private JPanel classPanel;
     private JPanel fieldsPanel;
     private JPanel methodsPanel;
@@ -18,18 +22,15 @@ public class GUIUMLClass {
     private JLayeredPane background;
     private Color color;
 
-    public GUIUMLClass(String name)
+    private UMLClass umlclass;
+
+    public GUIUMLClass(UMLClass umlclass)
+        
     {
-        // Sets the name of the class
-        this.name = name;
+        this.umlclass = umlclass;
 
         // Creates a random color for the class
-        color = new Color((int)(Math.random() * 240 + 15), (int)(Math.random() * 240 + 15), (int)(Math.random() * 240 + 15), 100);
-
-        // Creates a bunch of different panels
-        // bgPanel = new JPanel();
-        // bgPanel.setBackground(Color.BLACK);
-        // bgPanel.setBounds(0, 0, 150, 250);
+        color = new Color((int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), 100);
 
         classPanel = new JPanel();
         // classPanel.setBackground(Color.RED);
@@ -51,27 +52,25 @@ public class GUIUMLClass {
 
         // Creates the labels for the different panels
         className = new JLabel();
-        className.setText(name);
+        className.setText(umlclass.getName());
         className.setHorizontalAlignment(JLabel.CENTER); //LEFT, CENTER, RIGHT
         className.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
         className.setForeground(Color.BLACK);
-        className.setBounds(0, 0, 140, 25);  // Set bounds for the class name label
+        className.setBounds(0, 2, 140, 25);  // Set bounds for the class name label
 
         // Creates the labels for the different panels
         fields = new JLabel();
-        fields.setText("Fields:");
-        fields.setHorizontalAlignment(JLabel.CENTER); //LEFT, CENTER, RIGHT
+        fields.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
         fields.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
         fields.setForeground(Color.BLACK);
-        fields.setBounds(0, 0, 140, 25);  // Set bounds for the fields label
+        // fields.setBounds(0, 0, 140, 25);  // Set bounds for the fields label
 
         // Creates the labels for the different panels
         methods = new JLabel();
-        methods.setText("Methods:");
-        methods.setHorizontalAlignment(JLabel.CENTER); //LEFT, CENTER, RIGHT
+        methods.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
         methods.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
         methods.setForeground(Color.BLACK);
-        methods.setBounds(0, 0, 140, 25);  // Set bounds for the methods label
+        // methods.setBounds(0, 0, 140, 25);  // Set bounds for the methods label
 
         // Add labels
         classPanel.add(className);
@@ -100,11 +99,8 @@ public class GUIUMLClass {
         background.add(classPanel, JLayeredPane.PALETTE_LAYER);
         background.add(fieldsPanel, JLayeredPane.PALETTE_LAYER);
         background.add(methodsPanel, JLayeredPane.PALETTE_LAYER);
-    }
 
-    public String getName()
-    {
-        return name;
+        update();
     }
 
     public JLayeredPane getJLayeredPane()
@@ -112,10 +108,73 @@ public class GUIUMLClass {
         return background;
     }
 
-    public void renameClass (String name)
+    public void update ()
     {
-        this.name = name;
-        className.setText(name);
+        updateClassName();
+        updateFields();
+        updateMethods();
+
+        // Calculate new total height
+        int newHeight = classPanel.getHeight() + fieldsPanel.getHeight() + methodsPanel.getHeight() + 20;
+        int newWidth = Math.max(classPanel.getWidth(), Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth())) + 10;
+        
+        background.setBounds(0, 0, newWidth, newHeight);
+        className.setSize(newWidth - 10, classPanel.getHeight());
+
+        classPanel.setSize(newWidth - 10, classPanel.getHeight());
+        fieldsPanel.setSize(newWidth - 10, fieldsPanel.getHeight());
+        methodsPanel.setSize(newWidth - 10, methodsPanel.getHeight());
+
+        background.revalidate();
+        background.repaint();
     }
 
+    public void updateClassName()
+    {
+        String text = umlclass.getName();
+        className.setText(text);
+        className.setBounds(0, 2, 140, 25);
+        classPanel.setBounds(5, 5, 140 + text.length(), 25); // Resize panel
+
+    }
+
+    public void updateFields ()
+    {
+        int newHeight = fieldsPanel.getHeight();
+        int maxLength = 0;
+        if (!umlclass.getFields().isEmpty())
+        {
+            String text = "<html>";
+            for (Field field : umlclass.getFields())
+            {
+                maxLength = Math.max(maxLength, field.getName().length());
+                text += field.getName() + "<br/>";
+            }
+            text = text.substring(0, text.length() - 5); // trim off the extra \n
+            fields.setText(text + "</html>");
+            newHeight = 20 * umlclass.getFields().size(); // Calculate height dynamically
+        }
+        fields.setBounds(10, 5, maxLength * PIXELSPERCHARACTER, newHeight);
+        fieldsPanel.setBounds(5, 35, maxLength * PIXELSPERCHARACTER, newHeight); // Resize panel
+    }
+
+    public void updateMethods ()
+    {
+        int newHeight = methodsPanel.getHeight();
+        int maxLength = 0;
+        if (!umlclass.getMethods().isEmpty())
+        {
+            String text = "<html>";
+            for (Method method : umlclass.getMethods())
+            {
+                maxLength = Math.max(maxLength, (method.getName() + method.toString()).length());
+                text += method + "<br/>";
+            }
+            text = text.substring(0, text.length() - 5); // trim off the extra \n
+            methods.setText(text + "</html>");
+            newHeight = 20 * umlclass.getFields().size(); // Calculate height dynamically
+        }
+        methods.setBounds(10, 5, maxLength * PIXELSPERCHARACTER, newHeight);
+        methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), maxLength * PIXELSPERCHARACTER, newHeight); // Resize panel
+    }
 }
