@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -15,6 +16,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +54,8 @@ public class GUIView extends JFrame implements ActionListener, View {
     private GUIMenuItem renameParameter;
     private GUIMenuItem renameRelationship;
 
+    private ArrayList<JTextField> boxes;
+
     private Controller controller;
     final JFileChooser fileChooser = new JFileChooser();
 
@@ -63,6 +69,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     {
         GUIUMLClasses = new HashMap<String, GUIUMLClass>();
         arrows = new ArrayList<ArrowComponent>();
+        boxes = new ArrayList<JTextField>();
 
         // Creates a JMenuBar and menus
         menuBar = new JMenuBar();
@@ -84,21 +91,21 @@ public class GUIView extends JFrame implements ActionListener, View {
         
         // ADD
         addClass = new GUIMenuItem("Class", Action.ADD_CLASS);
-        addField = new GUIMenuItem("Attribute", Action.ADD_FIELD);
+        addField = new GUIMenuItem("Field", Action.ADD_FIELD);
         addMethod = new GUIMenuItem("Method", Action.ADD_METHOD);
         addParameter = new GUIMenuItem("Parameter", Action.ADD_PARAMETERS);
         addRelationship = new GUIMenuItem("Relationship", Action.ADD_RELATIONSHIP);
 
         // REMOVE
         removeClass = new GUIMenuItem("Class", Action.REMOVE_CLASS);
-        removeField = new GUIMenuItem("Attribute", Action.REMOVE_FIELD);
+        removeField = new GUIMenuItem("Field", Action.REMOVE_FIELD);
         removeMethod = new GUIMenuItem("Method", Action.REMOVE_METHOD);
         removeParameter = new GUIMenuItem("Parameter", Action.REMOVE_PARAMETERS);
         removeRelationship = new GUIMenuItem("Relationship", Action.REMOVE_RELATIONSHIP);
 
         // RENAME
         renameClass = new GUIMenuItem("Class", Action.RENAME_CLASS);
-        renameField = new GUIMenuItem("Attribute", Action.RENAME_FIELD);
+        renameField = new GUIMenuItem("Field", Action.RENAME_FIELD);
         renameMethod = new GUIMenuItem("Method", Action.RENAME_METHOD);
         renameParameter = new GUIMenuItem("Parameter", Action.CHANGE_PARAMETER);
         renameRelationship = new GUIMenuItem("Relationship", Action.CHANGE_RELATIONSHIP_TYPE);
@@ -153,8 +160,6 @@ public class GUIView extends JFrame implements ActionListener, View {
         renameMenu.add(renameParameter);
         renameMenu.add(renameRelationship);
 
-        
-
         // Sets main attributes of the "frame" (this)
         this.setTitle("UMLEditor");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -166,19 +171,113 @@ public class GUIView extends JFrame implements ActionListener, View {
         this.setVisible(true);
 
     }
+    public void makeTextBoxes(Action a, String [] placeholders)
+    {
+        boxes.clear();
+        for (int i = 0; i < placeholders.length; i++)
+        {
+            JTextField text;
+            text = new JTextField(20);
+            text.setBounds(i * 130 + 20, 20, 125, 30); // Set position and size
+            String placeholder = placeholders[i];
+            text.setText(placeholder);
+            text.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Red border with thickness of 5
+            text.setHorizontalAlignment(SwingConstants.CENTER);
+
+            text.addFocusListener(new java.awt.event.FocusListener() {
+                public void focusGained(java.awt.event.FocusEvent e) {
+                    if (text.getText().equals(placeholder)) {
+                        text.setText(""); // Clear placeholder when focused
+                    }
+                }
     
+                public void focusLost(java.awt.event.FocusEvent e) {
+                    if (text.getText().isEmpty()) {
+                        text.setText(placeholder); // Restore placeholder if the field is empty
+                    }
+                }
+            });
+
+            boxes.add(text);
+            this.add(text);
+            // if (i == 0)
+            //     text.requestFocus(); // Automatically focus the text field
+            addEnterKeyListenerToRemove(a, text);
+            repaint(); // Refresh UI
+        }
+
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
     	Action a = ((GUIMenuItem) e.getSource()).action;
 
-        if (e.getSource() == addClass)
+        if (e.getSource() == addClass && boxes.isEmpty())
         {
-            
+            makeTextBoxes(a, new String [] {"Class Name"});
+        }
+        else if (e.getSource() == addField && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Class Name", "Field Name"});
+        }
+        else if (e.getSource() == addMethod && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name"});
+        }
+        else if (e.getSource() == addParameter && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: (a, b, c)"});
+        }
+        else if (e.getSource() == addRelationship && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
         }
 
-    	String[] args = new String[0];
-        controller.runHelper(a, args);
-        // TODO: actually execute the command based on whether runHelper() succeeds
+        if (e.getSource() == removeClass && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Class Name"});
+        }
+        else if (e.getSource() == removeField && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Class Name", "Field Name"});
+        }
+        else if (e.getSource() == removeMethod && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name"});
+        }
+        else if (e.getSource() == removeParameter && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: (a, b, c)"});
+        }
+        else if (e.getSource() == removeRelationship && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Src Class", "Dest Class"});
+        }
+
+    	// String[] args = new String[0];
+        // controller.runHelper(a, args);
+    }
+
+    private void addEnterKeyListenerToRemove(Action action, JTextField text) {
+        text.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    String[] args = boxes.stream().map(JTextField::getText).toArray(String[]::new);
+                    boxes.forEach(GUIView.this::remove); // Remove all text fields
+                    boxes.clear();
+                    repaint(); // Refresh UI
+                    System.out.println("arg0: " + args[0]);
+                    // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
+                    // controller.runHelper(action, args);
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    boxes.forEach(GUIView.this::remove); // Remove all text fields
+                    boxes.clear();
+                    repaint(); // Refresh UI
+                }
+            }
+        }); 
     }
 
     /**
@@ -231,7 +330,7 @@ public class GUIView extends JFrame implements ActionListener, View {
 
     public void addUMLClass(String className)
     {
-        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller);
+        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this.getWidth(), this.getHeight());
 
         // Creates new listener for the newly added JLayeredPane
         DragListener dragListener = new DragListener(newUMLClass.getJLayeredPane(), this, this);
@@ -390,7 +489,7 @@ class DragListener extends MouseAdapter {
         // Constrain X and Y to stay within the frame bounds
         if (x < 0) x = 0;
         if (x > maxX) x = maxX;
-        if (y < 0) y = 0;
+        if (y < 75) y = 75;
         if (y > maxY) y = maxY;
 
         // Move JLayeredPane to new position within bounds

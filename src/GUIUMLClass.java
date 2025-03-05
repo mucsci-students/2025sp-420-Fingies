@@ -26,7 +26,7 @@ public class GUIUMLClass {
     private UMLClass umlclass;
     private Controller controller;
 
-    public GUIUMLClass(UMLClass umlclass, Controller controller)
+    public GUIUMLClass(UMLClass umlclass, Controller controller, int frameWidth, int frameHeight)
         
     {
         this.umlclass = umlclass;
@@ -94,12 +94,21 @@ public class GUIUMLClass {
         background.add(fieldsPanel, JLayeredPane.PALETTE_LAYER);
         background.add(methodsPanel, JLayeredPane.PALETTE_LAYER);
 
+        randomizePosition(background, frameWidth, frameHeight);
+
         update();
     }
 
     public JLayeredPane getJLayeredPane()
     {
         return background;
+    }
+
+    public void randomizePosition (JLayeredPane pane, int maxWidth, int maxHeight)
+    {
+        int randX = (int)(Math.random() * (maxWidth - pane.getWidth()));
+        int randY = (int)(Math.random() * (maxHeight - pane.getHeight() - 75)) + 75;
+        pane.setBounds(randX, randY, pane.getWidth(), pane.getHeight());
     }
 
     public void update ()
@@ -111,7 +120,8 @@ public class GUIUMLClass {
         int newHeight = classPanel.getHeight() + fieldsPanel.getHeight() + methodsPanel.getHeight() + 20;
         int newWidth = Math.max(classPanel.getWidth(), Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
         
-        background.setBounds(0, 0, newWidth, newHeight);
+        background.setBounds(background.getX(), background.getY(), newWidth, newHeight);
+        
         
         // Must be called down here because it relies on new size of background
         updateClassName();
@@ -134,7 +144,7 @@ public class GUIUMLClass {
         classLabel.setHorizontalAlignment(SwingConstants.CENTER);
         // classLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Red border with thickness of 2
 
-        classLabel.setBounds((background.getWidth() - labelWidth) / 2 - 4, 2, labelWidth, DEFAULT_CLASS_PANEL_HEIGHT);  // Set bounds for the class name label
+        classLabel.setBounds((background.getWidth() - labelWidth) / 2 - 5, 2, labelWidth, DEFAULT_CLASS_PANEL_HEIGHT);  // Set bounds for the class name label
         
 
         JTextField classEditor = new JTextField(umlclass.getName());
