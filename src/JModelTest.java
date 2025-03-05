@@ -1,6 +1,7 @@
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import org.junit.Before;
@@ -19,22 +20,21 @@ public class JModelTest {
     @Before
     public void setUp() {
         UMLClassHandler.createClass("Car");
-            UMLClassHandler.getClass("Car").addAttribute("Engine");
-            UMLClassHandler.getClass("Car").addAttribute("Wheel");
-            UMLClassHandler.getClass("Car").addAttribute("Pedal");
+        UMLClassHandler.getClass("Car").addField("Wheels");
+        UMLClassHandler.getClass("Car").addField("V16 Engine");
+        UMLClassHandler.getClass("Car").addMethod("Drive", Arrays.asList("ThrottleAmount", "GasAmount"));
         UMLClassHandler.createClass("Animal");
-            UMLClassHandler.getClass("Animal").addAttribute("Cat");
-            UMLClassHandler.getClass("Animal").addAttribute("Dog");
+        UMLClassHandler.getClass("Animal").addField("Eyeballs");
+        UMLClassHandler.getClass("Animal").addMethod("Eat", Arrays.asList("Food", "Calories"));
         UMLClassHandler.createClass("Food");
-            UMLClassHandler.getClass("Food").addAttribute("Breakfast");
-            UMLClassHandler.getClass("Food").addAttribute("Lunch");
-            UMLClassHandler.getClass("Food").addAttribute("Dinner");
-        UMLClassHandler.addRelationship("Car", "Food");
+        RelationshipHandler.addRelationship("Car", "Animal", RelationshipType.AGGREGATION);
+        RelationshipHandler.addRelationship("Food", "Animal", RelationshipType.INHERITANCE);
     }
 
     @After
     public void resetTest() {
-        UMLClassHandler.reset();
+        RelationshipHandler.removeRelationship("Car", "Animal");
+        RelationshipHandler.removeRelationship("Food", "Animal");
     }
 
     @Test
@@ -59,11 +59,36 @@ public class JModelTest {
 
     @Test
     public void loadSave() {
+    	System.out.println("@Test loadSave():");
         assertNotNull(model.loadData(path));
         HashSet<UMLClass> umlClasses = UMLClassHandler.getAllClasses();
         for (UMLClass umlClass : umlClasses) {
             System.out.print(umlClass.getName() + " ");
         }
         System.out.println();
+        System.out.println(RelationshipHandler.listRelationships());
+    }
+    
+    @Test
+    public void loadTwice()
+    {
+    	System.out.println("@Test loadTwice() (first time):");
+        
+        assertNotNull(model.loadData(path));
+        HashSet<UMLClass> umlClasses = UMLClassHandler.getAllClasses();
+        for (UMLClass umlClass : umlClasses) {
+            System.out.print(umlClass.getName() + " ");
+        }
+        System.out.println();
+        System.out.println(RelationshipHandler.listRelationships());
+        
+        System.out.println("@Test loadTwice() (second time):");
+        assertNotNull(model.loadData(path));
+        umlClasses = UMLClassHandler.getAllClasses();
+        for (UMLClass umlClass : umlClasses) {
+            System.out.print(umlClass.getName() + " ");
+        }
+        System.out.println();
+        System.out.println(RelationshipHandler.listRelationships());
     }
 }

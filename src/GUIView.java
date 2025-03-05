@@ -16,6 +16,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -35,12 +36,15 @@ public class GUIView extends JFrame implements ActionListener, View {
     final JFileChooser fileChooser = new JFileChooser();
 
     // HashMap with key as name of class and value as GUIUMLClass associated with the name
-    private HashMap<String, GUIUMLClass> UMLClasses;
+    private HashMap<String, GUIUMLClass> GUIUMLClasses;
+
+    // List of all current arrows representing relationships
+    private List<ArrowComponent> arrows;
 
     public GUIView ()
     {
-        // Creates the list for UMLClasses to be added
-        UMLClasses = new HashMap<String, GUIUMLClass>();
+        GUIUMLClasses = new HashMap<String, GUIUMLClass>();
+        arrows = new ArrayList<ArrowComponent>();
 
         // Creates a JMenuBar and menus
         menuBar = new JMenuBar();
@@ -93,34 +97,100 @@ public class GUIView extends JFrame implements ActionListener, View {
     	Action a = ((GUIMenuItem) e.getSource()).action;
     	String[] args = new String[0];
         controller.runHelper(a, args);
+        // TODO: actually execute the command based on whether runHelper() succeeds
     }
 
-    public void addUMLClass(String name)
+    /**
+     * Creates an arrow between two UMLClasses of a specific relationship
+     * @param relationship relationship between two UMLClasses
+     */
+    public void addArrowForRelationship(Relationship relationship) {
+        GUIUMLClass srcClass = GUIUMLClasses.get(relationship.getSrc().getName());
+        GUIUMLClass destClass = GUIUMLClasses.get(relationship.getDest().getName());
+
+        Point start = new Point(srcClass.getJLayeredPane().getX() + srcClass.getJLayeredPane().getWidth() / 2,
+                            srcClass.getJLayeredPane().getY() + srcClass.getJLayeredPane().getHeight() / 2);
+        Point end = new Point(destClass.getJLayeredPane().getX() + destClass.getJLayeredPane().getWidth() / 2,
+                            destClass.getJLayeredPane().getY() + destClass.getJLayeredPane().getHeight() / 2);
+
+        // Create a new ArrowComponent and add it to the arrows list
+        ArrowComponent arrow = new ArrowComponent(start, end);
+        arrows.add(arrow);
+
+        // Add the arrow to the JLayeredPane (or other container)
+        this.add(arrow, JLayeredPane.DEFAULT_LAYER);
+        reload();  // Force a reload to revalidate and repaint
+    }
+
+    /**
+     * Updates all of the current arrows by removing them all and redrawing them
+     */
+    public void updateArrows() {
+        for (ArrowComponent arrow : arrows) {
+            this.remove(arrow); // Remove from JFrame
+        }
+        arrows.clear();  // Clear the list of arrows
+        
+        // Get the relationships and create arrows for each one
+        for (Relationship relationship : RelationshipHandler.getRelationships()) {
+            addArrowForRelationship(relationship);
+        }
+        reload();
+    }
+
+    /**
+     * Refreshes the GUI to update for movement of UMLClasses
+     */
+    public void reload()
     {
-        GUIUMLClass newUMLClass = new GUIUMLClass(name);
-        // Creates new listener for the newly added JLayeredPane
-        DragListener dragListener = new DragListener(newUMLClass.getJLayeredPane(), this);
-        newUMLClass.getJLayeredPane().addMouseListener(dragListener);
-        newUMLClass.getJLayeredPane().addMouseMotionListener(dragListener);
-
-        // Adds the JLayeredPane to the Frame (this) and to the HashMap of UMLClasses
-        this.add(newUMLClass.getJLayeredPane());
-        UMLClasses.put(name, newUMLClass);
-
         // Force the GUI to refresh and update
         this.revalidate(); // Recalculate layout
         this.repaint();    // Repaint to reflect changes
     }
-    
-    @Override
-    public String promptForSaveInput(String message)
+
+    public void addUMLClass(String name)
     {
-    	fileChooser.setDialogTitle(message);
-        int returnValue = fileChooser.showSaveDialog(this);
-        if(returnValue != JFileChooser.APPROVE_OPTION)
-        	return null;
-        return fileChooser.getSelectedFile().getName();
+        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(name), controller);
+
+        // Creates new listener for the newly added JLayeredPane
+        DragListener dragListener = new DragListener(newUMLClass.getJLayeredPane(), this, this);
+        newUMLClass.getJLayeredPane().addMouseListener(dragListener);
+        newUMLClass.getJLayeredPane().addMouseMotionListener(dragListener);
+
+        // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
+        this.add(newUMLClass.getJLayeredPane());
+        GUIUMLClasses.put(name, newUMLClass);
+        reload();
     }
+
+    public void removeUMLClass(String name)
+    {
+        // this..getContentPane().remove(GUIUMLClasses.get(name).getJLayeredPane());
+        this.remove(GUIUMLClasses.get(name).getJLayeredPane());
+        GUIUMLClasses.remove(name);
+        reload();
+    }
+
+    public void renameUMLClass(String className, String newName)
+    {
+        GUIUMLClass temp = GUIUMLClasses.get(className);
+        GUIUMLClasses.remove(className);
+        temp.update();
+        GUIUMLClasses.put(newName, temp);
+        reload();
+    }
+
+    /**
+     * Updates the fields in the GUI UMLclasses based on user input
+     * @param className name of UMLClass to be updated
+     */
+    public void updateAttributes(String className)
+    {
+        GUIUMLClasses.get(className).updateFields();
+        GUIUMLClasses.get(className).updateMethods();
+    }
+
+    
     
 	@Override
 	public String promptForInput(String message) {
@@ -137,6 +207,26 @@ public class GUIView extends JFrame implements ActionListener, View {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+    public String promptForSaveInput(String message)
+    {
+    	fileChooser.setDialogTitle(message);
+        int returnValue = fileChooser.showSaveDialog(this);
+        if(returnValue != JFileChooser.APPROVE_OPTION)
+        	return null;
+        return fileChooser.getSelectedFile().getName();
+    }
+	
+	@Override
+	public String promptForOpenInput(String message) {
+    	fileChooser.setDialogTitle(message);
+        int returnValue = fileChooser.showOpenDialog(this);
+        if(returnValue != JFileChooser.APPROVE_OPTION)
+        	return null;
+        return fileChooser.getSelectedFile().getName();
+	}
+	
 	@Override
 	public void notifySuccess() {
 		// TODO Auto-generated method stub
@@ -168,41 +258,37 @@ public class GUIView extends JFrame implements ActionListener, View {
 		
 	}
 	
-	public void setController(Controller c)
-	{
-		controller = c;
-	}
-	
-	@Override
-	public String promptForOpenInput(String message) {
-    	fileChooser.setDialogTitle(message);
-        int returnValue = fileChooser.showOpenDialog(this);
-        if(returnValue != JFileChooser.APPROVE_OPTION)
-        	return null;
-        return fileChooser.getSelectedFile().getName();
-	}
 	@Override
 	public void run() 
 	{
 		// Nothing to be implemented here
 	}
-  
+	
+	public void setController(Controller c)
+	{
+		controller = c;
+	}
+    
+    
 }
 
 // Drag listener for JLayeredPane
 class DragListener extends MouseAdapter {
     private final JComponent component;
     private final JFrame parentFrame;
+    private final GUIView parentView;
     private Point initialClick;
 
-    public DragListener(JComponent component, JFrame parentFrame) {
+    public DragListener(JComponent component, JFrame parentFrame, GUIView parentView) {
         this.component = component;
         this.parentFrame = parentFrame;
+        this.parentView = parentView;
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         initialClick = e.getPoint(); // Store initial click position
+        ((JComponent)e.getSource()).requestFocusInWindow();
     }
 
     @Override
@@ -229,6 +315,9 @@ class DragListener extends MouseAdapter {
 
         // Move JLayeredPane to new position within bounds
         component.setLocation(x, y);
+
+        // Update the arrows after moving the class
+        parentView.updateArrows();  // This will update the arrows to reflect new positions
     }
 }
 
