@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Arrays;
 
 /**
  * Controller for UML Editor, handles user input
@@ -60,11 +61,12 @@ public class Controller {
         }
     }
 
-    public boolean doAddRelationship(String srcClass, String destClass, RelationshipType type) 
+    public boolean doAddRelationship(String srcClass, String destClass, String type) 
     {
         try
         {
-            return RelationshipHandler.addRelationship(srcClass, destClass, type);
+            RelationshipType rType = RelationshipType.valueOf(type);
+            return RelationshipHandler.addRelationship(srcClass, destClass, rType);
         }
         catch (Exception e)
         {
@@ -88,11 +90,12 @@ public class Controller {
         }
     }
 
-    public boolean doChangeRelationshipType(String srcClass, String destClass, RelationshipType newType)
+    public boolean doChangeRelationshipType(String srcClass, String destClass, String newType)
     {
         try
         {
-            return RelationshipHandler.changeRelationshipType(srcClass, destClass, newType);
+            RelationshipType rType = RelationshipType.valueOf(newType);
+            return RelationshipHandler.changeRelationshipType(srcClass, destClass, rType);
         }
         catch (Exception e)
         {
@@ -144,11 +147,12 @@ public class Controller {
         }
     }
 
-    public boolean doRemoveMethod(String srcClass, String method, int paramNum) 
+    public boolean doRemoveMethod(String srcClass, String method, String paramNum) 
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).removeMethod(method, paramNum);
+            int arity = Integer.parseInt(paramNum);
+            return UMLClassHandler.getClass(srcClass).removeMethod(method, arity);
         }
         catch (Exception e)
         {
@@ -172,11 +176,12 @@ public class Controller {
         }
     }
 
-    public boolean doRenameMethod(String srcClass, String oldMethod,int paramNum, String newMethod) 
+    public boolean doRenameMethod(String srcClass, String oldMethod, String paramNum, String newMethod) 
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).renameMethod(oldMethod, paramNum, newMethod);
+            int arity = Integer.parseInt(paramNum);
+            return UMLClassHandler.getClass(srcClass).renameMethod(oldMethod, arity, newMethod);
         }
         catch (Exception e)
         {
@@ -186,11 +191,12 @@ public class Controller {
         }
     }
     
-    public boolean doAddParameters(String srcClass, String method, int paramNum, List<String> params)
+    public boolean doAddParameters(String srcClass, String method, String paramNum, List<String> params)
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).addParameters(method, paramNum, params);
+            int arity = Integer.parseInt(paramNum);
+            return UMLClassHandler.getClass(srcClass).addParameters(method, arity, params);
         }
         catch (Exception e)
         {
@@ -200,11 +206,12 @@ public class Controller {
         }
     }
 
-    public boolean doRemoveParameters(String srcClass, String method, int paramNum, List<String> params)
+    public boolean doRemoveParameters(String srcClass, String method, String paramNum, List<String> params)
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).removeParameters(method, paramNum, params);
+            int arity = Integer.parseInt(paramNum);
+            return UMLClassHandler.getClass(srcClass).removeParameters(method, arity, params);
         }
         catch (Exception e)
         {
@@ -214,11 +221,12 @@ public class Controller {
         }
     }
     
-    public boolean doRenameParameter(String srcClass, String method, int paramNum, String oldParam, String newParam)
+    public boolean doRenameParameter(String srcClass, String method, String paramNum, String oldParam, String newParam)
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).getMethod(method, paramNum).renameParameter(oldParam, newParam);
+            int arity = Integer.parseInt(paramNum);
+            return UMLClassHandler.getClass(srcClass).getMethod(method, arity).renameParameter(oldParam, newParam);
         }
         catch (Exception e)
         {
@@ -421,7 +429,6 @@ public class Controller {
                 	view.notifyFail("Add class should have exactly 1 argument.");
                     return false;
                 }
-                break;
             case REMOVE_CLASS:
                 if (args.length == 1)
                 {
@@ -442,7 +449,6 @@ public class Controller {
                 	view.notifyFail("Remove class should have exactly 1 argument.");
                     return false;
                 }
-                break;
             case RENAME_CLASS:
                 if (args.length == 2)
                 {
@@ -463,23 +469,27 @@ public class Controller {
                 	view.notifyFail("Rename class should have exactly 2 arguments.");
                     return false;
                 }
-                break;
             case ADD_RELATIONSHIP:
-                if (args.length == 2)
+                if (args.length == 3)
                 {
-                    if (doAddRelationship(args[0], args[1], new RelationshipType(args[2])))
+
+                    if (doAddRelationship(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully added relationship " + args[0] + " --> " + args[1]);
+                        view.notifySuccess("Successfully added relationship " + args[0] + " --> " + args[1] + " of type " + args[3]);
                         madeChange = true;
                         return true;
+                    }
+                    else
+                    {
+                        view.notifyFail("Failed to add relationship " + args[0] + " --> " + args[1] + " of type " + args[3]);
+                        return false;
                     }
                 }
                 else
                 {
-                	view.notifyFail("Add relationship should have exactly 2 arguments.");
+                	view.notifyFail("Add relationship should have exactly 3 arguments.");
                     return false;
                 }
-                break;
             case REMOVE_RELATIONSHIP:
                 if (args.length == 2)
                 {
@@ -500,15 +510,30 @@ public class Controller {
                 	view.notifyFail("Remove relationship should have exactly 2 arguments.");
                     return false;
                 }
-                break;
             case ADD_METHOD:
-                //todo
-                break;
+                if (args.length >= 2)
+                {
+                    if (doAddMethod(args[0], args[1], getPartialListFromArray(args, 2, args.length)))
+                    {
+                        view.notifySuccess("Successfully added method " + args[1] + " with argument(s) " + getPartialListFromArray(args, 2, args.length) + " to class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }
+                    else
+                    {
+                        view.notifyFail("Method couldn't be added.");
+                        return false;
+                    }
+                }
+                else
+                {
+                	view.notifyFail("Add Method should have 2 or more arguments.");
+                    return false;
+                }
             case REMOVE_METHOD:
                 if (args.length == 3)
                 {
-                    int arity = Integer.parseInt(args[2]);
-                    if (doRemoveMethod(args[0], args[1], arity))
+                    if (doRemoveMethod(args[0], args[1], args[2]))
                     {
                         view.notifySuccess("Successfully removed method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         madeChange = true;
@@ -524,10 +549,26 @@ public class Controller {
                     view.notifyFail("Remove method should have exactly 3 arguments.");
                     return false;
                 }
-                break;
             case RENAME_METHOD:
-                //todo
-                break;
+                if (args.length == 4)
+                {
+                    if (doRenameMethod(args[0], args[1], args[2], args[3]))
+                    {
+                        view.notifySuccess("Successfully renamed method " + args[1] + " with arity " + args[2] + " to " + args[3] + " in class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }
+                    else
+                    {
+                        view.notifyFail("Failed to rename method " + args[1] + " with arity " + args[2] + " to " + args[3] + " in class " + args[0]);
+                        return false;
+                    }
+                }
+                else
+                {
+                	view.notifyFail("Rename method should have exactly 4 arguments.");
+                    return false;
+                }
             case ADD_FIELD:
                 if (args.length == 2)
                 {
@@ -548,7 +589,6 @@ public class Controller {
                 	view.notifyFail("Add field should have exactly 2 arguments.");
                     return false;
                 }
-                break;
             case REMOVE_FIELD:
                 if (args.length == 2)
                 {
@@ -568,7 +608,6 @@ public class Controller {
                 	view.notifyFail("Remove field should have exactly 2 arguments.");
                     return false;
                 }
-                break;
             case RENAME_FIELD:
                 if (args.length == 3)
                 {
@@ -589,37 +628,59 @@ public class Controller {
                 	view.notifyFail("Rename field should have exactly 3 arguments.");
                     return false;
                 }
-                break;
             case ADD_PARAMETERS:
-                //todo
-                break;
-            case REMOVE_PARAMETERS:
-                int arity = Integer.parseInt(args[2]);
-                if (args.length == 3)
+                if (args.length >= 4) {
+                    List<String> params = getPartialListFromArray(args, 3, args.length);
+                    if (doAddParameters(args[0], args[1], args[2], params))
+                    {
+                        view.notifySuccess("Succesfully added parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + "from class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }
+                    else {
+                        view.notifyFail("Failed to remove parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + "from class " + args[0]);
+                        return false;
+                    }
+                }
+                else
                 {
-                    //remove all?
+                    view.notifyFail("Add Parameters should have 4 or more parameters.");
+                    return false;
                 }
-                else if (args.length >= 4) {
-                    if (doRemoveParameters(args[0], args[1], arity, args[]))
+            case REMOVE_PARAMETERS:
+                if (args.length >= 4) {
+                    List<String> params = getPartialListFromArray(args, 3, args.length);
+                    if (doRemoveParameters(args[0], args[1], args[2], params))
+                    {
+                        view.notifySuccess("Succesfully removed parameter(s): " + params + " from method " + args[1] + " with arity " + args[2] + "from class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }
+                    else {
+                        view.notifyFail("Failed to remove parameter(s): " + params + " from method " + args[1] + " with arity " + args[2] + "from class " + args[0]);
+                        return false;
+                    }
                 }
-                break;
+                else
+                {
+                    view.notifyFail("Remove Parameters should have 4 or more parameters.");
+                    return false;
+                }
             // this should be called RENAME_PARAMETER
             case CHANGE_PARAMETER:
                 if (args.length == 5) {
-                    int arity = Integer.parseInt(args[2]);
-                    if (doRenameParameter(args[0], args[1], arity, args[3], args[4]))
+                    if (doRenameParameter(args[0], args[1], args[2], args[3], args[4]))
                     {
-                        view.notifySuccess("Successfully renamed parameter " + args[3] + " with arity " + arity + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
+                        view.notifySuccess("Successfully renamed parameter " + args[3] + " with arity " + args[4] + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
                         madeChange = true;
                         return true;
                     }
                     else
                     {
-                        view.notifyFail("Failed to rename parameter " + args[3] + " with arity " + arity + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
+                        view.notifyFail("Failed to rename parameter " + args[3] + " with arity " + args[4] + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
                         return false;
                     }
                 }
-                break;
             case SAVE:
                 if (args.length == 0)
                 {
@@ -628,6 +689,7 @@ public class Controller {
                         doSave();
                         madeChange = false;
                         view.notifySuccess("Successfully saved your file");
+                        return true;
                     }
                     else
                     {
@@ -666,7 +728,6 @@ public class Controller {
                 	view.notifyFail("Save should have either 0 or 1 arguments.");
                     return false;
                 }
-                break;
             case LOAD:
                 if (args.length == 1)
                 {
@@ -711,7 +772,6 @@ public class Controller {
                 	view.notifyFail("Load should have exactly 1 argument.");
                     return false;
                 }
-                break;
             case LIST_CLASSES:
                 if (args.length == 0)
                 {
@@ -723,7 +783,6 @@ public class Controller {
                 	view.notifyFail("List classes shouldn't have any arguments.");
                     return false;
                 }
-                break;
             case LIST_CLASS:
                 if (args.length == 1)
                 {
@@ -735,7 +794,6 @@ public class Controller {
                 	view.notifyFail("List class should have exactly 1 argument.");
                     return false;
                 }
-                break;
             case LIST_RELATIONSHIPS:
                 if (args.length == 0)
                 {
@@ -747,7 +805,6 @@ public class Controller {
                 	view.notifyFail("List relationships shouldn't have any arguments.");
                     return false;
                 }
-                break;
             case HELP:
                 if (args.length == 0)
                 {
@@ -764,10 +821,10 @@ public class Controller {
                 	view.notifyFail("Too many arguments. Arguments with spaces require quotes.");
                     return true;
                 }
-                break;
             case EXIT:
                 if (args.length != 0) {
                     view.notifyFail("Failed to exit program.");
+                    return false;
                 }
                 else if (madeChange)
                 {
@@ -787,8 +844,15 @@ public class Controller {
                     }
                     
                 }
-                break;
+                return true;
         }
+        return false;
     }
+
+    public List<String> getPartialListFromArray(String[] array, int start, int end)
+    {
+        return Arrays.asList(Arrays.copyOfRange(array, start, end));
+    }
+
  }
  
