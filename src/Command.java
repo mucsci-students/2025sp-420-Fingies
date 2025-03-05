@@ -29,7 +29,8 @@ public class Command {
 		    "list relationships", "help", "exit",
 		    "add method", "remove method", "rename method",
 		    "add field", "remove field", "rename field",
-		    "add parameters", "remove parameters", "change parameter"
+		    "add parameters", "remove parameters", "change parameter",
+		    "change relationship type"
 		};
 	
 	/**
@@ -42,7 +43,8 @@ public class Command {
 		    "listr", "h", "quit",              // list relationships, help, exit
 		    "addm", "rmm", "rnm",              // add method, remove method, rename method
 		    "addf", "rmf", "rnf",              // add field, remove field, rename field
-		    "addp", "rmp", "rnp"              // add parameters, remove parameters, rename parameter
+		    "addp", "rmp", "rnp",              // add parameters, remove parameters, rename parameter
+		    "crt"
 		};
 	
 	/**
@@ -52,7 +54,7 @@ public class Command {
 			"CLASS_NAME",
 			"CLASS_NAME",
 			"CLASS_NAME NEW_NAME",
-			"SRC_CLASS DEST_CLASS",
+			"SRC_CLASS DEST_CLASS RELATIONSHIP_TYPE",
 			"SRC_CLASS DEST_CLASS",
 			"[ FILE_PATH ]",
 			"FILE_PATH",
@@ -62,14 +64,15 @@ public class Command {
 			"[ COMMAND ]",
 			"",
 			"CLASS_NAME METHOD [ PARAMETER ... ]",
-			"CLASS_NAME METHOD NUM_PARAMETERS",
-			"CLASS_NAME METHOD_NAME NUM_PARAMETERS NEW_NAME",
+			"CLASS_NAME METHOD ARITY",
+			"CLASS_NAME METHOD_NAME ARITY NEW_NAME",
 			"CLASS_NAME FIELD",
 			"CLASS_NAME FIELD",
 			"CLASS_NAME FIELD_NAME NEW_NAME",
-			"CLASS_NAME PARAMETER1 [ PARAMETER2 ... ]",
-			"CLASS_NAME PARAMETER1 [ PARAMETER2 ... ]",
-			"CLASS_NAME PARAMETER_NAME NEW_NAME",
+			"CLASS_NAME METHOD ARITY PARAMETER1 [ PARAMETER2 ... ]",
+			"CLASS_NAME METHOD ARITY [ PARAMETER ... ]",
+			"CLASS_NAME METHOD ARITY PARAMETER_NAME NEW_NAME",
+			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE"
 		};
 	
 	/**
@@ -90,14 +93,15 @@ public class Command {
 			"Prints a list of commands and their shorthand versions.\n"
 			+ "If the name of a command is supplied as an argument, prints a description of a single command.",
 			"Exits the program.",
-			"Adds a method to a class.",
-			"Removes a method from a class.",
+			"Adds a method with certain parameters to a class.",
+			"Removes a method from a class. \n",
 			"Gives a method of a class a new name.",
 			"Adds a field to a class.",
 			"Removes a field from a class.",
 			"Gives a field of a class a new name.",
 			"Adds a set of parameters to a method of a class.",
-			"Removes a set of parameters from a method of a class.",
+			"Removes a set of parameters from a method of a class. \n"
+			+ "If no parameters are specified, all parameters are removed from the method.",
 			"Gives a parameter of a method a new name."
 		};
 	
