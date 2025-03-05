@@ -27,8 +27,8 @@ public class ArrowComponent extends JComponent {
             g2d.setStroke(new BasicStroke(2));  // Line thickness
 
             // Define a dashed line pattern (10 pixels of dash, 10 pixels of space)
-            // float[] dashPattern = {10f, 10f};
-            // g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dashPattern, 0));
+            float[] dashPattern = {10f, 10f};
+            g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dashPattern, 0));
 
             // Dotted Line
             // float[] dotPattern = { 1f, 5f };  // Dots of size 1, with gaps of size 5
@@ -37,7 +37,7 @@ public class ArrowComponent extends JComponent {
             // Draw the main arrow line
             g2d.drawLine(start.x, start.y, end.x, end.y);
 
-            // Draw the arrowhead (simple triangle at the end)
+            // // Draw the arrowhead (simple triangle at the end)
             // int dx = end.x - start.x;
             // int dy = end.y - start.y;
             // double angle = Math.atan2(dy, dx);
@@ -49,7 +49,7 @@ public class ArrowComponent extends JComponent {
             // int x2 = (int) (end.x - arrowSize * Math.cos(angle + Math.PI / 6));
             // int y2 = (int) (end.y - arrowSize * Math.sin(angle + Math.PI / 6));
 
-            // // Draw the arrowhead
+            // Draw the arrowhead
             // g2d.fillPolygon(new int[] { end.x, x1, x2 }, new int[] { end.y, y1, y2 }, 3);
         }
     }
