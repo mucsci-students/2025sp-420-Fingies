@@ -16,8 +16,6 @@
 		ADD_RELATIONSHIP,
 		/** Removes a relationship. */
 		REMOVE_RELATIONSHIP,
-		/** Changes a relationship type */
-		CHANGE_RELATIONSHIP_TYPE,
 		/** Creates a relationship between two classes. */
 		SAVE,
 		/** Removes a relationship. */
@@ -49,7 +47,9 @@
 		/** Removes a set of parameters from a method */
 		REMOVE_PARAMETERS,
 		/** Changes the name of a parameter to a new one */
-		CHANGE_PARAMETER;
+		RENAME_PARAMETER,
+		/** Changes a relationship type */
+		CHANGE_RELATIONSHIP_TYPE;
 		
 			
 	}
