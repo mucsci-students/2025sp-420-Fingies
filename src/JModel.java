@@ -269,7 +269,7 @@ public class JModel {
     }
 
     /**
-     * Loads data from the desired filepath, Checks for field constraints as well.
+     * Loads data from the desired filepath, Checks for field constraints as well. **Overwrites any existing data!**
      * @return UMLClassHandler class if successful, null otherwise.
      */
     public Model loadData() {
@@ -290,6 +290,8 @@ public class JModel {
             //Check if content of file is null/empty
             if (jsonData.isEmpty()) return null;
             //Try to parse data from string. Throws exception if incorrect format
+            UMLClassHandler.reset();
+            RelationshipHandler.reset();
             Model data = gson.fromJson(jsonData, Model.class);
             data.reloadClasses();
             HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();

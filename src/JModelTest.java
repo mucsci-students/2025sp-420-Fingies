@@ -60,10 +60,6 @@ public class JModelTest {
     @Test
     public void loadSave() {
     	System.out.println("@Test loadSave():");
-        //Reset Classes and Relations for testing
-        UMLClassHandler.reset();
-        RelationshipHandler.reset();
-
         assertNotNull(model.loadData(path));
         HashSet<UMLClass> umlClasses = UMLClassHandler.getAllClasses();
         for (UMLClass umlClass : umlClasses) {
