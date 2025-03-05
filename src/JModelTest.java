@@ -73,9 +73,6 @@ public class JModelTest {
     public void loadTwice()
     {
     	System.out.println("@Test loadTwice() (first time):");
-    	//Reset Classes and Relations for testing
-    	UMLClassHandler.reset();
-        RelationshipHandler.reset();
         
         assertNotNull(model.loadData(path));
         HashSet<UMLClass> umlClasses = UMLClassHandler.getAllClasses();
