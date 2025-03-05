@@ -146,20 +146,19 @@ public class GUIUMLClass {
         // classLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Red border with thickness of 2
 
         classLabel.setBounds((background.getWidth() - labelWidth) / 2 - 5, 2, labelWidth, DEFAULT_CLASS_PANEL_HEIGHT);  // Set bounds for the class name label
-        
 
-        JTextField classEditor = new JTextField(umlclass.getName());
-        classEditor.setBounds(classLabel.getBounds());
-        classEditor.setBackground(Color.WHITE);
-        classEditor.setVisible(false);
+        // JTextField classEditor = new JTextField(umlclass.getName());
+        // classEditor.setBounds(classLabel.getBounds());
+        // classEditor.setBackground(Color.WHITE);
+        // classEditor.setVisible(false);
         
-        var labelListener = new JLabelDoubleClickListener (classEditor, background);
-        classLabel.addMouseListener(labelListener);
-        classLabel.addMouseMotionListener(labelListener);
-        classEditor.addFocusListener(new JTextFieldFocusLossListener (classLabel, Action.RENAME_CLASS));
+        // var labelListener = new JLabelDoubleClickListener (classEditor, background);
+        // classLabel.addMouseListener(labelListener);
+        // classLabel.addMouseMotionListener(labelListener);
+        // classEditor.addFocusListener(new JTextFieldFocusLossListener (classLabel, Action.RENAME_CLASS));
 
         classPanel.add(classLabel);
-        classPanel.add(classEditor);
+        // classPanel.add(classEditor);
 
         int panelWidth = Math.max(140, labelWidth + 20); // Ensure minimum width
         classPanel.setBounds(5, 5, panelWidth, DEFAULT_CLASS_PANEL_HEIGHT); // Resize panel
@@ -190,18 +189,18 @@ public class GUIUMLClass {
                 fieldLabel.setForeground(Color.BLACK);
                 fieldLabel.setBounds(10, 5 + offset * 20, field.getName().length() * PIXELS_PER_CHARACTER, 25);
 
-                JTextField fieldEditor = new JTextField(field.getName());
-                fieldEditor.setBounds(fieldLabel.getBounds());
-                fieldEditor.setBackground(Color.WHITE);
-                fieldEditor.setVisible(false);
+                // JTextField fieldEditor = new JTextField(field.getName());
+                // fieldEditor.setBounds(fieldLabel.getBounds());
+                // fieldEditor.setBackground(Color.WHITE);
+                // fieldEditor.setVisible(false);
 
-                var labelListener = new JLabelDoubleClickListener (fieldEditor, background);
-                fieldLabel.addMouseListener(labelListener);
-                fieldLabel.addMouseMotionListener(labelListener);
-                fieldEditor.addFocusListener(new JTextFieldFocusLossListener(fieldLabel, Action.RENAME_FIELD));
+                // var labelListener = new JLabelDoubleClickListener (fieldEditor, background);
+                // fieldLabel.addMouseListener(labelListener);
+                // fieldLabel.addMouseMotionListener(labelListener);
+                // fieldEditor.addFocusListener(new JTextFieldFocusLossListener(fieldLabel, Action.RENAME_FIELD));
 
                 fieldsPanel.add(fieldLabel);
-                fieldsPanel.add(fieldEditor);
+                // fieldsPanel.add(fieldEditor);
 
                 offset++;
                 
@@ -239,18 +238,18 @@ public class GUIUMLClass {
                 methodLabel.setForeground(Color.BLACK);
                 methodLabel.setBounds(10, 5 + offset * 20, method.toString().length() * PIXELS_PER_CHARACTER, 25);
 
-                JTextField methodEditor = new JTextField(method.toString());
-                methodEditor.setBounds(methodLabel.getBounds());
-                methodEditor.setBackground(Color.WHITE);
-                methodEditor.setVisible(false);
+                // JTextField methodEditor = new JTextField(method.toString());
+                // methodEditor.setBounds(methodLabel.getBounds());
+                // methodEditor.setBackground(Color.WHITE);
+                // methodEditor.setVisible(false);
 
-                var labelListener = new JLabelDoubleClickListener (methodEditor, background);
-                methodLabel.addMouseListener(labelListener);
-                methodLabel.addMouseMotionListener(labelListener);
-                methodEditor.addFocusListener(new JTextFieldFocusLossListener(methodLabel, Action.RENAME_METHOD));
+                // var labelListener = new JLabelDoubleClickListener (methodEditor, background);
+                // methodLabel.addMouseListener(labelListener);
+                // methodLabel.addMouseMotionListener(labelListener);
+                // methodEditor.addFocusListener(new JTextFieldFocusLossListener(methodLabel, Action.RENAME_METHOD));
 
                 methodsPanel.add(methodLabel);
-                methodsPanel.add(methodEditor);
+                // methodsPanel.add(methodEditor);
 
                 offset++;
             }
@@ -333,7 +332,9 @@ public class GUIUMLClass {
             label.setText(src.getText()); // Update the label with the new text
             src.setVisible(false);
             label.setVisible(true);
-			
+            update();
+			// background.revalidate();
+            // background.repaint();
 		}
     }
     

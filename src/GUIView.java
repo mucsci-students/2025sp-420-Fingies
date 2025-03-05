@@ -226,7 +226,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == addParameter && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: (a, b, c)"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: a, b, c"});
         }
         else if (e.getSource() == addRelationship && boxes.isEmpty())
         {
@@ -242,15 +242,35 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == removeMethod && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters"});
         }
         else if (e.getSource() == removeParameter && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: (a, b, c)"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: a, b, c"});
         }
         else if (e.getSource() == removeRelationship && boxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Src Class", "Dest Class"});
+        }
+        else if (e.getSource() == renameClass && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Old Class Name", "New Class Name"});
+        }
+        else if (e.getSource() == renameField && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Class Name", "Old Field Name", "New Field Name"});
+        }
+        else if (e.getSource() == renameMethod && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Class Name", "Old Method Name", "New Method Name", "Arity of Method"});
+        }
+        else if (e.getSource() == renameParameter && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Old Parameter", "New Parameter"});
+        }
+        else if (e.getSource() == renameRelationship && boxes.isEmpty())
+        {
+            makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
         }
 
     	// String[] args = new String[0];
