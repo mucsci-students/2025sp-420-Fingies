@@ -9,8 +9,6 @@ public class UMLClass {
     private String name;
     private HashSet<Field> fields;
     private HashSet<Method> methods;
-    // private HashSet<String> incoming;
-    // private HashSet<String> outgoing;
     private final String allowedCharacters = " _aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-";
 
     /**

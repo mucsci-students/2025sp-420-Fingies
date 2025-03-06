@@ -7,48 +7,68 @@ import java.util.ArrayList;
 public class Main {
   
 	public static void main(String[] args) {
-        CLIView view = new CLIView();
-		//GUIView view = new GUIView();
-		Controller controller = new Controller(view, new JModel());
-		view.setController(controller);
+        if (hasCLIFlag(args)) {
+        //if (true) {
+            CLIView view = new CLIView();
+            Controller controller = new Controller(view, new JModel());
+		    view.setController(controller);
+            view.run();
+        }
+        else {
+            GUIView view = new GUIView();
+            Controller controller = new Controller(view, new JModel());
+            view.setController(controller);
 
-		// UMLClassHandler.createClass("Class A");
-        // UMLClassHandler.createClass("Class B");
-        // UMLClassHandler.createClass("Class C");
+            UMLClassHandler.createClass("Class A");
+            UMLClassHandler.createClass("Class B");
+            UMLClassHandler.createClass("Class C");
 
-        // Add fields and methods (if needed)
-        // UMLClassHandler.getClass("Class A").addField("FieldA");
-        // UMLClassHandler.getClass("Class A").addField("FieldB");
+            // Add fields and methods (if needed)
+            UMLClassHandler.getClass("Class A").addField("FieldA");
+            UMLClassHandler.getClass("Class A").addField("FieldB");
+            UMLClassHandler.getClass("Class A").addField("FieldC");
+            UMLClassHandler.getClass("Class A").addField("FieldD");
+            UMLClassHandler.getClass("Class A").addField("FieldE");
+            UMLClassHandler.getClass("Class A").addField("FieldF");
 
-        // Add the UML classes to the view
-        // view.addUMLClass("Class A");
-        // view.addUMLClass("Class B");
-        // view.addUMLClass("Class C");
+            UMLClassHandler.getClass("Class B").addField("FieldA");
+            UMLClassHandler.getClass("Class B").addField("FieldAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+            // Create a method in Class A (optional)
+            ArrayList<String> arr = new ArrayList<>();
+            arr.add("Param1");
+            arr.add("Param2");
+            arr.add("Param3");
+            UMLClassHandler.getClass("Class B").addMethod("MethodB", arr);
 
-        // Create a method in Class A (optional)
-        // ArrayList<String> arr = new ArrayList<>();
-        // arr.add("Param1");
-        // arr.add("Param2");
-        // arr.add("Param3");
-        // UMLClassHandler.getClass("Class A").addMethod("MethodA", arr);
+            arr.add("Param4");
+            arr.add("Param5");
+            UMLClassHandler.getClass("Class A").addMethod("MethodA", arr);
 
-        // Add relationships between classes to test arrows
-        // RelationshipHandler.addRelationship("Class A", "Class B", RelationshipType.AGGREGATION);
-        // RelationshipHandler.addRelationship("Class B", "Class C", RelationshipType.COMPOSITION);
-		// RelationshipHandler.addRelationship("Class A", "Class A", RelationshipType.AGGREGATION);
+            // Add the UML classes to the view
+            view.addUMLClass("Class A");
+            view.addUMLClass("Class B");
+            view.addUMLClass("Class C");
 
-        // Add arrows for these relationships
-        // view.addArrowForRelationship(RelationshipHandler.getRelationships().get(0));
-        // view.addArrowForRelationship(RelationshipHandler.getRelationships().get(1));
+            // Add relationships between classes to test arrows
+            RelationshipHandler.addRelationship("Class A", "Class B", RelationshipType.AGGREGATION);
+            RelationshipHandler.addRelationship("Class B", "Class C", RelationshipType.COMPOSITION);
+            RelationshipHandler.addRelationship("Class A", "Class A", RelationshipType.AGGREGATION);
 
-		// RelationshipHandler.removeRelationship("Class B", "Class C");
-		// view.removeArrowForRelationship(RelationshipHandler.getRelationships().get(1));
+            // Add arrows for these relationships
+            view.addArrowForRelationship(RelationshipHandler.getRelationships().get(0));
+            view.addArrowForRelationship(RelationshipHandler.getRelationships().get(1));
 
-        // Test updating arrows (in case relationships are modified or removed)
-        //view.updateArrows();  // Call this to refresh and redraw arrows
+            RelationshipHandler.removeRelationship("Class B", "Class C");
+            //view.removeArrowForRelationship(RelationshipHandler.getRelationships().get(1));
 
-        // Run the GUI
-        view.run();
+            // Test updating arrows (in case relationships are modified or removed)
+            view.updateArrows();  // Call this to refresh and redraw arrows
+
+            // Run the GUI
+            view.run();
+        }
+        
+		
 
 	}
 

@@ -92,6 +92,11 @@ public class RelationshipHandler
     	return lst;
     }
     
+    public static List<Relationship> getRelationships()
+    {
+        return relationships;
+    }
+    
     /**
      * Provides the list of all relation objects
      * @return A list of relationship objects
