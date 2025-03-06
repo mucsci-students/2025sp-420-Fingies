@@ -18,18 +18,28 @@ public class Main {
         // Add fields and methods (if needed)
         UMLClassHandler.getClass("Class A").addField("FieldA");
         UMLClassHandler.getClass("Class A").addField("FieldB");
+        UMLClassHandler.getClass("Class A").addField("FieldC");
+        UMLClassHandler.getClass("Class A").addField("FieldD");
+        UMLClassHandler.getClass("Class A").addField("FieldE");
+        UMLClassHandler.getClass("Class A").addField("FieldF");
 
-        // Add the UML classes to the view
-        view.addUMLClass("Class A");
-        view.addUMLClass("Class B");
-        view.addUMLClass("Class C");
-
+        UMLClassHandler.getClass("Class B").addField("FieldA");
+        UMLClassHandler.getClass("Class B").addField("FieldAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         // Create a method in Class A (optional)
         ArrayList<String> arr = new ArrayList<>();
         arr.add("Param1");
         arr.add("Param2");
         arr.add("Param3");
+        UMLClassHandler.getClass("Class B").addMethod("MethodB", arr);
+
+        arr.add("Param4");
+        arr.add("Param5");
         UMLClassHandler.getClass("Class A").addMethod("MethodA", arr);
+
+        // Add the UML classes to the view
+        view.addUMLClass("Class A");
+        view.addUMLClass("Class B");
+        view.addUMLClass("Class C");
 
         // Add relationships between classes to test arrows
         RelationshipHandler.addRelationship("Class A", "Class B", RelationshipType.AGGREGATION);

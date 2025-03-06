@@ -246,10 +246,15 @@ public class Controller {
         return model.saveData(filepath);
     }
 
-    public UMLClassHandler doLoad(String filepath) 
+    public JModel.Model doLoad(String filepath) 
     {
         return model.loadData(filepath);
     }
+
+    // public UMLClassHandler doLoad(String filepath) 
+    // {
+    //     return model.loadData(filepath);
+    // }
 
     public void doListClasses() 
     {

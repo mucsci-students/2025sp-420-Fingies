@@ -140,11 +140,14 @@ public class Method extends Attribute {
     public String toString()
     {
         String str = getName() + " (";
-        for (String parameter : parameters)
+        if (!parameters.isEmpty())
+        {
+            for (String parameter : parameters)
         {
             str += parameter + ", ";
         }
         str = str.substring(0, str.length() - 2); // trim off the extra comma
+        }
         str += ")";
         return str;
     }

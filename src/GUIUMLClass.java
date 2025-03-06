@@ -5,31 +5,33 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class GUIUMLClass {
-    private final int PIXELSPERCHARACTER = 8;
+    private final int PIXELS_PER_CHARACTER = 8;
+    private final int DEFAULT_CLASS_PANEL_HEIGHT = 25;
+    private final int DEFAULT_FIELD_PANEL_HEIGHT = 75;
+    private final int DEFAULT_METHOD_PANEL_HEIGHT = 125;
+
     private JPanel classPanel;
     private JPanel fieldsPanel;
     private JPanel methodsPanel;
-    private JLabel className;
-    private JTextField classNameRenamer;
-    private JLabel fields;
-    private JLabel methods;
     private JLayeredPane background;
     private Color color;
 
     private UMLClass umlclass;
     private Controller controller;
 
-    public GUIUMLClass(UMLClass umlclass, Controller controller)
+    public GUIUMLClass(UMLClass umlclass, Controller controller, int frameWidth, int frameHeight)
         
     {
         this.umlclass = umlclass;
-        this.controller = controller;
+        // this.controller = controller;
 
         // Creates a random color for the class
         color = new Color((int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), 100);
@@ -38,59 +40,36 @@ public class GUIUMLClass {
         // classPanel.setBackground(Color.RED);
         // classPanel.setBackground(new Color(255, 0, 0, 60));
         classPanel.setBackground(color);
-        classPanel.setBounds(5, 5, 140, 25);
+        classPanel.setBounds(5, 5, 140, DEFAULT_CLASS_PANEL_HEIGHT);
         classPanel.setLayout(null);  // Set layout to null
 
         fieldsPanel = new JPanel();
         // fieldsPanel.setBackground(Color.GREEN);
         fieldsPanel.setBackground(color);
-        fieldsPanel.setBounds(5, 35, 140, 75);
+        fieldsPanel.setBounds(5, 35, 140, DEFAULT_FIELD_PANEL_HEIGHT);
         fieldsPanel.setLayout(null);  // Set layout to null
 
         methodsPanel = new JPanel();
         methodsPanel.setBackground(color);
-        methodsPanel.setBounds(5, 115, 140, 125);
+        methodsPanel.setBounds(5, 115, 140, DEFAULT_METHOD_PANEL_HEIGHT);
         methodsPanel.setLayout(null);  // Set layout to null
 
-        // Creates the labels for the different panels
-        className = new JLabel();
-        className.setText(umlclass.getName());
-        className.setHorizontalAlignment(JLabel.CENTER); //LEFT, CENTER, RIGHT
-        className.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
-        className.setForeground(Color.BLACK);
-        className.setBounds(0, 2, 140, 25);  // Set bounds for the class name label
-        
-        classNameRenamer = new JTextField();
-        classNameRenamer.setForeground(Color.BLACK);
-        classNameRenamer.setBounds(0, 0, 147, 25);  // Set bounds for the class name label
-        classNameRenamer.setBackground(color.brighter().brighter().brighter().brighter().brighter().brighter().brighter().brighter()); // we like out JTextFields bright
-        classNameRenamer.setVisible(false);
-        classNameRenamer.setHorizontalAlignment(JTextField.CENTER);
-        
-        // make className & classNameRenamer replace each other when being edited
-        className.addMouseListener(new JLabelDoubleClickListener (classNameRenamer));
-        classNameRenamer.addFocusListener(new JTextFieldFocusLossListener (className, Action.RENAME_CLASS));
-        
+        // JLabel f1 = new JLabel("");
+        // f1.setText("11111");
+        // f1.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
+        // f1.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
+        // f1.setForeground(Color.BLACK);
+        // f1.setBounds(0, 0, 140, 25);
 
-        // Creates the labels for the different panels
-        fields = new JLabel();
-        fields.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
-        fields.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
-        fields.setForeground(Color.BLACK);
-        // fields.setBounds(0, 0, 140, 25);  // Set bounds for the fields label
+        // JLabel f2 = new JLabel("");
+        // f2.setText("22222");
+        // f2.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
+        // f2.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
+        // f2.setForeground(Color.BLACK);
+        // f2.setBounds(0, 0, 140, 25);
 
-        // Creates the labels for the different panels
-        methods = new JLabel();
-        methods.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
-        methods.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
-        methods.setForeground(Color.BLACK);
-        // methods.setBounds(0, 0, 140, 25);  // Set bounds for the methods label
-
-        // Add labels
-        classPanel.add(className);
-        classPanel.add(classNameRenamer);
-        fieldsPanel.add(fields);
-        methodsPanel.add(methods);
+        // methodsPanel.add(f1);
+        // fieldsPanel.add(f2);
         
 
         /* Here are the different layers in order for a JLayeredPane:
@@ -107,7 +86,7 @@ public class GUIUMLClass {
 
         // This is here just to see temporary border of JLayeredPane
         // background.setBackground(Color.WHITE);
-        background.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5)); // Red border with thickness of 5
+        background.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5)); // Black border with thickness of 5
         background.setOpaque(true); // Make it visible
 
         // Add all panels on top of it including bgPanel
@@ -115,6 +94,8 @@ public class GUIUMLClass {
         background.add(classPanel, JLayeredPane.PALETTE_LAYER);
         background.add(fieldsPanel, JLayeredPane.PALETTE_LAYER);
         background.add(methodsPanel, JLayeredPane.PALETTE_LAYER);
+
+        randomizePosition(background, frameWidth, frameHeight);
 
         update();
     }
@@ -124,74 +105,163 @@ public class GUIUMLClass {
         return background;
     }
 
+    public void randomizePosition (JLayeredPane pane, int maxWidth, int maxHeight)
+    {
+        int randX = (int)(Math.random() * (maxWidth - pane.getWidth()));
+        int randY = (int)(Math.random() * (maxHeight - pane.getHeight() - 75)) + 75;
+        pane.setBounds(randX, randY, pane.getWidth(), pane.getHeight());
+    }
+
     public void update ()
     {
-        updateClassName();
         updateFields();
         updateMethods();
 
         // Calculate new total height
         int newHeight = classPanel.getHeight() + fieldsPanel.getHeight() + methodsPanel.getHeight() + 20;
-        int newWidth = Math.max(classPanel.getWidth(), Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth())) + 10;
+        int newWidth = Math.max(classPanel.getWidth(), Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
         
-        background.setBounds(0, 0, newWidth, newHeight);
-        className.setSize(newWidth - 10, classPanel.getHeight());
+        background.setBounds(background.getX(), background.getY(), newWidth + 10, newHeight);
+        
+        // Must be called down here because it relies on new size of background
+        updateClassName();
 
-        classPanel.setSize(newWidth - 10, classPanel.getHeight());
-        fieldsPanel.setSize(newWidth - 10, fieldsPanel.getHeight());
-        methodsPanel.setSize(newWidth - 10, methodsPanel.getHeight());
+        classPanel.setSize(newWidth, classPanel.getHeight());
+        fieldsPanel.setSize(newWidth, fieldsPanel.getHeight());
+        methodsPanel.setSize(newWidth, methodsPanel.getHeight());
 
-        background.revalidate();
+        // background.revalidate();
         background.repaint();
     }
 
     public void updateClassName()
     {
-        String text = umlclass.getName();
-        className.setText(text);
-        className.setBounds(0, 2, 140, 25);
-        classPanel.setBounds(5, 5, 140 + text.length(), 25); // Resize panel
+        classPanel.removeAll(); // Clear panel before updating
 
+        JLabel classLabel = new JLabel(umlclass.getName());
+        int labelWidth = umlclass.getName().length() * PIXELS_PER_CHARACTER;
+        classLabel.setForeground(Color.BLACK);
+        classLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        // classLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Red border with thickness of 2
+
+        classLabel.setBounds((background.getWidth() - labelWidth) / 2 - 5, 2, labelWidth, DEFAULT_CLASS_PANEL_HEIGHT);  // Set bounds for the class name label
+
+        // JTextField classEditor = new JTextField(umlclass.getName());
+        // classEditor.setBounds(classLabel.getBounds());
+        // classEditor.setBackground(Color.WHITE);
+        // classEditor.setVisible(false);
+        
+        // var labelListener = new JLabelDoubleClickListener (classEditor, background);
+        // classLabel.addMouseListener(labelListener);
+        // classLabel.addMouseMotionListener(labelListener);
+        // classEditor.addFocusListener(new JTextFieldFocusLossListener (classLabel, Action.RENAME_CLASS));
+
+        classPanel.add(classLabel);
+        // classPanel.add(classEditor);
+
+        int panelWidth = Math.max(140, labelWidth + 20); // Ensure minimum width
+        classPanel.setBounds(5, 5, panelWidth, DEFAULT_CLASS_PANEL_HEIGHT); // Resize panel
+        // classPanel.setBounds(5, 5, 140 + classLabel.getText().length() * PIXELS_PER_CHARACTER - 15, DEFAULT_CLASS_PANEL_HEIGHT); // Resize panel
+        classPanel.revalidate();
+        classPanel.repaint();
     }
 
     public void updateFields ()
     {
+        fieldsPanel.removeAll(); // Clear panel before updating
         int newHeight = fieldsPanel.getHeight();
         int maxLength = 0;
+        int offset = 0;
+        // JLabel txt;
+
         if (!umlclass.getFields().isEmpty())
         {
-            String text = "<html>";
+            // String text = "<html>";
             for (Field field : umlclass.getFields())
             {
                 maxLength = Math.max(maxLength, field.getName().length());
-                text += field.getName() + "<br/>";
+                // text += field.getName() + "<br/>";
+
+                JLabel fieldLabel = new JLabel(field.getName());
+                fieldLabel.setHorizontalAlignment(JLabel.LEFT);
+                fieldLabel.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
+                fieldLabel.setForeground(Color.BLACK);
+                fieldLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, field.getName().length() * PIXELS_PER_CHARACTER, 25);
+
+                // JTextField fieldEditor = new JTextField(field.getName());
+                // fieldEditor.setBounds(fieldLabel.getBounds());
+                // fieldEditor.setBackground(Color.WHITE);
+                // fieldEditor.setVisible(false);
+
+                // var labelListener = new JLabelDoubleClickListener (fieldEditor, background);
+                // fieldLabel.addMouseListener(labelListener);
+                // fieldLabel.addMouseMotionListener(labelListener);
+                // fieldEditor.addFocusListener(new JTextFieldFocusLossListener(fieldLabel, Action.RENAME_FIELD));
+
+                fieldsPanel.add(fieldLabel);
+                // fieldsPanel.add(fieldEditor);
+
+                offset++;
+                
             }
-            text = text.substring(0, text.length() - 5); // trim off the extra \n
-            fields.setText(text + "</html>");
-            newHeight = 20 * umlclass.getFields().size(); // Calculate height dynamically
+            // text = text.substring(0, text.length() - 5); // trim off the extra \n
+            // fields.setText(text + "</html>");
+            newHeight = 25 * umlclass.getFields().size(); // Calculate height dynamically
         }
-        fields.setBounds(10, 5, maxLength * PIXELSPERCHARACTER, newHeight);
-        fieldsPanel.setBounds(5, 35, maxLength * PIXELSPERCHARACTER, newHeight); // Resize panel
+        // fields.setBounds(10, 5, maxLength * PIXELS_PER_CHARACTER, newHeight);
+        fieldsPanel.setBounds(5, 35, (maxLength - 2) * PIXELS_PER_CHARACTER, Math.max(DEFAULT_FIELD_PANEL_HEIGHT, newHeight - 20)); // Resize panel
+        fieldsPanel.revalidate();
+        fieldsPanel.repaint();
     }
 
     public void updateMethods ()
     {
+        methodsPanel.removeAll(); // Clear panel before updating
         int newHeight = methodsPanel.getHeight();
         int maxLength = 0;
+        int maxParameters = 0;
+        int offset = 0;
+        // JLabel txt;
+
         if (!umlclass.getMethods().isEmpty())
         {
-            String text = "<html>";
+            // String text = "<html>";
             for (Method method : umlclass.getMethods())
             {
-                maxLength = Math.max(maxLength, (method.getName() + method.toString()).length());
-                text += method + "<br/>";
+                maxLength = Math.max(maxLength, method.toString().length());
+                maxParameters = Math.max(maxParameters, method.getParameters().size());
+                // maxLength = Math.max(maxLength, (method.getName().length() + method.toString().length()));
+                // text += method + "<br/>";
+
+                // methodsPanel.add(txt);
+                JLabel methodLabel = new JLabel(method.toString());
+                methodLabel.setHorizontalAlignment(JLabel.LEFT);
+                methodLabel.setForeground(Color.BLACK);
+                methodLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, method.toString().length() * PIXELS_PER_CHARACTER, 25);
+
+                // JTextField methodEditor = new JTextField(method.toString());
+                // methodEditor.setBounds(methodLabel.getBounds());
+                // methodEditor.setBackground(Color.WHITE);
+                // methodEditor.setVisible(false);
+
+                // var labelListener = new JLabelDoubleClickListener (methodEditor, background);
+                // methodLabel.addMouseListener(labelListener);
+                // methodLabel.addMouseMotionListener(labelListener);
+                // methodEditor.addFocusListener(new JTextFieldFocusLossListener(methodLabel, Action.RENAME_METHOD));
+
+                methodsPanel.add(methodLabel);
+                // methodsPanel.add(methodEditor);
+
+                offset++;
             }
-            text = text.substring(0, text.length() - 5); // trim off the extra \n
-            methods.setText(text + "</html>");
-            newHeight = 20 * umlclass.getFields().size(); // Calculate height dynamically
+            // text = text.substring(0, text.length() - 5); // trim off the extra \n
+            // methods.setText(text + "</html>");
+            newHeight = 25 * umlclass.getMethods().size(); // Calculate height dynamically
         }
-        methods.setBounds(10, 5, maxLength * PIXELSPERCHARACTER, newHeight);
-        methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), maxLength * PIXELSPERCHARACTER, newHeight); // Resize panel
+        // methods.setBounds(10, 5, maxLength * PIXELS_PER_CHARACTER, newHeight);
+        methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), (maxLength - maxParameters) * PIXELS_PER_CHARACTER, Math.max(DEFAULT_METHOD_PANEL_HEIGHT, newHeight - 20)); // Resize panel
+        methodsPanel.revalidate();
+        methodsPanel.repaint();
     }
     
     
@@ -201,10 +271,12 @@ public class GUIUMLClass {
     class JLabelDoubleClickListener extends MouseAdapter 
     {
     	JTextField field;
+    	JLayeredPane parentPane;
     	
-    	public JLabelDoubleClickListener (JTextField field)
+    	public JLabelDoubleClickListener (JTextField field, JLayeredPane parentPane)
     	{
     		this.field = field;
+    		this.parentPane = parentPane;
     	}
     	
     	public void mouseClicked(MouseEvent me)
@@ -217,6 +289,18 @@ public class GUIUMLClass {
     			field.requestFocusInWindow();
     		}
     	}
+    	
+    	@Override
+        public void mousePressed(MouseEvent e) {
+    		e.setSource(parentPane);
+    		parentPane.dispatchEvent(e);
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+        	e.setSource(parentPane);
+    		parentPane.dispatchEvent(e);
+        }
     }
     
     /**
@@ -235,20 +319,24 @@ public class GUIUMLClass {
     		this.action = action;
     	}
     	
-		@Override
+        @Override
 		public void focusGained(FocusEvent e) {
-			JTextField src = ((JTextField)e.getSource());
-			classNameRenamer.setText(className.getText());
+			JTextField src = (JTextField) e.getSource();
+            src.setText(label.getText()); // Ensure the text field starts with the label’s text
 		}
 
 		@Override
 		public void focusLost(FocusEvent e) {
-			JTextField src = ((JTextField)e.getSource());
-			//controller.runHelper(action, new String[] {src.getText()});
+            JTextField src = (JTextField) e.getSource();
+            //controller.runHelper(action, new String[] {label.getText(), src.getText()});
 			// TODO: decide whether to actually switch back to a JLabel or not based on whether runHelper() succeeds
-			src.setVisible(false);
-        	label.setVisible(true);
-        	label.setText(classNameRenamer.getText());
+            label.setText(src.getText()); // Update the label with the new text
+            src.setVisible(false);
+            label.setVisible(true);
+            update();
+			// background.revalidate();
+            // background.repaint();
 		}
     }
+    
 }
