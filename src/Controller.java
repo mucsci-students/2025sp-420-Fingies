@@ -671,8 +671,7 @@ public class Controller {
                     view.notifyFail("Remove Parameters should have 4 or more parameters.");
                     return false;
                 }
-            // this should be called RENAME_PARAMETER
-            case CHANGE_PARAMETER:
+            case RENAME_PARAMETER:
                 if (args.length == 5) {
                     if (doRenameParameter(args[0], args[1], args[2], args[3], args[4]))
                     {
@@ -685,6 +684,31 @@ public class Controller {
                         view.notifyFail("Failed to rename parameter " + args[3] + " with arity " + args[4] + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
                         return false;
                     }
+                }
+                else
+                {
+                    view.notifyFail("Rename Parameters should have exactly 5 arguments.");
+                    return false;
+                }
+            case CHANGE_RELATIONSHIP_TYPE:
+                if (args.length == 3)
+                {
+                    if (doChangeRelationshipType(args[0], args[1], args[2]))
+                    {
+                        view.notifySuccess("Successfully changed relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
+                        madeChange = true;
+                        return true;
+                    }
+                    else
+                    {
+                        view.notifyFail("Failed to change relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
+                        return false;
+                    }
+                }
+                else
+                {
+                    view.notifyFail("Change Relationship Type should have exactly 3 arguments.");
+                    return false;
                 }
             case SAVE:
                 if (args.length == 0)
