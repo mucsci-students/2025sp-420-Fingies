@@ -633,12 +633,12 @@ public class Controller {
                     List<String> params = getPartialListFromArray(args, 3, args.length);
                     if (doAddParameters(args[0], args[1], args[2], params))
                     {
-                        view.notifySuccess("Succesfully added parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + "from class " + args[0]);
+                        view.notifySuccess("Succesfully added parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         madeChange = true;
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to remove parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + "from class " + args[0]);
+                        view.notifyFail("Failed to add parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         return false;
                     }
                 }
@@ -652,12 +652,12 @@ public class Controller {
                     List<String> params = getPartialListFromArray(args, 3, args.length);
                     if (doRemoveParameters(args[0], args[1], args[2], params))
                     {
-                        view.notifySuccess("Succesfully removed parameter(s): " + params + " from method " + args[1] + " with arity " + args[2] + "from class " + args[0]);
+                        view.notifySuccess("Succesfully removed parameter(s): " + params + " from method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         madeChange = true;
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to remove parameter(s): " + params + " from method " + args[1] + " with arity " + args[2] + "from class " + args[0]);
+                        view.notifyFail("Failed to remove parameter(s): " + params + " from method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         return false;
                     }
                 }
