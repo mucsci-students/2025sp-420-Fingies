@@ -7,8 +7,8 @@ import java.util.ArrayList;
 public class Main {
   
 	public static void main(String[] args) {
-        if (hasCLIFlag(args)) {
-        //if (true) {
+        //if (hasCLIFlag(args)) {
+        if (true) {
             CLIView view = new CLIView();
             Controller controller = new Controller(view, new JModel());
 		    view.setController(controller);
