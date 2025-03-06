@@ -22,6 +22,7 @@ import javax.swing.SwingConstants;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public class GUIView extends JFrame implements ActionListener, View {
@@ -277,6 +278,53 @@ public class GUIView extends JFrame implements ActionListener, View {
         // controller.runHelper(a, args);
     }
 
+    private void actionHelper(Action action, String[] args)
+    {
+        switch(action) {
+            case ADD_CLASS:
+                addUMLClass(args[0]);
+                break;
+            case REMOVE_CLASS:
+                removeUMLClass(args[0]);
+                break;
+            case RENAME_CLASS:
+                renameUMLClass(args[0], args[1]);
+                break;
+            case ADD_RELATIONSHIP:
+                break;
+            case REMOVE_RELATIONSHIP:
+                break;
+            case ADD_METHOD:
+                updateAttributes(args[0]);
+                break;
+            case REMOVE_METHOD:
+                updateAttributes(args[0]);
+                break;
+            case RENAME_METHOD:
+                updateAttributes(args[0]);
+                break;
+            case ADD_FIELD:
+                updateAttributes(args[0]);
+                break;
+            case REMOVE_FIELD:
+                updateAttributes(args[0]);
+                break;
+            case RENAME_FIELD:
+                updateAttributes(args[0]);
+                break;
+            case ADD_PARAMETERS:
+                updateAttributes(args[0]);
+                break;
+            case REMOVE_PARAMETERS:
+                break;
+            // this should be called RENAME_PARAMETER
+            case CHANGE_PARAMETER:
+                break;
+            default:
+                break;
+            }
+    }
+
     private void addEnterKeyListenerToRemove(Action action, JTextField text) {
         text.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
@@ -288,7 +336,12 @@ public class GUIView extends JFrame implements ActionListener, View {
                     repaint(); // Refresh UI
                     // System.out.println("arg0: " + args[0]);
                     // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
-                    // controller.runHelper(action, args);
+                    if (controller.runHelper(action, args))
+                    {
+                        actionHelper(action, args); 
+                        updateArrows();
+                    }
+                    
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     boxes.forEach(GUIView.this::remove); // Remove all text fields

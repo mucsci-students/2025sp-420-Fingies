@@ -24,6 +24,7 @@ public class Main {
         UMLClassHandler.getClass("Class A").addField("FieldF");
 
         UMLClassHandler.getClass("Class B").addField("FieldA");
+        UMLClassHandler.getClass("Class B").addField("FieldAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
         // Create a method in Class A (optional)
         ArrayList<String> arr = new ArrayList<>();

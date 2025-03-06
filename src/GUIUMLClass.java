@@ -86,7 +86,7 @@ public class GUIUMLClass {
 
         // This is here just to see temporary border of JLayeredPane
         // background.setBackground(Color.WHITE);
-        background.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5)); // Red border with thickness of 5
+        background.setBorder(BorderFactory.createLineBorder(Color.BLACK, 5)); // Black border with thickness of 5
         background.setOpaque(true); // Make it visible
 
         // Add all panels on top of it including bgPanel
@@ -123,15 +123,14 @@ public class GUIUMLClass {
         
         background.setBounds(background.getX(), background.getY(), newWidth, newHeight);
         
-        
         // Must be called down here because it relies on new size of background
         updateClassName();
 
-        classPanel.setSize(newWidth - 10, classPanel.getHeight());
-        fieldsPanel.setSize(newWidth - 10, fieldsPanel.getHeight());
-        methodsPanel.setSize(newWidth - 10, methodsPanel.getHeight());
+        classPanel.setSize(newWidth, classPanel.getHeight());
+        fieldsPanel.setSize(newWidth, fieldsPanel.getHeight());
+        methodsPanel.setSize(newWidth, methodsPanel.getHeight());
 
-        background.revalidate();
+        // background.revalidate();
         background.repaint();
     }
 
