@@ -100,9 +100,9 @@ public class Command {
 			"Removes a field from a class.",
 			"Gives a field of a class a new name.",
 			"Adds a set of parameters to a method of a class.",
-			"Removes a set of parameters from a method of a class. \n"
-			+ "If no parameters are specified, all parameters are removed from the method.",
-			"Gives a parameter of a method a new name."
+			"Removes a set of parameters from a method of a class.",
+			"Gives a parameter of a method a new name.",
+			"Changes the type of a specified relationship."
 		};
 	
 	Command (Action a, String[] args)
