@@ -27,7 +27,7 @@ public class RelationshipHandler
      * @param dest The name of the destination class
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      */
-    public static void addRelationship(String src, String dest, RelationshipType type)
+    public static boolean addRelationship(String src, String dest, RelationshipType type)
     {
     	UMLClass source = UMLClassHandler.getClass(src);
     	UMLClass destination = UMLClassHandler.getClass(dest);
@@ -37,7 +37,7 @@ public class RelationshipHandler
         {
             throw new IllegalArgumentException("This relationship already exists.");
         }
-        relationships.add(r);
+        return relationships.add(r);
     }
     
     /**
@@ -48,14 +48,14 @@ public class RelationshipHandler
      * 
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      */
-    public static void removeRelationship(String src, String dest)
+    public static boolean removeRelationship(String src, String dest)
     {
         int i = indexOf(src, dest);
         if(i == -1)
         {
         	throw new IllegalArgumentException("This relationship does not exist");
         }
-        relationships.remove(i);
+        return relationships.remove(i) != null;
     }
     
     /**
@@ -67,7 +67,7 @@ public class RelationshipHandler
      * 
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      */
-    public static void changeRelationshipType(String src, String dest, RelationshipType newType)
+    public static boolean changeRelationshipType(String src, String dest, RelationshipType newType)
     {
     	int i = indexOf(src, dest);
     	if (i == -1)
@@ -75,6 +75,7 @@ public class RelationshipHandler
     		throw new IllegalArgumentException("This relationship does not exist");
     	}
     	relationships.get(i).setType(newType);
+        return relationships.get(i).getType().equals(newType);
     }
     
     /**
@@ -87,7 +88,7 @@ public class RelationshipHandler
     	String lst = "";
     	for (Relationship r : relationships)
     		lst += r + "\n";
-    	lst = lst.substring(lst.length() - 1); // trims the remaining \n
+    	lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
     	return lst;
     }
     
@@ -96,4 +97,21 @@ public class RelationshipHandler
         return relationships;
     }
     
+    /**
+     * Provides the list of all relation objects
+     * @return A list of relationship objects
+     * @author trush
+     */
+    public static List<Relationship> getRelationObjects() 
+    {
+        return relationships;
+    }
+
+    /**
+     * Resets all relationships
+     * @author trush
+     */
+    public static void reset() {
+        relationships = new ArrayList<Relationship>();
+    }
 }

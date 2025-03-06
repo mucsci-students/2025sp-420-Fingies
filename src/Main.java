@@ -5,7 +5,7 @@ import java.util.ArrayList;
  * @author Lincoln Craddock
  */
 public class Main {
-
+  
 	public static void main(String[] args) {
 		GUIView view = new GUIView();
 		Controller controller = new Controller(view, new JModel());
@@ -52,11 +52,17 @@ public class Main {
         // Test updating arrows (in case relationships are modified or removed)
         view.updateArrows();  // Call this to refresh and redraw arrows
 
-        
-
         // Run the GUI
         view.run();
 
 	}
 
+	public static boolean hasCLIFlag(String[] args) {
+		for (String arg : args) {
+			if (arg.equalsIgnoreCase("--cli")) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

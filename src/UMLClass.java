@@ -122,6 +122,26 @@ public class UMLClass {
     }
 
     /**
+     * Attempts to atomically add a list of parameters to a method
+     * @param method name of method to add to
+     * @param arity specified arity of method to add to
+     * @param parameters list of parameters to add to method
+     * @return true if all parameters were added, false if any single parameter couldn't be added
+     */
+    boolean addParameters(String method, int arity, List<String> parameters)
+    {
+        Method m = getMethod(method, arity);
+        if (methodExists(method, arity + parameters.size()) || m == null)
+        {
+            return false;
+        }
+        else
+        {
+            return m.addParameters(parameters);
+        }
+    }
+
+    /**
      * Attempts to remove a field from the list of fields
      * @param attribute name of field the user wants to remove
      * @return true if the field was removed to the set, false otherwise
@@ -140,6 +160,27 @@ public class UMLClass {
     boolean removeMethod (String method, int paramNum)
     {
         return methods.remove(getMethod(method, paramNum));
+    }
+
+    /**
+     * Attempts to remove a list of parameters from a method with specified name and arity
+     * from list of all methods
+     * @param method name of method to remove from
+     * @param arity arity of method to remove from
+     * @param parameters list of parameters to remove from specified method
+     * @return true if the list of parameters were successfully removed.
+     */
+    boolean removeParameters(String method, int arity, List<String> parameters)
+    {
+        Method m = getMethod(method, arity);
+        if (methodExists(method, arity - parameters.size()) || m == null)
+        {
+            return false;
+        }
+        else
+        {
+            return m.removeParameters(parameters);
+        }
     }
 
     /**
@@ -191,10 +232,9 @@ public class UMLClass {
     }
 
     /**
-     * Returns whether a method with paramNum parameters exists in methods or not
-     * @param method name of method
-     * @param paramNum number of parameters
-     * @return true if the method with paramNum parameters does exist in methods, false otherwise
+     * Returns whether a field with the given String name exists in fields
+     * @param field name of field
+     * @return true if the field exists in fields, false otherwise
      */
     boolean fieldExists(String field)
     {

@@ -41,6 +41,19 @@ public class Method extends Attribute {
         return false;
     }
 
+    public boolean addParameters (List<String> newParameters) {
+        for (String newParam : newParameters)
+            {
+                validateCharacters(newParam);
+                if (parameterExists(newParam))
+                {
+                    return false;
+                }
+            }
+        parameters.addAll(newParameters);
+        return true;
+    }
+
     /**
      * Removes a single parameter from the list of parameters
      * @param name name of parameter to be removed
@@ -49,6 +62,28 @@ public class Method extends Attribute {
     public boolean removeParameter (String name)
     {
         return parameters.remove(name);
+    }
+
+    /**
+     * Removes a list of specifided parameters from the list of all parameters, if vall alid
+     * @param junkParameters list of parameters to be removed
+     * @return true if all junkParameters successfully removed, false if not
+     */
+    public boolean removeParameters (List<String> junkParameters)
+    {
+        // authenticate validity of entire list
+        for (String activeParam : junkParameters)
+        {
+            if (!parameterExists(activeParam))
+            {
+                return false;
+            }
+        }
+        // if authenication passed, execute specified victims
+        for (String victimParam : junkParameters) {
+            parameters.remove(victimParam);
+        }
+        return true;
     }
 
     /**

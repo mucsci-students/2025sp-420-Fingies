@@ -1,5 +1,6 @@
 import static org.junit.Assert.assertTrue;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,11 +15,16 @@ public class ControllerTester {
 
     @Before
     public void setUp() {
+        UMLClassHandler.reset();
         view = new CLIView();
         model = new JModel();
         controller = new Controller(view, model);
     }
 
+    @After
+    public void resetTest() {
+        UMLClassHandler.reset();
+    }
     // --------------------- METHOD FUNCTIONALITY ---------------------
 
     @Test
@@ -45,7 +51,7 @@ public class ControllerTester {
     public void testDoAddRelationship() {
         controller.doAddClass("A");
         controller.doAddClass("B");
-        boolean result = controller.doAddRelationship("A", "B");
+        boolean result = controller.doAddRelationship("A", "B", "AGGREGATION");
         assertTrue("Relationship should be added successfully.", result);
     }
 
@@ -53,32 +59,32 @@ public class ControllerTester {
     public void testDoRemoveRelationship() {
         controller.doAddClass("A");
         controller.doAddClass("B");
-        controller.doAddRelationship("A", "B");
+        controller.doAddRelationship("A", "B", "AGGREGATION");
         boolean result = controller.doRemoveRelationship("A", "B");
         assertTrue("Relationship should be removed successfully.", result);
     }
 
     @Test
-    public void testDoAddAttribute() {
+    public void testDoAddField() {
         controller.doAddClass("TestClass");
-        boolean result = controller.doAddAttribute("TestClass", "attribute1");
-        assertTrue("Attribute should be added successfully.", result);
+        boolean result = controller.doAddField("TestClass", "field1");
+        assertTrue("Field should be added successfully.", result);
     }
 
     @Test
-    public void testDoRemoveAttribute() {
+    public void testDoRemoveField() {
         controller.doAddClass("TestClass");
-        controller.doAddAttribute("TestClass", "attribute1");
-        boolean result = controller.doRemoveAttribute("TestClass", "attribute1");
+        controller.doAddField("TestClass", "field1");
+        boolean result = controller.doRemoveField("TestClass", "field1");
         assertTrue("Attribute should be removed successfully.", result);
     }
 
     @Test
-    public void testDoRenameAttribute() {
+    public void testDoRenameField() {
         controller.doAddClass("TestClass");
-        controller.doAddAttribute("TestClass", "oldAttr");
-        boolean result = controller.doRenameAttribute("TestClass", "oldAttr", "newAttr");
-        assertTrue("Attribute should be renamed successfully.", result);
+        controller.doAddField("TestClass", "oldField");
+        boolean result = controller.doRenameField("TestClass", "oldField", "newField");
+        assertTrue("Field should be renamed successfully.", result);
     }
 
     @Test
@@ -114,13 +120,13 @@ public class ControllerTester {
     }
 
     @Test
-    public void testRenameAttributeAction() {
+    public void testRenameFieldAction() {
         String [] args1 = {"JSON"};
         String [] args2 = {"JSON", "WILLSON"};
         String [] args3 = {"JSON", "WILLSON", "KEVSON"};
         controller.runHelper(Action.ADD_CLASS, args1);
-        controller.runHelper(Action.ADD_ATTRIBUTE, args2);
-        controller.runHelper(Action.RENAME_ATTRIBUTE, args3);
-        assertTrue("doRenameClass method was called through runHelper method", UMLClassHandler.getClass(args1[0]).exists(args3[2]));
+        controller.runHelper(Action.ADD_FIELD, args2);
+        controller.runHelper(Action.RENAME_FIELD, args3);
+        assertTrue("doRenameClass method was called through runHelper method", UMLClassHandler.getClass(args1[0]).fieldExists(args3[2]));
     }
 }
