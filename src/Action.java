@@ -49,9 +49,5 @@
 		/** Removes a set of parameters from a method */
 		REMOVE_PARAMETERS,
 		/** Changes the name of a parameter to a new one */
-		RENAME_PARAMETER,
-		/** Changes a relationship type */
-		CHANGE_RELATIONSHIP_TYPE;
-		
-			
+		RENAME_PARAMETER;
 	}

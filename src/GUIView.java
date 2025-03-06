@@ -108,7 +108,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         renameClass = new GUIMenuItem("Class", Action.RENAME_CLASS);
         renameField = new GUIMenuItem("Field", Action.RENAME_FIELD);
         renameMethod = new GUIMenuItem("Method", Action.RENAME_METHOD);
-        renameParameter = new GUIMenuItem("Parameter", Action.CHANGE_PARAMETER);
+        renameParameter = new GUIMenuItem("Parameter", Action.RENAME_PARAMETER);
         renameRelationship = new GUIMenuItem("Relationship", Action.CHANGE_RELATIONSHIP_TYPE);
 
         // Creates action listeners for the different submenu actions
@@ -321,7 +321,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 updateAttributes(args[0]);
                 break;
             // this should be called RENAME_PARAMETER
-            case CHANGE_PARAMETER:
+            case RENAME_PARAMETER:
                 break;
             default:
                 break;
