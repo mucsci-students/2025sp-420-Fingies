@@ -116,7 +116,7 @@ public class UMLClass {
      */
     boolean addMethod (String method, List<String>parameters)
     {
-        if (name.equals(method))
+        if (name.equals(method) || methodExists(method, parameters.size()))
             return false;
         return methods.add(new Method(method, parameters));
     }

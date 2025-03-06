@@ -12,6 +12,8 @@ public class CLIView implements View
     private Scanner sc = new Scanner(System.in);
     
     public String caret = ">";
+
+	private Controller controller;
     
     // terminal specific commands
     public static final String TOGGLE_COLOR_COMMAND = "toggle color";
@@ -82,13 +84,15 @@ public class CLIView implements View
     @Override
     public void run() 
     {
-    	while(true)
+		Command command;
+		Action action;
+    	do
     	{
     		System.out.print(caret + " ");
 
         	String in = sc.nextLine();
-            Command c = Command.parseCommand(in);
-            while(c == null)
+            command = Command.parseCommand(in);
+            while (command == null)
             {
             	if (in.equals(TOGGLE_COLOR_COMMAND) || in.equals(TOGGLE_COLOR_COMMAND_SHORTHAND))
             	{
@@ -108,12 +112,16 @@ public class CLIView implements View
             		notifySuccess();
             	}
             	else
-            		notifyFail("Invalid comamnd");
+            		notifyFail("Invalid command");
             	System.out.print(caret + " ");
             	in = sc.nextLine();
-                c = Command.parseCommand(in);
+                command = Command.parseCommand(in);
             }
-    	}
+			
+				action = command.action;
+				controller.runHelper(action, command.arguments);
+			
+    	} while (!action.equals(Action.EXIT));
     }
 
     @Override
@@ -279,6 +287,11 @@ public class CLIView implements View
     	System.out.println(result + RESET);
     }
 
+	public void setController(Controller c)
+	{
+		controller = c;
+	}
+	
 	@Override
 	public String promptForSaveInput(String message) 
 	{
