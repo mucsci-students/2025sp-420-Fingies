@@ -24,13 +24,16 @@ public class Main {
         UMLClassHandler.getClass("Class A").addField("FieldF");
 
         UMLClassHandler.getClass("Class B").addField("FieldA");
-        UMLClassHandler.getClass("Class B").addField("FieldAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-
+        UMLClassHandler.getClass("Class B").addField("FieldAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         // Create a method in Class A (optional)
         ArrayList<String> arr = new ArrayList<>();
         arr.add("Param1");
         arr.add("Param2");
         arr.add("Param3");
+        UMLClassHandler.getClass("Class B").addMethod("MethodB", arr);
+
+        arr.add("Param4");
+        arr.add("Param5");
         UMLClassHandler.getClass("Class A").addMethod("MethodA", arr);
 
         // Add the UML classes to the view

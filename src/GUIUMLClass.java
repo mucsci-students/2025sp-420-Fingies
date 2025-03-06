@@ -31,7 +31,7 @@ public class GUIUMLClass {
         
     {
         this.umlclass = umlclass;
-        this.controller = controller;
+        // this.controller = controller;
 
         // Creates a random color for the class
         color = new Color((int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), 100);
@@ -121,7 +121,7 @@ public class GUIUMLClass {
         int newHeight = classPanel.getHeight() + fieldsPanel.getHeight() + methodsPanel.getHeight() + 20;
         int newWidth = Math.max(classPanel.getWidth(), Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
         
-        background.setBounds(background.getX(), background.getY(), newWidth, newHeight);
+        background.setBounds(background.getX(), background.getY(), newWidth + 10, newHeight);
         
         // Must be called down here because it relies on new size of background
         updateClassName();
@@ -186,7 +186,7 @@ public class GUIUMLClass {
                 fieldLabel.setHorizontalAlignment(JLabel.LEFT);
                 fieldLabel.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
                 fieldLabel.setForeground(Color.BLACK);
-                fieldLabel.setBounds(10, 5 + offset * 20, field.getName().length() * PIXELS_PER_CHARACTER, 25);
+                fieldLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, field.getName().length() * PIXELS_PER_CHARACTER, 25);
 
                 // JTextField fieldEditor = new JTextField(field.getName());
                 // fieldEditor.setBounds(fieldLabel.getBounds());
@@ -209,7 +209,7 @@ public class GUIUMLClass {
             newHeight = 25 * umlclass.getFields().size(); // Calculate height dynamically
         }
         // fields.setBounds(10, 5, maxLength * PIXELS_PER_CHARACTER, newHeight);
-        fieldsPanel.setBounds(5, 35, maxLength * PIXELS_PER_CHARACTER  - 15, Math.max(DEFAULT_FIELD_PANEL_HEIGHT, newHeight - 20)); // Resize panel
+        fieldsPanel.setBounds(5, 35, (maxLength - 2) * PIXELS_PER_CHARACTER, Math.max(DEFAULT_FIELD_PANEL_HEIGHT, newHeight - 20)); // Resize panel
         fieldsPanel.revalidate();
         fieldsPanel.repaint();
     }
@@ -219,6 +219,7 @@ public class GUIUMLClass {
         methodsPanel.removeAll(); // Clear panel before updating
         int newHeight = methodsPanel.getHeight();
         int maxLength = 0;
+        int maxParameters = 0;
         int offset = 0;
         // JLabel txt;
 
@@ -228,6 +229,7 @@ public class GUIUMLClass {
             for (Method method : umlclass.getMethods())
             {
                 maxLength = Math.max(maxLength, method.toString().length());
+                maxParameters = Math.max(maxParameters, method.getParameters().size());
                 // maxLength = Math.max(maxLength, (method.getName().length() + method.toString().length()));
                 // text += method + "<br/>";
 
@@ -235,7 +237,7 @@ public class GUIUMLClass {
                 JLabel methodLabel = new JLabel(method.toString());
                 methodLabel.setHorizontalAlignment(JLabel.LEFT);
                 methodLabel.setForeground(Color.BLACK);
-                methodLabel.setBounds(10, 5 + offset * 20, method.toString().length() * PIXELS_PER_CHARACTER, 25);
+                methodLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, method.toString().length() * PIXELS_PER_CHARACTER, 25);
 
                 // JTextField methodEditor = new JTextField(method.toString());
                 // methodEditor.setBounds(methodLabel.getBounds());
@@ -257,7 +259,7 @@ public class GUIUMLClass {
             newHeight = 25 * umlclass.getMethods().size(); // Calculate height dynamically
         }
         // methods.setBounds(10, 5, maxLength * PIXELS_PER_CHARACTER, newHeight);
-        methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), maxLength * PIXELS_PER_CHARACTER - 15, Math.max(DEFAULT_METHOD_PANEL_HEIGHT, newHeight - 20)); // Resize panel
+        methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), (maxLength - maxParameters) * PIXELS_PER_CHARACTER, Math.max(DEFAULT_METHOD_PANEL_HEIGHT, newHeight - 20)); // Resize panel
         methodsPanel.revalidate();
         methodsPanel.repaint();
     }

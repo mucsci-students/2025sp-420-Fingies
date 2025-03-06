@@ -126,7 +126,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         removeField.addActionListener(this);
         removeMethod.addActionListener(this);
         removeParameter.addActionListener(this);
-        renameRelationship.addActionListener(this);
+        removeRelationship.addActionListener(this);
 
         renameClass.addActionListener(this);
         renameField.addActionListener(this);
@@ -291,8 +291,10 @@ public class GUIView extends JFrame implements ActionListener, View {
                 renameUMLClass(args[0], args[1]);
                 break;
             case ADD_RELATIONSHIP:
+                updateArrows();
                 break;
             case REMOVE_RELATIONSHIP:
+                updateArrows();
                 break;
             case ADD_METHOD:
                 updateAttributes(args[0]);
@@ -316,6 +318,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 updateAttributes(args[0]);
                 break;
             case REMOVE_PARAMETERS:
+                updateAttributes(args[0]);
                 break;
             // this should be called RENAME_PARAMETER
             case CHANGE_PARAMETER:
@@ -339,7 +342,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                     if (controller.runHelper(action, args))
                     {
                         actionHelper(action, args); 
-                        updateArrows();
+                        repaint();
                     }
                     
                 }
@@ -366,7 +369,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                             destClass.getJLayeredPane().getY() + destClass.getJLayeredPane().getHeight() / 2);
 
         // Create a new ArrowComponent and add it to the arrows list
-        ArrowComponent arrow = new ArrowComponent(start, end);
+        ArrowComponent arrow = new ArrowComponent(start, end, relationship.getType());
         arrows.add(arrow);
 
         // Add the arrow to the JLayeredPane (or other container)
@@ -378,13 +381,15 @@ public class GUIView extends JFrame implements ActionListener, View {
      * Updates all of the current arrows by removing them all and redrawing them
      */
     public void updateArrows() {
-        for (ArrowComponent arrow : arrows) {
+        for (ArrowComponent arrow : arrows) 
+        {
             this.remove(arrow); // Remove from JFrame
         }
         arrows.clear();  // Clear the list of arrows
         
         // Get the relationships and create arrows for each one
-        for (Relationship relationship : RelationshipHandler.getRelationships()) {
+        for (Relationship relationship : RelationshipHandler.getRelationships()) 
+        {
             addArrowForRelationship(relationship);
         }
         reload();
@@ -550,7 +555,6 @@ class DragListener extends MouseAdapter {
         parentFrame.getContentPane().setComponentZOrder(component, JLayeredPane.DEFAULT_LAYER); // Bring to front
         parentFrame.getContentPane().revalidate();
         parentFrame.getContentPane().repaint();
-        
 
         // Get current location of the JLayeredPane
         int x = component.getX() + e.getX() - initialClick.x;
