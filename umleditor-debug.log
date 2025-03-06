@@ -1,0 +1,23 @@
+[02/13/25 14:26:19]: Test Write to Error Log, Ignore this message.
+[02/13/25 14:32:14]: java.lang.UnsupportedOperationException: Attempted to serialize java.lang.Class: org.fingies.UMLClassHandler. Forgot to register a type adapter?
+See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-unsupported
+[02/13/25 14:33:03]: java.lang.UnsupportedOperationException: Attempted to serialize java.lang.Class: org.fingies.UMLClassHandler. Forgot to register a type adapter?
+See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-unsupported
+[02/13/25 15:10:59]: Test Write to Error Log, Ignore this message.
+[02/13/25 15:13:25]: Test Write to Error Log, Ignore this message.
+[02/13/25 15:14:43]: Test Write to Error Log, Ignore this message.
+[02/13/25 15:20:49]: java.lang.UnsupportedOperationException: Attempted to serialize java.lang.Class: org.fingies.UMLClassHandler. Forgot to register a type adapter?
+See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-unsupported
+[02/13/25 15:20:49]: Test Write to Error Log, Ignore this message.
+[03/06/25 15:25:58]: Test Write to Error Log, Ignore this message.
+[03/06/25 15:42:52]: Test Write to Error Log, Ignore this message.
+[03/06/25 15:43:51]: This relationship already exists.
+[03/06/25 15:44:36]: Test Write to Error Log, Ignore this message.
+[03/06/25 15:48:45]: Class does not exist
+[03/06/25 16:06:11]: This relationship already exists.
+[03/06/25 16:06:19]: Test Write to Error Log, Ignore this message.
+[03/06/25 16:09:40]: Test Write to Error Log, Ignore this message.
+[03/06/25 16:16:44]: Test Write to Error Log, Ignore this message.
+[03/06/25 16:21:51]: This relationship already exists.
+[03/06/25 16:21:51]: Test Write to Error Log, Ignore this message.
+[03/06/25 16:24:12]: This relationship already exists.
