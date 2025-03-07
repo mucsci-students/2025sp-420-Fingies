@@ -227,11 +227,11 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == addMethod && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Parameters: a, b, c"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Parameters: a b c"});
         }
         else if (e.getSource() == addParameter && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: a, b, c"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: a b c"});
         }
         else if (e.getSource() == addRelationship && boxes.isEmpty())
         {
@@ -251,7 +251,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == removeParameter && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: a, b, c"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: a b c"});
         }
         else if (e.getSource() == removeRelationship && boxes.isEmpty())
         {
@@ -348,14 +348,14 @@ public class GUIView extends JFrame implements ActionListener, View {
                     action.equals(Action.REMOVE_PARAMETERS) || action.equals(Action.RENAME_PARAMETER))
                     {
                         // Split last element in list of parameters
-                        String[] params = args[args.length - 1].split(", ");
+                        String[] params = args[args.length - 1].split(" ");
 
                         // Remove the last element from args
                         args = Arrays.copyOf(args, args.length - 1);
 
                         // Combine both arrays
                         args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
-                        System.out.println("Updated args: " + Arrays.toString(args));
+                        // System.out.println("Updated args: " + Arrays.toString(args));
                     }
 
                     if (controller.runHelper(action, args))
