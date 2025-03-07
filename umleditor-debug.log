@@ -23,3 +23,8 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-
 [03/06/25 16:24:12]: This relationship already exists.
 [03/07/25 00:05:06]: Class does not exist
 [03/07/25 00:06:49]: String contains invalid characters
+[03/07/25 18:48:07]: Class Class A does not exist
+[03/07/25 18:49:37]: Method MethodB already has a parameter called abc
+[03/07/25 18:50:52]: Method MethodB already has a parameter called abc
+[03/07/25 18:54:03]: Class Class B does not exist
+[03/07/25 18:54:53]: Method aaa already has a parameter called d

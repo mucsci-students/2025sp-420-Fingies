@@ -268,7 +268,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == removeParameter && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: a b c"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Parameters: a b c"});
         }
         else if (e.getSource() == removeRelationship && boxes.isEmpty())
         {
@@ -392,7 +392,7 @@ public class GUIView extends JFrame implements ActionListener, View {
 
                         // Combine both arrays
                         args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
-                        // System.out.println("Updated args: " + Arrays.toString(args));
+                        System.out.println("Updated args: " + Arrays.toString(args));
                     }
 
                     if (controller.runHelper(action, args))
