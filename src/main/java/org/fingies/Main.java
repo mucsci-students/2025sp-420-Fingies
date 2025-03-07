@@ -2,6 +2,8 @@ package org.fingies;
 
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 /**
  * The Main class for the entire UML editor program.
  * @author Lincoln Craddock
@@ -9,6 +11,7 @@ import java.util.ArrayList;
 public class Main {
   
 	public static void main(String[] args) {
+		args = new String[] {"--cli"};
         if (hasCLIFlag(args)) {
             CLIView view = new CLIView();
             Controller controller = new Controller(view, new JModel());

@@ -106,9 +106,14 @@ public class UMLClass {
      */
     public boolean addField (String field)
     {
-        if (name.equals(field))
-            return false;
-        return fields.add(new Field(field));
+//        if (name.equals(field))
+//            return false;
+//        return fields.add(new Field(field));
+    	if (name.equals(field))
+            throw new IllegalArgumentException("A field must have a different name than its class.");
+    	if (!fields.add(new Field(field)))
+        	throw new IllegalArgumentException(name + " already has a field called " + field);
+    	return true;
     }
 
     /**

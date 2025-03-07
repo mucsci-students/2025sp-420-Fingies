@@ -16,12 +16,15 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -167,13 +170,27 @@ public class GUIView extends JFrame implements ActionListener, View {
 
         // Sets main attributes of the "frame" (this)
         this.setTitle("UMLEditor");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent default closing behavior
         this.setLayout(null);
         // this.setLayout(new FlowLayout());
         this.setSize(1000, 1000);
         this.setJMenuBar(menuBar);
 
         this.setVisible(true);
+        
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                boolean result = controller.runHelper(Action.EXIT, new String[] {});
+                if (result)
+                {
+                	dispose();
+                }
+            }
+        });
+
+    
     }
     
     public void makeTextBoxes(Action a, String [] placeholders)
@@ -276,6 +293,22 @@ public class GUIView extends JFrame implements ActionListener, View {
         else if (e.getSource() == renameRelationship && boxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
+        }
+        else if (e.getSource() == load)
+        {
+        	controller.runHelper(a, new String[] {});
+        }
+        else if (e.getSource() == save)
+        {
+        	controller.runHelper(a, new String[] {});
+        }
+        else if (e.getSource() == exit)
+        {
+        	boolean result = controller.runHelper(a, new String[] {});
+        	if (result)
+        	{
+        		System.exit(0);
+        	}
         }
 
     	// String[] args = new String[0];
@@ -469,23 +502,39 @@ public class GUIView extends JFrame implements ActionListener, View {
     
 	@Override
 	public String promptForInput(String message) {
-		// TODO Auto-generated method stub
-		return null;
+		return JOptionPane.showInputDialog(message);
 	}
 	@Override
 	public List<String> promptForInput(List<String> messages) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> result = new ArrayList<String>();
+        for(String m : messages)
+        {
+            result.add(promptForInput(m));
+        }
+        return result;
 	}
 	@Override
 	public List<String> promptForInput(List<String> messages, List<InputCheck> checks) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> result = new ArrayList<String>();
+        for(int i = 0; i < messages.size(); ++i)
+        {
+            String ans = promptForInput(messages.get(i));
+            String checkMsg = checks.get(i).check(ans); // This will either be "" or "message"
+            while(!checkMsg.equals("")) // This loop will keep prompting the user until they input something that satisfies the check
+            {
+            	notifyFail(checkMsg);
+                ans = JOptionPane.showInputDialog(messages.get(i));
+                checkMsg = checks.get(i).check(ans);
+            }
+            result.add(ans);
+        }
+        return result;
 	}
 	
 	@Override
     public String promptForSaveInput(String message)
     {
+		//System.out.println("save");
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showSaveDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
@@ -495,6 +544,7 @@ public class GUIView extends JFrame implements ActionListener, View {
 	
 	@Override
 	public String promptForOpenInput(String message) {
+		//System.out.println("open");
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showOpenDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
@@ -504,23 +554,20 @@ public class GUIView extends JFrame implements ActionListener, View {
 	
 	@Override
 	public void notifySuccess() {
-		// TODO Auto-generated method stub
-		
+		// DON'T IMPLEMENT THIS
 	}
 	@Override
 	public void notifySuccess(String message) {
-		// TODO Auto-generated method stub
-		
+		// DO NOT IMPLEMENT PLS!
 	}
 	@Override
 	public void notifyFail(String message) {
-		// TODO Auto-generated method stub
+		JOptionPane.showMessageDialog(this, message);
 		
 	}
 	@Override
 	public void display(String message) {
-		// TODO Auto-generated method stub
-		
+		JOptionPane.showMessageDialog(this, message);
 	}
 	@Override
 	public void help() {

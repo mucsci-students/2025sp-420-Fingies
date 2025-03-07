@@ -30,7 +30,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -44,7 +44,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -58,7 +58,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -73,7 +73,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -87,7 +87,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -102,7 +102,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -116,7 +116,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -130,7 +130,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -144,7 +144,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -159,7 +159,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -173,7 +173,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -188,7 +188,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -203,7 +203,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -218,7 +218,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -268,7 +268,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
         }
     }
     public void doListClass(String className) 
@@ -282,7 +282,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
         }
     }
     public void doListRelationships() 
@@ -305,7 +305,7 @@ public class Controller {
     {
         while (true)
         {
-            String input = view.promptForInput("Enter a valid filepath to save to or type EXIT to quit the program.");
+            String input = view.promptForSaveInput("Enter a valid filepath to save to or type EXIT to quit the program.");
             if (input.toUpperCase().equals("EXIT"))
                 break;
             if (doSave(input))
@@ -323,30 +323,33 @@ public class Controller {
         }
     }
 
-    public void loadLoop()
-    {
-        while (true)
-        {
-            String input = view.promptForInput("Enter a valid filepath to save to or type EXIT to quit the program.");
-            if (input.toUpperCase().equals("EXIT"))
-                break;
-            if (doSave(input))
-            {
-                madeChange = false;
-                hasSaved = true;
-                view.notifySuccess("Successfully loaded your file.");
-                break;
-            }
-            else
-            {
-                view.notifyFail("Invalid filepath. Filepath should look something like this:");
-                view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
-            }
-        }
-    }
+    // TODO: delete this
+//    public void loadLoop()
+//    {
+//        while (true)
+//        {
+//            String input = view.promptForOpenInput("Enter a valid filepath to save to or type EXIT to quit the program.");
+//            if (input.toUpperCase().equals("EXIT"))
+//                break;
+//            if (doSave(input))
+//            {
+//                madeChange = false;
+//                hasSaved = true;
+//                view.notifySuccess("Successfully loaded your file.");
+//                break;
+//            }
+//            else
+//            {
+//                view.notifyFail("Invalid filepath. Filepath should look something like this:");
+//                view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
+//            }
+//        }
+//    }
 
     public boolean loadCheck(String filepath)
     {
+    	if (filepath == null)
+    		return false;
         if (doLoad(filepath) != null)
         {
             hasSaved = true;
@@ -426,7 +429,7 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to add class " + args[0]);
+                        //view.notifyFail("Failed to add class " + args[0]);
                         return false;
                     }
                         
@@ -446,7 +449,7 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to remove class " + args[0]);
+                        //view.notifyFail("Failed to remove class " + args[0]);
                         return false;
                     }
                         
@@ -467,13 +470,13 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Failed to rename class " + args[0] + " to " + args[1]);
+                        //view.notifyFail("Failed to rename class " + args[0] + " to " + args[1]);
                         return false;
                     }
                 }
                 else
                 {
-                	view.notifyFail("Rename class should have exactly 2 arguments.");
+                	//view.notifyFail("Rename class should have exactly 2 arguments.");
                     return false;
                 }
             case ADD_RELATIONSHIP:
@@ -488,13 +491,13 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Failed to add relationship " + args[0] + " --> " + args[1] + " of type " + args[3]);
+                        //view.notifyFail("Failed to add relationship " + args[0] + " --> " + args[1] + " of type " + args[3]);
                         return false;
                     }
                 }
                 else
                 {
-                	view.notifyFail("Add relationship should have exactly 3 arguments.");
+                	//view.notifyFail("Add relationship should have exactly 3 arguments.");
                     return false;
                 }
             case REMOVE_RELATIONSHIP:
@@ -508,13 +511,13 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Failed to remove relationship " + args[0] + " --> " + args[1]);
+                        //view.notifyFail("Failed to remove relationship " + args[0] + " --> " + args[1]);
                         return false;
                     }
                 }
                 else
                 {
-                	view.notifyFail("Remove relationship should have exactly 2 arguments.");
+                	//view.notifyFail("Remove relationship should have exactly 2 arguments.");
                     return false;
                 }
             case ADD_METHOD:
@@ -528,13 +531,13 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Method couldn't be added.");
+                        //view.notifyFail("Method couldn't be added.");
                         return false;
                     }
                 }
                 else
                 {
-                	view.notifyFail("Add Method should have 2 or more arguments.");
+                	//view.notifyFail("Add Method should have 2 or more arguments.");
                     return false;
                 }
             case REMOVE_METHOD:
@@ -547,13 +550,13 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to remove method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
+                        //view.notifyFail("Failed to remove method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         return false;
                     }
                 }
                 else
                 {
-                    view.notifyFail("Remove method should have exactly 3 arguments.");
+                    //view.notifyFail("Remove method should have exactly 3 arguments.");
                     return false;
                 }
             case RENAME_METHOD:
@@ -567,13 +570,13 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Failed to rename method " + args[1] + " with arity " + args[2] + " to " + args[3] + " in class " + args[0]);
+                        //view.notifyFail("Failed to rename method " + args[1] + " with arity " + args[2] + " to " + args[3] + " in class " + args[0]);
                         return false;
                     }
                 }
                 else
                 {
-                	view.notifyFail("Rename method should have exactly 4 arguments.");
+                	//view.notifyFail("Rename method should have exactly 4 arguments.");
                     return false;
                 }
             case ADD_FIELD:
@@ -587,13 +590,13 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Field couldn't be added.");
+                        //view.notifyFail("Field couldn't be added.");
                         return false;
                     }
                 }
                 else
                 {
-                	view.notifyFail("Add field should have exactly 2 arguments.");
+                	//view.notifyFail("Add field should have exactly 2 arguments.");
                     return false;
                 }
             case REMOVE_FIELD:
@@ -606,13 +609,13 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to remove field " + args[1] + " from class " + args[0]);
+                        //view.notifyFail("Failed to remove field " + args[1] + " from class " + args[0]);
                         return false;
                     }
                 }
                 else
                 {
-                	view.notifyFail("Remove field should have exactly 2 arguments.");
+                	//view.notifyFail("Remove field should have exactly 2 arguments.");
                     return false;
                 }
             case RENAME_FIELD:
@@ -626,13 +629,13 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Failed to rename field " + args[1] + " to " + args[2] + " in class " + args[0]);
+                        //view.notifyFail("Failed to rename field " + args[1] + " to " + args[2] + " in class " + args[0]);
                         return false;
                     }
                 }
                 else
                 {
-                	view.notifyFail("Rename field should have exactly 3 arguments.");
+                	//view.notifyFail("Rename field should have exactly 3 arguments.");
                     return false;
                 }
             case ADD_PARAMETERS:
@@ -645,13 +648,13 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to add parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
+                        //view.notifyFail("Failed to add parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         return false;
                     }
                 }
                 else
                 {
-                    view.notifyFail("Add Parameters should have 4 or more parameters.");
+                    //view.notifyFail("Add Parameters should have 4 or more parameters.");
                     return false;
                 }
             case REMOVE_PARAMETERS:
@@ -664,13 +667,13 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to remove parameter(s): " + params + " from method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
+                        //view.notifyFail("Failed to remove parameter(s): " + params + " from method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         return false;
                     }
                 }
                 else
                 {
-                    view.notifyFail("Remove Parameters should have 4 or more parameters.");
+                    //view.notifyFail("Remove Parameters should have 4 or more parameters.");
                     return false;
                 }
             case RENAME_PARAMETER:
@@ -683,13 +686,13 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Failed to rename parameter " + args[3] + " with arity " + args[4] + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
+                        //view.notifyFail("Failed to rename parameter " + args[3] + " with arity " + args[4] + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
                         return false;
                     }
                 }
                 else
                 {
-                    view.notifyFail("Rename Parameters should have exactly 5 arguments.");
+                    //view.notifyFail("Rename Parameters should have exactly 5 arguments.");
                     return false;
                 }
             case CHANGE_RELATIONSHIP_TYPE:
@@ -703,13 +706,13 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Failed to change relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
+                        //view.notifyFail("Failed to change relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
                         return false;
                     }
                 }
                 else
                 {
-                    view.notifyFail("Change Relationship Type should have exactly 3 arguments.");
+                    //view.notifyFail("Change Relationship Type should have exactly 3 arguments.");
                     return false;
                 }
             case SAVE:
@@ -725,6 +728,8 @@ public class Controller {
                     else
                     {
                         args = new String[] {view.promptForSaveInput("Please designate a filepath to save to")};
+                        if (args[0] == null)
+                        	return false;
                         if (doSave(args[0]))
                         {
                             hasSaved = true;
@@ -756,10 +761,18 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Save should have either 0 or 1 arguments.");
+                	//view.notifyFail("Save should have either 0 or 1 arguments.");
                     return false;
                 }
             case LOAD:
+            	System.out.println("load case");
+                
+                if (args.length == 0)
+                {
+                	String path = view.promptForOpenInput("Please designate a filepath to open");
+                	args = new String[] {path}; // make it so the if() below will run
+                }
+                
                 if (args.length == 1)
                 {
                     if (madeChange)
@@ -798,11 +811,7 @@ public class Controller {
                         }
                     }
                 }
-                else
-                {
-                	view.notifyFail("Load should have exactly 1 argument.");
-                    return false;
-                }
+                
             case LIST_CLASSES:
                 if (args.length == 0)
                 {
@@ -811,7 +820,7 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("List classes shouldn't have any arguments.");
+                	//view.notifyFail("List classes shouldn't have any arguments.");
                     return false;
                 }
             case LIST_CLASS:
@@ -822,7 +831,7 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("List class should have exactly 1 argument.");
+                	//view.notifyFail("List class should have exactly 1 argument.");
                     return false;
                 }
             case LIST_RELATIONSHIPS:
@@ -833,7 +842,7 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("List relationships shouldn't have any arguments.");
+                	//view.notifyFail("List relationships shouldn't have any arguments.");
                     return false;
                 }
             case HELP:
@@ -849,17 +858,19 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Too many arguments. Arguments with spaces require quotes.");
-                    return true;
+                	//view.notifyFail("Too many arguments. Arguments with spaces require quotes.");
+                    return false;
                 }
             case EXIT:
                 if (args.length != 0) {
-                    view.notifyFail("Failed to exit program.");
+                    //view.notifyFail("Failed to exit program.");
                     return false;
                 }
                 else if (madeChange)
                 {
                     String result = view.promptForInput("Are you sure that you want to exit without saving? Type Y for yes or any other key to save before exiting");
+                    if (result == null)
+                    	return false;
                     if (!result.toLowerCase().equals("y"))
                     {
                         //needs to be changed for overload with 0 arguments ... could prompt for a new path
