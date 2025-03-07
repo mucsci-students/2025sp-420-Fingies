@@ -23,9 +23,11 @@ import javax.swing.SwingConstants;
 
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class GUIView extends JFrame implements ActionListener, View {
 
@@ -225,7 +227,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == addMethod && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Parameters: a, b, c"});
         }
         else if (e.getSource() == addParameter && boxes.isEmpty())
         {
@@ -245,7 +247,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == removeMethod && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method"});
         }
         else if (e.getSource() == removeParameter && boxes.isEmpty())
         {
@@ -341,6 +343,21 @@ public class GUIView extends JFrame implements ActionListener, View {
                     repaint(); // Refresh UI
                     // System.out.println("arg0: " + args[0]);
                     // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
+
+                    if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) || 
+                    action.equals(Action.REMOVE_PARAMETERS) || action.equals(Action.RENAME_PARAMETER))
+                    {
+                        // Split last element in list of parameters
+                        String[] params = args[args.length - 1].split(", ");
+
+                        // Remove the last element from args
+                        args = Arrays.copyOf(args, args.length - 1);
+
+                        // Combine both arrays
+                        args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
+                        System.out.println("Updated args: " + Arrays.toString(args));
+                    }
+
                     if (controller.runHelper(action, args))
                     {
                         actionHelper(action, args); 
