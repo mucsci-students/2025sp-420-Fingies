@@ -21,13 +21,13 @@ public class UMLClassHandler {
      */
     public static boolean createClass(String name)
     {
-        if (!classes.containsKey(name))
+    	if (!classes.containsKey(name))
         {
             UMLClass c = new UMLClass(name);
             classes.put(name, c);
             return true;
         }
-        return false;
+        throw new IllegalArgumentException("Class " + name + " already exists.");
     }
 
     /**
@@ -57,7 +57,7 @@ public class UMLClassHandler {
     {
         if (!exists(name))
         {
-            return false;
+            throw new IllegalArgumentException("Class " + name + " does not exist.");
         }
         return classes.remove(name) != null;
     }
@@ -70,15 +70,21 @@ public class UMLClassHandler {
      */
     public static boolean renameClass(String className, String newName)
     {
-        if (classes.containsKey(className) && !classes.containsKey(newName))
+        if (classes.containsKey(className))
         {
-            UMLClass c = classes.get(className);
-            c.renameClass(newName);
-            classes.remove(className);
-            classes.put(newName, c);
-            return true;
+        	if (!classes.containsKey(newName))
+        	{
+        		UMLClass c = classes.get(className);
+                c.renameClass(newName);
+                classes.remove(className);
+                classes.put(newName, c);
+                return true;
+        	}
+        	else
+        		throw new IllegalArgumentException("Another class already has the name " + newName);
         }
-        return false;
+        else
+        	throw new IllegalArgumentException("Class " + className + " does not exist.");
     }
 
     /**
@@ -108,7 +114,7 @@ public class UMLClassHandler {
         {
             return classes.get(name);
         }
-        throw new IllegalArgumentException("Class does not exist");
+        throw new IllegalArgumentException("Class " + name + " does not exist");
     }
     
     /**

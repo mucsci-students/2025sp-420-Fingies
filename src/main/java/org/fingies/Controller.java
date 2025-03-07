@@ -67,7 +67,7 @@ public class Controller {
     {
         try
         {
-            RelationshipType rType = RelationshipType.valueOf(type);
+            RelationshipType rType = RelationshipType.fromString(type);
             return RelationshipHandler.addRelationship(srcClass, destClass, rType);
         }
         catch (Exception e)
@@ -96,7 +96,7 @@ public class Controller {
     {
         try
         {
-            RelationshipType rType = RelationshipType.valueOf(newType);
+            RelationshipType rType = RelationshipType.fromString(newType);
             return RelationshipHandler.changeRelationshipType(srcClass, destClass, rType);
         }
         catch (Exception e)
@@ -387,27 +387,9 @@ public class Controller {
                     break;
             }
         }
-        //data = new UMLClassHandler();
         return true;
         
     }
-
-    /**
-     * Runs the program by infinitely looping and executing commands until the user types EXIT
-     */
-    // public void run ()
-    // {
-    // 	//TODO Probably remove this method as we are adding functionality into the Views
-    //     if(!getData())
-    //         return;
-    //     Command command;
-    //     Action action;
-    //     do {
-    //         command = view.nextCommand();
-    //         action = command.action;   
-    //         runHelper (action, command.arguments);
-    //     } while (!action.equals(Action.EXIT));
-    // }
 
     /**
      * Executes the action with the commands arguments as inputs
@@ -476,7 +458,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("Rename class should have exactly 2 arguments.");
+                	view.notifyFail("Rename class should have exactly 2 arguments.");
                     return false;
                 }
             case ADD_RELATIONSHIP:
@@ -485,19 +467,19 @@ public class Controller {
 
                     if (doAddRelationship(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully added relationship " + args[0] + " --> " + args[1] + " of type " + args[3]);
+                        view.notifySuccess("Successfully added relationship " + args[0] + " " + RelationshipType.fromString(args[2]) + " " + args[1]);
                         madeChange = true;
                         return true;
                     }
                     else
                     {
-                        //view.notifyFail("Failed to add relationship " + args[0] + " --> " + args[1] + " of type " + args[3]);
+                        //view.notifyFail("Failed to add relationship " + args[0] + " --> " + args[1] + " of type " + args[2]);
                         return false;
                     }
                 }
                 else
                 {
-                	//view.notifyFail("Add relationship should have exactly 3 arguments.");
+                	view.notifyFail("Add relationship should have exactly 3 arguments.");
                     return false;
                 }
             case REMOVE_RELATIONSHIP:
@@ -505,7 +487,7 @@ public class Controller {
                 {
                     if (doRemoveRelationship(args[0], args[1]))
                     {
-                        view.notifySuccess("Successfully removed relationship " + args[0] + " --> " + args[1]);
+                        view.notifySuccess("Successfully removed relationship between " + args[0] + " and " + args[1]);
                         madeChange = true;
                         return true;
                     }
@@ -517,7 +499,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("Remove relationship should have exactly 2 arguments.");
+                	view.notifyFail("Remove relationship should have exactly 2 arguments.");
                     return false;
                 }
             case ADD_METHOD:
@@ -537,7 +519,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("Add Method should have 2 or more arguments.");
+                	view.notifyFail("Add Method should have 2 or more arguments.");
                     return false;
                 }
             case REMOVE_METHOD:
@@ -556,7 +538,7 @@ public class Controller {
                 }
                 else
                 {
-                    //view.notifyFail("Remove method should have exactly 3 arguments.");
+                    view.notifyFail("Remove method should have exactly 3 arguments.");
                     return false;
                 }
             case RENAME_METHOD:
@@ -576,7 +558,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("Rename method should have exactly 4 arguments.");
+                	view.notifyFail("Rename method should have exactly 4 arguments.");
                     return false;
                 }
             case ADD_FIELD:
@@ -596,7 +578,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("Add field should have exactly 2 arguments.");
+                	view.notifyFail("Add field should have exactly 2 arguments.");
                     return false;
                 }
             case REMOVE_FIELD:
@@ -615,7 +597,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("Remove field should have exactly 2 arguments.");
+                	view.notifyFail("Remove field should have exactly 2 arguments.");
                     return false;
                 }
             case RENAME_FIELD:
@@ -635,7 +617,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("Rename field should have exactly 3 arguments.");
+                	view.notifyFail("Rename field should have exactly 3 arguments.");
                     return false;
                 }
             case ADD_PARAMETERS:
@@ -654,7 +636,7 @@ public class Controller {
                 }
                 else
                 {
-                    //view.notifyFail("Add Parameters should have 4 or more parameters.");
+                    view.notifyFail("Add Parameters should have 4 or more parameters.");
                     return false;
                 }
             case REMOVE_PARAMETERS:
@@ -673,7 +655,7 @@ public class Controller {
                 }
                 else
                 {
-                    //view.notifyFail("Remove Parameters should have 4 or more parameters.");
+                    view.notifyFail("Remove Parameters should have 4 or more parameters.");
                     return false;
                 }
             case RENAME_PARAMETER:
@@ -692,7 +674,7 @@ public class Controller {
                 }
                 else
                 {
-                    //view.notifyFail("Rename Parameters should have exactly 5 arguments.");
+                    view.notifyFail("Rename Parameters should have exactly 5 arguments.");
                     return false;
                 }
             case CHANGE_RELATIONSHIP_TYPE:
@@ -700,7 +682,7 @@ public class Controller {
                 {
                     if (doChangeRelationshipType(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully changed relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
+                        view.notifySuccess("Successfully changed relationship type to " + args[0] + " " + args[2] + " " + args[1]);
                         madeChange = true;
                         return true;
                     }
@@ -712,7 +694,7 @@ public class Controller {
                 }
                 else
                 {
-                    //view.notifyFail("Change Relationship Type should have exactly 3 arguments.");
+                    view.notifyFail("Change Relationship Type should have exactly 3 arguments.");
                     return false;
                 }
             case SAVE:
@@ -761,7 +743,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("Save should have either 0 or 1 arguments.");
+                	view.notifyFail("Save should have either 0 or 1 arguments.");
                     return false;
                 }
             case LOAD:
@@ -811,6 +793,10 @@ public class Controller {
                         }
                     }
                 }
+                else
+                {
+                	view.notifyFail("Load should have either 0 or 1 arguments.");
+                }
                 
             case LIST_CLASSES:
                 if (args.length == 0)
@@ -820,7 +806,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("List classes shouldn't have any arguments.");
+                	view.notifyFail("List classes shouldn't have any arguments.");
                     return false;
                 }
             case LIST_CLASS:
@@ -831,7 +817,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("List class should have exactly 1 argument.");
+                	view.notifyFail("List class should have exactly 1 argument.");
                     return false;
                 }
             case LIST_RELATIONSHIPS:
@@ -842,7 +828,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("List relationships shouldn't have any arguments.");
+                	view.notifyFail("List relationships shouldn't have any arguments.");
                     return false;
                 }
             case HELP:
@@ -858,7 +844,7 @@ public class Controller {
                 }
                 else
                 {
-                	//view.notifyFail("Too many arguments. Arguments with spaces require quotes.");
+                	view.notifyFail("Too many arguments. Arguments with spaces require quotes.");
                     return false;
                 }
             case EXIT:

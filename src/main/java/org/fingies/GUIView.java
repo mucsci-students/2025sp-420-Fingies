@@ -185,7 +185,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 boolean result = controller.runHelper(Action.EXIT, new String[] {});
                 if (result)
                 {
-                	dispose();
+                	System.exit(0);
                 }
             }
         });
@@ -296,7 +296,11 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == load)
         {
-        	controller.runHelper(a, new String[] {});
+        	boolean result = controller.runHelper(a, new String[] {});
+        	if (result)
+        	{
+        		loadGUIObjects();
+        	}
         }
         else if (e.getSource() == save)
         {
@@ -405,6 +409,16 @@ public class GUIView extends JFrame implements ActionListener, View {
                 }
             }
         }); 
+    }
+    
+    /**
+     * Creates a GUIUMLObject for every UMLClass in UMLClassHandler
+     */
+    public void loadGUIObjects()
+    {
+    	new HashSet<>(GUIUMLClasses.keySet()).forEach(x -> removeUMLClass(x));
+    	UMLClassHandler.getAllClasses().stream().forEach(x -> addUMLClass(x.getName()));
+    	updateArrows();
     }
 
     /**
