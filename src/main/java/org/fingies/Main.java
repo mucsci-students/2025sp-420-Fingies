@@ -11,7 +11,7 @@ import javax.swing.JOptionPane;
 public class Main {
   
 	public static void main(String[] args) {
-		args = new String[] {"--cli"};
+		// args = new String[] {"--cli"};
         if (hasCLIFlag(args)) {
             CLIView view = new CLIView();
             Controller controller = new Controller(view, new JModel());
@@ -54,9 +54,11 @@ public class Main {
             view.addUMLClass("Class C");
 
             // Add relationships between classes to test arrows
-            RelationshipHandler.addRelationship("Class A", "Class B", RelationshipType.AGGREGATION);
-            RelationshipHandler.addRelationship("Class B", "Class C", RelationshipType.COMPOSITION);
-            RelationshipHandler.addRelationship("Class A", "Class A", RelationshipType.AGGREGATION);
+            RelationshipHandler.addRelationship("Class A", "Class C", RelationshipType.INHERITANCE);
+            RelationshipHandler.addRelationship("Class C", "Class A", RelationshipType.COMPOSITION);
+            RelationshipHandler.addRelationship("Class B", "Class C", RelationshipType.AGGREGATION);
+            RelationshipHandler.addRelationship("Class A", "Class A", RelationshipType.REALIZATION);
+            RelationshipHandler.addRelationship("Class C", "Class C", RelationshipType.COMPOSITION);
 
             // Add arrows for these relationships
             view.addArrowForRelationship(RelationshipHandler.getRelationships().get(0));

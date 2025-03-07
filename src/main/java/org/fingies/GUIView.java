@@ -421,7 +421,8 @@ public class GUIView extends JFrame implements ActionListener, View {
                             destClass.getJLayeredPane().getY() + destClass.getJLayeredPane().getHeight() / 2);
 
         // Create a new ArrowComponent and add it to the arrows list
-        ArrowComponent arrow = new ArrowComponent(start, end, relationship.getType());
+        ArrowComponent arrow = new ArrowComponent(start, end, relationship.getType(), 
+        destClass.getJLayeredPane().getWidth(), destClass.getJLayeredPane().getHeight(), srcClass == destClass);
         arrows.add(arrow);
 
         // Add the arrow to the JLayeredPane (or other container)
