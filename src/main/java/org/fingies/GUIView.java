@@ -186,6 +186,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 if (result)
                 {
                 	dispose();
+                	System.exit(0);
                 }
             }
         });
