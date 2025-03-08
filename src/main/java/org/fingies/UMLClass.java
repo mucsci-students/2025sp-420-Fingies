@@ -11,7 +11,7 @@ public class UMLClass {
     private String name;
     private HashSet<Field> fields;
     private HashSet<Method> methods;
-    private final String allowedCharacters = " _aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-";
+    private final String allowedCharacters = "_aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
     /**
      * Constructs a new Class object with a name and empty set of attributes
