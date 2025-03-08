@@ -12,15 +12,14 @@ public class Method extends Attribute {
 
     public Method (String name)
     {
-        super(name);
-        params = new ArrayList<String>();
+        validateCharacters(name);
         this.name = name;
+        params = new ArrayList<String>();
     }
 
     public Method (String name, List<String> parameters)
     {
-        super(name);
-        params = new ArrayList<String>();
+        this(name);
         for (String parameter : params)
         {
             validateCharacters(parameter);
@@ -33,8 +32,12 @@ public class Method extends Attribute {
     }
 
     @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
     public void renameAttribute(String name) {
-        super.renameAttribute(name);
         this.name = name;
     }
 
