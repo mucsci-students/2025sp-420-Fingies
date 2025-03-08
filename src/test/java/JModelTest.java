@@ -28,8 +28,8 @@ public class JModelTest {
         UMLClassHandler.getClass("Animal").addField("Eyeballs");
         UMLClassHandler.getClass("Animal").addMethod("Eat", Arrays.asList("Food", "Calories"));
         UMLClassHandler.createClass("Food");
-        RelationshipHandler.addRelationship("Car", "Animal", RelationshipType.AGGREGATION);
-        RelationshipHandler.addRelationship("Food", "Animal", RelationshipType.INHERITANCE);
+        RelationshipHandler.addRelationship("Car", "Animal", RelationshipType.Aggregation);
+        RelationshipHandler.addRelationship("Food", "Animal", RelationshipType.Inheritance);
     }
 
     @After

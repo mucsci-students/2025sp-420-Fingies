@@ -39,6 +39,7 @@ public class Controller {
     {
         try
         {
+            RelationshipHandler.removeAllRelationshipsForClassname(className);
             return UMLClassHandler.removeClass(className);
         }
         catch (Exception e)
@@ -322,29 +323,6 @@ public class Controller {
             }
         }
     }
-
-    // TODO: delete this
-//    public void loadLoop()
-//    {
-//        while (true)
-//        {
-//            String input = view.promptForOpenInput("Enter a valid filepath to save to or type EXIT to quit the program.");
-//            if (input.toUpperCase().equals("EXIT"))
-//                break;
-//            if (doSave(input))
-//            {
-//                madeChange = false;
-//                hasSaved = true;
-//                view.notifySuccess("Successfully loaded your file.");
-//                break;
-//            }
-//            else
-//            {
-//                view.notifyFail("Invalid filepath. Filepath should look something like this:");
-//                view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
-//            }
-//        }
-//    }
 
     public boolean loadCheck(String filepath)
     {
@@ -714,6 +692,7 @@ public class Controller {
                         	return false;
                         if (doSave(args[0]))
                         {
+                            System.out.println("args[0] is: " + args[0]);
                             hasSaved = true;
                             madeChange = false;
                             view.notifySuccess("Successfully saved your file");

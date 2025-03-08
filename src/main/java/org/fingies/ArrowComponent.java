@@ -38,7 +38,7 @@ public class ArrowComponent extends JComponent {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(color);  // Arrow color
                 
-            if (relation == RelationshipType.REALIZATION)
+            if (relation == RelationshipType.Realization)
             {
                 // Dashed + Hollow Arrow
                 float[] dashPattern = {10f, 10f};
@@ -120,7 +120,7 @@ public class ArrowComponent extends JComponent {
         }
 
     private void drawShape(Graphics2D g2d, int x, int y, double angle) {
-        if (relation == RelationshipType.AGGREGATION || relation == RelationshipType.COMPOSITION) 
+        if (relation == RelationshipType.Aggregation || relation == RelationshipType.Composition) 
         {
             drawDiamond(g2d, x, y);
         }
@@ -156,7 +156,7 @@ public class ArrowComponent extends JComponent {
         int[] xPoints = {x - diamondSize, x, x + diamondSize, x};
         int[] yPoints = {y, y - diamondSize, y, y + diamondSize};
 
-        if (relation == RelationshipType.AGGREGATION) {
+        if (relation == RelationshipType.Aggregation) {
             // Draw the diamond outline (unfilled)
             g2d.drawPolygon(xPoints, yPoints, 4);
         } else {

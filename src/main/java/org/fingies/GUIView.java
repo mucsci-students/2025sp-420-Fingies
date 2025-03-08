@@ -284,7 +284,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == renameMethod && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Old Method Name", "New Method Name", "Arity of Method"});
+            makeTextBoxes(a, new String [] {"Class Name", "Old Method Name", "Arity of Method", "New Method Name"});
         }
         else if (e.getSource() == renameParameter && boxes.isEmpty())
         {
@@ -327,6 +327,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 break;
             case REMOVE_CLASS:
                 removeUMLClass(args[0]);
+                updateArrows();
                 break;
             case RENAME_CLASS:
                 renameUMLClass(args[0], args[1]);
@@ -336,6 +337,9 @@ public class GUIView extends JFrame implements ActionListener, View {
                 break;
             case REMOVE_RELATIONSHIP:
                 updateArrows();
+                break;
+            case CHANGE_RELATIONSHIP_TYPE:
+                updateArrows();;
                 break;
             case ADD_METHOD:
                 updateAttributes(args[0]);
@@ -361,8 +365,8 @@ public class GUIView extends JFrame implements ActionListener, View {
             case REMOVE_PARAMETERS:
                 updateAttributes(args[0]);
                 break;
-            // this should be called RENAME_PARAMETER
             case RENAME_PARAMETER:
+                updateAttributes(args[0]);
                 break;
             default:
                 break;
@@ -380,18 +384,24 @@ public class GUIView extends JFrame implements ActionListener, View {
                     repaint(); // Refresh UI
                     // System.out.println("arg0: " + args[0]);
                     // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
+                    System.out.println("Updated args: " + Arrays.toString(args));
 
                     if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) || 
                     action.equals(Action.REMOVE_PARAMETERS) || action.equals(Action.RENAME_PARAMETER))
                     {
                         // Split last element in list of parameters
-                        String[] params = args[args.length - 1].split(" ");
+                        // Removes leading and trailing spaces from the string
+                        // Splits the string by one or more whitespace characters (including spaces, tabs, etc.), ensuring no empty elements
+                        String[] params = args[args.length - 1].trim().split("\\s+");
 
                         // Remove the last element from args
                         args = Arrays.copyOf(args, args.length - 1);
 
                         // Combine both arrays
-                        args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
+                        if (!params[0].equals(" "));
+                        {
+                            args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
+                        }
                         System.out.println("Updated args: " + Arrays.toString(args));
                     }
 
@@ -554,7 +564,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         int returnValue = fileChooser.showSaveDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
         	return null;
-        return fileChooser.getSelectedFile().getName();
+        return fileChooser.getSelectedFile().getPath();
     }
 	
 	@Override
@@ -564,7 +574,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         int returnValue = fileChooser.showOpenDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
         	return null;
-        return fileChooser.getSelectedFile().getName();
+        return fileChooser.getSelectedFile().getPath();
 	}
 	
 	@Override

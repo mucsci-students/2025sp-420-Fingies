@@ -97,7 +97,7 @@ public class Method extends Attribute {
     public boolean renameParameter (String oldName, String newName)
     {
         validateCharacters(newName);
-        if (!parameters.contains(newName))
+        if (parameters.contains(newName))
         	throw new IllegalArgumentException("Method " + getName() + " already has a parameter called " + newName);
         if (parameters.contains(oldName))
         {

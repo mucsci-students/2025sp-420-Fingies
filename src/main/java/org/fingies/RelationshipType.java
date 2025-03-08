@@ -2,10 +2,10 @@ package org.fingies;
 
 public enum RelationshipType {
 	
-	AGGREGATION("----◇"),
-	COMPOSITION("----◆"),
-	INHERITANCE("----▷"),
-	REALIZATION("- - ▷"),
+	Aggregation("----◇"),
+	Composition("----◆"),
+	Inheritance("----▷"),
+	Realization("- - ▷"),
 	/**
 	 * For creating temporary, internal relationships; not for the user.
 	 */
@@ -33,19 +33,19 @@ public enum RelationshipType {
 	{
 		for (String name : AGGR_NAMES)
 			if (name.equalsIgnoreCase(arg0))
-				return RelationshipType.AGGREGATION;
+				return RelationshipType.Aggregation;
 		
 		for (String name : COMP_NAMES)
 			if (name.equalsIgnoreCase(arg0))
-				return RelationshipType.COMPOSITION;
+				return RelationshipType.Composition;
 		
 		for (String name : INHR_NAMES)
 			if (name.equalsIgnoreCase(arg0))
-				return RelationshipType.INHERITANCE;
+				return RelationshipType.Inheritance;
 		
 		for (String name : REAL_NAMES)
 			if (name.equalsIgnoreCase(arg0))
-				return RelationshipType.REALIZATION;
+				return RelationshipType.Realization;
 		
 		return null;
 	}
