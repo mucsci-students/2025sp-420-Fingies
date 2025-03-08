@@ -22,7 +22,7 @@ public class Method extends Attribute {
             validateCharacters(parameter);
             if (!addParameter(parameter))
             {
-                throw new IllegalArgumentException("Duplicate parameters");
+                throw new IllegalArgumentException("Methods cannot contain duplicate parameters");
             }
         }
     }
@@ -40,7 +40,7 @@ public class Method extends Attribute {
             parameters.add(name);
             return true;
         }
-        return false;
+        throw new IllegalArgumentException("Method " + getName() + " already has a parameter named " + name);
     }
 
     public boolean addParameters (List<String> newParameters) {
@@ -49,7 +49,7 @@ public class Method extends Attribute {
                 validateCharacters(newParam);
                 if (parameterExists(newParam))
                 {
-                    return false;
+                	throw new IllegalArgumentException("Method " + getName() + " already has a parameter named " + newParam);
                 }
             }
         parameters.addAll(newParameters);
@@ -78,7 +78,7 @@ public class Method extends Attribute {
         {
             if (!parameterExists(activeParam))
             {
-                return false;
+            	throw new IllegalArgumentException("Method " + getName() + " doesn't have a parameter named " + activeParam);
             }
         }
         // if authenication passed, execute specified victims
@@ -97,12 +97,14 @@ public class Method extends Attribute {
     public boolean renameParameter (String oldName, String newName)
     {
         validateCharacters(newName);
-        if (parameters.contains(oldName) && !parameters.contains(newName))
+        if (parameters.contains(newName))
+        	throw new IllegalArgumentException("Method " + getName() + " already has a parameter called " + newName);
+        if (parameters.contains(oldName))
         {
             parameters.set(parameters.indexOf(oldName), newName);
             return true;
         }
-        return false;
+        throw new IllegalArgumentException("Method " + getName() + " doesn't have a parameter called " + oldName);
     }
 
     /**

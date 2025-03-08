@@ -23,6 +23,22 @@ public class RelationshipHandler
     }
 
     /**
+     * Removes all relationships with a src or dest equal to the classname
+     * @param className name of class to remove relationships of
+     */
+    public static void removeAllRelationshipsForClassname(String className)
+    {
+        for (int i = 0; i < relationships.size(); i++)
+        {
+            if (relationships.get(i).getSrc().getName().equals(className) || relationships.get(i).getDest().getName().equals(className))
+            {
+                relationships.remove(i);
+                i--;
+            }
+        }
+    }
+
+    /**
      * Adds a new relationship to the list of relationships in the diagram.
      * 
      * @param src The name of the source class

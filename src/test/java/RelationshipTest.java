@@ -25,8 +25,8 @@ public class RelationshipTest {
         UMLClassHandler.createClass("Class2");
         UMLClassHandler.createClass("Jeremy");
         UMLClassHandler.createClass("Jane");
-        r = new Relationship(UMLClassHandler.getClass("Class1"),UMLClassHandler.getClass("Class2"), RelationshipType.COMPOSITION);
-        r2 = new Relationship(UMLClassHandler.getClass("Jeremy"), UMLClassHandler.getClass("Jane"), RelationshipType.INHERITANCE);
+        r = new Relationship(UMLClassHandler.getClass("Class1"),UMLClassHandler.getClass("Class2"), RelationshipType.Composition);
+        r2 = new Relationship(UMLClassHandler.getClass("Jeremy"), UMLClassHandler.getClass("Jane"), RelationshipType.Inheritance);
     }
     
     @Test
@@ -56,14 +56,14 @@ public class RelationshipTest {
     @Test
     public void RelationshipsAreEqual()
     {
-        Relationship rCopy = new Relationship(UMLClassHandler.getClass("Class1"),UMLClassHandler.getClass("Class2"), RelationshipType.COMPOSITION);
+        Relationship rCopy = new Relationship(UMLClassHandler.getClass("Class1"),UMLClassHandler.getClass("Class2"), RelationshipType.Composition);
         assertTrue("Two relationships between Class1 and Class2 should be equal.", r.equals(rCopy));
     }
     
     @Test
     public void RelationshipsAreEqual2()
     {
-        Relationship rCopy = new Relationship(UMLClassHandler.getClass("Class1"),UMLClassHandler.getClass("Class2"), RelationshipType.COMPOSITION);
+        Relationship rCopy = new Relationship(UMLClassHandler.getClass("Class1"),UMLClassHandler.getClass("Class2"), RelationshipType.Composition);
         assertTrue("Two relationships between Class1 and Class2 should be equal.", rCopy.equals(r));
     }
     
@@ -82,27 +82,27 @@ public class RelationshipTest {
     @Test
     public void RelationshipToStringWorks()
     {
-        assertEquals("The string representation should be \"Class1 " + RelationshipType.COMPOSITION + " Class2\"", "Class1 " + RelationshipType.COMPOSITION + " Class2", r.toString());
+        assertEquals("The string representation should be \"Class1 " + RelationshipType.Composition + " Class2\"", "Class1 " + RelationshipType.Composition + " Class2", r.toString());
     }
     
     @Test
     public void RelationshipToStringWorks2()
     {
-        assertEquals("The string representation should be \"Jeremy " + RelationshipType.INHERITANCE + " Jane\"", "Jeremy " + RelationshipType.INHERITANCE + " Jane", r2.toString());
+        assertEquals("The string representation should be \"Jeremy " + RelationshipType.Inheritance + " Jane\"", "Jeremy " + RelationshipType.Inheritance + " Jane", r2.toString());
     }
     
     @Test
     public void RelationshipTypeWorks()
     {
-    	assertEquals(r + " should be the type " + RelationshipType.COMPOSITION, RelationshipType.COMPOSITION, r.getType());
+    	assertEquals(r + " should be the type " + RelationshipType.Composition, RelationshipType.Composition, r.getType());
     }
     
     @Test
     public void RelationshipTypeWorks2()
     {
-    	r.setType(RelationshipType.AGGREGATION);
-    	assertEquals(r + " should be the type " + RelationshipType.AGGREGATION, RelationshipType.AGGREGATION, r.getType());
-    	r.setType(RelationshipType.COMPOSITION);
-    	assertEquals(r + " should be the type " + RelationshipType.COMPOSITION, RelationshipType.COMPOSITION, r.getType());
+    	r.setType(RelationshipType.Aggregation);
+    	assertEquals(r + " should be the type " + RelationshipType.Aggregation, RelationshipType.Aggregation, r.getType());
+    	r.setType(RelationshipType.Composition);
+    	assertEquals(r + " should be the type " + RelationshipType.Composition, RelationshipType.Composition, r.getType());
     }  
 }

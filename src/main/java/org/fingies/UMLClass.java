@@ -23,8 +23,6 @@ public class UMLClass {
         this.name = name;
         fields = new HashSet<Field>();
         methods = new HashSet<Method>();
-        // incoming = new HashSet<String>();
-        // outgoing = new HashSet<String>();
     }
 
     /**
@@ -35,13 +33,13 @@ public class UMLClass {
     {
         if (name.length() > 50)
         {
-            throw new IllegalArgumentException("String is longer than 50 characters");
+            throw new IllegalArgumentException("Class names must not be longer than 50 characters");
         }
         for (char c : name.toCharArray())
         {
             if (allowedCharacters.indexOf(c) == -1)
             {
-                throw new IllegalArgumentException("String contains invalid characters");
+                throw new IllegalArgumentException("The name " + name + " contains invalid characters");
             }
         }
     }
@@ -81,16 +79,16 @@ public class UMLClass {
     }
 
     /**
-     * Returns a method object specified by the method parameter and paramNum
+     * Returns a method object specified by the method parameter and arity
      * @param method name of the method
-     * @param paramNum the number of parameters the method must contain
-     * @return the method object specified by the method parameter and paramNum or null if the object doesn't exist
+     * @param arity the number of parameters the method must contain
+     * @return the method object specified by the method parameter and arity or null if the object doesn't exist
      */ 
-    public Method getMethod (String method, int paramNum)
+    public Method getMethod (String method, int arity)
     {
         for (Method m : methods)
         {
-            if (m.getName().equals(method) && m.getParameters().size() == paramNum)
+            if (m.getName().equals(method) && m.getParameters().size() == arity)
             {
                 return m;
             }
@@ -106,9 +104,11 @@ public class UMLClass {
      */
     public boolean addField (String field)
     {
-        if (name.equals(field))
-            return false;
-        return fields.add(new Field(field));
+    	if (name.equals(field))
+            throw new IllegalArgumentException("A field must have a different name than its class.");
+    	if (!fields.add(new Field(field)))
+        	throw new IllegalArgumentException(name + " already has a field called " + field);
+    	return true;
     }
 
     /**
@@ -118,8 +118,10 @@ public class UMLClass {
      */
     public boolean addMethod (String method, List<String>parameters)
     {
-        if (name.equals(method) || methodExists(method, parameters.size()))
-            return false;
+        if (name.equals(method))
+        	throw new IllegalArgumentException("A method must have a different name than its class.");
+        if (methodExists(method, parameters.size()))
+        	throw new IllegalArgumentException("A method with that name and arity already exists.");
         return methods.add(new Method(method, parameters));
     }
 
@@ -133,10 +135,10 @@ public class UMLClass {
     public boolean addParameters(String method, int arity, List<String> parameters)
     {
         Method m = getMethod(method, arity);
-        if (methodExists(method, arity + parameters.size()) || m == null)
-        {
-            return false;
-        }
+        if (m == null)
+        	throw new IllegalArgumentException("Class " + name + " doesn't have a method with the name " + method + " and arity " + arity);
+        if (methodExists(method, arity + parameters.size()))
+        	throw new IllegalArgumentException("Class " + name + " already has a method with the name " + method + " and arity " + arity);
         else
         {
             return m.addParameters(parameters);
@@ -150,18 +152,24 @@ public class UMLClass {
      */
     public boolean removeField (String field)
     {
-        return fields.remove(getField(field));
+    	boolean result = fields.remove(getField(field));
+    	if (!result)
+    		throw new IllegalArgumentException("Class " + name + " doesn't have a field named " + field);
+        return true;
     }
 
     /**
-     * Attempts to remove a method from the list of methods with paramNum parameters
+     * Attempts to remove a method from the list of methods with arity parameters
      * @param method name of method to be removed
-     * @param paramNum number of parameters of the desired method to remove
-     * @return true if the method was paramNum parameters was removed, false otherwise
+     * @param arity number of parameters of the desired method to remove
+     * @return true if the method was arity parameters was removed, false otherwise
      */
-    public boolean removeMethod (String method, int paramNum)
+    public boolean removeMethod (String method, int arity)
     {
-        return methods.remove(getMethod(method, paramNum));
+    	boolean result = methods.remove(getMethod(method, arity));
+    	if (!result)
+    		throw new IllegalArgumentException("Class " + name + " doesn't have a method named " + method + " with the arity " + arity);
+    	return true;
     }
 
     /**
@@ -175,10 +183,8 @@ public class UMLClass {
     public boolean removeParameters(String method, int arity, List<String> parameters)
     {
         Method m = getMethod(method, arity);
-        if (methodExists(method, arity - parameters.size()) || m == null)
-        {
-            return false;
-        }
+        if (m == null)
+        	throw new IllegalArgumentException("Class " + name + " does not exist");
         else
         {
             return m.removeParameters(parameters);
@@ -197,40 +203,40 @@ public class UMLClass {
         Field f = getField(field);
         Field newF = getField(newName);
 
-        if (field.equals(newName) || f == null || newF != null || name.equals(newName))
-            return false;
-        if (fields.contains(f))
-        {
-            fields.remove(f); // Remove the old field
-            fields.add(new Field(newName)); // Create new Field object and add it to fields
-            return true;
-        }
-        return false;
+        if (field.equals(newName))
+        	throw new IllegalArgumentException("Bro seriously? Why would you rename a field to be the same name bro.");
+        if (f == null)
+        	throw new IllegalArgumentException("Class " + name + " doesn't have a field named " + field);
+        if (newF != null)
+        	throw new IllegalArgumentException("Class " + name + " already has a field named " + newName);
+        if (name.equals(newName))
+        	throw new IllegalArgumentException("Fields must have different names than their classes.");
+        fields.remove(f);
+        fields.add(new Field(newName));
+        return true;
     }
 
     /**
-     * Attemps to rename an existing method with paramNum parameters to a new one
+     * Attemps to rename an existing method with arity parameters to a new one
      * @param method name of method to be changed
-     * @param paramNum number of parameters
+     * @param arity number of parameters
      * @param newName new name of method to replace old name
-     * @return true if the name of the method was replaced based on paramNum, false otherwise
+     * @return true if the name of the method was replaced based on arity, false otherwise
      */
-    public boolean renameMethod (String method, int paramNum, String newName)
+    public boolean renameMethod (String method, int arity, String newName)
     {
         validateCharacters(newName);
-        Method m = getMethod (method, paramNum);
-        Method newM = getMethod (newName, paramNum);
+        Method m = getMethod (method, arity);
+        Method newM = getMethod (newName, arity);
 
-        if (m == null || newM != null)
-            return false;
-        if (methods.contains(m))
-        {
-            methods.remove(m); // Remove the old method
-            Method newMethod = new Method(newName, m.getParameters()); // Create new Method object
-            methods.add(newMethod); // Add the renamed method
-            return true;
-        }
-        return false;
+        if (m == null)
+        	throw new IllegalArgumentException("Class " + name + " doesn't have a method called " + method + " with the arity " + arity);
+        if (newM != null)
+    	throw new IllegalArgumentException("Class " + name + " already has a method called " + newName + " with " + arity + " parameters.");
+        methods.remove(m);
+        Method newMethod = new Method(newName, m.getParameters());
+        methods.add(newMethod);
+        return true;
     }
 
     /**
@@ -244,14 +250,14 @@ public class UMLClass {
     }
 
     /**
-     * Returns whether a method with paramNum parameters exists in methods or not
+     * Returns whether a method with arity parameters exists in methods or not
      * @param method name of method
-     * @param paramNum number of parameters
-     * @return true if the method with paramNum parameters does exist in methods, false otherwise
+     * @param arity number of parameters
+     * @return true if the method with arity parameters does exist in methods, false otherwise
      */
-    public boolean methodExists(String method, int paramNum)
+    public boolean methodExists(String method, int arity)
     {
-        return methods.contains(getMethod(method, paramNum));
+        return methods.contains(getMethod(method, arity));
     }
 
     /**

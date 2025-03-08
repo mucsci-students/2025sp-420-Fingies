@@ -16,16 +16,21 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JMenu;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class GUIView extends JFrame implements ActionListener, View {
 
@@ -165,13 +170,27 @@ public class GUIView extends JFrame implements ActionListener, View {
 
         // Sets main attributes of the "frame" (this)
         this.setTitle("UMLEditor");
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent default closing behavior
         this.setLayout(null);
         // this.setLayout(new FlowLayout());
         this.setSize(1000, 1000);
         this.setJMenuBar(menuBar);
 
         this.setVisible(true);
+        
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                boolean result = controller.runHelper(Action.EXIT, new String[] {});
+                if (result)
+                {
+                	System.exit(0);
+                }
+            }
+        });
+
+    
     }
     
     public void makeTextBoxes(Action a, String [] placeholders)
@@ -225,11 +244,11 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == addMethod && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Parameters: a b c"});
         }
         else if (e.getSource() == addParameter && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: a, b, c"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: a b c"});
         }
         else if (e.getSource() == addRelationship && boxes.isEmpty())
         {
@@ -245,11 +264,11 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == removeMethod && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method"});
         }
         else if (e.getSource() == removeParameter && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: a, b, c"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Parameters: a b c"});
         }
         else if (e.getSource() == removeRelationship && boxes.isEmpty())
         {
@@ -265,7 +284,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == renameMethod && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Old Method Name", "New Method Name", "Arity of Method"});
+            makeTextBoxes(a, new String [] {"Class Name", "Old Method Name", "Arity of Method", "New Method Name"});
         }
         else if (e.getSource() == renameParameter && boxes.isEmpty())
         {
@@ -274,6 +293,26 @@ public class GUIView extends JFrame implements ActionListener, View {
         else if (e.getSource() == renameRelationship && boxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
+        }
+        else if (e.getSource() == load)
+        {
+        	boolean result = controller.runHelper(a, new String[] {});
+        	if (result)
+        	{
+        		loadGUIObjects();
+        	}
+        }
+        else if (e.getSource() == save)
+        {
+        	controller.runHelper(a, new String[] {});
+        }
+        else if (e.getSource() == exit)
+        {
+        	boolean result = controller.runHelper(a, new String[] {});
+        	if (result)
+        	{
+        		System.exit(0);
+        	}
         }
 
     	// String[] args = new String[0];
@@ -288,6 +327,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 break;
             case REMOVE_CLASS:
                 removeUMLClass(args[0]);
+                updateArrows();
                 break;
             case RENAME_CLASS:
                 renameUMLClass(args[0], args[1]);
@@ -297,6 +337,9 @@ public class GUIView extends JFrame implements ActionListener, View {
                 break;
             case REMOVE_RELATIONSHIP:
                 updateArrows();
+                break;
+            case CHANGE_RELATIONSHIP_TYPE:
+                updateArrows();;
                 break;
             case ADD_METHOD:
                 updateAttributes(args[0]);
@@ -322,8 +365,8 @@ public class GUIView extends JFrame implements ActionListener, View {
             case REMOVE_PARAMETERS:
                 updateAttributes(args[0]);
                 break;
-            // this should be called RENAME_PARAMETER
             case RENAME_PARAMETER:
+                updateAttributes(args[0]);
                 break;
             default:
                 break;
@@ -341,6 +384,27 @@ public class GUIView extends JFrame implements ActionListener, View {
                     repaint(); // Refresh UI
                     // System.out.println("arg0: " + args[0]);
                     // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
+                    System.out.println("Updated args: " + Arrays.toString(args));
+
+                    if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) || 
+                    action.equals(Action.REMOVE_PARAMETERS) || action.equals(Action.RENAME_PARAMETER))
+                    {
+                        // Split last element in list of parameters
+                        // Removes leading and trailing spaces from the string
+                        // Splits the string by one or more whitespace characters (including spaces, tabs, etc.), ensuring no empty elements
+                        String[] params = args[args.length - 1].trim().split("\\s+");
+
+                        // Remove the last element from args
+                        args = Arrays.copyOf(args, args.length - 1);
+
+                        // Combine both arrays
+                        if (!params[0].equals(" "));
+                        {
+                            args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
+                        }
+                        System.out.println("Updated args: " + Arrays.toString(args));
+                    }
+
                     if (controller.runHelper(action, args))
                     {
                         actionHelper(action, args); 
@@ -355,6 +419,16 @@ public class GUIView extends JFrame implements ActionListener, View {
                 }
             }
         }); 
+    }
+    
+    /**
+     * Creates a GUIUMLObject for every UMLClass in UMLClassHandler
+     */
+    public void loadGUIObjects()
+    {
+    	new HashSet<>(GUIUMLClasses.keySet()).forEach(x -> removeUMLClass(x));
+    	UMLClassHandler.getAllClasses().stream().forEach(x -> addUMLClass(x.getName()));
+    	updateArrows();
     }
 
     /**
@@ -371,7 +445,8 @@ public class GUIView extends JFrame implements ActionListener, View {
                             destClass.getJLayeredPane().getY() + destClass.getJLayeredPane().getHeight() / 2);
 
         // Create a new ArrowComponent and add it to the arrows list
-        ArrowComponent arrow = new ArrowComponent(start, end, relationship.getType());
+        ArrowComponent arrow = new ArrowComponent(start, end, relationship.getType(), 
+        destClass.getJLayeredPane().getWidth(), destClass.getJLayeredPane().getHeight(), srcClass == destClass);
         arrows.add(arrow);
 
         // Add the arrow to the JLayeredPane (or other container)
@@ -452,58 +527,72 @@ public class GUIView extends JFrame implements ActionListener, View {
     
 	@Override
 	public String promptForInput(String message) {
-		// TODO Auto-generated method stub
-		return null;
+		return JOptionPane.showInputDialog(message);
 	}
 	@Override
 	public List<String> promptForInput(List<String> messages) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> result = new ArrayList<String>();
+        for(String m : messages)
+        {
+            result.add(promptForInput(m));
+        }
+        return result;
 	}
 	@Override
 	public List<String> promptForInput(List<String> messages, List<InputCheck> checks) {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> result = new ArrayList<String>();
+        for(int i = 0; i < messages.size(); ++i)
+        {
+            String ans = promptForInput(messages.get(i));
+            String checkMsg = checks.get(i).check(ans); // This will either be "" or "message"
+            while(!checkMsg.equals("")) // This loop will keep prompting the user until they input something that satisfies the check
+            {
+            	notifyFail(checkMsg);
+                ans = JOptionPane.showInputDialog(messages.get(i));
+                checkMsg = checks.get(i).check(ans);
+            }
+            result.add(ans);
+        }
+        return result;
 	}
 	
 	@Override
     public String promptForSaveInput(String message)
     {
+		//System.out.println("save");
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showSaveDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
         	return null;
-        return fileChooser.getSelectedFile().getName();
+        return fileChooser.getSelectedFile().getPath();
     }
 	
 	@Override
 	public String promptForOpenInput(String message) {
+		//System.out.println("open");
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showOpenDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
         	return null;
-        return fileChooser.getSelectedFile().getName();
+        return fileChooser.getSelectedFile().getPath();
 	}
 	
 	@Override
 	public void notifySuccess() {
-		// TODO Auto-generated method stub
-		
+		// DON'T IMPLEMENT THIS
 	}
 	@Override
 	public void notifySuccess(String message) {
-		// TODO Auto-generated method stub
-		
+		// DO NOT IMPLEMENT PLS!
 	}
 	@Override
 	public void notifyFail(String message) {
-		// TODO Auto-generated method stub
+		JOptionPane.showMessageDialog(this, message);
 		
 	}
 	@Override
 	public void display(String message) {
-		// TODO Auto-generated method stub
-		
+		JOptionPane.showMessageDialog(this, message);
 	}
 	@Override
 	public void help() {

@@ -30,7 +30,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -39,12 +39,13 @@ public class Controller {
     {
         try
         {
+            RelationshipHandler.removeAllRelationshipsForClassname(className);
             return UMLClassHandler.removeClass(className);
         }
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -58,7 +59,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -67,13 +68,13 @@ public class Controller {
     {
         try
         {
-            RelationshipType rType = RelationshipType.valueOf(type);
+            RelationshipType rType = RelationshipType.fromString(type);
             return RelationshipHandler.addRelationship(srcClass, destClass, rType);
         }
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -87,7 +88,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -96,13 +97,13 @@ public class Controller {
     {
         try
         {
-            RelationshipType rType = RelationshipType.valueOf(newType);
+            RelationshipType rType = RelationshipType.fromString(newType);
             return RelationshipHandler.changeRelationshipType(srcClass, destClass, rType);
         }
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -116,7 +117,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -130,7 +131,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -144,7 +145,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -159,7 +160,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -173,7 +174,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -188,7 +189,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -203,7 +204,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -218,7 +219,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
             return false;
         }
     }
@@ -268,7 +269,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
         }
     }
     public void doListClass(String className) 
@@ -282,7 +283,7 @@ public class Controller {
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
-            view.notifyFail(e.toString());
+            view.notifyFail(e.getMessage());
         }
     }
     public void doListRelationships() 
@@ -305,29 +306,7 @@ public class Controller {
     {
         while (true)
         {
-            String input = view.promptForInput("Enter a valid filepath to save to or type EXIT to quit the program.");
-            if (input.toUpperCase().equals("EXIT"))
-                break;
-            if (doSave(input))
-            {
-                madeChange = false;
-                hasSaved = true;
-                view.notifySuccess("Successfully loaded your file.");
-                break;
-            }
-            else
-            {
-                view.notifyFail("Invalid filepath. Filepath should look something like this:");
-                view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
-            }
-        }
-    }
-
-    public void loadLoop()
-    {
-        while (true)
-        {
-            String input = view.promptForInput("Enter a valid filepath to save to or type EXIT to quit the program.");
+            String input = view.promptForSaveInput("Enter a valid filepath to save to or type EXIT to quit the program.");
             if (input.toUpperCase().equals("EXIT"))
                 break;
             if (doSave(input))
@@ -347,6 +326,8 @@ public class Controller {
 
     public boolean loadCheck(String filepath)
     {
+    	if (filepath == null)
+    		return false;
         if (doLoad(filepath) != null)
         {
             hasSaved = true;
@@ -384,27 +365,9 @@ public class Controller {
                     break;
             }
         }
-        //data = new UMLClassHandler();
         return true;
         
     }
-
-    /**
-     * Runs the program by infinitely looping and executing commands until the user types EXIT
-     */
-    // public void run ()
-    // {
-    // 	//TODO Probably remove this method as we are adding functionality into the Views
-    //     if(!getData())
-    //         return;
-    //     Command command;
-    //     Action action;
-    //     do {
-    //         command = view.nextCommand();
-    //         action = command.action;   
-    //         runHelper (action, command.arguments);
-    //     } while (!action.equals(Action.EXIT));
-    // }
 
     /**
      * Executes the action with the commands arguments as inputs
@@ -426,7 +389,7 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to add class " + args[0]);
+                        //view.notifyFail("Failed to add class " + args[0]);
                         return false;
                     }
                         
@@ -446,7 +409,7 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to remove class " + args[0]);
+                        //view.notifyFail("Failed to remove class " + args[0]);
                         return false;
                     }
                         
@@ -467,7 +430,7 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Failed to rename class " + args[0] + " to " + args[1]);
+                        //view.notifyFail("Failed to rename class " + args[0] + " to " + args[1]);
                         return false;
                     }
                 }
@@ -482,13 +445,13 @@ public class Controller {
 
                     if (doAddRelationship(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully added relationship " + args[0] + " --> " + args[1] + " of type " + args[3]);
+                        view.notifySuccess("Successfully added relationship " + args[0] + " " + RelationshipType.fromString(args[2]) + " " + args[1]);
                         madeChange = true;
                         return true;
                     }
                     else
                     {
-                        view.notifyFail("Failed to add relationship " + args[0] + " --> " + args[1] + " of type " + args[3]);
+                        //view.notifyFail("Failed to add relationship " + args[0] + " --> " + args[1] + " of type " + args[2]);
                         return false;
                     }
                 }
@@ -502,13 +465,13 @@ public class Controller {
                 {
                     if (doRemoveRelationship(args[0], args[1]))
                     {
-                        view.notifySuccess("Successfully removed relationship " + args[0] + " --> " + args[1]);
+                        view.notifySuccess("Successfully removed relationship between " + args[0] + " and " + args[1]);
                         madeChange = true;
                         return true;
                     }
                     else
                     {
-                        view.notifyFail("Failed to remove relationship " + args[0] + " --> " + args[1]);
+                        //view.notifyFail("Failed to remove relationship " + args[0] + " --> " + args[1]);
                         return false;
                     }
                 }
@@ -528,7 +491,7 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Method couldn't be added.");
+                        //view.notifyFail("Method couldn't be added.");
                         return false;
                     }
                 }
@@ -547,7 +510,7 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to remove method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
+                        //view.notifyFail("Failed to remove method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         return false;
                     }
                 }
@@ -567,7 +530,7 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Failed to rename method " + args[1] + " with arity " + args[2] + " to " + args[3] + " in class " + args[0]);
+                        //view.notifyFail("Failed to rename method " + args[1] + " with arity " + args[2] + " to " + args[3] + " in class " + args[0]);
                         return false;
                     }
                 }
@@ -587,7 +550,7 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Field couldn't be added.");
+                        //view.notifyFail("Field couldn't be added.");
                         return false;
                     }
                 }
@@ -606,7 +569,7 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to remove field " + args[1] + " from class " + args[0]);
+                        //view.notifyFail("Failed to remove field " + args[1] + " from class " + args[0]);
                         return false;
                     }
                 }
@@ -626,7 +589,7 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Failed to rename field " + args[1] + " to " + args[2] + " in class " + args[0]);
+                        //view.notifyFail("Failed to rename field " + args[1] + " to " + args[2] + " in class " + args[0]);
                         return false;
                     }
                 }
@@ -645,7 +608,7 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to add parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
+                        //view.notifyFail("Failed to add parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         return false;
                     }
                 }
@@ -664,7 +627,7 @@ public class Controller {
                         return true;
                     }
                     else {
-                        view.notifyFail("Failed to remove parameter(s): " + params + " from method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
+                        //view.notifyFail("Failed to remove parameter(s): " + params + " from method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                         return false;
                     }
                 }
@@ -683,7 +646,7 @@ public class Controller {
                     }
                     else
                     {
-                        view.notifyFail("Failed to rename parameter " + args[3] + " with arity " + args[4] + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
+                        //view.notifyFail("Failed to rename parameter " + args[3] + " with arity " + args[4] + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
                         return false;
                     }
                 }
@@ -697,13 +660,13 @@ public class Controller {
                 {
                     if (doChangeRelationshipType(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully changed relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
+                        view.notifySuccess("Successfully changed relationship type to " + args[0] + " " + args[2] + " " + args[1]);
                         madeChange = true;
                         return true;
                     }
                     else
                     {
-                        view.notifyFail("Failed to change relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
+                        //view.notifyFail("Failed to change relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
                         return false;
                     }
                 }
@@ -725,8 +688,11 @@ public class Controller {
                     else
                     {
                         args = new String[] {view.promptForSaveInput("Please designate a filepath to save to")};
+                        if (args[0] == null)
+                        	return false;
                         if (doSave(args[0]))
                         {
+                            System.out.println("args[0] is: " + args[0]);
                             hasSaved = true;
                             madeChange = false;
                             view.notifySuccess("Successfully saved your file");
@@ -760,6 +726,14 @@ public class Controller {
                     return false;
                 }
             case LOAD:
+            	System.out.println("load case");
+                
+                if (args.length == 0)
+                {
+                	String path = view.promptForOpenInput("Please designate a filepath to open");
+                	args = new String[] {path}; // make it so the if() below will run
+                }
+                
                 if (args.length == 1)
                 {
                     if (madeChange)
@@ -800,9 +774,9 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Load should have exactly 1 argument.");
-                    return false;
+                	view.notifyFail("Load should have either 0 or 1 arguments.");
                 }
+                
             case LIST_CLASSES:
                 if (args.length == 0)
                 {
@@ -850,16 +824,18 @@ public class Controller {
                 else
                 {
                 	view.notifyFail("Too many arguments. Arguments with spaces require quotes.");
-                    return true;
+                    return false;
                 }
             case EXIT:
                 if (args.length != 0) {
-                    view.notifyFail("Failed to exit program.");
+                    //view.notifyFail("Failed to exit program.");
                     return false;
                 }
                 else if (madeChange)
                 {
                     String result = view.promptForInput("Are you sure that you want to exit without saving? Type Y for yes or any other key to save before exiting");
+                    if (result == null)
+                    	return false;
                     if (!result.toLowerCase().equals("y"))
                     {
                         //needs to be changed for overload with 0 arguments ... could prompt for a new path

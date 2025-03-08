@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.geom.Arc2D;
+
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
@@ -13,12 +15,18 @@ public class ArrowComponent extends JComponent {
     private Point end;
     private Color color;
     private RelationshipType relation;
+    private int endPanelWidth;
+    private int endPanelHeight;
+    private boolean isSelfReferencing;
 
-    public ArrowComponent(Point start, Point end, RelationshipType relation) {
+    public ArrowComponent(Point start, Point end, RelationshipType relation, int endPanelWidth, int endPanelHeight, boolean isSelfReferencing) {
         this.start = start;
         this.end = end;
         this.color = Color.BLACK;
         this.relation = relation;
+        this.endPanelWidth = endPanelWidth;
+        this.endPanelHeight = endPanelHeight;
+        this.isSelfReferencing = isSelfReferencing;
         this.setBounds(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE); // setBounds(0, 0, max_width, max_height)
     }
 
@@ -29,49 +37,146 @@ public class ArrowComponent extends JComponent {
         if (start != null && end != null) {
             Graphics2D g2d = (Graphics2D) g;
             g2d.setColor(color);  // Arrow color
-            g2d.setStroke(new BasicStroke(2));  // Line thickness
-
-            if (relation == RelationshipType.AGGREGATION)
-            {  
-                // Combination of dashes and dots
-                float[] dashDotPattern = {10f, 5f, 3f, 5f}; // Dash, gap, dot, gap
-                g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dashDotPattern, 0));
-            }
-
-            else if (relation == RelationshipType.COMPOSITION)
+                
+            if (relation == RelationshipType.Realization)
             {
-                // Define a dashed line pattern (10 pixels of dash, 10 pixels of space)
+                // Dashed + Hollow Arrow
                 float[] dashPattern = {10f, 10f};
                 g2d.setStroke(new BasicStroke(2, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10f, dashPattern, 0));
             }
-            
-            else if (relation == RelationshipType.INHERITANCE)
+            else
             {
-                // Dotted Line
-                float[] dotPattern = { 1f, 5f };  // Dots of size 1, with gaps of size 5
-                g2d.setStroke(new BasicStroke(5, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 30f, dotPattern, 0f));
+                // Solid
+                g2d.setStroke(new BasicStroke(2));  // Line thickness
             }
-            
 
+            // Draw the arrow based on the self-referencing flag
+            if (isSelfReferencing) 
+            {
+                drawSelfReferencingArrow(g2d);
+            } 
+            else 
+            {
+                drawRegularArrow(g2d);
+            }
+        }
+    }
+
+        // Helper method to draw a regular arrow
+        private void drawRegularArrow(Graphics2D g2d) {
             // Draw the main arrow line
             g2d.drawLine(start.x, start.y, end.x, end.y);
 
-            // // Draw the arrowhead (simple triangle at the end)
-            // int dx = end.x - start.x;
-            // int dy = end.y - start.y;
-            // double angle = Math.atan2(dy, dx);
+            // Calculate the angle of the line between start and end
+            int dx = end.x - start.x;
+            int dy = end.y - start.y;
+            double angle = Math.atan2(dy, dx);
 
-            // // Points for the arrowhead
-            // int arrowSize = 10;
-            // int x1 = (int) (end.x - arrowSize * Math.cos(angle - Math.PI / 6));
-            // int y1 = (int) (end.y - arrowSize * Math.sin(angle - Math.PI / 6));
-            // int x2 = (int) (end.x - arrowSize * Math.cos(angle + Math.PI / 6));
-            // int y2 = (int) (end.y - arrowSize * Math.sin(angle + Math.PI / 6));
+            // Calculate the distance from the endpoint to the border of the JPanel
+            // The border is determined by the panel's width and height
+            double borderDistance = calculateBorderDistance(angle, endPanelWidth, endPanelHeight);
 
-            // Draw the arrowhead
-            // g2d.fillPolygon(new int[] { end.x, x1, x2 }, new int[] { end.y, y1, y2 }, 3);
+            // Adjust the distance to be 10 pixels from the border
+            int distanceFromBorder = - 10; // Fixed distance from the border
+            int distanceFromEnd = (int) (borderDistance - distanceFromBorder);
+
+            // Calculate the position for the shape at the adjusted distance from the end point
+            int shapeX = (int) (end.x - distanceFromEnd * Math.cos(angle));
+            int shapeY = (int) (end.y - distanceFromEnd * Math.sin(angle));
+
+            // Draw the shape based on the relationship type
+            drawShape(g2d, shapeX, shapeY, angle);
+        }
+
+        private void drawSelfReferencingArrow(Graphics2D g2d) {
+            // Define the fixed size of the loop
+            int loopSize = 50; // Fixed size of the loop (adjust as needed)
+
+            // Define the offset from the top and left edges of the panel
+            int offset = - 10; // Fixed offset in pixels (adjust as needed)
+
+            // Calculate the center of the loop
+            int centerX = end.x + endPanelWidth / 2 - offset; // Center X at the right edge of the panel
+            int centerY = end.y - endPanelHeight / 2 - offset; // Center Y at the top edge of the panel
+
+            // Draw the loop as an arc starting from the top-right corner
+            Arc2D arc = new Arc2D.Double(
+                centerX - loopSize, centerY - loopSize, // Top-left corner of the bounding rectangle
+                2 * loopSize, 2 * loopSize,           // Width and height of the bounding rectangle
+                0, 360,                               // Start angle and extent (270 degrees for a loop)
+                Arc2D.OPEN                            // Open arc type
+            );
+            g2d.draw(arc);
+    
+            // Calculate the angle at the end of the loop
+            double angle = Math.toRadians(270); // End of the arc
+    
+            // Calculate the position for the shape at the end of the loop
+            int shapeX = (int) (centerX + loopSize * Math.cos(angle));
+            int shapeY = (int) (centerY + loopSize * Math.sin(angle));
+
+            // Draw the shape based on the relationship type
+            drawShape (g2d, shapeX, shapeY, angle);
+        }
+
+    private void drawShape(Graphics2D g2d, int x, int y, double angle) {
+        if (relation == RelationshipType.Aggregation || relation == RelationshipType.Composition) 
+        {
+            drawDiamond(g2d, x, y);
+        }
+        else
+        {
+            g2d.setStroke(new BasicStroke(2));  // Line thickness
+            if (!isSelfReferencing)
+                drawArrowhead(g2d, x, y, angle);
+            else
+            {
+                drawArrowhead(g2d, x, y - 13, angle);
+            }
         }
     }
+
+    // Helper method to calculate the distance from the endpoint to the border of the JPanel
+    private double calculateBorderDistance(double angle, int panelWidth, int panelHeight) {
+        // Calculate the intersection point of the line with the panel's border
+        double halfWidth = panelWidth / 2.0;
+        double halfHeight = panelHeight / 2.0;
+
+        // Calculate the distance to the border along the line's direction
+        double borderDistance = Math.min(
+            Math.abs(halfWidth / Math.cos(angle)),
+            Math.abs(halfHeight / Math.sin(angle))
+        );
+        return borderDistance;
+    }
+
+    // Helper method to draw a diamond
+    private void drawDiamond(Graphics2D g2d, int x, int y) {
+        int diamondSize = 10;  // Size of the diamond
+        int[] xPoints = {x - diamondSize, x, x + diamondSize, x};
+        int[] yPoints = {y, y - diamondSize, y, y + diamondSize};
+
+        if (relation == RelationshipType.Aggregation) {
+            // Draw the diamond outline (unfilled)
+            g2d.drawPolygon(xPoints, yPoints, 4);
+        } else {
+            // Draw the diamond outline (filled)
+            g2d.fillPolygon(xPoints, yPoints, 4);
+        }
+    }
+
+    // Helper method to draw an arrowhead
+    private void drawArrowhead(Graphics2D g2d, int x, int y, double angle) {
+        int arrowSize = 20;  // Size of the arrowhead
+        int x1 = (int) (x - arrowSize * Math.cos(angle - Math.PI / 6));
+        int y1 = (int) (y - arrowSize * Math.sin(angle - Math.PI / 6));
+        int x2 = (int) (x - arrowSize * Math.cos(angle + Math.PI / 6));
+        int y2 = (int) (y - arrowSize * Math.sin(angle + Math.PI / 6));
+
+        // Draw the arrowhead
+        g2d.drawPolygon(new int[]{x, x1, x2}, new int[]{y, y1, y2}, 3);
+    }
+
     // Getters and Setters for start and end points
     public Point getStart() {
         return start;
