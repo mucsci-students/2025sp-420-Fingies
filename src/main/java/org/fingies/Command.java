@@ -59,7 +59,7 @@ public class Command {
 			"SRC_CLASS DEST_CLASS RELATIONSHIP_TYPE",
 			"SRC_CLASS DEST_CLASS",
 			"[ FILE_PATH ]",
-			"FILE_PATH",
+			"[ FILE_PATH ]",
 			"",
 			"CLASS_NAME",
 			"",
@@ -70,10 +70,10 @@ public class Command {
 			"CLASS_NAME METHOD_NAME ARITY NEW_NAME",
 			"CLASS_NAME FIELD",
 			"CLASS_NAME FIELD",
-			"CLASS_NAME FIELD_NAME NEW_NAME",
+			"CLASS_NAME FIELD NEW_NAME",
 			"CLASS_NAME METHOD ARITY PARAMETER1 [ PARAMETER2 ... ]",
-			"CLASS_NAME METHOD ARITY [ PARAMETER ... ]",
-			"CLASS_NAME METHOD ARITY PARAMETER_NAME NEW_NAME",
+			"CLASS_NAME METHOD ARITY PARAMETER1 [ PARAMETER2 ... ]",
+			"CLASS_NAME METHOD ARITY PARAMETER NEW_NAME",
 			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE"
 		};
 	
@@ -84,18 +84,20 @@ public class Command {
 			"Creates a new class.",
 			"Removes a class from the diagram.",
 			"Gives a class a new name.",
-			"Creates a directed relationship from one class to another.",
+			"Creates a directed relationship from one class to another. \n"
+			+ "Relationships can either be aggregation, composition, inheritance, or realization type.",
 			"Removes the relationship going from one class to another.",
-			"Saves the current diagram given a filepath (C:\\Users\\Zoppetti\\Demos\\Test.txt). \n"
-			+ "Or saves the current diagram without a filepath after saving once.",
-			"Loads a diagram into the editor from your files (C:\\\\Users\\\\Zoppetti\\\\Demos\\\\Test.txt).",
+			"Saves the current diagram given a filepath (e.g. C:\\Users\\Zoppetti\\Demos\\Test.txt). \n"
+			+ "A filepath doesn't need to be provided if the diagram has been saved before.",
+			"Loads a diagram into the editor given a filepath (e.g. C:\\\\Users\\\\Zoppetti\\\\Demos\\\\Test.txt).",
 			"Prints a list of all of the classes in the diagram.",
 			"Prints all of the attributes in a class.",
 			"Lists all of the relationships between classes in the diagram.",
-			"Prints a list of commands and their shorthand versions.\n"
+			"Prints a list of commands and their shorthand versions. \n"
 			+ "If the name of a command is supplied as an argument, prints a description of a single command.",
 			"Exits the program.",
-			"Adds a method with certain parameters to a class.",
+			"Adds a method to a class. \n"
+			+ "Two methods in a class can have the same name, as long as they have a different arity.",
 			"Removes a method from a class. \n",
 			"Gives a method of a class a new name.",
 			"Adds a field to a class.",

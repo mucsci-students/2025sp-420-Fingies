@@ -67,7 +67,7 @@ public class Method extends Attribute {
     }
 
     /**
-     * Removes a list of specifided parameters from the list of all parameters, if vall alid
+     * Removes a list of specifided parameters from the list of all parameters, if valid
      * @param junkParameters list of parameters to be removed
      * @return true if all junkParameters successfully removed, false if not
      */

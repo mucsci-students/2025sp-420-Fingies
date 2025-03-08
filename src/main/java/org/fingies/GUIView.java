@@ -60,7 +60,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     private GUIMenuItem renameField;
     private GUIMenuItem renameMethod;
     private GUIMenuItem renameParameter;
-    private GUIMenuItem renameRelationship;
+    private GUIMenuItem renameRelationshipType;
 
     private ArrayList<JTextField> boxes;
 
@@ -116,7 +116,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         renameField = new GUIMenuItem("Field", Action.RENAME_FIELD);
         renameMethod = new GUIMenuItem("Method", Action.RENAME_METHOD);
         renameParameter = new GUIMenuItem("Parameter", Action.RENAME_PARAMETER);
-        renameRelationship = new GUIMenuItem("Relationship", Action.CHANGE_RELATIONSHIP_TYPE);
+        renameRelationshipType = new GUIMenuItem("Relationship Type", Action.CHANGE_RELATIONSHIP_TYPE);
 
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
@@ -139,7 +139,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         renameField.addActionListener(this);
         renameMethod.addActionListener(this);
         renameParameter.addActionListener(this);
-        renameRelationship.addActionListener(this);
+        renameRelationshipType.addActionListener(this);
 
         // Allows the press of a key to do the function of clicking the menu item WHILE in the menu
         save.setMnemonic(KeyEvent.VK_S); // S for save
@@ -166,7 +166,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         renameMenu.add(renameField);
         renameMenu.add(renameMethod);
         renameMenu.add(renameParameter);
-        renameMenu.add(renameRelationship);
+        renameMenu.add(renameRelationshipType);
 
         // Sets main attributes of the "frame" (this)
         this.setTitle("UMLEditor");
@@ -290,7 +290,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         {
             makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Old Parameter", "New Parameter"});
         }
-        else if (e.getSource() == renameRelationship && boxes.isEmpty())
+        else if (e.getSource() == renameRelationshipType && boxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
         }
