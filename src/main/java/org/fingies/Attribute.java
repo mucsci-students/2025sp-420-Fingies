@@ -1,7 +1,9 @@
 package org.fingies;
 
 public abstract class Attribute {
-    private String name;
+    
+    //Name field *NEEDS* to be volatile for JSON formatting. Please leave it! @trush
+    private volatile String name;
     private final String allowedCharacters = " _aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-";
 
     public Attribute (String name)

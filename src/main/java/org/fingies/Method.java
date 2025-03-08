@@ -5,12 +5,16 @@ import java.util.List;
 import java.util.Objects;
 
 public class Method extends Attribute {
+
+    //This name field is STRICTLY for JSON formatting.
+    private String name;
     private ArrayList<String> parameters;
 
     public Method (String name)
     {
         super(name);
         parameters = new ArrayList<String>();
+        this.name = name;
     }
 
     public Method (String name, List<String> params)
@@ -25,6 +29,7 @@ public class Method extends Attribute {
                 throw new IllegalArgumentException("Methods cannot contain duplicate parameters");
             }
         }
+        this.name = name;
     }
 
     /**
