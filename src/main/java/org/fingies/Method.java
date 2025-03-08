@@ -8,19 +8,19 @@ public class Method extends Attribute {
 
     //This name field is STRICTLY for JSON formatting.
     private String name;
-    private ArrayList<String> params;
+    private ArrayList<Parameter> params;
 
     public Method (String name)
     {
         validateCharacters(name);
         this.name = name;
-        params = new ArrayList<String>();
+        params = new ArrayList<Parameter>();
     }
 
     public Method (String name, List<String> parameters)
     {
         this(name);
-        for (String parameter : params)
+        for (String parameter : parameters)
         {
             validateCharacters(parameter);
             if (!addParameter(parameter))
@@ -42,6 +42,21 @@ public class Method extends Attribute {
     }
 
     /**
+     * Returns a field object specified by the field parameter
+     * @param field name of the field
+     * @return the field object specified by the field parameter or null if the object doesn't exist
+     */
+    public Parameter getParameter (String parameter)
+    {
+        for (Parameter param : params)
+        {
+            if (param.getName().equals(parameter))
+                return param;
+        }
+        return null;
+    }
+
+    /**
      * Adds a single parameter to the list of params
      * @param name name of parameter
      * @return true if the parameter was added, false otherwise
@@ -51,7 +66,7 @@ public class Method extends Attribute {
         validateCharacters(name);
         if (!parameterExists(name))
         {
-            params.add(name);
+            params.add(new Parameter(name));
             return true;
         }
         throw new IllegalArgumentException("Method " + getName() + " already has a parameter named " + name);
@@ -66,7 +81,7 @@ public class Method extends Attribute {
                 	throw new IllegalArgumentException("Method " + getName() + " already has a parameter named " + newParam);
                 }
             }
-        params.addAll(newparams);
+        params.addAll(newparams.stream().map(x -> new Parameter(x)).toList());
         return true;
     }
 
@@ -77,7 +92,7 @@ public class Method extends Attribute {
      */
     public boolean removeParameter (String name)
     {
-        return params.remove(name);
+        return params.remove(getParameter(name));
     }
 
     /**
@@ -97,7 +112,7 @@ public class Method extends Attribute {
         }
         // if authenication passed, execute specified victims
         for (String victimParam : junkparams) {
-            params.remove(victimParam);
+            params.remove(getParameter(victimParam));
         }
         return true;
     }
@@ -111,11 +126,14 @@ public class Method extends Attribute {
     public boolean renameParameter (String oldName, String newName)
     {
         validateCharacters(newName);
-        if (params.contains(newName))
+        Parameter oldParam = getParameter(oldName);
+        Parameter newParam = getParameter(newName);
+
+        if (params.contains(newParam))
         	throw new IllegalArgumentException("Method " + getName() + " already has a parameter called " + newName);
-        if (params.contains(oldName))
+        if (params.contains(oldParam))
         {
-            params.set(params.indexOf(oldName), newName);
+            params.set(params.indexOf(oldParam), newParam);
             return true;
         }
         throw new IllegalArgumentException("Method " + getName() + " doesn't have a parameter called " + oldName);
@@ -128,16 +146,16 @@ public class Method extends Attribute {
      */
     public boolean parameterExists (String name)
     {
-        return params.contains(name);
+        return params.contains(getParameter(name));
     }
 
     /**
      * Returns the list of params as a hashset
      * @return list of params as a hashset
      */
-    public ArrayList<String> getParameters ()
+    public List<String> getParameters ()
     {
-        return params;
+        return params.stream().map(x -> x.getName()).toList();
     }
 
     @Override
@@ -160,9 +178,9 @@ public class Method extends Attribute {
         String str = getName() + " (";
         if (!params.isEmpty())
         {
-            for (String parameter : params)
+            for (Parameter parameter : params)
         {
-            str += parameter + ", ";
+            str += parameter.getName() + ", ";
         }
         str = str.substring(0, str.length() - 2); // trim off the extra comma
         }

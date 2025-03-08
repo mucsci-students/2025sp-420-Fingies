@@ -248,7 +248,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
         else if (e.getSource() == addParameter && boxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "# of Parameters", "Parameters: a b c"});
+            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Parameters: a b c"});
         }
         else if (e.getSource() == addRelationship && boxes.isEmpty())
         {
