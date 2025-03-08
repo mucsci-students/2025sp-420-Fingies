@@ -20,6 +20,7 @@ public class JModelTest {
 
     @Before
     public void setUp() {
+        UMLClassHandler.reset();
         UMLClassHandler.createClass("Car");
         UMLClassHandler.getClass("Car").addField("Wheels");
         UMLClassHandler.getClass("Car").addField("V16 Engine");

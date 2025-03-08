@@ -105,7 +105,7 @@ public class UMLClass {
     public boolean addField (String field)
     {
     	if (name.equals(field))
-            throw new IllegalArgumentException("A field must have a different name than its class.");
+            throw new IllegalArgumentException("A field must have a different name than its class");
     	if (!fields.add(new Field(field)))
         	throw new IllegalArgumentException(name + " already has a field called " + field);
     	return true;
@@ -119,9 +119,9 @@ public class UMLClass {
     public boolean addMethod (String method, List<String>parameters)
     {
         if (name.equals(method))
-        	throw new IllegalArgumentException("A method must have a different name than its class.");
+        	throw new IllegalArgumentException("A method must have a different name than its class");
         if (methodExists(method, parameters.size()))
-        	throw new IllegalArgumentException("A method with that name and arity already exists.");
+        	throw new IllegalArgumentException("A method with that name and arity already exists");
         return methods.add(new Method(method, parameters));
     }
 
@@ -210,7 +210,7 @@ public class UMLClass {
         if (newF != null)
         	throw new IllegalArgumentException("Class " + name + " already has a field named " + newName);
         if (name.equals(newName))
-        	throw new IllegalArgumentException("Fields must have different names than their classes.");
+        	throw new IllegalArgumentException("Fields must have different names than their classes");
         fields.remove(f);
         fields.add(new Field(newName));
         return true;
@@ -232,7 +232,7 @@ public class UMLClass {
         if (m == null)
         	throw new IllegalArgumentException("Class " + name + " doesn't have a method called " + method + " with the arity " + arity);
         if (newM != null)
-    	throw new IllegalArgumentException("Class " + name + " already has a method called " + newName + " with " + arity + " parameters.");
+    	throw new IllegalArgumentException("Class " + name + " already has a method called " + newName + " with " + arity + " parameters");
         methods.remove(m);
         Method newMethod = new Method(newName, m.getParameters());
         methods.add(newMethod);

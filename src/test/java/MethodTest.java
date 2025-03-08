@@ -1,5 +1,8 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+
 import static org.junit.Assert.assertFalse;
 
 import org.fingies.Method;
@@ -64,9 +67,16 @@ public class MethodTest {
     @Test
     public void addDuplicateParameters_ThenMethodShouldNotAddDuplicateParameter()
     {
-        m.addParameter("Param1");
-        m.addParameter("Param1");
-        assertEquals(m.getParameters().size(), 1);
+        
+        try
+        {
+            m.addParameter("Param1");
+            m.addParameter("Param1");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("Method Method1 already has a parameter named Param1", e.getMessage());
+        }
     }
 
     // --------------------- RENAME PARAMETERS ---------------------
@@ -84,16 +94,30 @@ public class MethodTest {
     @Test
     public void addTwoParametersAndRenameOneParameterToOneThatExists_ThenParameterShouldFailToBeRenamed()
     {
-        m.addParameter("Param1");
-        m.addParameter("Param2");
-        assertFalse(m.renameParameter("Param1", "Param2"));
+        try
+        {
+            m.addParameter("Param1");
+            m.addParameter("Param2");
+            m.renameParameter("Param1", "Param2");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("Method Method1 already has a parameter called Param2", e.getMessage());
+        }
     }
 
     @Test
     public void renameParameterToSameName_ThenParameterShouldFailToBeRenamed()
     {
-        m.addParameter("Param1");
-        assertFalse(m.renameParameter("Param1", "Param1"));
+        try
+        {
+            m.addParameter("Param1");
+            m.renameParameter("Param1", "Param1");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("Method Method1 already has a parameter called Param1", e.getMessage());
+        }
     }
 
     // --------------------- REMOVE PARAMETERS ---------------------
