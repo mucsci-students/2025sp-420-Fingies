@@ -20,7 +20,7 @@ public class Method extends Attribute {
     public Method (String name, List<String> parameters)
     {
         this(name);
-        for (String parameter : params)
+        for (String parameter : parameters)
         {
             validateCharacters(parameter);
             if (!addParameter(parameter))
