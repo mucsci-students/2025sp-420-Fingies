@@ -26,7 +26,7 @@ public class JModel {
     private String latestError;
 
     //GSON is built to ignore fields with "final" modifier.
-    private Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL).create();
+    private Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL, Modifier.VOLATILE).create();
 
     /**
      * Model class for saving and loading to standardized JSON format

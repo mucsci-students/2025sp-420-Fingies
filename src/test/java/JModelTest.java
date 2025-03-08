@@ -23,7 +23,7 @@ public class JModelTest {
         UMLClassHandler.reset();
         UMLClassHandler.createClass("Car");
         UMLClassHandler.getClass("Car").addField("Wheels");
-        UMLClassHandler.getClass("Car").addField("V16 Engine");
+        UMLClassHandler.getClass("Car").addField("V16Engine");
         UMLClassHandler.getClass("Car").addMethod("Drive", Arrays.asList("ThrottleAmount", "GasAmount"));
         UMLClassHandler.createClass("Animal");
         UMLClassHandler.getClass("Animal").addField("Eyeballs");
