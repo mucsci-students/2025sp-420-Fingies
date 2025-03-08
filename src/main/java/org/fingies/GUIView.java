@@ -385,7 +385,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                     repaint(); // Refresh UI
                     // System.out.println("arg0: " + args[0]);
                     // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
-                    // System.out.println("Updated args: " + Arrays.toString(args));
+                    //System.out.println("Original args: " + Arrays.toString(args));
 
                     if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) || 
                     action.equals(Action.REMOVE_PARAMETERS) || action.equals(Action.RENAME_PARAMETER))
@@ -394,16 +394,16 @@ public class GUIView extends JFrame implements ActionListener, View {
                         // Removes leading and trailing spaces from the string
                         // Splits the string by one or more whitespace characters (including spaces, tabs, etc.), ensuring no empty elements
                         String[] params = args[args.length - 1].trim().split("\\s+");
+                        
+                        // Remove parameters that are just empty or made of whitespace
+                        params = Arrays.stream(params).filter(x -> !x.isBlank()).toArray(String[]::new);
 
                         // Remove the last element from args
                         args = Arrays.copyOf(args, args.length - 1);
 
                         // Combine both arrays
-                        if (!params[0].equals(" "));
-                        {
-                            args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
-                        }
-                        // System.out.println("Updated args: " + Arrays.toString(args));
+                        args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
+                        //System.out.println("Updated args: " + Arrays.toString(args));
                     }
 
                     if (controller.runHelper(action, args))

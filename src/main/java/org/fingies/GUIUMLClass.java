@@ -124,10 +124,10 @@ public class GUIUMLClass {
         int newHeight = classPanel.getHeight() + fieldsPanel.getHeight() + methodsPanel.getHeight() + 20;
         int newWidth = Math.max(DEFAULT_PANEL_WIDTH, Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
 
-        System.out.println("Update classPanel width is " + classPanel.getWidth());
-        System.out.println("Update fieldsPanel width is " + fieldsPanel.getWidth());
-        System.out.println("Update methodsPanel width is " + methodsPanel.getWidth());
-        System.out.println("Update new width is " + newWidth + "\n");
+        //System.out.println("Update classPanel width is " + classPanel.getWidth());
+        //System.out.println("Update fieldsPanel width is " + fieldsPanel.getWidth());
+        //System.out.println("Update methodsPanel width is " + methodsPanel.getWidth());
+        //System.out.println("Update new width is " + newWidth + "\n");
         
         background.setBounds(background.getX(), background.getY(), newWidth + 10, newHeight);
         
