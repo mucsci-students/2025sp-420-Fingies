@@ -11,10 +11,10 @@ public enum RelationshipType {
 	 */
 	DEFAULT("");
 	
-	private static final String[] AGGR_NAMES = {"aggregation", "aggr"};
-	private static final String[] COMP_NAMES = {"composition", "comp"};
-	private static final String[] INHR_NAMES = {"inheritance", "inhr"};
-	private static final String[] REAL_NAMES = {"realization", "real"};
+	private static final String[] AGGR_NAMES = {"aggregation", "aggr", "a"};
+	private static final String[] COMP_NAMES = {"composition", "comp", "c"};
+	private static final String[] INHR_NAMES = {"inheritance", "inhr", "i"};
+	private static final String[] REAL_NAMES = {"realization", "real", "r"};
 	
 	private final String symbol;
 	

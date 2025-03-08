@@ -40,3 +40,8 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-
 [03/07/25 22:44:18]: Class     does not exist
 [03/07/25 22:44:41]: Class     does not exist
 [03/07/25 22:44:47]: Class    does not exist
+[03/08/25 13:27:11]: Class Class C does not exist
+[03/08/25 14:02:54]: Class ClassB doesn't have a field named Fieldaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+[03/08/25 14:18:19]: Class ClassA doesn't have a method named h with the arity 0
+[03/08/25 14:22:46]: Class ClassA doesn't have a method named abc with the arity 9
+[03/08/25 14:31:16]: This relationship already exists.

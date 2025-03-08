@@ -327,19 +327,19 @@ public class GUIView extends JFrame implements ActionListener, View {
                 break;
             case REMOVE_CLASS:
                 removeUMLClass(args[0]);
-                updateArrows();
+                // updateArrows();
                 break;
             case RENAME_CLASS:
                 renameUMLClass(args[0], args[1]);
                 break;
             case ADD_RELATIONSHIP:
-                updateArrows();
+                // updateArrows();
                 break;
             case REMOVE_RELATIONSHIP:
-                updateArrows();
+                // updateArrows();
                 break;
             case CHANGE_RELATIONSHIP_TYPE:
-                updateArrows();;
+                // updateArrows();
                 break;
             case ADD_METHOD:
                 updateAttributes(args[0]);
@@ -371,6 +371,7 @@ public class GUIView extends JFrame implements ActionListener, View {
             default:
                 break;
             }
+            updateArrows();
     }
 
     private void addEnterKeyListenerToRemove(Action action, JTextField text) {
@@ -384,7 +385,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                     repaint(); // Refresh UI
                     // System.out.println("arg0: " + args[0]);
                     // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
-                    System.out.println("Updated args: " + Arrays.toString(args));
+                    // System.out.println("Updated args: " + Arrays.toString(args));
 
                     if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) || 
                     action.equals(Action.REMOVE_PARAMETERS) || action.equals(Action.RENAME_PARAMETER))
@@ -402,7 +403,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                         {
                             args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
                         }
-                        System.out.println("Updated args: " + Arrays.toString(args));
+                        // System.out.println("Updated args: " + Arrays.toString(args));
                     }
 
                     if (controller.runHelper(action, args))
