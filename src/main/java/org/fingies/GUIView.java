@@ -60,7 +60,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     private GUIMenuItem renameField;
     private GUIMenuItem renameMethod;
     private GUIMenuItem renameParameter;
-    private GUIMenuItem renameRelationship;
+    private GUIMenuItem renameRelationshipType;
 
     private ArrayList<JTextField> boxes;
 
@@ -116,7 +116,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         renameField = new GUIMenuItem("Field", Action.RENAME_FIELD);
         renameMethod = new GUIMenuItem("Method", Action.RENAME_METHOD);
         renameParameter = new GUIMenuItem("Parameter", Action.RENAME_PARAMETER);
-        renameRelationship = new GUIMenuItem("Relationship", Action.CHANGE_RELATIONSHIP_TYPE);
+        renameRelationshipType = new GUIMenuItem("Relationship Type", Action.CHANGE_RELATIONSHIP_TYPE);
 
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
@@ -139,7 +139,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         renameField.addActionListener(this);
         renameMethod.addActionListener(this);
         renameParameter.addActionListener(this);
-        renameRelationship.addActionListener(this);
+        renameRelationshipType.addActionListener(this);
 
         // Allows the press of a key to do the function of clicking the menu item WHILE in the menu
         save.setMnemonic(KeyEvent.VK_S); // S for save
@@ -166,7 +166,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         renameMenu.add(renameField);
         renameMenu.add(renameMethod);
         renameMenu.add(renameParameter);
-        renameMenu.add(renameRelationship);
+        renameMenu.add(renameRelationshipType);
 
         // Sets main attributes of the "frame" (this)
         this.setTitle("UMLEditor");
@@ -290,7 +290,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         {
             makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Old Parameter", "New Parameter"});
         }
-        else if (e.getSource() == renameRelationship && boxes.isEmpty())
+        else if (e.getSource() == renameRelationshipType && boxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
         }
@@ -327,19 +327,19 @@ public class GUIView extends JFrame implements ActionListener, View {
                 break;
             case REMOVE_CLASS:
                 removeUMLClass(args[0]);
-                updateArrows();
+                // updateArrows();
                 break;
             case RENAME_CLASS:
                 renameUMLClass(args[0], args[1]);
                 break;
             case ADD_RELATIONSHIP:
-                updateArrows();
+                // updateArrows();
                 break;
             case REMOVE_RELATIONSHIP:
-                updateArrows();
+                // updateArrows();
                 break;
             case CHANGE_RELATIONSHIP_TYPE:
-                updateArrows();;
+                // updateArrows();
                 break;
             case ADD_METHOD:
                 updateAttributes(args[0]);
@@ -371,6 +371,7 @@ public class GUIView extends JFrame implements ActionListener, View {
             default:
                 break;
             }
+            updateArrows();
     }
 
     private void addEnterKeyListenerToRemove(Action action, JTextField text) {
@@ -384,7 +385,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                     repaint(); // Refresh UI
                     // System.out.println("arg0: " + args[0]);
                     // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
-                    System.out.println("Updated args: " + Arrays.toString(args));
+                    //System.out.println("Original args: " + Arrays.toString(args));
 
                     if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) || 
                     action.equals(Action.REMOVE_PARAMETERS) || action.equals(Action.RENAME_PARAMETER))
@@ -393,16 +394,16 @@ public class GUIView extends JFrame implements ActionListener, View {
                         // Removes leading and trailing spaces from the string
                         // Splits the string by one or more whitespace characters (including spaces, tabs, etc.), ensuring no empty elements
                         String[] params = args[args.length - 1].trim().split("\\s+");
+                        
+                        // Remove parameters that are just empty or made of whitespace
+                        params = Arrays.stream(params).filter(x -> !x.isBlank()).toArray(String[]::new);
 
                         // Remove the last element from args
                         args = Arrays.copyOf(args, args.length - 1);
 
                         // Combine both arrays
-                        if (!params[0].equals(" "));
-                        {
-                            args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
-                        }
-                        System.out.println("Updated args: " + Arrays.toString(args));
+                        args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
+                        //System.out.println("Updated args: " + Arrays.toString(args));
                     }
 
                     if (controller.runHelper(action, args))

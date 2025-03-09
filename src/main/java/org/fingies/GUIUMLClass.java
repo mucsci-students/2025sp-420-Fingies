@@ -19,6 +19,7 @@ public class GUIUMLClass {
     private final int DEFAULT_CLASS_PANEL_HEIGHT = 25;
     private final int DEFAULT_FIELD_PANEL_HEIGHT = 75;
     private final int DEFAULT_METHOD_PANEL_HEIGHT = 125;
+    private final int DEFAULT_PANEL_WIDTH = 140;
 
     private JPanel classPanel;
     private JPanel fieldsPanel;
@@ -42,18 +43,18 @@ public class GUIUMLClass {
         // classPanel.setBackground(Color.RED);
         // classPanel.setBackground(new Color(255, 0, 0, 60));
         classPanel.setBackground(color);
-        classPanel.setBounds(5, 5, 140, DEFAULT_CLASS_PANEL_HEIGHT);
+        classPanel.setBounds(5, 5, DEFAULT_PANEL_WIDTH, DEFAULT_CLASS_PANEL_HEIGHT);
         classPanel.setLayout(null);  // Set layout to null
 
         fieldsPanel = new JPanel();
         // fieldsPanel.setBackground(Color.GREEN);
         fieldsPanel.setBackground(color);
-        fieldsPanel.setBounds(5, 35, 140, DEFAULT_FIELD_PANEL_HEIGHT);
+        fieldsPanel.setBounds(5, 35, DEFAULT_PANEL_WIDTH, DEFAULT_FIELD_PANEL_HEIGHT);
         fieldsPanel.setLayout(null);  // Set layout to null
 
         methodsPanel = new JPanel();
         methodsPanel.setBackground(color);
-        methodsPanel.setBounds(5, 115, 140, DEFAULT_METHOD_PANEL_HEIGHT);
+        methodsPanel.setBounds(5, 115, DEFAULT_PANEL_WIDTH, DEFAULT_METHOD_PANEL_HEIGHT);
         methodsPanel.setLayout(null);  // Set layout to null
 
         // JLabel f1 = new JLabel("");
@@ -121,7 +122,12 @@ public class GUIUMLClass {
 
         // Calculate new total height
         int newHeight = classPanel.getHeight() + fieldsPanel.getHeight() + methodsPanel.getHeight() + 20;
-        int newWidth = Math.max(classPanel.getWidth(), Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
+        int newWidth = Math.max(DEFAULT_PANEL_WIDTH, Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
+
+        //System.out.println("Update classPanel width is " + classPanel.getWidth());
+        //System.out.println("Update fieldsPanel width is " + fieldsPanel.getWidth());
+        //System.out.println("Update methodsPanel width is " + methodsPanel.getWidth());
+        //System.out.println("Update new width is " + newWidth + "\n");
         
         background.setBounds(background.getX(), background.getY(), newWidth + 10, newHeight);
         
@@ -174,7 +180,6 @@ public class GUIUMLClass {
         int newHeight = fieldsPanel.getHeight();
         int maxLength = 0;
         int offset = 0;
-        // JLabel txt;
 
         if (!umlclass.getFields().isEmpty())
         {
@@ -182,13 +187,20 @@ public class GUIUMLClass {
             for (Field field : umlclass.getFields())
             {
                 maxLength = Math.max(maxLength, field.getName().length());
-                // text += field.getName() + "<br/>";
 
                 JLabel fieldLabel = new JLabel(field.getName());
                 fieldLabel.setHorizontalAlignment(JLabel.LEFT);
                 fieldLabel.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
                 fieldLabel.setForeground(Color.BLACK);
-                fieldLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, field.getName().length() * PIXELS_PER_CHARACTER, 25);
+
+                int labelWidth = field.getName().length() * PIXELS_PER_CHARACTER; // Approximate width based on max line length
+                int labelHeight = 25; // Adjust height based on number of lines
+
+                fieldLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, labelWidth, labelHeight);
+
+                fieldsPanel.add(fieldLabel);
+
+                offset++;
 
                 // JTextField fieldEditor = new JTextField(field.getName());
                 // fieldEditor.setBounds(fieldLabel.getBounds());
@@ -199,19 +211,14 @@ public class GUIUMLClass {
                 // fieldLabel.addMouseListener(labelListener);
                 // fieldLabel.addMouseMotionListener(labelListener);
                 // fieldEditor.addFocusListener(new JTextFieldFocusLossListener(fieldLabel, Action.RENAME_FIELD));
-
-                fieldsPanel.add(fieldLabel);
-                // fieldsPanel.add(fieldEditor);
-
-                offset++;
-                
             }
-            // text = text.substring(0, text.length() - 5); // trim off the extra \n
-            // fields.setText(text + "</html>");
             newHeight = 25 * umlclass.getFields().size(); // Calculate height dynamically
         }
-        // fields.setBounds(10, 5, maxLength * PIXELS_PER_CHARACTER, newHeight);
-        fieldsPanel.setBounds(5, 35, (maxLength - 2) * PIXELS_PER_CHARACTER, Math.max(DEFAULT_FIELD_PANEL_HEIGHT, newHeight - 20)); // Resize panel
+        // Resize the methodsPanel dynamically
+        int panelWidth = (maxLength - 2) * PIXELS_PER_CHARACTER;
+        int panelHeight = Math.max(DEFAULT_FIELD_PANEL_HEIGHT, newHeight - 20);
+
+        fieldsPanel.setBounds(5, 35, panelWidth, panelHeight); // Resize panel
         fieldsPanel.revalidate();
         fieldsPanel.repaint();
     }
@@ -221,25 +228,44 @@ public class GUIUMLClass {
         methodsPanel.removeAll(); // Clear panel before updating
         int newHeight = methodsPanel.getHeight();
         int maxLength = 0;
-        int maxParameters = 0;
+        int maxLineLength = 40;
         int offset = 0;
-        // JLabel txt;
+        int lineHeight = 20; // Approximate line height for each wrapped line
 
         if (!umlclass.getMethods().isEmpty())
         {
-            // String text = "<html>";
             for (Method method : umlclass.getMethods())
-            {
-                maxLength = Math.max(maxLength, method.toString().length());
-                maxParameters = Math.max(maxParameters, method.getParameters().size());
-                // maxLength = Math.max(maxLength, (method.getName().length() + method.toString().length()));
-                // text += method + "<br/>";
+            {  
+                String methodString = method.toString();
+                StringBuilder formattedText = new StringBuilder("<html>");
 
-                // methodsPanel.add(txt);
-                JLabel methodLabel = new JLabel(method.toString());
+                maxLength = Math.max(maxLength, methodString.length());
+
+                // Insert line breaks every maxLineLength characters
+                int lineCount = 0;
+                for (int i = 0; i < methodString.length(); i += maxLineLength) {
+                    int endIndex = Math.min(i + maxLineLength, methodString.length());
+                    formattedText.append(methodString, i, endIndex).append("<br>");
+                    lineCount++;
+                }
+                
+                formattedText.append("</html>");
+
+                JLabel methodLabel = new JLabel(formattedText.toString());
                 methodLabel.setHorizontalAlignment(JLabel.LEFT);
                 methodLabel.setForeground(Color.BLACK);
-                methodLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, method.toString().length() * PIXELS_PER_CHARACTER, 25);
+
+                int labelWidth = Math.min (methodString.length(), maxLineLength) * PIXELS_PER_CHARACTER; // Approximate width based on max line length
+                int labelHeight = lineCount * lineHeight; // Adjust height based on number of lines
+
+                methodLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, labelWidth, labelHeight);
+
+                methodsPanel.add(methodLabel);
+
+                offset += lineCount; // Increase offset by number of lines to avoid overlap
+                
+                // methodLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, formattedText.toString().length() * PIXELS_PER_CHARACTER, 25);
+                // methodLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, method.toString().length() * PIXELS_PER_CHARACTER, 25);
 
                 // JTextField methodEditor = new JTextField(method.toString());
                 // methodEditor.setBounds(methodLabel.getBounds());
@@ -251,17 +277,15 @@ public class GUIUMLClass {
                 // methodLabel.addMouseMotionListener(labelListener);
                 // methodEditor.addFocusListener(new JTextFieldFocusLossListener(methodLabel, Action.RENAME_METHOD));
 
-                methodsPanel.add(methodLabel);
                 // methodsPanel.add(methodEditor);
-
-                offset++;
             }
-            // text = text.substring(0, text.length() - 5); // trim off the extra \n
-            // methods.setText(text + "</html>");
-            newHeight = 25 * umlclass.getMethods().size(); // Calculate height dynamically
+            newHeight = offset * lineHeight; // Calculate dynamic height based on total lines
         }
-        // methods.setBounds(10, 5, maxLength * PIXELS_PER_CHARACTER, newHeight);
-        methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), (maxLength - maxParameters) * PIXELS_PER_CHARACTER, Math.max(DEFAULT_METHOD_PANEL_HEIGHT, newHeight - 20)); // Resize panel
+        // Resize the methodsPanel dynamically
+        int panelWidth = Math.min(maxLineLength, maxLength) * PIXELS_PER_CHARACTER - 30;
+        int panelHeight = Math.max(DEFAULT_METHOD_PANEL_HEIGHT, newHeight - 20);
+        
+        methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), panelWidth, panelHeight);
         methodsPanel.revalidate();
         methodsPanel.repaint();
     }

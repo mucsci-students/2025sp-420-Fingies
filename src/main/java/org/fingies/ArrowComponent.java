@@ -76,8 +76,13 @@ public class ArrowComponent extends JComponent {
             // The border is determined by the panel's width and height
             double borderDistance = calculateBorderDistance(angle, endPanelWidth, endPanelHeight);
 
+            int distanceFromBorder = - 10;
             // Adjust the distance to be 10 pixels from the border
-            int distanceFromBorder = - 10; // Fixed distance from the border
+            if (relation == RelationshipType.Inheritance || relation == RelationshipType.Realization) 
+            {
+                distanceFromBorder += 10;
+            }
+             // Fixed distance from the border
             int distanceFromEnd = (int) (borderDistance - distanceFromBorder);
 
             // Calculate the position for the shape at the adjusted distance from the end point
