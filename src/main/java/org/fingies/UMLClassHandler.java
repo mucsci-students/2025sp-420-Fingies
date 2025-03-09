@@ -27,7 +27,7 @@ public class UMLClassHandler {
             classes.put(name, c);
             return true;
         }
-        throw new IllegalArgumentException("Class " + name + " already exists.");
+        throw new IllegalArgumentException("Class " + name + " already exists");
     }
 
     /**
@@ -57,7 +57,7 @@ public class UMLClassHandler {
     {
         if (!exists(name))
         {
-            throw new IllegalArgumentException("Class " + name + " does not exist.");
+            throw new IllegalArgumentException("Class " + name + " does not exist");
         }
         return classes.remove(name) != null;
     }
@@ -84,7 +84,7 @@ public class UMLClassHandler {
         		throw new IllegalArgumentException("Another class already has the name " + newName);
         }
         else
-        	throw new IllegalArgumentException("Class " + className + " does not exist.");
+        	throw new IllegalArgumentException("Class " + className + " does not exist");
     }
 
     /**

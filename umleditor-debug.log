@@ -40,8 +40,21 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-
 [03/07/25 22:44:18]: Class     does not exist
 [03/07/25 22:44:41]: Class     does not exist
 [03/07/25 22:44:47]: Class    does not exist
-[03/08/25 13:27:11]: Class Class C does not exist
-[03/08/25 14:02:54]: Class ClassB doesn't have a field named Fieldaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-[03/08/25 14:18:19]: Class ClassA doesn't have a method named h with the arity 0
-[03/08/25 14:22:46]: Class ClassA doesn't have a method named abc with the arity 9
-[03/08/25 14:31:16]: This relationship already exists.
+[03/08/25 15:19:06]: This relationship already exists.
+[03/08/25 15:19:25]: This relationship already exists.
+[03/08/25 15:26:46]: This relationship already exists.
+[03/08/25 15:34:18]: This relationship already exists.
+[03/08/25 15:37:23]: This relationship already exists.
+[03/08/25 15:40:53]: This relationship already exists.
+[03/08/25 15:41:36]: This relationship already exists.
+[03/08/25 15:41:37]: Test Write to Error Log, Ignore this message.
+[03/08/25 15:48:50]: This relationship already exists.
+[03/08/25 15:48:50]: Test Write to Error Log, Ignore this message.
+[03/08/25 16:49:24]: This relationship already exists.
+[03/08/25 16:51:50]: This relationship already exists.
+[03/08/25 17:03:47]: This relationship already exists.
+[03/08/25 17:05:48]: This relationship already exists.
+[03/08/25 17:08:04]: This relationship already exists.
+[03/08/25 17:09:21]: This relationship already exists.
+[03/08/25 17:09:21]: Test Write to Error Log, Ignore this message.
+[03/08/25 17:24:11]: The name Class A contains invalid characters

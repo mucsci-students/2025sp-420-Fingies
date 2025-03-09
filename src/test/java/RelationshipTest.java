@@ -21,6 +21,7 @@ public class RelationshipTest {
     @Before
     public void setUp()
     {
+        UMLClassHandler.reset();
         UMLClassHandler.createClass("Class1");
         UMLClassHandler.createClass("Class2");
         UMLClassHandler.createClass("Jeremy");

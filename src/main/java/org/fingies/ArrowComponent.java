@@ -162,10 +162,15 @@ public class ArrowComponent extends JComponent {
         int[] yPoints = {y, y - diamondSize, y, y + diamondSize};
 
         if (relation == RelationshipType.Aggregation) {
+        	// Draw the diamond inside (filled)
+        	g2d.setColor(Color.WHITE);
+            g2d.fillPolygon(xPoints, yPoints, 4);
             // Draw the diamond outline (unfilled)
+        	g2d.setColor(Color.BLACK);
             g2d.drawPolygon(xPoints, yPoints, 4);
         } else {
-            // Draw the diamond outline (filled)
+        	// Draw the diamond (filled)
+        	g2d.setColor(Color.BLACK);
             g2d.fillPolygon(xPoints, yPoints, 4);
         }
     }
@@ -178,7 +183,11 @@ public class ArrowComponent extends JComponent {
         int x2 = (int) (x - arrowSize * Math.cos(angle + Math.PI / 6));
         int y2 = (int) (y - arrowSize * Math.sin(angle + Math.PI / 6));
 
-        // Draw the arrowhead
+        // Draw the arrowhead inside (filled)
+    	g2d.setColor(Color.WHITE);
+        g2d.fillPolygon(new int[]{x, x1, x2}, new int[]{y, y1, y2}, 3);
+        // Draw the arrowhead outline (unfilled)
+        g2d.setColor(Color.BLACK);
         g2d.drawPolygon(new int[]{x, x1, x2}, new int[]{y, y1, y2}, 3);
     }
 

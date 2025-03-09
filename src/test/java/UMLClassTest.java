@@ -65,15 +65,30 @@ public class UMLClassTest {
     @Test
     public void addFieldWithSameNameAsClass_ThenClassShouldFailToAddField()
     {
-        assertFalse(c.addField("UMLClass"));
+        try
+        {
+            c.addField("UMLClass");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("A field must have a different name than its class", e.getMessage());
+        }
     }
 
     @Test
     public void addFieldThatAlreadyExists_ThenClassShouldFailToAddField()
     {
-        c.addField("Engine");
-        assertTrue(c.fieldExists("Engine"));
-        assertFalse(c.addField("Engine"));
+        
+        try
+        {
+            c.addField("Engine");
+            assertTrue(c.fieldExists("Engine"));
+            c.addField("Engine");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("UMLClass already has a field called Engine", e.getMessage());
+        }
     }
 
     @Test
@@ -143,10 +158,19 @@ public class UMLClassTest {
     @Test
     public void addMethodWithSameNameAsClassWithSameArity_ThenClassShouldFailToAddMethod()
     {
-        ArrayList<String> parameters = new ArrayList<String>();
-        c.addMethod("getEngine", parameters);
-        assertTrue(c.methodExists("getEngine", 0));
-        assertFalse(c.addMethod("getEngine", parameters));
+        try
+        {
+            ArrayList<String> parameters = new ArrayList<String>();
+            c.addMethod("getEngine", parameters);
+            assertTrue(c.methodExists("getEngine", 0));
+            c.addMethod("getEngine", parameters);
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("A method with that name and arity already exists", e.getMessage());
+        }
+        
+        
     }
 
     @Test
@@ -176,16 +200,30 @@ public class UMLClassTest {
     @Test
     public void addTwoFieldsAndRenameOneFieldToOneThatExists_ThenFieldShouldFailToBeRenamed()
     {
-        c.addField("Engine");
-        c.addField("Wheel");
-        assertFalse(c.renameField("Engine", "Wheel"));
+        try
+        {
+            c.addField("Engine");
+            c.addField("Wheel");
+            c.renameField("Engine", "Wheel");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("Class UMLClass already has a field named Wheel", e.getMessage());
+        }
     }
 
     @Test
     public void renameFieldToSameName_ThenFieldShouldFailToBeRenamed()
     {
-        c.addField("Engine");
-        assertFalse(c.renameField("Engine", "Engine"));
+        try
+        {
+            c.addField("Engine");
+            c.renameField("Engine", "Engine");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("Bro seriously? Why would you rename a field to be the same name bro.", e.getMessage());
+        }
     }
 
     // --------------------- RENAME METHODS ---------------------
@@ -204,10 +242,18 @@ public class UMLClassTest {
     @Test
     public void addTwoMethodsAndRenameOneMethodToOneThatExistsWithSameArity_ThenMethodShouldFailToBeRenamed()
     {
-        ArrayList<String> parameters = new ArrayList<String>();
-        c.addMethod("getEngine", parameters);
-        c.addMethod("setEngine", parameters);
-        assertFalse(c.renameMethod("setEngine", 0, "getEngine"));
+        
+        try
+        {
+            ArrayList<String> parameters = new ArrayList<String>();
+            c.addMethod("getEngine", parameters);
+            c.addMethod("setEngine", parameters);
+            c.renameMethod("setEngine", 0, "getEngine");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("Class UMLClass already has a method called getEngine with 0 parameters", e.getMessage());
+        }
     }
 
     @Test
@@ -223,9 +269,16 @@ public class UMLClassTest {
     @Test
     public void renameMethodToSameNameWithSameArity_ThenMethodShouldFailToBeRenamed()
     {
-        ArrayList<String> parameters = new ArrayList<String>();
-        c.addMethod("Engine", parameters);
-        assertFalse(c.renameMethod("Engine", 0, "Engine"));
+        try
+        {
+            ArrayList<String> parameters = new ArrayList<String>();
+            c.addMethod("Engine", parameters);
+            c.renameMethod("Engine", 0, "Engine");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("Class UMLClass already has a method called Engine with 0 parameters", e.getMessage());
+        }
     }
     // --------------------- DELETE FIELDS ---------------------
 
@@ -242,7 +295,14 @@ public class UMLClassTest {
     @Test
     public void removeFieldThatDNE_ThrowsIllegalArgumentException()
     {
-        assertFalse(c.removeField("Engine"));
+        try
+        {
+            c.removeField("Engine");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("Class UMLClass doesn't have a field named Engine", e.getMessage());
+        }
     }
 
     // --------------------- DELETE METHODS ---------------------
@@ -261,6 +321,13 @@ public class UMLClassTest {
     @Test
     public void removeMethodThatDNE_ThrowsIllegalArgumentException()
     {
-        assertFalse(c.removeMethod("Engine", 0));
+        try
+        {
+            c.removeMethod("Engine", 0);
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("Class UMLClass doesn't have a method named Engine with the arity 0", e.getMessage());
+        }
     }
 }
