@@ -26,6 +26,7 @@ public class ControllerTest {
     public void resetTest() {
         UMLClassHandler.reset();
     }
+
     // --------------------- METHOD FUNCTIONALITY ---------------------
 
     @Test
@@ -93,14 +94,6 @@ public class ControllerTest {
         boolean result = controller.doSave("testfile.json");
         assertTrue("Data should be saved successfully.", result);
     }
-
-    /* Not ready yet (Tristan, this one's all you)
-    @Test
-    public void testDoLoad() {
-        UMLClassHandler data = controller.doLoad("testfile.json");
-        assertNotNull("Loaded data should not be null.", data);
-    }
-    */
 
     // --------------------- RUN METHODS ---------------------
 

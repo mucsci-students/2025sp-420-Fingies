@@ -19,6 +19,7 @@ public class UMLClassHandlerTest {
     @Before
     public void setUp()
     {
+        UMLClassHandler.reset();
         UMLClassHandler.createClass("Car");
             UMLClassHandler.getClass("Car").addField("Engine");
             UMLClassHandler.getClass("Car").addField("Wheel");
@@ -48,7 +49,14 @@ public class UMLClassHandlerTest {
     @Test
     public void renameCarClassToAnimalClass()
     {
-        assertFalse(UMLClassHandler.renameClass("Car", "Animal"));
+        try
+        {
+            UMLClassHandler.renameClass("Car", "Animal");
+        }
+        catch(IllegalArgumentException e)
+        {
+            assertEquals("Another class already has the name Animal", e.getMessage());
+        }
     }
 
     @Test
@@ -60,7 +68,7 @@ public class UMLClassHandlerTest {
         }
         catch (IllegalArgumentException e)
         {
-            assertEquals("String contains invalid characters", e.getMessage());
+            assertEquals("The name Tank% contains invalid characters", e.getMessage());
         }
     }
 
@@ -73,60 +81,9 @@ public class UMLClassHandlerTest {
         }
         catch (IllegalArgumentException e)
         {
-            assertEquals("String is longer than 50 characters", e.getMessage());
+            assertEquals("Class names must not be longer than 50 characters", e.getMessage());
         }
     }
-
-
-    // --------------------- ADD RELATIONSHIPS ---------------------
-
-    // @Test
-    // public void addRelationshipBetweenCarAndFoodClasses()
-    // {
-    //     UMLClassHandler.addRelationship("Car", "Food");
-    //     assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food").getName()));
-    //     assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car").getName()));
-    // }
-
-    // @Test
-    // public void addRelationshipBetweenTwoClassesThatDontExist()
-    // {
-    //     try
-    //     {
-    //         UMLClassHandler.addRelationship("Class1", "Class2");
-    //     }
-    //     catch (IllegalArgumentException e)
-    //     {
-    //         System.out.println(e.getMessage());
-    //     }
-    // }
-
-    // --------------------- REMOVE RELATIONSHIPS ---------------------
-    
-    // @Test
-    // public void removeRelationshpBetweenExistingCarAndFoodClasses()
-    // {
-    //     UMLClassHandler.addRelationship("Car", "Food");
-    //     assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food").getName()));
-    //     assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car").getName()));
-
-    //     UMLClassHandler.removeRelationship("Car", "Food");
-    //     assertTrue(UMLClassHandler.getClass("Car").getOutgoing().isEmpty());
-    //     assertTrue(UMLClassHandler.getClass("Food").getIncoming().isEmpty());
-    // }
-
-    // @Test 
-    // public void removeRelationshipBetweenTwoClassesThatDontExist()
-    // {
-    //     try
-    //     {
-    //         UMLClassHandler.removeRelationship("Class1", "Class2");
-    //     }
-    //     catch (IllegalArgumentException e)
-    //     {
-    //         System.out.println(e.getMessage());
-    //     }
-    // }
 
     // --------------------- REMOVE CLASS ---------------------
 
@@ -137,22 +94,18 @@ public class UMLClassHandlerTest {
         assertFalse(UMLClassHandler.exists("Car"));
     }
 
-    // @Test
-    // public void removeTheCarClassAfterAddingARelationshipBetweenTheCarAndAnimalClasses()
-    // {
-    //     UMLClassHandler.addRelationship("Car", "Food");
-    //     assertTrue(UMLClassHandler.getClass("Car").getOutgoing().contains(UMLClassHandler.getClass("Food").getName()));
-    //     assertTrue(UMLClassHandler.getClass("Food").getIncoming().contains(UMLClassHandler.getClass("Car").getName()));
-
-    //     UMLClassHandler.removeClass("Car");
-    //     assertFalse(UMLClassHandler.exists("Car"));
-    //     assertTrue(UMLClassHandler.getClass("Food").getIncoming().isEmpty());
-    // }
-
     @Test
     public void removeAClassThatDoesntExist()
     {
-        assertFalse(UMLClassHandler.removeClass("Class1"));
+        try
+        {
+            UMLClassHandler.removeClass("Class1");
+        }
+        catch(IllegalArgumentException e)
+        {
+            assertEquals("Class Class1 does not exist", e.getMessage());
+        }
+        
     }
 
     

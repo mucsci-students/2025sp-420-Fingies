@@ -1,14 +1,10 @@
 package org.fingies;
 
 public abstract class Attribute {
-    private String name;
-    private final String allowedCharacters = " _aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-";
-
-    public Attribute (String name)
-    {
-        validateCharacters(name);
-        this.name = name;
-    }
+    
+    //Name field *NEEDS* to be volatile for JSON formatting. Please leave it! @trush
+    // private volatile String name;
+    private final String allowedCharacters = "_aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
     /**
      * Throws an IllegalArgumentException if the user provides a string that contains illegal characters
@@ -33,19 +29,12 @@ public abstract class Attribute {
      * Gets the name of the attribute
      * @return the name of the attribute
      */
-    public String getName ()
-    {
-        return name;
-    }
+    public abstract String getName ();
 
     /**
      * Changes the name of an attribute
      * @param name the new name to be given to the attribute
      */
-    public void renameAttribute (String name)
-    {
-        validateCharacters(name);
-        this.name = name;
-    }
+    public abstract void renameAttribute (String name);
 
 }
