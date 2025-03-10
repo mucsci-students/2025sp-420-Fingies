@@ -302,8 +302,7 @@ public class CLIView implements View
 
 	@Override
 	public String promptForOpenInput(String message) {
-		// TODO Auto-generated method stub
-		return null;
+		return promptForInput(message);
 	}
     
 }

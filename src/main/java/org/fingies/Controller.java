@@ -692,7 +692,6 @@ public class Controller {
                         	return false;
                         if (doSave(args[0]))
                         {
-                            System.out.println("args[0] is: " + args[0]);
                             hasSaved = true;
                             madeChange = false;
                             view.notifySuccess("Successfully saved your file");
@@ -725,9 +724,7 @@ public class Controller {
                 	view.notifyFail("Save should have either 0 or 1 arguments.");
                     return false;
                 }
-            case LOAD:
-            	System.out.println("load case");
-                
+            case LOAD:     
                 if (args.length == 0)
                 {
                 	String path = view.promptForOpenInput("Please designate a filepath to open");
