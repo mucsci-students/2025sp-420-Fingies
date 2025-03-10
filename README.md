@@ -8,20 +8,29 @@ A Java application for creating class diagrams.
 Ensure that you have the following dependencies installed:
 - Java (https://www.oracle.com/java/technologies/downloads/#java17)
   - Install the latest version for your operating system.
-- Gson (https://github.com/google/gson/releases/tag/gson-parent-2.12.0)
-  - Move the ``.jar`` to ``2025sp-420-Fingies/lib/`` if it is not already there.
+- Maven (https://maven.apache.org/download.cgi)
+  - Install the latest version for your operating system.
 
-### Run:
+### Compile:
 Clone the project and use ``java`` to run ``Main``.
 1. Call ``git clone https://github.com/mucsci-students/2025sp-420-Fingies.git``.
-2. Navigate to the ``2025sp-420-Fingies/src/`` directory.
-3. Call ``javac -cp "../lib/gson-2.12.0.jar:../lib/hamcrest-core-1.3.jar:../lib/junit-4.13.2.jar:." *.java`` to compile all of the files in ``src/``.
-4. Call ``java -cp "../lib/gson-2.12.0.jar:../lib/hamcrest-core-1.3.jar:../lib/junit-4.13.2.jar:." Main`` to run the program.
+2. Navigate to the ``2025sp-420-Fingies/`` directory.
+3. Call ``mvn package`` to compile the program. This will build the package, test the program, and start it.
 
-## Known issues:
-- Invalid/altered JSON files aren't detected immediately by the program.
-- New files can be saved to invalid filepaths & replace already existing ones.
-- Entering a command with too many arguments (>200,000) can stall the program endlessly.
+### Run:
+- Run in CLI mode: ``java -jar target/fingies-1.0-SNAPSHOT.jar --cli``.
+- Run in GUI mode: ``java -jar target/fingies-1.0-SNAPSHOT.jar``.
+- Run tests: ``mvn test``.
+
+### How to use the CLI:
+1. Type a command with a list of space separated aguments and press ENTER.
+
+Type ``help`` for a list of commands and their arguments, or ``help command_name`` for help using a specific command.
+ 
+### How to use the GUI:
+1. Select a command you want to execute from the menu bar.
+2. After filling the textboxes with arguments, press ENTER to execute the command.
+3. If you want to cancel the current command, press ESC while in one of the text boxes.
 
 ## Team Fingies
 - Nick Hayes
@@ -29,3 +38,4 @@ Clone the project and use ``java`` to run ``Main``.
 - Tristan Rush
 - Kevin Dichter
 - Lincoln Craddock
+- Tim King
