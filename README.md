@@ -18,6 +18,9 @@ Clone the project and use ``java`` to run ``Main``.
 3. Call ``mvn package`` to compile all of the files in ``src/``. This will build the package, test the program, and start it.
 4. Call ``mvn test`` to only run tests.
  
+### GUI:
+1. After filling the textboxes with arguments, press ENTER to execute the command.
+2. If you want to cancel the current command, press ESC while in one of the text boxes
 
 ## Known issues:
 - Invalid/altered JSON files aren't detected immediately by the program.
@@ -30,3 +33,4 @@ Clone the project and use ``java`` to run ``Main``.
 - Tristan Rush
 - Kevin Dichter
 - Lincoln Craddock
+- Tim King
