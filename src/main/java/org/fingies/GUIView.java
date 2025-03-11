@@ -198,110 +198,91 @@ public class GUIView extends JFrame implements ActionListener, View {
     
     }
     
-    public void makeComboBoxes(Action a, String [] placeholders)
-    {
+    public void makeComboBoxes(Action a, String[] placeholders) {
         comboBoxes.clear();
         JComboBox<String> classComboBox = null;
-        JComboBox<String> fieldComboBox = null;
-        JComboBox<String> methodComboBox = null;
-        JComboBox<String> parameterComboBox = null;
 
-        
-        for (int i = 0; i < placeholders.length; i++)
-        {
-            JComboBox box = null;
-            if (placeholders[i].equals("Class"))
-            {
-                classComboBox = makeClassComboBox();
-                box = classComboBox;
-            }
-            else if (placeholders[i].equals("Field"))
-            {  
-                fieldComboBox = new JComboBox<>();
-                box = fieldComboBox;
-            }
-            else if (placeholders[i].equals("Method"))
-            {  
-                methodComboBox = new JComboBox<>();
-                box = methodComboBox;
-            }
-            else if (placeholders[i].equals("Parameter"))
-            {
-                methodComboBox = new JComboBox<>();
-                box = parameterComboBox;
-            }
-            box.setBounds(i * 130 + 20, 80, 125, 30); // Set position and size
-            box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Red border with thickness of 5
-            // box.setHorizontalAlignment(SwingConstants.CENTER);
+        for (int i = 0; i < placeholders.length; i++) {
+            JComboBox<String> box = new JComboBox<>();
 
+            switch (placeholders[i]) {
+                case "Class":
+                    // Make a combo box with an item for every class in the diagram
+                    String[] classes = GUIUMLClasses.keySet().toArray(String[]::new);
+                    classComboBox = new JComboBox<>(classes);
+                    box = classComboBox;
+                    break;
+
+                case "Field":
+                    // Make a combo box with an item for every field the selected class has
+                    updateComboBox(box, classComboBox, "getFields");
+                    addComboBoxListener(classComboBox, box, "getFields");
+                    break;
+
+                case "Method":
+                    // Make a combo box with an item for every method the selected class has
+                    updateComboBox(box, classComboBox, "getMethods");
+                    addComboBoxListener(classComboBox, box, "getMethods");
+                    break;
+
+                case "Parameter":
+                    // Make a combo box with an item for every parameter (currently not implemented)
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown placeholder: " + placeholders[i]);
+            }
+
+            styleComboBox(box, i);
             comboBoxes.add(box);
             this.add(box);
-            repaint(); // Refresh UI
-        }    
-
-        
-        // Add listener to update method combo box when a class is selected
-        if (classComboBox != null && methodComboBox != null) {
-            // JComboBox<String> finalMethodComboBox = methodComboBox; // For lambda access
-            if (classComboBox != null && methodComboBox != null) {
-                classComboBox.addActionListener(e -> {
-                    String selectedClass = (String) classComboBox.getSelectedItem();
-                    if (selectedClass != null) {
-                        methodComboBox.removeAllItems(); // Clear old methods
-                        for (String method : GUIUMLClasses.get(selectedClass).getUMLClass().getMethods()
-                                .stream().map(x -> x.getName()).toArray(String[]::new)) {
-                            methodComboBox.addItem(method); // Add new methods
-                        }
-                    }
-                });
-            }
-            // classComboBox.addItemListener(new ComboBoxListener(methodComboBox) {
-            //     @Override
-            //     public void itemStateChanged(ItemEvent arg) {
-            //         String selectedClass = (String) arg.getItem();
-            //         if (selectedClass != null) {
-            //             boxToUpdate.removeAllItems(); // Clear previous methods
-            //             for (String method : GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
-            //                     .map(x -> x.getName()).toArray(String[]::new)) {
-            //                         boxToUpdate.addItem(method); // Add new methods
-            //             }
-            //         }
-            //     }
-            // });
         }
-        if (classComboBox != null && fieldComboBox != null)
-        {
-            // JComboBox<String> finalFieldComboBox = fieldComboBox; // For lambda access
-            classComboBox.addItemListener(new ComboBoxListener(fieldComboBox) {
-                @Override
-                public void itemStateChanged(ItemEvent arg) {
-                    String selectedClass = (String) arg.getItem();
-                    if (selectedClass != null) {
-                        boxToUpdate.removeAllItems(); // Clear previous methods
-                        for (String method : GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
-                                .map(x -> x.getName()).toArray(String[]::new)) {
-                                    boxToUpdate.addItem(method); // Add new methods
-                        }
+
+        reload();
+    }
+
+    private void updateComboBox(JComboBox<String> box, JComboBox<String> classComboBox, String methodType) {
+        String selectedClass = (String) classComboBox.getSelectedItem();
+        if (selectedClass != null) {
+            box.removeAllItems();
+            String[] items = getClassItems(selectedClass, methodType);
+            for (String item : items) {
+                box.addItem(item);
+            }
+        }
+    }
+
+    private void addComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> box, String methodType) {
+        var listener = new ComboBoxListener(new JComboBox[]{box}) {
+            @Override
+            public void itemStateChanged(ItemEvent arg) {
+                String selectedClass = (String) arg.getItem();
+                if (selectedClass != null) {
+                    box.removeAllItems();
+                    String[] items = getClassItems(selectedClass, methodType);
+                    for (String item : items) {
+                        box.addItem(item);
                     }
                 }
-            });
-        }
+            }
+        };
+        classComboBox.addItemListener(listener);
     }
 
-    // creates a JComboBox of all available classes
-    public JComboBox makeClassComboBox()
-    {
-        String [] classes = GUIUMLClasses.keySet().toArray(String[]::new);
-        return new JComboBox(classes);
+    private String[] getClassItems(String selectedClass, String methodType) {
+        return switch (methodType) {
+            case "getFields" -> GUIUMLClasses.get(selectedClass).getUMLClass().getFields().stream()
+                    .map(x -> x.getName()).toArray(String[]::new);
+            case "getMethods" -> GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
+                    .map(x -> x.getName()).toArray(String[]::new);
+            default -> new String[0];
+        };
     }
 
-    // creates a JComboBox of all available methods from a specific class
-    public JComboBox makeMethodComboBox(String className)
-    {
-        String [] methods = GUIUMLClasses.get(className).getUMLClass().getMethods().stream().map(x -> x.getName()).toArray(String[]::new);
-        return new JComboBox(methods);
+    private void styleComboBox(JComboBox<String> box, int index) {
+        box.setBounds(index * 130 + 20, 80, 125, 30);
+        box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     }
-
 
 
     public void makeTextBoxes(Action a, String [] placeholders)
@@ -488,10 +469,11 @@ public class GUIView extends JFrame implements ActionListener, View {
             updateArrows();
     }
 
-    private void addEnterKeyListenerToRemove(Action action, JTextField text) {
-        text.addKeyListener(new java.awt.event.KeyAdapter() {
+    private void addEnterKeyListenerToRemove(Action action, JTextField field) {
+        field.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+            	System.out.println("hi");
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     String[] args = textBoxes.stream().map(JTextField::getText).toArray(String[]::new);
                     textBoxes.forEach(GUIView.this::remove); // Remove all text fields

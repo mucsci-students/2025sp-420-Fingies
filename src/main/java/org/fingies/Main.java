@@ -38,16 +38,16 @@ public class Main {
 
             // UMLClassHandler.getClass("ClassB").addField("FieldA");
             // UMLClassHandler.getClass("ClassB").addField("FieldAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-            // // Create a method in Class A (optional)
-            // ArrayList<String> arr = new ArrayList<>();
-            // arr.add("Param1");
-            // arr.add("Param2");
-            // arr.add("Param3");
-            // UMLClassHandler.getClass("ClassB").addMethod("MethodB", arr);
+            // Create a method in Class A (optional)
+            ArrayList<String> arr = new ArrayList<>();
+            arr.add("Param1");
+            arr.add("Param2");
+            arr.add("Param3");
+            UMLClassHandler.getClass("ClassB").addMethod("MethodB", arr);
 
-            // arr.add("Param4");
-            // arr.add("Param5");
-            // UMLClassHandler.getClass("ClassA").addMethod("MethodA", arr);
+            arr.add("Param4");
+            arr.add("Param5");
+            UMLClassHandler.getClass("ClassA").addMethod("MethodA", arr);
 
             // Add the UML classes to the view
             view.addUMLClass("ClassA");
@@ -70,9 +70,10 @@ public class Main {
             // //view.removeArrowForRelationship(RelationshipHandler.getRelationships().get(1));
 
             // // Test updating arrows (in case relationships are modified or removed)
-            // view.updateArrows();  // Call this to refresh and redraw arrows
+            view.updateArrows();  // Call this to refresh and redraw arrows
 
             view.run();
+            
         }
         
 	}

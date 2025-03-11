@@ -15,7 +15,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 public class GUIUMLClass {
-    private final int PIXELS_PER_CHARACTER = 8;
+    private final int PIXELS_PER_CHARACTER = 9;
     private final int DEFAULT_CLASS_PANEL_HEIGHT = 25;
     private final int DEFAULT_FIELD_PANEL_HEIGHT = 75;
     private final int DEFAULT_METHOD_PANEL_HEIGHT = 125;
