@@ -6,10 +6,10 @@ import java.awt.event.ItemListener;
 import javax.swing.JComboBox;
 
 public abstract class ComboBoxListener implements ItemListener{
-    public JComboBox boxToUpdate;
+    public JComboBox[] boxesToUpdate;
 
-    public ComboBoxListener(JComboBox box)
+    public ComboBoxListener(JComboBox[] box)
     {
-        boxToUpdate = box;
+        boxesToUpdate = box;
     }
 }
