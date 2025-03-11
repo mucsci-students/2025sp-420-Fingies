@@ -103,6 +103,11 @@ public class GUIUMLClass {
         update();
     }
 
+    public UMLClass getUMLClass()
+    {
+        return umlclass;
+    }
+
     public JLayeredPane getJLayeredPane()
     {
         return background;

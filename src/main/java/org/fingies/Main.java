@@ -22,7 +22,7 @@ public class Main {
             GUIView view = new GUIView();
             Controller controller = new Controller(view, new JModel());
             view.setController(controller);
-            view.run();
+            // view.run();
 
              UMLClassHandler.createClass("ClassA");
              UMLClassHandler.createClass("ClassB");
@@ -71,6 +71,8 @@ public class Main {
 
             // // Test updating arrows (in case relationships are modified or removed)
             // view.updateArrows();  // Call this to refresh and redraw arrows
+
+            view.run();
         }
         
 	}
