@@ -24,17 +24,17 @@ public class Main {
             view.setController(controller);
             view.run();
 
-            // UMLClassHandler.createClass("ClassA");
-            // UMLClassHandler.createClass("ClassB");
-            // UMLClassHandler.createClass("ClassC");
+             UMLClassHandler.createClass("ClassA");
+             UMLClassHandler.createClass("ClassB");
+             UMLClassHandler.createClass("ClassC");
 
-            // // Add fields and methods (if needed)
-            // UMLClassHandler.getClass("ClassA").addField("FieldA");
-            // UMLClassHandler.getClass("ClassA").addField("FieldB");
-            // UMLClassHandler.getClass("ClassA").addField("FieldC");
-            // UMLClassHandler.getClass("ClassA").addField("FieldD");
-            // UMLClassHandler.getClass("ClassA").addField("FieldE");
-            // UMLClassHandler.getClass("ClassA").addField("FieldF");
+             // Add fields and methods (if needed)
+             UMLClassHandler.getClass("ClassA").addField("FieldA");
+             UMLClassHandler.getClass("ClassA").addField("FieldB");
+             UMLClassHandler.getClass("ClassA").addField("FieldC");
+             UMLClassHandler.getClass("ClassA").addField("FieldD");
+             UMLClassHandler.getClass("ClassA").addField("FieldE");
+             UMLClassHandler.getClass("ClassA").addField("FieldF");
 
             // UMLClassHandler.getClass("ClassB").addField("FieldA");
             // UMLClassHandler.getClass("ClassB").addField("FieldAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -49,30 +49,28 @@ public class Main {
             // arr.add("Param5");
             // UMLClassHandler.getClass("ClassA").addMethod("MethodA", arr);
 
-            // // Add the UML classes to the view
-            // view.addUMLClass("ClassA");
-            // view.addUMLClass("ClassB");
-            // view.addUMLClass("ClassC");
+            // Add the UML classes to the view
+            view.addUMLClass("ClassA");
+            view.addUMLClass("ClassB");
+            view.addUMLClass("ClassC");
 
-            // // Add relationships between classes to test arrows
-            // RelationshipHandler.addRelationship("ClassA", "ClassC", RelationshipType.Inheritance);
-            // RelationshipHandler.addRelationship("ClassC", "ClassA", RelationshipType.Composition);
-            // RelationshipHandler.addRelationship("ClassB", "ClassC", RelationshipType.Aggregation);
-            // RelationshipHandler.addRelationship("ClassA", "ClassA", RelationshipType.Realization);
-            // RelationshipHandler.addRelationship("ClassC", "ClassC", RelationshipType.Composition);
+            // Add relationships between classes to test arrows
+            RelationshipHandler.addRelationship("ClassA", "ClassC", RelationshipType.Inheritance);
+            RelationshipHandler.addRelationship("ClassC", "ClassA", RelationshipType.Composition);
+            RelationshipHandler.addRelationship("ClassB", "ClassC", RelationshipType.Aggregation);
+            RelationshipHandler.addRelationship("ClassA", "ClassA", RelationshipType.Realization);
+            RelationshipHandler.addRelationship("ClassC", "ClassC", RelationshipType.Composition);
+            RelationshipHandler.addRelationship("ClassC", "ClassB", RelationshipType.Realization);
 
-            // // Add arrows for these relationships
-            // view.addArrowForRelationship(RelationshipHandler.getRelationships().get(0));
-            // view.addArrowForRelationship(RelationshipHandler.getRelationships().get(1));
+            // Add arrows for these relationships
+            view.addArrowForRelationship(RelationshipHandler.getRelationships().get(0));
+            view.addArrowForRelationship(RelationshipHandler.getRelationships().get(1));
 
             // RelationshipHandler.removeRelationship("ClassB", "ClassC");
             // //view.removeArrowForRelationship(RelationshipHandler.getRelationships().get(1));
 
             // // Test updating arrows (in case relationships are modified or removed)
             // view.updateArrows();  // Call this to refresh and redraw arrows
-
-             // Run the GUI
-            //  view.run();
         }
         
 	}
