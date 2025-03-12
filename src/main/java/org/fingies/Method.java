@@ -1,34 +1,42 @@
 package org.fingies;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Represents a method of a class in a UML Class Diagram
+ * @author Kevin Dichter, Lincoln Craddock, Tristan Rush
+ */
 public class Method extends Attribute {
 
-    //This name field is STRICTLY for JSON formatting.
     private String name;
+    private String return_type;
     private ArrayList<Parameter> params;
 
-    public Method (String name)
+    public Method (String name, String return_type)
     {
         validateCharacters(name);
+        validateCharacters(return_type);
         this.name = name;
+        this.return_type = return_type;
         params = new ArrayList<Parameter>();
     }
 
-    public Method (String name, List<String> parameters)
+    public Method (String name, String return_type, Map<String, String> parameters)
     {
-        this(name);
-        for (String parameter : parameters)
+        this(name, return_type);
+        for (String parameter : parameters.keySet())
         {
             validateCharacters(parameter);
-            if (!addParameter(parameter))
+            validateCharacters(parameters.get(parameter));
+            if (!addParameter(parameter, parameters.get(parameter)))
             {
                 throw new IllegalArgumentException("Methods cannot contain duplicate params");
             }
         }
-        this.name = name;
     }
 
     @Override
@@ -39,6 +47,23 @@ public class Method extends Attribute {
     @Override
     public void renameAttribute(String name) {
         this.name = name;
+    }
+
+    /**
+     * Gets the return type of the method
+     * @return the return type for the method
+     */
+    public String getReturnType() {
+        return return_type;
+    }
+
+    /**
+     * Sets the return type of the method
+     * @param return_type the return type to set to.
+     */
+    public void setReturnType(String return_type) {
+        validateCharacters(return_type);
+        this.return_type = return_type;
     }
 
     /**
@@ -59,29 +84,36 @@ public class Method extends Attribute {
     /**
      * Adds a single parameter to the list of params
      * @param name name of parameter
+     * @param type data type for the parameter
      * @return true if the parameter was added, false otherwise
      */
-    public boolean addParameter (String name)
+    public boolean addParameter (String name, String type)
     {
         validateCharacters(name);
         if (!parameterExists(name))
         {
-            params.add(new Parameter(name));
+            params.add(new Parameter(name, type));
             return true;
         }
         throw new IllegalArgumentException("Method " + getName() + " already has a parameter named " + name);
     }
 
-    public boolean addParameters (List<String> newparams) {
-        for (String newParam : newparams)
+    /**
+     * Adds parameters to the method
+     * @param newparams a map of Parameter name -> Parameter data type
+     * @return true if all parameters added, false otherwise.
+     */
+    public boolean addParameters (Map<String, String> newparams) {
+        for (String newParam : newparams.keySet())
+        {
+            validateCharacters(newParam);
+            if (parameterExists(newParam))
             {
-                validateCharacters(newParam);
-                if (parameterExists(newParam))
-                {
-                	throw new IllegalArgumentException("Method " + getName() + " already has a parameter named " + newParam);
-                }
+                throw new IllegalArgumentException("Method " + getName() + " already has a parameter named " + newParam);
             }
-        params.addAll(newparams.stream().map(x -> new Parameter(x)).toList());
+            Parameter p = new Parameter(newParam, newparams.get(newParam));
+            params.add(p);
+        }
         return true;
     }
 
@@ -133,7 +165,7 @@ public class Method extends Attribute {
         	throw new IllegalArgumentException("Method " + getName() + " already has a parameter called " + newName);
         if (oldParam != null)
         {
-            params.set(params.indexOf(oldParam), new Parameter(newName));
+            params.set(params.indexOf(oldParam), new Parameter(newName, oldParam.getType()));
             return true;
         }
         throw new IllegalArgumentException("Method " + getName() + " doesn't have a parameter called " + oldName);
@@ -153,9 +185,21 @@ public class Method extends Attribute {
      * Returns the list of params as a hashset
      * @return list of params as a hashset
      */
-    public List<String> getParameters ()
+    public List<String> getParameterNames()
     {
         return params.stream().map(x -> x.getName()).toList();
+    }
+
+    /**
+     * Returns a map of parameter details
+     * @return a map of parameter name : parameter type
+     */
+    public Map<String, String> getParameters() {
+        HashMap<String, String> paramDetails = new HashMap<>();
+        for (Parameter param : params) {
+            paramDetails.put(param.getName(), param.getType());
+        }
+        return paramDetails;
     }
 
     @Override

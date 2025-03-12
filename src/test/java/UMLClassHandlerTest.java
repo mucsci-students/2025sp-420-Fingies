@@ -136,4 +136,8 @@ public class UMLClassHandlerTest {
             System.out.println(e.getMessage());
         }  
     }
+
+    // TODO: Write Tests for method return type char validation
+
+    // TODO: Write Tests for param type char validation
 }
