@@ -1,6 +1,8 @@
 package org.fingies;
 
 import java.awt.Color;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.MouseAdapter;
@@ -27,14 +29,12 @@ public class GUIUMLClass {
     private JLayeredPane background;
     private Color color;
 
-    private UMLClass umlclass;
-    private Controller controller;
+    private UMLClass umlclass; // TODO: consider having GUIUMLClass interact with the controller, rather than a UMLClass, for better MVC
 
-    public GUIUMLClass(UMLClass umlclass, Controller controller, int frameWidth, int frameHeight)
+    public GUIUMLClass(UMLClass umlclass, Controller controller, GUIView guiView)
         
     {
         this.umlclass = umlclass;
-        // this.controller = controller;
 
         // Creates a random color for the class
         color = new Color((int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), 100);
@@ -97,8 +97,13 @@ public class GUIUMLClass {
         background.add(classPanel, JLayeredPane.PALETTE_LAYER);
         background.add(fieldsPanel, JLayeredPane.PALETTE_LAYER);
         background.add(methodsPanel, JLayeredPane.PALETTE_LAYER);
+        
+     // Creates new listener for the newly added JLayeredPane
+        DragListener dragListener = new DragListener(background, guiView);
+        background.addMouseListener(dragListener);
+        background.addMouseMotionListener(dragListener);
 
-        randomizePosition(background, frameWidth, frameHeight);
+        initializePosition(background, guiView.getWidth(), guiView.getHeight());
 
         update();
     }
@@ -113,11 +118,18 @@ public class GUIUMLClass {
         return background;
     }
 
-    public void randomizePosition (JLayeredPane pane, int maxWidth, int maxHeight)
+    public void initializePosition (JLayeredPane pane, int maxWidth, int maxHeight)
     {
-        int randX = (int)(Math.random() * (maxWidth - pane.getWidth()));
-        int randY = (int)(Math.random() * (maxHeight - pane.getHeight() - 75)) + 75;
-        pane.setBounds(randX, randY, pane.getWidth(), pane.getHeight());
+        Position pos = umlclass.getPosition();
+        if (pos.getX() < 0 || pos.getY() < 75)
+        {
+        	// the position is invalid, so randomize it
+        	int randX = (int)(Math.random() * (maxWidth - pane.getWidth()));
+            int randY = (int)(Math.random() * (maxHeight - pane.getHeight() - 75)) + 75;
+            pos = new Position(randX, randY);
+            umlclass.setPosition(randX, randY);
+        }
+        pane.setBounds(pos.getX(), pos.getY(), pane.getWidth(), pane.getHeight());
     }
 
     public void update ()
@@ -368,6 +380,65 @@ public class GUIUMLClass {
 			// background.revalidate();
             // background.repaint();
 		}
+    }
+    
+ // Drag listener for JLayeredPane
+    class DragListener extends MouseAdapter {
+        private final JComponent component;
+        private final GUIView parentView;
+        private Point initialClick;
+
+        public DragListener(JComponent component, GUIView parentView) {
+            this.component = component;
+            this.parentView = parentView;
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+            initialClick = e.getPoint(); // Store initial click position
+            ((JComponent)e.getSource()).requestFocusInWindow();
+        }
+
+        @Override
+        public void mouseDragged(MouseEvent e) {
+            if (initialClick == null) return;
+
+            // Brings current frame being dragged to the front
+            parentView.getContentPane().setComponentZOrder(component, JLayeredPane.DEFAULT_LAYER); // Bring to front
+            parentView.getContentPane().revalidate();
+            parentView.getContentPane().repaint();
+
+            // Get current location of the JLayeredPane
+            int x = component.getX() + e.getX() - initialClick.x;
+            int y = component.getY() + e.getY() - initialClick.y;
+
+            // Get parent frame size
+            int frameWidth = parentView.getWidth();
+            int frameHeight = parentView.getHeight();
+
+            // Prevent dragging off the screen (Constrain within parent frame)
+            int maxX = frameWidth - component.getWidth();
+            int maxY = frameHeight - component.getHeight();
+
+            // Constrain X and Y to stay within the frame bounds
+            if (x < 0) x = 0;
+            if (x > maxX) x = maxX;
+            if (y < 75) y = 75;
+            if (y > maxY) y = maxY;
+
+            // Move JLayeredPane to new position within bounds
+            component.setLocation(x, y);
+
+            // Update the arrows after moving the class
+            parentView.updateArrows();  // This will update the arrows to reflect new positions
+        }
+        
+        @Override
+        public void mouseReleased(MouseEvent e)
+        {
+        	Rectangle r = background.getBounds();
+            umlclass.setPosition(r.x, r.y);
+        }
     }
     
 }
