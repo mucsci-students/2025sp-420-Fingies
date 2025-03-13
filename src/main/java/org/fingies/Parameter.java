@@ -6,7 +6,7 @@ import java.util.Objects;
  * A representation of a parameter of a method in a UML Class Diagram
  * @author Kevin Dichter, Lincoln Craddock, Tristan Rush
  */
-public class Parameter{
+public class Parameter {
 
     private String name;
     private String type;

@@ -36,7 +36,7 @@ public class UMLClassTest {
     public void addOneFieldWithIllegalCharacters_ThrowsIllegalArgumentException()
     {
         try{
-            c.addField("Engine%");
+            c.addField("Engine%", "String");
         }   
         catch (IllegalArgumentException e)
         {
@@ -48,7 +48,7 @@ public class UMLClassTest {
     public void addOneFieldLongerThan50Characters_ThrowsIllegalArgumentException()
     {
         try{
-            c.addField("Engineeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+            c.addField("Engineeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "String");
         }   
         catch (IllegalArgumentException e)
         {
@@ -59,7 +59,7 @@ public class UMLClassTest {
     @Test
     public void addOneField_ThenClassShouldContainField()
     {
-        c.addField("Engine");
+        c.addField("Engine", "String");
         assertTrue(c.fieldExists("Engine"));
     }
 
@@ -68,7 +68,7 @@ public class UMLClassTest {
     {
         try
         {
-            c.addField("UMLClass");
+            c.addField("UMLClass", "String");
         }
         catch (IllegalArgumentException e)
         {
@@ -82,9 +82,9 @@ public class UMLClassTest {
         
         try
         {
-            c.addField("Engine");
+            c.addField("Engine", "String");
             assertTrue(c.fieldExists("Engine"));
-            c.addField("Engine");
+            c.addField("Engine", "String");
         }
         catch (IllegalArgumentException e)
         {
@@ -97,7 +97,7 @@ public class UMLClassTest {
     {
         try
         {
-            c.addField("Engine%");
+            c.addField("Engine%", "String");
         }
         catch (IllegalArgumentException e)
         {
@@ -112,7 +112,7 @@ public class UMLClassTest {
         UMLClass DNE = null;
         try
         {
-            DNE.addField("Engine");
+            DNE.addField("Engine", "String");
         }
         catch (NullPointerException e)
         {
@@ -191,10 +191,10 @@ public class UMLClassTest {
     @Test
     public void addFieldThenRenameIt_ThenFieldShouldBeRenamed()
     {
-        c.addField("Engine");
+        c.addField("Engine", "String");
         assertTrue(c.fieldExists("Engine"));
 
-        c.renameField("Engine", "Wheel");
+        c.renameField("Engine", "String", "Wheel");
         assertTrue(c.fieldExists("Wheel"));
     }
 
@@ -203,9 +203,9 @@ public class UMLClassTest {
     {
         try
         {
-            c.addField("Engine");
-            c.addField("Wheel");
-            c.renameField("Engine", "Wheel");
+            c.addField("Engine", "String");
+            c.addField("Wheel", "String");
+            c.renameField("Engine", "String", "Wheel");
         }
         catch (IllegalArgumentException e)
         {
@@ -218,8 +218,8 @@ public class UMLClassTest {
     {
         try
         {
-            c.addField("Engine");
-            c.renameField("Engine", "Engine");
+            c.addField("Engine", "String");
+            c.renameField("Engine", "String", "Engine");
         }
         catch (IllegalArgumentException e)
         {
@@ -286,7 +286,7 @@ public class UMLClassTest {
     @Test
     public void addFieldAndRemoveIt_ThenFieldShouldBeRemoved()
     {
-        c.addField("Engine");
+        c.addField("Engine", "String");
         assertTrue(c.fieldExists("Engine"));
 
         c.removeField("Engine");

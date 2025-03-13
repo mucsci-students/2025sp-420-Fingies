@@ -110,11 +110,11 @@ public class Controller {
         }
     }
 
-    public boolean doAddField(String srcClass, String field) 
+    public boolean doAddField(String srcClass, String field, String type) 
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).addField(field);
+            return UMLClassHandler.getClass(srcClass).addField(field, type);
         }
         catch (Exception e)
         {
@@ -152,6 +152,21 @@ public class Controller {
         }
     }
 
+    public boolean doChangeFieldDataType(String srcClass, String field, String newType)
+    {
+        try 
+        {
+            UMLClassHandler.getClass(srcClass).getField(field).setType(newType);
+            return true;
+        }
+        catch (Exception e) 
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
+            return false;
+        }
+    }
+
     public boolean doRemoveMethod(String srcClass, String method, String return_type, String paramNum) 
     {
         try
@@ -167,11 +182,11 @@ public class Controller {
         }
     }
 
-    public boolean doRenameField(String srcClass, String oldField, String newField) 
+    public boolean doRenameField(String srcClass, String oldField, String type, String newField) 
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).renameField(oldField, newField);
+            return UMLClassHandler.getClass(srcClass).renameField(oldField, type, newField);
         }
         catch (Exception e)
         {
@@ -235,6 +250,19 @@ public class Controller {
         }
         catch (Exception e)
         {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean doChangeParameterDataType(String srcClass, String method, String returnType, String paramNum, String param, String newType) {
+        try {
+            int arity = Integer.parseInt(paramNum);
+            UMLClassHandler.getClass(srcClass).getMethod(method, returnType, arity).getParameter(param).setType(newType);
+            return true;
+        }
+        catch (Exception e) {
             model.writeToLog(e.getMessage());
             view.notifyFail(e.getMessage());
             return false;
@@ -548,11 +576,11 @@ public class Controller {
                     return false;
                 }
             case ADD_FIELD:
-                if (args.length == 2)
+                if (args.length == 3)
                 {
-                    if (doAddField(args[0], args[1]))
+                    if (doAddField(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully added field " + args[1] + " to class " + args[0]);
+                        view.notifySuccess("Successfully added field " + args[1] + " with type " + args[2] + " to class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -564,7 +592,7 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Add field should have exactly 2 arguments.");
+                	view.notifyFail("Add field should have exactly 3 arguments.");
                     return false;
                 }
             case REMOVE_FIELD:
@@ -587,11 +615,11 @@ public class Controller {
                     return false;
                 }
             case RENAME_FIELD:
-                if (args.length == 3)
+                if (args.length == 4)
                 {
-                    if (doRenameField(args[0], args[1], args[2]))
+                    if (doRenameField(args[0], args[1], args[2], args[3]))
                     {
-                        view.notifySuccess("Successfully renamed field " + args[1] + " to " + args[2] + " in class " + args[0]);
+                        view.notifySuccess("Successfully renamed field " + args[1] + " to " + args[3] + " in class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -603,7 +631,7 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Rename field should have exactly 3 arguments.");
+                	view.notifyFail("Rename field should have exactly 4 arguments.");
                     return false;
                 }
             case ADD_PARAMETERS:

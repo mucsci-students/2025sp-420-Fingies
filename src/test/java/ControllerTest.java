@@ -69,14 +69,14 @@ public class ControllerTest {
     @Test
     public void testDoAddField() {
         controller.doAddClass("TestClass");
-        boolean result = controller.doAddField("TestClass", "field1");
+        boolean result = controller.doAddField("TestClass", "field1", "String");
         assertTrue("Field should be added successfully.", result);
     }
 
     @Test
     public void testDoRemoveField() {
         controller.doAddClass("TestClass");
-        controller.doAddField("TestClass", "field1");
+        controller.doAddField("TestClass", "field1", "String");
         boolean result = controller.doRemoveField("TestClass", "field1");
         assertTrue("Attribute should be removed successfully.", result);
     }
@@ -84,8 +84,8 @@ public class ControllerTest {
     @Test
     public void testDoRenameField() {
         controller.doAddClass("TestClass");
-        controller.doAddField("TestClass", "oldField");
-        boolean result = controller.doRenameField("TestClass", "oldField", "newField");
+        controller.doAddField("TestClass", "oldField", "String");
+        boolean result = controller.doRenameField("TestClass", "oldField","String", "newField");
         assertTrue("Field should be renamed successfully.", result);
     }
 
@@ -116,11 +116,11 @@ public class ControllerTest {
     @Test
     public void testRenameFieldAction() {
         String [] args1 = {"JSON"};
-        String [] args2 = {"JSON", "WILLSON"};
-        String [] args3 = {"JSON", "WILLSON", "KEVSON"};
+        String [] args2 = {"JSON", "WILLSON", "STRING"};
+        String [] args3 = {"JSON", "WILLSON", "STRING", "KEVSON"};
         controller.runHelper(Action.ADD_CLASS, args1);
         controller.runHelper(Action.ADD_FIELD, args2);
         controller.runHelper(Action.RENAME_FIELD, args3);
-        assertTrue("doRenameClass method was called through runHelper method", UMLClassHandler.getClass(args1[0]).fieldExists(args3[2]));
+        assertTrue("doRenameClass method was called through runHelper method", UMLClassHandler.getClass(args1[0]).fieldExists(args3[3]));
     }
 }

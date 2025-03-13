@@ -103,14 +103,15 @@ public class UMLClass {
     /**
      * Attempts to add a field to the list of fields
      * @param field name of field the user wants to add
+     * @param type data type for the field the user wants to add
      * @precondition field name is not the name of the class
      * @return true if the field was added to the set, false otherwise
      */
-    public boolean addField (String field)
+    public boolean addField (String field, String type)
     {
     	if (name.equals(field))
             throw new IllegalArgumentException("A field must have a different name than its class");
-    	if (!fields.add(new Field(field)))
+    	if (!fields.add(new Field(field, type)))
         	throw new IllegalArgumentException(name + " already has a field called " + field);
     	return true;
     }
@@ -203,10 +204,11 @@ public class UMLClass {
     /**
      * Attemps to rename an existing field to a new one
      * @param field name of field to be changed
+     * @param type data type of the field to be changed;
      * @param newName new name of field to replace old name
      * @return true if the name of the field was replaced, false otherwise
      */
-    public boolean renameField (String field, String newName)
+    public boolean renameField (String field, String type, String newName)
     {
         validateCharacters(newName);
         Field f = getField(field);
@@ -221,7 +223,7 @@ public class UMLClass {
         if (name.equals(newName))
         	throw new IllegalArgumentException("Fields must have different names than their classes");
         fields.remove(f);
-        fields.add(new Field(newName));
+        fields.add(new Field(newName, type));
         return true;
     }
 

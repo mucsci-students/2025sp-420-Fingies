@@ -21,6 +21,7 @@ public class Command {
 	 */
 	public static final int maxNumArgs = 100;
 	
+	//TODO: Add changing field and parameter data type field.
 	/**
 	 * An array storing the keywords that represents each command.
 	 */
