@@ -30,6 +30,7 @@ public class JModelTest {
         carParams.put("ThrottleAmount", "Float");
         carParams.put("gasAmount", "Float");
         UMLClassHandler.getClass("Car").addMethod("Drive", "void", carParams);
+        UMLClassHandler.getClass("Car").setPosition(1000, 500);
         UMLClassHandler.createClass("Animal");
         UMLClassHandler.getClass("Animal").addField("Eyeballs");
         HashMap<String, String> animalParams = new HashMap<>();

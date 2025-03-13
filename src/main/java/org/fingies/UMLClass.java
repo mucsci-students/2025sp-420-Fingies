@@ -12,6 +12,7 @@ public class UMLClass {
     private String name;
     private HashSet<Field> fields;
     private HashSet<Method> methods;
+    private Position position;
     private final String allowedCharacters = "_aeioubcdfghjklmnpqrstvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
     /**
@@ -24,6 +25,7 @@ public class UMLClass {
         this.name = name;
         fields = new HashSet<Field>();
         methods = new HashSet<Method>();
+        position = new Position();
     }
 
     /**
@@ -285,5 +287,23 @@ public class UMLClass {
     public HashSet<Method> getMethods()
     {
         return methods;
+    }
+
+    /**
+     * Gets the position of the UML Class
+     * @return the current position
+     */
+    public Position getPosition() {
+        return position;
+    }
+
+    /**
+     * Sets the position of the UML Class
+     * @param x the x position to set the class to
+     * @param y the y position to set the class to.
+     */
+    public void setPosition(int x, int y) {
+        position.setX(x);
+        position.setY(y);
     }
 }
