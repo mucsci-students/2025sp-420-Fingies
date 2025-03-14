@@ -634,6 +634,24 @@ public class Controller {
                 	view.notifyFail("Rename field should have exactly 4 arguments.");
                     return false;
                 }
+            case CHANGE_FIELD_TYPE: 
+                if (args.length == 3)
+                {
+                    if (doChangeFieldDataType(args[0], args[1], args[2]))
+                    {
+                        view.notifySuccess("Successfully changed field " + args[1] + "'s data type to " + args[2] + " in class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                else {
+                    view.notifyFail("Changing field data type should have exactly 3 arguments.");
+                    return false;
+                }
             case ADD_PARAMETERS:
                 if (args.length >= 5) {
                     try {
@@ -681,7 +699,7 @@ public class Controller {
                 if (args.length == 6) {
                     if (doRenameParameter(args[0], args[1], args[2], args[3], args[4], args[5]))
                     {
-                        view.notifySuccess("Successfully renamed parameter " + args[4] + " with return type " + args[2] + " with arity " + args[3] + " of method " + args[1] + " of class " + args[0] + " to " + args[5]);
+                        view.notifySuccess("Successfully renamed parameter " + args[4] + " with arity " + args[3] + " of method " + args[1] + " with return type " + args[2] + " of class " + args[0] + " to " + args[5]);
                         madeChange = true;
                         return true;
                     }
@@ -693,7 +711,26 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Rename Parameters should have exactly 6 arguments.");
+                    view.notifyFail("Parameters should have exactly 6 arguments.");
+                    return false;
+                }
+            case CHANGE_PARAMETER_TYPE:
+                if (args.length == 6) 
+                {
+                    if (doChangeParameterDataType(args[0], args[1], args[2], args[3], args[4], args[5]))
+                    {
+                        view.notifySuccess("Successfully changed parameter " + args[4] + "'s data type to " + args[5] + " of method " + args[1] + " with arity " + args[3] + " with return type " + args[2] + " of class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }
+                    else 
+                    {
+                        return false;
+                    }
+                }
+                else 
+                {
+                    view.notifyFail("Changing Parameter type should have exactly 6 arguments.");
                     return false;
                 }
             case CHANGE_RELATIONSHIP_TYPE:

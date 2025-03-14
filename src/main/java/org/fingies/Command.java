@@ -33,7 +33,7 @@ public class Command {
 		    "add method", "remove method", "rename method",
 		    "add field", "remove field", "rename field",
 		    "add parameters", "remove parameters", "change parameter",
-		    "change relationship type"
+		    "change relationship type", "change parameter type", "change field type"
 		};
 	
 	/**
@@ -47,7 +47,7 @@ public class Command {
 		    "addm", "rmm", "rnm",              // add method, remove method, rename method
 		    "addf", "rmf", "rnf",              // add field, remove field, rename field
 		    "addp", "rmp", "rnp",              // add parameters, remove parameters, rename parameter
-		    "crt"
+		    "crt", "cpt", "cft"				   // change relationship type, change parameter type, change field type
 		};
 	
 	/**
@@ -66,16 +66,18 @@ public class Command {
 			"",
 			"[ COMMAND ]",
 			"",
-			"CLASS_NAME METHOD [ PARAMETER ... ]",
-			"CLASS_NAME METHOD ARITY",
-			"CLASS_NAME METHOD_NAME ARITY NEW_NAME",
+			"CLASS_NAME METHOD RETURN_TYPE [ PARAMETER ... ]",
+			"CLASS_NAME METHOD RETURN_TYPE ARITY",
+			"CLASS_NAME METHOD_NAME RETURN_TYPE ARITY NEW_NAME",
 			"CLASS_NAME FIELD",
 			"CLASS_NAME FIELD",
 			"CLASS_NAME FIELD NEW_NAME",
-			"CLASS_NAME METHOD ARITY PARAMETER1 [ PARAMETER2 ... ]",
-			"CLASS_NAME METHOD ARITY PARAMETER1 [ PARAMETER2 ... ]",
-			"CLASS_NAME METHOD ARITY PARAMETER NEW_NAME",
-			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE"
+			"CLASS_NAME METHOD RETURN_TYPE ARITY PARAMETER1 [ PARAMETER2 ... ]",
+			"CLASS_NAME METHOD RETURN_TYPE ARITY PARAMETER1 [ PARAMETER2 ... ]",
+			"CLASS_NAME METHOD RETURN_TYPE ARITY PARAMETER NEW_NAME",
+			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE",
+			"SRC_CLASS METHOD RETURN_TYPE ARITY PARAMETER NEW_TYPE",
+			"CLASS_NAME FIELD NEW_TYPE"
 		};
 	
 	/**
@@ -107,7 +109,9 @@ public class Command {
 			"Adds a set of parameters to a method of a class.",
 			"Removes a set of parameters from a method of a class.",
 			"Gives a parameter of a method a new name.",
-			"Changes the type of a specified relationship."
+			"Changes the type of a specified relationship.",
+			"Changes the data type of a parameter.",
+			"Changes the data type of a field"
 		};
 	
 	Command (Action a, String[] args)
