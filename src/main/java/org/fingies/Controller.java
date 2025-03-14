@@ -2,6 +2,7 @@ package org.fingies;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -124,11 +125,11 @@ public class Controller {
         }
     }
 
-    public boolean doAddMethod(String srcClass, String method, String return_type, Map<String, String> parameters) 
+    public boolean doAddMethod(String srcClass, String methodName, String returnType, List<String> parameterNames, List<String> parameterTypes) 
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).addMethod(method, return_type, parameters);
+            return UMLClassHandler.getClass(srcClass).addMethod(methodName, returnType, parameterNames, parameterTypes);
         }
         catch (Exception e)
         {
@@ -167,12 +168,11 @@ public class Controller {
         }
     }
 
-    public boolean doRemoveMethod(String srcClass, String method, String return_type, String paramNum) 
+    public boolean doRemoveMethod(String srcClass, String methodName, List<String> parameterTypes) 
     {
         try
         {
-            int arity = Integer.parseInt(paramNum);
-            return UMLClassHandler.getClass(srcClass).removeMethod(method, return_type, arity);
+            return UMLClassHandler.getClass(srcClass).removeMethod(methodName, parameterTypes);
         }
         catch (Exception e)
         {
@@ -196,12 +196,11 @@ public class Controller {
         }
     }
 
-    public boolean doRenameMethod(String srcClass, String oldMethod, String returnType, String paramNum, String newMethod) 
+    public boolean doRenameMethod(String srcClass, String oldMethodName, List<String> parameterTypes, String newMethodName) 
     {
         try
         {
-            int arity = Integer.parseInt(paramNum);
-            return UMLClassHandler.getClass(srcClass).renameMethod(oldMethod, returnType, arity, newMethod);
+            return UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, parameterTypes, newMethodName);
         }
         catch (Exception e)
         {
@@ -211,12 +210,12 @@ public class Controller {
         }
     }
     
-    public boolean doAddParameters(String srcClass, String method, String returnType, String paramNum, Map<String, String> params)
+    // class method type1 type2 ; newName1 newType1
+    public boolean doAddParameters(String srcClass, String methodName, List<String> parameterTypes, List<String> newParameterNames, List<String> newParameterTypes)
     {
         try
         {
-            int arity = Integer.parseInt(paramNum);
-            return UMLClassHandler.getClass(srcClass).addParameters(method, returnType, arity, params);
+            return UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).addParameters(newParameterNames, newParameterTypes);
         }
         catch (Exception e)
         {
@@ -226,12 +225,11 @@ public class Controller {
         }
     }
 
-    public boolean doRemoveParameters(String srcClass, String method, String returnType, String paramNum, List<String> params)
+    public boolean doRemoveParameters(String srcClass, String method, List<String> parameterTypes, List<String> parameterNamesToRemove)
     {
         try
         {
-            int arity = Integer.parseInt(paramNum);
-            return UMLClassHandler.getClass(srcClass).removeParameters(method, returnType, arity, params);
+            return UMLClassHandler.getClass(srcClass).getMethod(method, parameterTypes).removeParameters(parameterNamesToRemove);
         }
         catch (Exception e)
         {
@@ -241,12 +239,11 @@ public class Controller {
         }
     }
     
-    public boolean doRenameParameter(String srcClass, String method, String returnType, String paramNum, String oldParam, String newParam)
+    public boolean doRenameParameter(String srcClass, String method, List<String> parameterTypes, String oldParam, String newParam)
     {
         try
         {
-            int arity = Integer.parseInt(paramNum);
-            return UMLClassHandler.getClass(srcClass).getMethod(method, returnType, arity).renameParameter(oldParam, newParam);
+            return UMLClassHandler.getClass(srcClass).getMethod(method, parameterTypes).renameParameter(oldParam, newParam);
         }
         catch (Exception e)
         {
@@ -256,10 +253,9 @@ public class Controller {
         }
     }
 
-    public boolean doChangeParameterDataType(String srcClass, String method, String returnType, String paramNum, String param, String newType) {
+    public boolean doChangeParameterDataType(String srcClass, String methodName, List<String> parameterTypes, String param, String newType) {
         try {
-            int arity = Integer.parseInt(paramNum);
-            UMLClassHandler.getClass(srcClass).getMethod(method, returnType, arity).getParameter(param).setType(newType);
+            UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
             return true;
         }
         catch (Exception e) {
@@ -514,7 +510,15 @@ public class Controller {
                 if (args.length >= 3)
                 {
                     try {
-                        if (doAddMethod(args[0], args[1], args[2], getMapFromArray(args, 3, args.length)))
+                    	List<String> parameterNames = new ArrayList<String>();
+                    	List<String> parameterTypes = new ArrayList<String>();
+                    	boolean result = getTwoListsFromArray(args, 3, args.length, parameterNames, parameterTypes);
+                    	if (!result)
+                    	{
+                    		view.notifyFail("Add Metod should have exactly 1 type for every parameter name.");
+                    		return false;
+                    	}
+                        if (doAddMethod(args[0], args[1], args[2], parameterNames, parameterTypes))
                         {
                             view.notifySuccess("Successfully added method " + args[1] + " with argument(s) " + getPartialListFromArray(args, 3, args.length) + " to class " + args[0]);
                             madeChange = true;
@@ -537,9 +541,10 @@ public class Controller {
                     return false;
                 }
             case REMOVE_METHOD:
-                if (args.length == 4)
+                if (args.length >= 2)
                 {
-                    if (doRemoveMethod(args[0], args[1], args[2], args[3]))
+                	List<String> paramTypes = getPartialListFromArray(args, 2, args.length);
+                    if (doRemoveMethod(args[0], args[1], paramTypes))
                     {
                         view.notifySuccess("Successfully removed method " + args[1] + " with return type " + args[2] + " with arity " + args[3] + " from class " + args[0]);
                         madeChange = true;
@@ -552,13 +557,14 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Remove method should have exactly 4 arguments.");
+                    view.notifyFail("Remove method should have 2 or more arguments.");
                     return false;
                 }
             case RENAME_METHOD:
                 if (args.length == 5)
                 {
-                    if (doRenameMethod(args[0], args[1], args[2], args[3], args[4]))
+                	List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 1);
+                    if (doRenameMethod(args[0], args[1], paramTypes, args[args.length - 1]))
                     {
                         view.notifySuccess("Successfully renamed method " + args[1] + " with return type " + args[2] + " with arity " + args[3] + " to " + args[4] + " in class " + args[0]);
                         madeChange = true;
@@ -655,14 +661,25 @@ public class Controller {
             case ADD_PARAMETERS:
                 if (args.length >= 5) {
                     try {
-                        Map<String, String> params = getMapFromArray(args, 3, args.length);
-                        if (doAddParameters(args[0], args[1], args[2], args[3], params))
+                        int idx = indexOfSymbol(args, ";");
+                        if (idx == -1)
                         {
-                            view.notifySuccess("Succesfully added parameter(s): " + params + " to method " + args[1] + " with return type " + args[2] + " with arity " + args[3] + " from class " + args[0]);
+                        	view.notifyFail("Add Parameters should have a semicolon as an argument in between the method's signature and the new parameters\n"
+                        			+ "ex. addp class_name method_name param_type1 param_type2 ; new_param_type new_param_name");
+                        	return false;
+                        }
+                        List<String> oldParamTypes = getPartialListFromArray(args, 2, idx);
+                        List<String> newParamNames = new ArrayList<String>();
+                        List<String> newParamTypes = new ArrayList<String>();
+                        getTwoListsFromArray(args, idx + 1, args.length, newParamNames, newParamTypes);
+                        if (doAddParameters(args[0], args[1], oldParamTypes, newParamNames, newParamTypes))
+                        {
+                            view.notifySuccess("Succesfully added parameter(s): " + newParamNames + " to method " + args[1] + " from class " + args[0]);
                             madeChange = true;
                             return true;
                         }
-                        else {
+                        else
+                        {
                             //view.notifyFail("Failed to add parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
                             return false;
                         }
@@ -678,10 +695,18 @@ public class Controller {
                 }
             case REMOVE_PARAMETERS:
                 if (args.length >= 5) {
-                    List<String> params = getPartialListFromArray(args, 3, args.length);
-                    if (doRemoveParameters(args[0], args[1], args[2], args[3], params))
+                    int idx = indexOfSymbol(args, ";");
+                    if (idx == -1)
                     {
-                        view.notifySuccess("Succesfully removed parameter(s): " + params + " from method " + args[1] + " with return type " + args[2] + " with arity " + args[3] + " from class " + args[0]);
+                    	view.notifyFail("Remove Parameters should have a semicolon as an argument in between the method's signature and the parameters to remove\n"
+                    			+ "ex. rmp class_name method_name param_type1 param_type2 ; param_type param_name");
+                    	return false;
+                    }
+                    List<String> paramTypes = getPartialListFromArray(args, 2, idx);
+                    List<String> paramNames = getPartialListFromArray(args, idx + 1, args.length);
+                    if (doRemoveParameters(args[0], args[1], paramTypes, paramNames))
+                    {
+                        view.notifySuccess("Succesfully removed parameter(s): " + paramNames + " from method " + args[1] + " from class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -696,10 +721,11 @@ public class Controller {
                     return false;
                 }
             case RENAME_PARAMETER:
-                if (args.length == 6) {
-                    if (doRenameParameter(args[0], args[1], args[2], args[3], args[4], args[5]))
+                if (args.length >= 5) {
+                	List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 2); 
+                    if (doRenameParameter(args[0], args[1], paramTypes, args[args.length - 2], args[args.length - 1]))
                     {
-                        view.notifySuccess("Successfully renamed parameter " + args[4] + " with arity " + args[3] + " of method " + args[1] + " with return type " + args[2] + " of class " + args[0] + " to " + args[5]);
+                        view.notifySuccess("Successfully renamed parameter " + args[args.length - 2] + " of method " + args[1] + " of class " + args[0] + " to " + args[args.length - 1]);
                         madeChange = true;
                         return true;
                     }
@@ -711,15 +737,16 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Parameters should have exactly 6 arguments.");
+                    view.notifyFail("Parameters should have 5 or more arguments.");
                     return false;
                 }
             case CHANGE_PARAMETER_TYPE:
-                if (args.length == 6) 
+                if (args.length >= 5) 
                 {
-                    if (doChangeParameterDataType(args[0], args[1], args[2], args[3], args[4], args[5]))
+                	List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 2); 
+                    if (doChangeParameterDataType(args[0], args[1], paramTypes, args[args.length - 2], args[args.length - 1]))
                     {
-                        view.notifySuccess("Successfully changed parameter " + args[4] + "'s data type to " + args[5] + " of method " + args[1] + " with arity " + args[3] + " with return type " + args[2] + " of class " + args[0]);
+                        view.notifySuccess("Successfully changed parameter " + args[args.length - 2] + "'s data type to " + args[args.length - 1] + " of method " + args[1] + " of class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -936,28 +963,24 @@ public class Controller {
         return Arrays.asList(Arrays.copyOfRange(array, start, end));
     }
 
-    /**
-     * Gets a map from the array, input should alternative key & value
-     * @param array the input array
-     * @param start the starting index to take from
-     * @param end the last index to take from
-     * @return a Map from the input array
-     * @throws IllegalArgumentException when distance between starting and ending index is not a factor of 2 or when end index is after start index.
-     * @author trush
-     */
-    public Map<String, String> getMapFromArray(String[] array, int start, int end) {
-        HashMap<String, String> output = new HashMap<>();
-        if ((end - start) % 2 != 0) {
-            throw new IllegalArgumentException("Input must have an even amount of indices between start and end");
+    // ex. e1 e1 e2 e2 e3 e3
+    public boolean getTwoListsFromArray(String[] array, int start, int end, List<String> names, List<String> types) {
+    	if ((end - start) % 2 == 1)
+    		
+        for (int i = start; i < end; i += 2)
+        {
+        	names.add(array[i]);
+        	types.add(array[i + 1]);
         }
-        if (start > end) {
-            throw new IllegalArgumentException("End index is before start index");
-        }
-        while (start < end) {
-            output.put(array[start], array[start + 1]);
-            start += 2;
-        }
-        return output;
+    	return true;
+    }
+    
+    public int indexOfSymbol (String[] array, String symbol)
+    {
+    	for (int i = 0; i < array.length; ++i)
+    		if (array[i].equals(symbol))
+    			return i;
+    	return -1;
     }
  }
  
