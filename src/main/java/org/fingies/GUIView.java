@@ -202,6 +202,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     public void makeComboBoxes(Action a, String[] placeholders) {
         comboBoxes.clear();
         JComboBox<String> classComboBox = null;
+        JComboBox<String> methodComboBox = null;
 
         for (int i = 0; i < placeholders.length; i++) {
             JComboBox<String> box = new JComboBox<>();
@@ -228,6 +229,10 @@ public class GUIView extends JFrame implements ActionListener, View {
 
                 case "Parameter":
                     // Make a combo box with an item for every parameter (currently not implemented)
+                    // updateComboBox(box, classComboBox, "getParameters");
+                    // addComboBoxListener(classComboBox, box, "getParameters");
+                    updateParameterComboBox(box, classComboBox, methodComboBox);
+                    addMethodComboBoxListener(classComboBox, methodComboBox, box);
                     break;
 
                 default:
@@ -242,6 +247,14 @@ public class GUIView extends JFrame implements ActionListener, View {
         reload();
     }
 
+    private void addMethodComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> methodComboBox, JComboBox<String> paramBox) {
+        methodComboBox.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                updateParameterComboBox(paramBox, classComboBox, methodComboBox);
+            }
+        });
+    }
+
     private void updateComboBox(JComboBox<String> box, JComboBox<String> classComboBox, String methodType) {
         String selectedClass = (String) classComboBox.getSelectedItem();
         if (selectedClass != null) {
@@ -251,6 +264,24 @@ public class GUIView extends JFrame implements ActionListener, View {
                 box.addItem(item);
             }
         }
+    }
+
+    private void updateParameterComboBox(JComboBox<String> paramBox, JComboBox<String> classComboBox, JComboBox<String> methodComboBox) {
+        String selectedClass = (String) classComboBox.getSelectedItem();
+        String selectedMethod = (String) methodComboBox.getSelectedItem();
+    
+        if (selectedClass != null && selectedMethod != null) {
+            paramBox.removeAllItems();
+            String[] parameters = getMethodParameters(selectedClass, selectedMethod);
+            for (String param : parameters) {
+                paramBox.addItem(param);
+            }
+        }
+    }
+
+    private String[] getMethodParameters(String selectedClass, String selectedMethod) {
+        return GUIUMLClasses.get(selectedClass).getUMLClass().getMethod(selectedMethod)
+                .getParameters().stream().map (x -> x.getName()).toArray(String[]::new);
     }
 
     private void addComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> box, String methodType) {
@@ -275,6 +306,8 @@ public class GUIView extends JFrame implements ActionListener, View {
             case "getFields" -> GUIUMLClasses.get(selectedClass).getUMLClass().getFields().stream()
                     .map(x -> x.getName()).toArray(String[]::new);
             case "getMethods" -> GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
+                    .map(x -> x.getName()).toArray(String[]::new);
+            case "getParameters" -> GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
                     .map(x -> x.getName()).toArray(String[]::new);
             default -> new String[0];
         };

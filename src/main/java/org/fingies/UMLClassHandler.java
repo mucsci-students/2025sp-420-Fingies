@@ -1,5 +1,6 @@
 package org.fingies;
 
+import java.util.List;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -154,8 +155,8 @@ public class UMLClassHandler {
     public static String listClass(UMLClass c)
     {
     	String str = c.getName();
-        HashSet<Field> fields = c.getFields();
-        HashSet<Method> methods = c.getMethods();
+        List<Field> fields = c.getFields();
+        List<Method> methods = c.getMethods();
         
         if (fields.isEmpty() && methods.isEmpty())
 	        return str;
