@@ -28,7 +28,7 @@ public class UMLClass {
      * Throws an IllegalArgumentException if the user provides a string that contains illegal characters
      * @param name name of the new class/attribute the user desires
      */
-    private void validateCharacters(String name) {
+    public void validateCharacters(String name) {
         if (name.length() > 50) {
             throw new IllegalArgumentException("Class names must not be longer than 50 characters");
         }
@@ -87,7 +87,7 @@ public class UMLClass {
         if (name.equals(fieldName))
             throw new IllegalArgumentException("A field must have a different name than its class");
         if (fieldExists(fieldName))
-            throw new IllegalArgumentException("Field already exists");
+            throw new IllegalArgumentException(name + " already has a field called " + fieldName);
         return fields.add(new Field(fieldName, type));
     }
 
@@ -102,7 +102,7 @@ public class UMLClass {
         if (name.equals(methodName))
             throw new IllegalArgumentException("A method must have a different name than its class");
         if (methodExists(methodName, types))
-            throw new IllegalArgumentException("Method already exists");
+            throw new IllegalArgumentException("A method with that name and types already exists");
         return methods.add(new Method(methodName, returnType, parameters, types));
     }
 
