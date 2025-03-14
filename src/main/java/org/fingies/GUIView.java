@@ -3,6 +3,7 @@ package org.fingies;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -581,12 +582,7 @@ public class GUIView extends JFrame implements ActionListener, View {
 
     public void addUMLClass(String className)
     {
-        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this.getWidth(), this.getHeight());
-
-        // Creates new listener for the newly added JLayeredPane
-        DragListener dragListener = new DragListener(newUMLClass.getJLayeredPane(), this, this);
-        newUMLClass.getJLayeredPane().addMouseListener(dragListener);
-        newUMLClass.getJLayeredPane().addMouseMotionListener(dragListener);
+        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this);
 
         // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
         this.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
@@ -656,7 +652,6 @@ public class GUIView extends JFrame implements ActionListener, View {
 	@Override
     public String promptForSaveInput(String message)
     {
-		//System.out.println("save");
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showSaveDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
@@ -666,7 +661,6 @@ public class GUIView extends JFrame implements ActionListener, View {
 	
 	@Override
 	public String promptForOpenInput(String message) {
-		//System.out.println("open");
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showOpenDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
@@ -714,59 +708,5 @@ public class GUIView extends JFrame implements ActionListener, View {
 	}
     
     
-}
-
-// Drag listener for JLayeredPane
-class DragListener extends MouseAdapter {
-    private final JComponent component;
-    private final JFrame parentFrame;
-    private final GUIView parentView;
-    private Point initialClick;
-
-    public DragListener(JComponent component, JFrame parentFrame, GUIView parentView) {
-        this.component = component;
-        this.parentFrame = parentFrame;
-        this.parentView = parentView;
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        initialClick = e.getPoint(); // Store initial click position
-        ((JComponent)e.getSource()).requestFocusInWindow();
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        if (initialClick == null) return;
-
-        // Brings current frame being dragged to the front
-        parentFrame.getContentPane().setComponentZOrder(component, JLayeredPane.DEFAULT_LAYER); // Bring to front
-        parentFrame.getContentPane().revalidate();
-        parentFrame.getContentPane().repaint();
-
-        // Get current location of the JLayeredPane
-        int x = component.getX() + e.getX() - initialClick.x;
-        int y = component.getY() + e.getY() - initialClick.y;
-
-        // Get parent frame size
-        int frameWidth = parentFrame.getWidth();
-        int frameHeight = parentFrame.getHeight();
-
-        // Prevent dragging off the screen (Constrain within parent frame)
-        int maxX = frameWidth - component.getWidth();
-        int maxY = frameHeight - component.getHeight();
-
-        // Constrain X and Y to stay within the frame bounds
-        if (x < 0) x = 0;
-        if (x > maxX) x = maxX;
-        if (y < 75) y = 75;
-        if (y > maxY) y = maxY;
-
-        // Move JLayeredPane to new position within bounds
-        component.setLocation(x, y);
-
-        // Update the arrows after moving the class
-        parentView.updateArrows();  // This will update the arrows to reflect new positions
-    }
 }
 

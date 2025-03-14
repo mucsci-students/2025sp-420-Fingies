@@ -20,7 +20,7 @@ public class MethodTest {
     @Before
     public void setUp()
     {
-        m = new Method ("Method1");
+        m = new Method ("Method1",  "void");
     }
     
     // --------------------- ADD PARAMETERS ---------------------
@@ -29,7 +29,7 @@ public class MethodTest {
     public void addOneParameterWithIllegalCharacters_ThrowsIllegalArgumentException()
     {
         try{
-            m.addParameter("Param1%");
+            m.addParameter("Param1%",  "String");
         }   
         catch (IllegalArgumentException e)
         {
@@ -41,7 +41,7 @@ public class MethodTest {
     public void addOneParameterLongerThan50Characters_ThrowsIllegalArgumentException()
     {
         try{
-            m.addParameter("Parameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeter1");
+            m.addParameter("Parameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeter1",  "String");
         }   
         catch (IllegalArgumentException e)
         {
@@ -52,15 +52,15 @@ public class MethodTest {
     @Test
     public void addOneParameterToMethod_ThenMethodShouldContainParameter()
     {
-        m.addParameter("Param1");
+        m.addParameter("Param1",  "String");
         assertTrue(m.parameterExists("Param1"));
     }
 
     @Test
     public void addTwoParametersToMethod_ThenMethodShouldContainBothParameters()
     {
-        m.addParameter("Param1");
-        m.addParameter("Param2");
+        m.addParameter("Param1",  "String");
+        m.addParameter("Param2",  "String");
         assertTrue(m.parameterExists("Param1") && m.parameterExists("Param2"));
     }
 
@@ -70,8 +70,8 @@ public class MethodTest {
         
         try
         {
-            m.addParameter("Param1");
-            m.addParameter("Param1");
+            m.addParameter("Param1",  "String");
+            m.addParameter("Param1",  "String");
         }
         catch (IllegalArgumentException e)
         {
@@ -84,7 +84,7 @@ public class MethodTest {
     @Test
     public void addParameterThenRenameIt_ThenParameterdShouldBeRenamed()
     {
-        m.addParameter("Param1");
+        m.addParameter("Param1",  "String");
         assertTrue(m.parameterExists("Param1"));
 
         m.renameParameter("Param1", "Param2");
@@ -96,8 +96,8 @@ public class MethodTest {
     {
         try
         {
-            m.addParameter("Param1");
-            m.addParameter("Param2");
+            m.addParameter("Param1",  "String");
+            m.addParameter("Param2",  "String");
             m.renameParameter("Param1", "Param2");
         }
         catch (IllegalArgumentException e)
@@ -111,7 +111,7 @@ public class MethodTest {
     {
         try
         {
-            m.addParameter("Param1");
+            m.addParameter("Param1", "String");
             m.renameParameter("Param1", "Param1");
         }
         catch (IllegalArgumentException e)
@@ -125,7 +125,7 @@ public class MethodTest {
     @Test
     public void addOneParameterToMethodAndRemoveIt_ThenMethodShouldContainParameter()
     {
-        m.addParameter("Param1");
+        m.addParameter("Param1",  "String");
         assertTrue(m.parameterExists("Param1"));
         m.removeParameter("Param1");
         assertFalse(m.parameterExists("Param1"));

@@ -82,6 +82,10 @@ public enum Action {
      */
     RENAME_FIELD,
     /**
+     * Changes the data type of a field.
+     */
+    CHANGE_FIELD_TYPE,
+    /**
      * Adds a list of new parameters to a method
      */
     ADD_PARAMETERS,
@@ -93,6 +97,10 @@ public enum Action {
      * Changes the name of a parameter to a new one
      */
     RENAME_PARAMETER,
+    /**
+     * Changes the data type of a parameter to a new one
+     */
+    CHANGE_PARAMETER_TYPE,
     /**
      * Changes a relationship type
      */

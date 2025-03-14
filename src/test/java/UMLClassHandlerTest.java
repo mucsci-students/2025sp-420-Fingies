@@ -21,16 +21,16 @@ public class UMLClassHandlerTest {
     {
         UMLClassHandler.reset();
         UMLClassHandler.createClass("Car");
-            UMLClassHandler.getClass("Car").addField("Engine");
-            UMLClassHandler.getClass("Car").addField("Wheel");
-            UMLClassHandler.getClass("Car").addField("Pedal");
+            UMLClassHandler.getClass("Car").addField("Engine", "String");
+            UMLClassHandler.getClass("Car").addField("Wheel", "String");
+            UMLClassHandler.getClass("Car").addField("Pedal", "String");
         UMLClassHandler.createClass("Animal");
-            UMLClassHandler.getClass("Animal").addField("Cat");
-            UMLClassHandler.getClass("Animal").addField("Dog");
+            UMLClassHandler.getClass("Animal").addField("Cat", "String");
+            UMLClassHandler.getClass("Animal").addField("Dog", "String");
         UMLClassHandler.createClass("Food");
-            UMLClassHandler.getClass("Food").addField("Breakfast");
-            UMLClassHandler.getClass("Food").addField("Lunch");
-            UMLClassHandler.getClass("Food").addField("Dinner");
+            UMLClassHandler.getClass("Food").addField("Breakfast", "String");
+            UMLClassHandler.getClass("Food").addField("Lunch", "String");
+            UMLClassHandler.getClass("Food").addField("Dinner", "String");
     }
     @After
     public void resetTest() {
@@ -115,16 +115,16 @@ public class UMLClassHandlerTest {
         try
         {
             UMLClassHandler.createClass("Car");
-                UMLClassHandler.getClass("Car").addField("Engine");
-                UMLClassHandler.getClass("Car").addField("Wheel");
-                UMLClassHandler.getClass("Car").addField("Pedal");
+                UMLClassHandler.getClass("Car").addField("Engine", "String");
+                UMLClassHandler.getClass("Car").addField("Wheel", "String");
+                UMLClassHandler.getClass("Car").addField("Pedal", "String");
             UMLClassHandler.createClass("Animal");
-                UMLClassHandler.getClass("Animal").addField("Cat");
-                UMLClassHandler.getClass("Animal").addField("Dog");
+                UMLClassHandler.getClass("Animal").addField("Cat", "String");
+                UMLClassHandler.getClass("Animal").addField("Dog", "String");
             UMLClassHandler.createClass("Food");
-                UMLClassHandler.getClass("Food").addField("Breakfast");
-                UMLClassHandler.getClass("Food").addField("Lunch");
-                UMLClassHandler.getClass("Food").addField("Dinner");
+                UMLClassHandler.getClass("Food").addField("Breakfast", "String");
+                UMLClassHandler.getClass("Food").addField("Lunch", "String");
+                UMLClassHandler.getClass("Food").addField("Dinner", "String");
             // UMLClassHandler.addRelationship("Car", "Food");
 
             UMLClassHandler.reset();
@@ -136,4 +136,10 @@ public class UMLClassHandlerTest {
             System.out.println(e.getMessage());
         }  
     }
+
+    // TODO: Write Tests for method return type char validation
+
+    // TODO: Write Tests for param type char validation
+
+    // TODO: Write Tests for field type char validation
 }

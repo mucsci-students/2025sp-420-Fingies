@@ -4,11 +4,14 @@ import java.util.Objects;
 
 public class Field extends Attribute {
     private String name;
+    private String type;
 
-    public Field (String name)
+    public Field (String name, String type)
     {
         validateCharacters(name);
+        validateCharacters(type);
         this.name = name;
+        this.type = type;
     }
 
     @Override
@@ -19,6 +22,22 @@ public class Field extends Attribute {
             return false;
         Field field = (Field) obj;
         return getName().equals(field.getName()); // Compare by name
+    }
+
+    /**
+     * Gets the data type of the field
+     * @return the data type
+     */
+    public String getType() {
+        return type;
+    }
+
+    /**
+     * Sets the data type of the field
+     * @param type the data type to set the field to.
+     */
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override
