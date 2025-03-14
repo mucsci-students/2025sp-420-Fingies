@@ -3,6 +3,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.fingies.UMLClass;
 import org.junit.Before;
@@ -35,7 +36,7 @@ public class UMLClassTest {
     public void addOneFieldWithIllegalCharacters_ThrowsIllegalArgumentException()
     {
         try{
-            c.addField("Engine%");
+            c.addField("Engine%", "String");
         }   
         catch (IllegalArgumentException e)
         {
@@ -47,7 +48,7 @@ public class UMLClassTest {
     public void addOneFieldLongerThan50Characters_ThrowsIllegalArgumentException()
     {
         try{
-            c.addField("Engineeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+            c.addField("Engineeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "String");
         }   
         catch (IllegalArgumentException e)
         {
@@ -58,7 +59,7 @@ public class UMLClassTest {
     @Test
     public void addOneField_ThenClassShouldContainField()
     {
-        c.addField("Engine");
+        c.addField("Engine", "String");
         assertTrue(c.fieldExists("Engine"));
     }
 
@@ -67,7 +68,7 @@ public class UMLClassTest {
     {
         try
         {
-            c.addField("UMLClass");
+            c.addField("UMLClass", "String");
         }
         catch (IllegalArgumentException e)
         {
@@ -81,9 +82,9 @@ public class UMLClassTest {
         
         try
         {
-            c.addField("Engine");
+            c.addField("Engine", "String");
             assertTrue(c.fieldExists("Engine"));
-            c.addField("Engine");
+            c.addField("Engine", "String");
         }
         catch (IllegalArgumentException e)
         {
@@ -96,7 +97,7 @@ public class UMLClassTest {
     {
         try
         {
-            c.addField("Engine%");
+            c.addField("Engine%", "String");
         }
         catch (IllegalArgumentException e)
         {
@@ -111,7 +112,7 @@ public class UMLClassTest {
         UMLClass DNE = null;
         try
         {
-            DNE.addField("Engine");
+            DNE.addField("Engine", "String");
         }
         catch (NullPointerException e)
         {
@@ -124,9 +125,9 @@ public class UMLClassTest {
     @Test
     public void addOneMethodWithIllegalCharacters_ThrowsIllegalArgumentException()
     {
-        try{
-            ArrayList<String> parameters = new ArrayList<String>();
-            c.addMethod("Engine%", parameters);
+        try {
+            HashMap<String, String> parameters = new HashMap<>();
+            c.addMethod("Engine%", "void", parameters);
         }   
         catch (IllegalArgumentException e)
         {
@@ -137,9 +138,9 @@ public class UMLClassTest {
     @Test
     public void addOneMethodLongerThan50Characters_ThrowsIllegalArgumentException()
     {
-        try{
-            ArrayList<String> parameters = new ArrayList<String>();
-            c.addMethod("Engineeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", parameters);
+        try {
+            HashMap<String, String> parameters = new HashMap<>();
+            c.addMethod("Engineeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "void", parameters);
         }   
         catch (IllegalArgumentException e)
         {
@@ -150,9 +151,9 @@ public class UMLClassTest {
     @Test
     public void addOneMethod_ThenClassShouldContainMethod()
     {
-        ArrayList<String> parameters = new ArrayList<String>();
-        c.addMethod("getEngine", parameters);
-        assertTrue(c.methodExists("getEngine", 0));
+        HashMap<String, String> parameters = new HashMap<>();
+        c.addMethod("getEngine", "void", parameters);
+        assertTrue(c.methodExists("getEngine", "void", 0));
     }
 
     @Test
@@ -160,10 +161,10 @@ public class UMLClassTest {
     {
         try
         {
-            ArrayList<String> parameters = new ArrayList<String>();
-            c.addMethod("getEngine", parameters);
-            assertTrue(c.methodExists("getEngine", 0));
-            c.addMethod("getEngine", parameters);
+            HashMap<String, String> parameters = new HashMap<>();
+            c.addMethod("getEngine", "void", parameters);
+            assertTrue(c.methodExists("getEngine", "void", 0));
+            c.addMethod("getEngine", "void", parameters);
         }
         catch (IllegalArgumentException e)
         {
@@ -176,13 +177,13 @@ public class UMLClassTest {
     @Test
     public void addMethodWithSameNameAsClassWithDifferenteArity_ThenClassAddMethod()
     {
-        ArrayList<String> parameters = new ArrayList<String>();
-        c.addMethod("getEngine", parameters);
-        assertTrue(c.methodExists("getEngine", 0));
-        parameters.add("Param1");
-        assertTrue(c.addMethod("getEngine", parameters));
-        assertTrue(c.methodExists("getEngine", 1));
-        assertTrue(c.getMethod("getEngine", 1).getParameters().contains("Param1"));
+        HashMap<String, String> parameters = new HashMap<>();
+        c.addMethod("getEngine", "void", parameters);
+        assertTrue(c.methodExists("getEngine", "void", 0));
+        parameters.put("Param1", "String");
+        assertTrue(c.addMethod("getEngine", "void", parameters));
+        assertTrue(c.methodExists("getEngine", "void", 1));
+        assertTrue(c.getMethod("getEngine", "void", 1).getParameters().keySet().contains("Param1"));
     }
 
     // --------------------- RENAME FIELDS ---------------------
@@ -190,10 +191,10 @@ public class UMLClassTest {
     @Test
     public void addFieldThenRenameIt_ThenFieldShouldBeRenamed()
     {
-        c.addField("Engine");
+        c.addField("Engine", "String");
         assertTrue(c.fieldExists("Engine"));
 
-        c.renameField("Engine", "Wheel");
+        c.renameField("Engine", "String", "Wheel");
         assertTrue(c.fieldExists("Wheel"));
     }
 
@@ -202,9 +203,9 @@ public class UMLClassTest {
     {
         try
         {
-            c.addField("Engine");
-            c.addField("Wheel");
-            c.renameField("Engine", "Wheel");
+            c.addField("Engine", "String");
+            c.addField("Wheel", "String");
+            c.renameField("Engine", "String", "Wheel");
         }
         catch (IllegalArgumentException e)
         {
@@ -217,8 +218,8 @@ public class UMLClassTest {
     {
         try
         {
-            c.addField("Engine");
-            c.renameField("Engine", "Engine");
+            c.addField("Engine", "String");
+            c.renameField("Engine", "String", "Engine");
         }
         catch (IllegalArgumentException e)
         {
@@ -231,12 +232,12 @@ public class UMLClassTest {
     @Test
     public void addMethodThenRenameIt_ThenMethodShouldBeRenamed()
     {
-        ArrayList<String> parameters = new ArrayList<String>();
-        c.addMethod("getEngine", parameters);
-        assertTrue(c.methodExists("getEngine", 0));
+        HashMap<String, String> parameters = new HashMap<>();
+        c.addMethod("getEngine", "void", parameters);
+        assertTrue(c.methodExists("getEngine", "void", 0));
 
-        c.renameMethod("getEngine", 0, "setEngine");
-        assertTrue(c.methodExists("setEngine", 0));
+        c.renameMethod("getEngine", "void", 0, "setEngine");
+        assertTrue(c.methodExists("setEngine", "void", 0));
     }
 
     @Test
@@ -245,10 +246,10 @@ public class UMLClassTest {
         
         try
         {
-            ArrayList<String> parameters = new ArrayList<String>();
-            c.addMethod("getEngine", parameters);
-            c.addMethod("setEngine", parameters);
-            c.renameMethod("setEngine", 0, "getEngine");
+            HashMap<String, String> parameters = new HashMap<>();
+            c.addMethod("getEngine", "void", parameters);
+            c.addMethod("setEngine", "void", parameters);
+            c.renameMethod("setEngine", "void", 0, "getEngine");
         }
         catch (IllegalArgumentException e)
         {
@@ -259,11 +260,11 @@ public class UMLClassTest {
     @Test
     public void addTwoMethodsAndRenameOneMethodToOneThatExistsWithDifferentArity_ThenMethodShouldBeRenamed()
     {
-        ArrayList<String> parameters = new ArrayList<String>();
-        c.addMethod("getEngine", parameters);
-        parameters.add("param1");
-        c.addMethod("setEngine", parameters);
-        assertTrue(c.renameMethod("setEngine", 1, "getEngine"));
+        HashMap<String, String> parameters = new HashMap<>();
+        c.addMethod("getEngine", "void", parameters);
+        parameters.put("param1", "String");
+        c.addMethod("setEngine", "void", parameters);
+        assertTrue(c.renameMethod("setEngine", "void", 1, "getEngine"));
     }
 
     @Test
@@ -271,9 +272,9 @@ public class UMLClassTest {
     {
         try
         {
-            ArrayList<String> parameters = new ArrayList<String>();
-            c.addMethod("Engine", parameters);
-            c.renameMethod("Engine", 0, "Engine");
+            HashMap<String, String> parameters = new HashMap<>();
+            c.addMethod("Engine", "void", parameters);
+            c.renameMethod("Engine", "void", 0, "Engine");
         }
         catch (IllegalArgumentException e)
         {
@@ -285,7 +286,7 @@ public class UMLClassTest {
     @Test
     public void addFieldAndRemoveIt_ThenFieldShouldBeRemoved()
     {
-        c.addField("Engine");
+        c.addField("Engine", "String");
         assertTrue(c.fieldExists("Engine"));
 
         c.removeField("Engine");
@@ -310,12 +311,12 @@ public class UMLClassTest {
     @Test
     public void addMethodAndRemoveIt_ThenMethodShouldBeRemoved()
     {
-        ArrayList<String> parameters = new ArrayList<String>();
-        c.addMethod("Engine", parameters);
-        assertTrue(c.methodExists("Engine", 0));
+        HashMap<String, String> parameters = new HashMap<>();
+        c.addMethod("Engine", "void", parameters);
+        assertTrue(c.methodExists("Engine", "void", 0));
 
-        c.removeMethod("Engine", 0);
-        assertFalse(c.methodExists("Engine", 0));
+        c.removeMethod("Engine", "void", 0);
+        assertFalse(c.methodExists("Engine", "void", 0));
     }
 
     @Test
@@ -323,7 +324,7 @@ public class UMLClassTest {
     {
         try
         {
-            c.removeMethod("Engine", 0);
+            c.removeMethod("Engine", "void", 0);
         }
         catch (IllegalArgumentException e)
         {

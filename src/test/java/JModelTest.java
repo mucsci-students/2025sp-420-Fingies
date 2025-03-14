@@ -1,7 +1,7 @@
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.fingies.*;
@@ -22,12 +22,19 @@ public class JModelTest {
     public void setUp() {
         UMLClassHandler.reset();
         UMLClassHandler.createClass("Car");
-        UMLClassHandler.getClass("Car").addField("Wheels");
-        UMLClassHandler.getClass("Car").addField("V16Engine");
-        UMLClassHandler.getClass("Car").addMethod("Drive", Arrays.asList("ThrottleAmount", "GasAmount"));
+        UMLClassHandler.getClass("Car").addField("Wheels", "Wheels");
+        UMLClassHandler.getClass("Car").addField("V16Engine", "Engine");
+        HashMap<String, String> carParams = new HashMap<>();
+        carParams.put("ThrottleAmount", "Float");
+        carParams.put("gasAmount", "Float");
+        UMLClassHandler.getClass("Car").addMethod("Drive", "void", carParams);
+        UMLClassHandler.getClass("Car").setPosition(1000, 500);
         UMLClassHandler.createClass("Animal");
-        UMLClassHandler.getClass("Animal").addField("Eyeballs");
-        UMLClassHandler.getClass("Animal").addMethod("Eat", Arrays.asList("Food", "Calories"));
+        UMLClassHandler.getClass("Animal").addField("Eyeballs", "int");
+        HashMap<String, String> animalParams = new HashMap<>();
+        animalParams.put("Food", "String");
+        animalParams.put("Calories", "int");
+        UMLClassHandler.getClass("Animal").addMethod("Eat", "void", animalParams);
         UMLClassHandler.createClass("Food");
         RelationshipHandler.addRelationship("Car", "Animal", RelationshipType.Aggregation);
         RelationshipHandler.addRelationship("Food", "Animal", RelationshipType.Inheritance);

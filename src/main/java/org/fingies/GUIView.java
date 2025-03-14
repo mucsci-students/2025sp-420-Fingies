@@ -3,12 +3,16 @@ package org.fingies;
 import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -62,7 +66,8 @@ public class GUIView extends JFrame implements ActionListener, View {
     private GUIMenuItem renameParameter;
     private GUIMenuItem renameRelationshipType;
 
-    private ArrayList<JTextField> boxes;
+    private ArrayList<JTextField> textBoxes;
+    private ArrayList<JComboBox> comboBoxes;
 
     private Controller controller;
     final JFileChooser fileChooser = new JFileChooser();
@@ -77,7 +82,8 @@ public class GUIView extends JFrame implements ActionListener, View {
     {
         GUIUMLClasses = new HashMap<String, GUIUMLClass>();
         arrows = new ArrayList<ArrowComponent>();
-        boxes = new ArrayList<JTextField>();
+        textBoxes = new ArrayList<JTextField>();
+        comboBoxes = new ArrayList<JComboBox>();
 
         // Creates a JMenuBar and menus
         menuBar = new JMenuBar();
@@ -193,9 +199,96 @@ public class GUIView extends JFrame implements ActionListener, View {
     
     }
     
+    public void makeComboBoxes(Action a, String[] placeholders) {
+        comboBoxes.clear();
+        JComboBox<String> classComboBox = null;
+
+        for (int i = 0; i < placeholders.length; i++) {
+            JComboBox<String> box = new JComboBox<>();
+
+            switch (placeholders[i]) {
+                case "Class":
+                    // Make a combo box with an item for every class in the diagram
+                    String[] classes = GUIUMLClasses.keySet().toArray(String[]::new);
+                    classComboBox = new JComboBox<>(classes);
+                    box = classComboBox;
+                    break;
+
+                case "Field":
+                    // Make a combo box with an item for every field the selected class has
+                    updateComboBox(box, classComboBox, "getFields");
+                    addComboBoxListener(classComboBox, box, "getFields");
+                    break;
+
+                case "Method":
+                    // Make a combo box with an item for every method the selected class has
+                    updateComboBox(box, classComboBox, "getMethods");
+                    addComboBoxListener(classComboBox, box, "getMethods");
+                    break;
+
+                case "Parameter":
+                    // Make a combo box with an item for every parameter (currently not implemented)
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown placeholder: " + placeholders[i]);
+            }
+
+            styleComboBox(box, i);
+            comboBoxes.add(box);
+            this.add(box);
+        }
+
+        reload();
+    }
+
+    private void updateComboBox(JComboBox<String> box, JComboBox<String> classComboBox, String methodType) {
+        String selectedClass = (String) classComboBox.getSelectedItem();
+        if (selectedClass != null) {
+            box.removeAllItems();
+            String[] items = getClassItems(selectedClass, methodType);
+            for (String item : items) {
+                box.addItem(item);
+            }
+        }
+    }
+
+    private void addComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> box, String methodType) {
+        var listener = new ComboBoxListener(new JComboBox[]{box}) {
+            @Override
+            public void itemStateChanged(ItemEvent arg) {
+                String selectedClass = (String) arg.getItem();
+                if (selectedClass != null) {
+                    box.removeAllItems();
+                    String[] items = getClassItems(selectedClass, methodType);
+                    for (String item : items) {
+                        box.addItem(item);
+                    }
+                }
+            }
+        };
+        classComboBox.addItemListener(listener);
+    }
+
+    private String[] getClassItems(String selectedClass, String methodType) {
+        return switch (methodType) {
+            case "getFields" -> GUIUMLClasses.get(selectedClass).getUMLClass().getFields().stream()
+                    .map(x -> x.getName()).toArray(String[]::new);
+            case "getMethods" -> GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
+                    .map(x -> x.getName()).toArray(String[]::new);
+            default -> new String[0];
+        };
+    }
+
+    private void styleComboBox(JComboBox<String> box, int index) {
+        box.setBounds(index * 130 + 20, 80, 125, 30);
+        box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+    }
+
+
     public void makeTextBoxes(Action a, String [] placeholders)
     {
-        boxes.clear();
+        textBoxes.clear();
         for (int i = 0; i < placeholders.length; i++)
         {
             JTextField text;
@@ -220,7 +313,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 }
             });
 
-            boxes.add(text);
+            textBoxes.add(text);
             this.add(text);
             // if (i == 0)
             //     text.requestFocus(); // Automatically focus the text field
@@ -234,63 +327,66 @@ public class GUIView extends JFrame implements ActionListener, View {
     public void actionPerformed(ActionEvent e) {
     	Action a = ((GUIMenuItem) e.getSource()).action;
 
-        if (e.getSource() == addClass && boxes.isEmpty())
+        if (e.getSource() == addClass && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name"});
+            makeComboBoxes(a, new String [] {"Class"});
         }
-        else if (e.getSource() == addField && boxes.isEmpty())
+        else if (e.getSource() == addField && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name", "Field Name"});
+            makeComboBoxes(a, new String [] {"Class", "Field"});
         }
-        else if (e.getSource() == addMethod && boxes.isEmpty())
+        else if (e.getSource() == addMethod && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Parameters: a b c"});
+            makeComboBoxes(a, new String [] {"Class", "Method"});
         }
-        else if (e.getSource() == addParameter && boxes.isEmpty())
+        else if (e.getSource() == addParameter && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Parameters: a b c"});
         }
-        else if (e.getSource() == addRelationship && boxes.isEmpty())
+        else if (e.getSource() == addRelationship && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
         }
-        else if (e.getSource() == removeClass && boxes.isEmpty())
+        else if (e.getSource() == removeClass && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name"});
         }
-        else if (e.getSource() == removeField && boxes.isEmpty())
+        else if (e.getSource() == removeField && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name", "Field Name"});
         }
-        else if (e.getSource() == removeMethod && boxes.isEmpty())
+        else if (e.getSource() == removeMethod && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method"});
         }
-        else if (e.getSource() == removeParameter && boxes.isEmpty())
+        else if (e.getSource() == removeParameter && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Parameters: a b c"});
         }
-        else if (e.getSource() == removeRelationship && boxes.isEmpty())
+        else if (e.getSource() == removeRelationship && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Src Class", "Dest Class"});
         }
-        else if (e.getSource() == renameClass && boxes.isEmpty())
+        else if (e.getSource() == renameClass && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Old Class Name", "New Class Name"});
         }
-        else if (e.getSource() == renameField && boxes.isEmpty())
+        else if (e.getSource() == renameField && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name", "Old Field Name", "New Field Name"});
         }
-        else if (e.getSource() == renameMethod && boxes.isEmpty())
+        else if (e.getSource() == renameMethod && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name", "Old Method Name", "Arity of Method", "New Method Name"});
         }
-        else if (e.getSource() == renameParameter && boxes.isEmpty())
+        else if (e.getSource() == renameParameter && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Old Parameter", "New Parameter"});
         }
-        else if (e.getSource() == renameRelationshipType && boxes.isEmpty())
+        else if (e.getSource() == renameRelationshipType && textBoxes.isEmpty())
         {
             makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
         }
@@ -374,14 +470,14 @@ public class GUIView extends JFrame implements ActionListener, View {
             updateArrows();
     }
 
-    private void addEnterKeyListenerToRemove(Action action, JTextField text) {
-        text.addKeyListener(new java.awt.event.KeyAdapter() {
+    private void addEnterKeyListenerToRemove(Action action, JTextField field) {
+        field.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    String[] args = boxes.stream().map(JTextField::getText).toArray(String[]::new);
-                    boxes.forEach(GUIView.this::remove); // Remove all text fields
-                    boxes.clear();
+                    String[] args = textBoxes.stream().map(JTextField::getText).toArray(String[]::new);
+                    textBoxes.forEach(GUIView.this::remove); // Remove all text fields
+                    textBoxes.clear();
                     repaint(); // Refresh UI
                     // System.out.println("arg0: " + args[0]);
                     // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
@@ -414,8 +510,8 @@ public class GUIView extends JFrame implements ActionListener, View {
                     
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-                    boxes.forEach(GUIView.this::remove); // Remove all text fields
-                    boxes.clear();
+                    textBoxes.forEach(GUIView.this::remove); // Remove all text fields
+                    textBoxes.clear();
                     repaint(); // Refresh UI
                 }
             }
@@ -485,12 +581,7 @@ public class GUIView extends JFrame implements ActionListener, View {
 
     public void addUMLClass(String className)
     {
-        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this.getWidth(), this.getHeight());
-
-        // Creates new listener for the newly added JLayeredPane
-        DragListener dragListener = new DragListener(newUMLClass.getJLayeredPane(), this, this);
-        newUMLClass.getJLayeredPane().addMouseListener(dragListener);
-        newUMLClass.getJLayeredPane().addMouseMotionListener(dragListener);
+        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this);
 
         // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
         this.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
@@ -560,7 +651,6 @@ public class GUIView extends JFrame implements ActionListener, View {
 	@Override
     public String promptForSaveInput(String message)
     {
-		//System.out.println("save");
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showSaveDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
@@ -570,7 +660,6 @@ public class GUIView extends JFrame implements ActionListener, View {
 	
 	@Override
 	public String promptForOpenInput(String message) {
-		//System.out.println("open");
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showOpenDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
@@ -618,59 +707,5 @@ public class GUIView extends JFrame implements ActionListener, View {
 	}
     
     
-}
-
-// Drag listener for JLayeredPane
-class DragListener extends MouseAdapter {
-    private final JComponent component;
-    private final JFrame parentFrame;
-    private final GUIView parentView;
-    private Point initialClick;
-
-    public DragListener(JComponent component, JFrame parentFrame, GUIView parentView) {
-        this.component = component;
-        this.parentFrame = parentFrame;
-        this.parentView = parentView;
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        initialClick = e.getPoint(); // Store initial click position
-        ((JComponent)e.getSource()).requestFocusInWindow();
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {
-        if (initialClick == null) return;
-
-        // Brings current frame being dragged to the front
-        parentFrame.getContentPane().setComponentZOrder(component, JLayeredPane.DEFAULT_LAYER); // Bring to front
-        parentFrame.getContentPane().revalidate();
-        parentFrame.getContentPane().repaint();
-
-        // Get current location of the JLayeredPane
-        int x = component.getX() + e.getX() - initialClick.x;
-        int y = component.getY() + e.getY() - initialClick.y;
-
-        // Get parent frame size
-        int frameWidth = parentFrame.getWidth();
-        int frameHeight = parentFrame.getHeight();
-
-        // Prevent dragging off the screen (Constrain within parent frame)
-        int maxX = frameWidth - component.getWidth();
-        int maxY = frameHeight - component.getHeight();
-
-        // Constrain X and Y to stay within the frame bounds
-        if (x < 0) x = 0;
-        if (x > maxX) x = maxX;
-        if (y < 75) y = 75;
-        if (y > maxY) y = maxY;
-
-        // Move JLayeredPane to new position within bounds
-        component.setLocation(x, y);
-
-        // Update the arrows after moving the class
-        parentView.updateArrows();  // This will update the arrows to reflect new positions
-    }
 }
 
