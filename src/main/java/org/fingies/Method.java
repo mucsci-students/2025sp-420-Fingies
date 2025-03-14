@@ -117,6 +117,10 @@ public class Method extends Attribute {
         return params.stream().map(Parameter::getType).toList();
     }
 
+    public List<Parameter> getParameters() {
+        return params;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
@@ -128,6 +132,15 @@ public class Method extends Attribute {
     @Override
     public int hashCode() {
         return Objects.hash(name, params);
+    }
+
+    public String toTypes()
+    {
+        String paramString = params.stream()
+                .map(param -> param.getType())
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("");
+        return name + "(" + paramString + ")";
     }
 
     @Override

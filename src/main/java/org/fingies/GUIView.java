@@ -203,58 +203,77 @@ public class GUIView extends JFrame implements ActionListener, View {
         comboBoxes.clear();
         JComboBox<String> classComboBox = null;
         JComboBox<String> methodComboBox = null;
-
+        JComboBox<String> parameterComboBox = null;
+    
         for (int i = 0; i < placeholders.length; i++) {
+            String placeholder = placeholders[i];
             JComboBox<String> box = new JComboBox<>();
-
-            switch (placeholders[i]) {
+    
+            switch (placeholder) {
                 case "Class":
-                    // Make a combo box with an item for every class in the diagram
-                    String[] classes = GUIUMLClasses.keySet().toArray(String[]::new);
-                    classComboBox = new JComboBox<>(classes);
+                    classComboBox = createClassComboBox();
                     box = classComboBox;
                     break;
-
+    
                 case "Field":
-                    // Make a combo box with an item for every field the selected class has
-                    updateComboBox(box, classComboBox, "getFields");
+                    box = createComboBoxForClassItems(classComboBox, "getFields");
                     addComboBoxListener(classComboBox, box, "getFields");
                     break;
-
+    
                 case "Method":
-                    // Make a combo box with an item for every method the selected class has
-                    updateComboBox(box, classComboBox, "getMethods");
-                    addComboBoxListener(classComboBox, box, "getMethods");
+                    methodComboBox = createComboBoxForClassItems(classComboBox, "getMethods");
+                    addComboBoxListener(classComboBox, methodComboBox, "getMethods");
+                    box = methodComboBox;
                     break;
-
+    
                 case "Parameter":
-                    // Make a combo box with an item for every parameter (currently not implemented)
-                    // updateComboBox(box, classComboBox, "getParameters");
-                    // addComboBoxListener(classComboBox, box, "getParameters");
-                    updateParameterComboBox(box, classComboBox, methodComboBox);
-                    addMethodComboBoxListener(classComboBox, methodComboBox, box);
+                    parameterComboBox = new JComboBox<>();
+                    updateParameterComboBox(parameterComboBox, classComboBox, methodComboBox); // Initial population
+                    addMethodComboBoxListener(classComboBox, methodComboBox, parameterComboBox);
+                    box = parameterComboBox;
                     break;
-
+                case "Relationship":
+                    JComboBox<String> relationships = new JComboBox<>();
+                    relationships.addItem("Aggregation");
+                    relationships.addItem("Composition");
+                    relationships.addItem("Inheritance");
+                    relationships.addItem("Realization");
+                    box = relationships;
+                    break;
+    
                 default:
-                    throw new IllegalArgumentException("Unknown placeholder: " + placeholders[i]);
+                    throw new IllegalArgumentException("Unknown placeholder: " + placeholder);
             }
-
+    
             styleComboBox(box, i);
             comboBoxes.add(box);
             this.add(box);
         }
-
+    
         reload();
     }
-
+    
+    private JComboBox<String> createClassComboBox() {
+        String[] classes = GUIUMLClasses.keySet().toArray(String[]::new);
+        JComboBox<String> classComboBox = new JComboBox<>(classes);
+        return classComboBox;
+    }
+    
+    private JComboBox<String> createComboBoxForClassItems(JComboBox<String> classComboBox, String methodType) {
+        JComboBox<String> box = new JComboBox<>();
+        updateComboBox(box, classComboBox, methodType);
+        return box;
+    }
+    
     private void addMethodComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> methodComboBox, JComboBox<String> paramBox) {
-        methodComboBox.addItemListener(e -> {
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                updateParameterComboBox(paramBox, classComboBox, methodComboBox);
+        methodComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{paramBox}) {
+            @Override
+            protected void updateComboBox(JComboBox box) {
+                updateParameterComboBox((JComboBox<String>) box, classComboBox, methodComboBox);
             }
         });
     }
-
+    
     private void updateComboBox(JComboBox<String> box, JComboBox<String> classComboBox, String methodType) {
         String selectedClass = (String) classComboBox.getSelectedItem();
         if (selectedClass != null) {
@@ -265,30 +284,35 @@ public class GUIView extends JFrame implements ActionListener, View {
             }
         }
     }
-
+    
     private void updateParameterComboBox(JComboBox<String> paramBox, JComboBox<String> classComboBox, JComboBox<String> methodComboBox) {
         String selectedClass = (String) classComboBox.getSelectedItem();
-        String selectedMethod = (String) methodComboBox.getSelectedItem();
-    
-        if (selectedClass != null && selectedMethod != null) {
+        String selectedMethodSignature = (String) methodComboBox.getSelectedItem();
+        
+        if (selectedClass != null && selectedMethodSignature != null) {
+            String methodName = selectedMethodSignature.split("\\(")[0];  // Get method name (split by '(')
+            
             paramBox.removeAllItems();
-            String[] parameters = getMethodParameters(selectedClass, selectedMethod);
+            String[] parameters = getMethodParameters(selectedClass, methodName);
             for (String param : parameters) {
                 paramBox.addItem(param);
             }
         }
     }
-
-    private String[] getMethodParameters(String selectedClass, String selectedMethod) {
-        return GUIUMLClasses.get(selectedClass).getUMLClass().getMethod(selectedMethod)
-                .getParameters().stream().map (x -> x.getName()).toArray(String[]::new);
+    
+    private String[] getMethodParameters(String selectedClass, String methodName) {
+        return GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
+                .filter(method -> method.getName().equals(methodName))
+                .flatMap(method -> method.getParameters().stream())
+                .map(param -> param.getName())
+                .toArray(String[]::new);
     }
-
+    
     private void addComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> box, String methodType) {
-        var listener = new ComboBoxListener(new JComboBox[]{box}) {
+        classComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{box}) {
             @Override
-            public void itemStateChanged(ItemEvent arg) {
-                String selectedClass = (String) arg.getItem();
+            protected void updateComboBox(JComboBox box) {
+                String selectedClass = (String) classComboBox.getSelectedItem();
                 if (selectedClass != null) {
                     box.removeAllItems();
                     String[] items = getClassItems(selectedClass, methodType);
@@ -297,36 +321,39 @@ public class GUIView extends JFrame implements ActionListener, View {
                     }
                 }
             }
-        };
-        classComboBox.addItemListener(listener);
+        });
     }
-
+    
     private String[] getClassItems(String selectedClass, String methodType) {
         return switch (methodType) {
             case "getFields" -> GUIUMLClasses.get(selectedClass).getUMLClass().getFields().stream()
                     .map(x -> x.getName()).toArray(String[]::new);
             case "getMethods" -> GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
                     .map(x -> x.getName()).toArray(String[]::new);
-            case "getParameters" -> GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
-                    .map(x -> x.getName()).toArray(String[]::new);
             default -> new String[0];
         };
     }
-
+    
     private void styleComboBox(JComboBox<String> box, int index) {
-        box.setBounds(index * 130 + 20, 80, 125, 30);
+        box.setBounds(index * 130 + 20, 20, 125, 30);
         box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     }
+    
 
-
-    public void makeTextBoxes(Action a, String [] placeholders)
+    /**
+     * Creates textboxes
+     * @param a action of the textbox
+     * @param placeholders values to be filled in for the textbox
+     * @param offset how many parameters come before this, so these don't overlap with combo boxes
+     */
+    public void makeTextBoxes(Action a, String [] placeholders, int offset)
     {
         textBoxes.clear();
         for (int i = 0; i < placeholders.length; i++)
         {
             JTextField text;
             text = new JTextField(20);
-            text.setBounds(i * 130 + 20, 20, 125, 30); // Set position and size
+            text.setBounds(offset * 130 + 20, 20, 125, 30); // Set position and size
             String placeholder = placeholders[i];
             text.setText(placeholder);
             text.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Red border with thickness of 5
@@ -346,6 +373,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 }
             });
 
+            offset++;
             textBoxes.add(text);
             this.add(text);
             // if (i == 0)
@@ -362,66 +390,71 @@ public class GUIView extends JFrame implements ActionListener, View {
 
         if (e.getSource() == addClass && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name"});
-            makeComboBoxes(a, new String [] {"Class"});
+            makeTextBoxes(a, new String [] {"Class Name"}, 0);
         }
         else if (e.getSource() == addField && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Field Name"});
-            makeComboBoxes(a, new String [] {"Class", "Field"});
+            makeComboBoxes(a, new String [] {"Class"});
+            makeTextBoxes(a, new String [] {"Field Name"}, 1);
         }
         else if (e.getSource() == addMethod && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Parameters: a b c"});
-            makeComboBoxes(a, new String [] {"Class", "Method"});
+            makeComboBoxes(a, new String [] {"Class"});
+            makeTextBoxes(a, new String [] {"Method Name", "Parameters: a b c"}, 1);
         }
         else if (e.getSource() == addParameter && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Parameters: a b c"});
+            makeComboBoxes(a, new String [] {"Class", "Method"});
+            makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"}, 2);
         }
         else if (e.getSource() == addRelationship && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
+            makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
+            // makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
         }
         else if (e.getSource() == removeClass && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name"});
+            makeComboBoxes(a, new String [] {"Class"});
         }
         else if (e.getSource() == removeField && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Field Name"});
+            makeComboBoxes(a, new String [] {"Class", "Field"});
         }
         else if (e.getSource() == removeMethod && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method"});
+            makeComboBoxes(a, new String [] {"Class", "Method"});
         }
         else if (e.getSource() == removeParameter && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Parameters: a b c"});
+            makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
         }
         else if (e.getSource() == removeRelationship && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Src Class", "Dest Class"});
+            makeComboBoxes(a, new String [] {"Class", "Class"});
         }
         else if (e.getSource() == renameClass && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Old Class Name", "New Class Name"});
+            makeComboBoxes(a, new String [] {"Class"});
+            makeTextBoxes(a, new String [] {"New Class Name"}, 1);
         }
         else if (e.getSource() == renameField && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Old Field Name", "New Field Name"});
+            makeComboBoxes(a, new String [] {"Class", "Field"});
+            makeTextBoxes(a, new String [] {"New Field Name"}, 2);
         }
         else if (e.getSource() == renameMethod && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Old Method Name", "Arity of Method", "New Method Name"});
+            makeComboBoxes(a, new String [] {"Class", "Method"});
+            makeTextBoxes(a, new String [] {"New Method Name"}, 2);
         }
         else if (e.getSource() == renameParameter && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name", "Method Name", "Arity of Method", "Old Parameter", "New Parameter"});
+            makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+            makeTextBoxes(a, new String [] {"New Parameter"}, 3);
         }
         else if (e.getSource() == renameRelationshipType && textBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
+            makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
         }
         else if (e.getSource() == load)
         {
@@ -507,38 +540,52 @@ public class GUIView extends JFrame implements ActionListener, View {
         field.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
-            	System.out.println("hi");
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    String[] args = textBoxes.stream().map(JTextField::getText).toArray(String[]::new);
+                    // Gather the text from text fields
+                    String[] textInputs = textBoxes.stream()
+                    .map(JTextField::getText)
+                    .toArray(String[]::new);
+
+                    // Gather the selected items from combo boxes
+                    String[] comboBoxInputs = comboBoxes.stream()
+                    .map(comboBox -> (String) ((JComboBox<?>) comboBox).getSelectedItem())
+                    .toArray(String[]::new);
+
+                    // Concatenate both arrays
+                    String[] allInputs = Stream.concat(Arrays.stream(comboBoxInputs), Arrays.stream(textInputs))
+                    .filter(input -> input != null && !input.trim().isEmpty())  // Remove null or empty values
+                    .toArray(String[]::new);   
+
                     textBoxes.forEach(GUIView.this::remove); // Remove all text fields
                     textBoxes.clear();
+                    comboBoxes.forEach(GUIView.this::remove); // Remove all comboboxes
+                    comboBoxes.clear();
                     repaint(); // Refresh UI
                     // System.out.println("arg0: " + args[0]);
                     // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
                     //System.out.println("Original args: " + Arrays.toString(args));
 
-                    if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) || 
-                    action.equals(Action.REMOVE_PARAMETERS) || action.equals(Action.RENAME_PARAMETER))
-                    {
-                        // Split last element in list of parameters
-                        // Removes leading and trailing spaces from the string
-                        // Splits the string by one or more whitespace characters (including spaces, tabs, etc.), ensuring no empty elements
-                        String[] params = args[args.length - 1].trim().split("\\s+");
-                        
-                        // Remove parameters that are just empty or made of whitespace
-                        params = Arrays.stream(params).filter(x -> !x.isBlank()).toArray(String[]::new);
+                    // Process the concatenated arguments (e.g., for addMethod, addParameters, etc.)
+                    if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) ||
+                    action.equals(Action.REMOVE_PARAMETERS) || action.equals(Action.RENAME_PARAMETER)) {
+                        // Special handling for parameters if needed, depending on the action
+                        if (allInputs.length > 0) {
+                            String[] params = allInputs[allInputs.length - 1].trim().split("\\s+");
 
-                        // Remove the last element from args
-                        args = Arrays.copyOf(args, args.length - 1);
+                            // Clean up parameters
+                            params = Arrays.stream(params).filter(x -> !x.isBlank()).toArray(String[]::new);
 
-                        // Combine both arrays
-                        args = Stream.concat(Arrays.stream(args), Arrays.stream(params)).toArray(String[]::new);
-                        //System.out.println("Updated args: " + Arrays.toString(args));
+                            // Remove the last element from allInputs (parameters part)
+                            allInputs = Arrays.copyOf(allInputs, allInputs.length - 1);
+
+                            // Combine all inputs and parameters
+                            allInputs = Stream.concat(Arrays.stream(allInputs), Arrays.stream(params)).toArray(String[]::new);
+                        }
                     }
 
-                    if (controller.runHelper(action, args))
+                    if (controller.runHelper(action, allInputs))
                     {
-                        actionHelper(action, args); 
+                        actionHelper(action, allInputs); 
                         repaint();
                     }
                     
@@ -546,6 +593,8 @@ public class GUIView extends JFrame implements ActionListener, View {
                 else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
                     textBoxes.forEach(GUIView.this::remove); // Remove all text fields
                     textBoxes.clear();
+                    comboBoxes.forEach(GUIView.this::remove); // Remove all comboboxes
+                    comboBoxes.clear();
                     repaint(); // Refresh UI
                 }
             }
