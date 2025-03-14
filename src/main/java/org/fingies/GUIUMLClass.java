@@ -205,12 +205,12 @@ public class GUIUMLClass {
             {
                 maxLength = Math.max(maxLength, field.getName().length());
 
-                JLabel fieldLabel = new JLabel(field.getName());
+                JLabel fieldLabel = new JLabel(field.toString());
                 fieldLabel.setHorizontalAlignment(JLabel.LEFT);
                 fieldLabel.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
                 fieldLabel.setForeground(Color.BLACK);
 
-                int labelWidth = field.getName().length() * PIXELS_PER_CHARACTER; // Approximate width based on max line length
+                int labelWidth = field.toString().length() * PIXELS_PER_CHARACTER; // Approximate width based on max line length
                 int labelHeight = 25; // Adjust height based on number of lines
 
                 fieldLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, labelWidth, labelHeight);
@@ -372,7 +372,6 @@ public class GUIUMLClass {
 		public void focusLost(FocusEvent e) {
             JTextField src = (JTextField) e.getSource();
             //controller.runHelper(action, new String[] {label.getText(), src.getText()});
-			// TODO: decide whether to actually switch back to a JLabel or not based on whether runHelper() succeeds
             label.setText(src.getText()); // Update the label with the new text
             src.setVisible(false);
             label.setVisible(true);

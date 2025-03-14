@@ -54,4 +54,10 @@ public class Field extends Attribute {
         Field field = (Field) obj;
         return getName().equals(field.getName()); // Compare by name
     }
+
+    @Override
+    public String toString ()
+    {
+        return type + " " + name;
+    }
 }

@@ -111,7 +111,7 @@ public class Controller {
         }
     }
 
-    public boolean doAddField(String srcClass, String field, String type) 
+    public boolean doAddField(String srcClass, String type, String field) 
     {
         try
         {
@@ -586,7 +586,7 @@ public class Controller {
                 {
                     if (doAddField(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully added field " + args[1] + " with type " + args[2] + " to class " + args[0]);
+                        view.notifySuccess("Successfully added field " + args[2] + " with type " + args[1] + " to class " + args[0]);
                         madeChange = true;
                         return true;
                     }
