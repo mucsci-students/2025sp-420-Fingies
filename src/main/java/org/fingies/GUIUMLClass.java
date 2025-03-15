@@ -57,24 +57,6 @@ public class GUIUMLClass {
         methodsPanel.setBounds(5, 115, DEFAULT_PANEL_WIDTH, DEFAULT_METHOD_PANEL_HEIGHT);
         methodsPanel.setLayout(null);  // Set layout to null
 
-        // JLabel f1 = new JLabel("");
-        // f1.setText("11111");
-        // f1.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
-        // f1.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
-        // f1.setForeground(Color.BLACK);
-        // f1.setBounds(0, 0, 140, 25);
-
-        // JLabel f2 = new JLabel("");
-        // f2.setText("22222");
-        // f2.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
-        // f2.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
-        // f2.setForeground(Color.BLACK);
-        // f2.setBounds(0, 0, 140, 25);
-
-        // methodsPanel.add(f1);
-        // fieldsPanel.add(f2);
-        
-
         /* Here are the different layers in order for a JLayeredPane:
                 JLayeredPane.DEFAULT_LAYER
                 JLayeredPane.PALETTE_LAYER
@@ -140,11 +122,6 @@ public class GUIUMLClass {
         // Calculate new total height
         int newHeight = classPanel.getHeight() + fieldsPanel.getHeight() + methodsPanel.getHeight() + 20;
         int newWidth = Math.max(DEFAULT_PANEL_WIDTH, Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
-
-        //System.out.println("Update classPanel width is " + classPanel.getWidth());
-        //System.out.println("Update fieldsPanel width is " + fieldsPanel.getWidth());
-        //System.out.println("Update methodsPanel width is " + methodsPanel.getWidth());
-        //System.out.println("Update new width is " + newWidth + "\n");
         
         background.setBounds(background.getX(), background.getY(), newWidth + 10, newHeight);
         
@@ -205,12 +182,12 @@ public class GUIUMLClass {
             {
                 maxLength = Math.max(maxLength, field.getName().length());
 
-                JLabel fieldLabel = new JLabel(field.getName());
+                JLabel fieldLabel = new JLabel(field.toString());
                 fieldLabel.setHorizontalAlignment(JLabel.LEFT);
                 fieldLabel.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
                 fieldLabel.setForeground(Color.BLACK);
 
-                int labelWidth = field.getName().length() * PIXELS_PER_CHARACTER; // Approximate width based on max line length
+                int labelWidth = field.toString().length() * PIXELS_PER_CHARACTER; // Approximate width based on max line length
                 int labelHeight = 25; // Adjust height based on number of lines
 
                 fieldLabel.setBounds(PIXELS_PER_CHARACTER, 5 + offset * 20, labelWidth, labelHeight);
@@ -245,7 +222,7 @@ public class GUIUMLClass {
         methodsPanel.removeAll(); // Clear panel before updating
         int newHeight = methodsPanel.getHeight();
         int maxLength = 0;
-        int maxLineLength = 40;
+        int maxLineLength = 50;
         int offset = 0;
         int lineHeight = 20; // Approximate line height for each wrapped line
 
@@ -299,14 +276,13 @@ public class GUIUMLClass {
             newHeight = offset * lineHeight; // Calculate dynamic height based on total lines
         }
         // Resize the methodsPanel dynamically
-        int panelWidth = Math.min(maxLineLength, maxLength) * PIXELS_PER_CHARACTER - 30;
+        int panelWidth = Math.min(maxLineLength - 10, maxLength) * PIXELS_PER_CHARACTER - 30;
         int panelHeight = Math.max(DEFAULT_METHOD_PANEL_HEIGHT, newHeight - 20);
         
         methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), panelWidth, panelHeight);
         methodsPanel.revalidate();
         methodsPanel.repaint();
     }
-    
     
     /**
      * A listener that turns the JLabel invisible and turns a JTextField visible when the label is double clicked
@@ -372,7 +348,6 @@ public class GUIUMLClass {
 		public void focusLost(FocusEvent e) {
             JTextField src = (JTextField) e.getSource();
             //controller.runHelper(action, new String[] {label.getText(), src.getText()});
-			// TODO: decide whether to actually switch back to a JLabel or not based on whether runHelper() succeeds
             label.setText(src.getText()); // Update the label with the new text
             src.setVisible(false);
             label.setVisible(true);
