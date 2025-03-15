@@ -141,10 +141,12 @@ public class UMLClass {
     public boolean renameField(String fieldName, String type, String newName) {
         validateCharacters(newName);
         Field field = getField(fieldName);
-        if (field == null || fieldExists(newName))
+        if (field == null || fieldExists(newName) || name.equals(newName))
             throw new IllegalArgumentException("Invalid rename operation");
-        removeField(fieldName);
-        return addField(newName, type);
+        getField(fieldName).renameAttribute(newName);
+        return true;
+        // removeField(fieldName);
+        // return addField(newName, type);
     }
 
     /**
@@ -159,8 +161,10 @@ public class UMLClass {
         Method method = getMethod(methodName, types);
         if (method == null || methodExists(newName, types))
             throw new IllegalArgumentException("Invalid rename operation");
-        removeMethod(methodName, types);
-        return addMethod(newName, method.getReturnType(), method.getParameterNames(), types);
+        getMethod(methodName, types).renameAttribute(newName);
+        return true;
+        // removeMethod(methodName, types);
+        // return addMethod(newName, method.getReturnType(), method.getParameterNames(), types);
     }
 
     /**
