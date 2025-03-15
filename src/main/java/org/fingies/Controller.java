@@ -561,7 +561,7 @@ public class Controller {
                     return false;
                 }
             case RENAME_METHOD:
-                if (args.length == 5)
+                if (args.length >= 5)
                 {
                 	List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 1);
                     if (doRenameMethod(args[0], args[1], paramTypes, args[args.length - 1]))

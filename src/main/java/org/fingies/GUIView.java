@@ -274,19 +274,41 @@ public class GUIView extends JFrame implements ActionListener, View {
                                     fullMethodName.substring(fullMethodName.indexOf("(") + 1, fullMethodName.indexOf(")")) : "";
                 // Store them in a list
                 parameters = methodParams.split(", ");
-                System.out.println("parameters are " + Arrays.toString(parameters));
+                // System.out.println("parameters are " + Arrays.toString(parameters));
                 allInputs[1] = methodName;
             }
 
-            if (allInputs.length >= 3) // Ensure we have enough arguments 
+            if (allInputs.length >= 2) // Ensure we have enough arguments 
             {
-                String [] types;
-                String [] names;
+                String [] types = null;
+                String [] names = null; 
+                
+                // Initialize a list to store the final inputs
+                List<String> finalInputsList = new ArrayList<>();
+                finalInputsList.add(allInputs[0]);  // Class Name
+                finalInputsList.add(allInputs[1]);  // Method name
+                System.out.println("Action is " + action);
 
                 if (action.equals(Action.ADD_METHOD))
                 {
                     types = allInputs[3].trim().split("\\s+");   // Extract types 
                     names = allInputs[4].trim().split("\\s+");   // Extract names 
+                }
+                else if (action.equals(Action.REMOVE_PARAMETERS))
+                {
+                    finalInputsList.addAll(Arrays.asList(parameters));
+                    finalInputsList.add(";"); 
+                    finalInputsList.add(allInputs[2]);  // Parameter Name
+                }
+                else if (action.equals(Action.RENAME_METHOD))
+                {
+                    finalInputsList.addAll(Arrays.asList(parameters));
+                    finalInputsList.add(allInputs[2]);  // New Method Name
+                }
+                else if (action.equals(Action.REMOVE_METHOD))
+                {
+                    System.out.println("got here");
+                    finalInputsList.addAll(Arrays.asList(parameters));
                 }
                 else
                 {
@@ -296,7 +318,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 
 
                 // Ensure type-name pairing is valid 
-                if (types.length == names.length) { 
+                if (types != null && types.length == names.length) { 
                     List <String> altered = new ArrayList<>();
                     for (int i = 0; i < types.length; i++)
                     {
@@ -306,33 +328,24 @@ public class GUIView extends JFrame implements ActionListener, View {
 
                     String [] alteredArr = altered.toArray(new String[0]);
 
-                    // Initialize a list to store the final inputs
-                    List<String> finalInputsList = new ArrayList<>();
-                    finalInputsList.add(allInputs[0]);  // Class Name
-                    finalInputsList.add(allInputs[1]);  // Method name
-
                     if (action.equals(Action.ADD_METHOD)) {
                         finalInputsList.add(allInputs[2]); // return type
                         finalInputsList.addAll(Arrays.asList(alteredArr));
                     } 
-                    else if (action.equals(Action.ADD_PARAMETERS) || action.equals(Action.REMOVE_PARAMETERS)) 
+                    else if (action.equals(Action.ADD_PARAMETERS))
                     {
                         finalInputsList.addAll(Arrays.asList(parameters));
                         finalInputsList.add(";"); 
                         finalInputsList.addAll(Arrays.asList(alteredArr));
-                    } else 
+                    } 
+                    else 
                     {
                         finalInputsList.addAll(Arrays.asList(parameters));
                         finalInputsList.addAll(Arrays.asList(alteredArr));
                     }
-
-                    // Now finalInputsList will contain the elements in the desired format
-                    allInputs = finalInputsList.toArray(new String[0]);
-
-                    // Output the result (for debugging purposes)
-                    System.out.println(Arrays.toString(allInputs)); // This will show the expected result
-                    // Combine all inputs: allInputs[0], allInputs[1], allInputs[2], and formatted params
                 } 
+                // Now finalInputsList will contain the elements in the desired format
+                allInputs = finalInputsList.toArray(new String[0]);
             } 
         }
         System.out.println("Input: " + Arrays.toString(allInputs));
@@ -389,6 +402,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                     addMethodComboBoxListener(classComboBox, methodComboBox, parameterComboBox);
                     box = parameterComboBox;
                     break;
+                    
                 case "Relationship":
                     JComboBox<String> relationships = new JComboBox<>();
                     relationships.addItem("Aggregation");
@@ -452,6 +466,7 @@ public class GUIView extends JFrame implements ActionListener, View {
             String methodName = selectedMethodSignature.split("\\(")[0];  // Get method name (split by '(')
             
             paramBox.removeAllItems();
+
             String[] parameters = getMethodParameters(selectedClass, methodName);
             for (String param : parameters) {
                 paramBox.addItem(param);
@@ -460,8 +475,22 @@ public class GUIView extends JFrame implements ActionListener, View {
     }
     
     private String[] getMethodParameters(String selectedClass, String methodName) {
-        return GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
-                .filter(method -> method.getName().equals(methodName))
+        if (!GUIUMLClasses.containsKey(selectedClass)) {
+            throw new IllegalArgumentException("Class not found: " + selectedClass);
+        }
+        // Get the UML class and its methods
+        UMLClass umlClass = GUIUMLClasses.get(selectedClass).getUMLClass();
+        if (umlClass == null) {
+            throw new IllegalArgumentException("UMLClass not found for: " + selectedClass);
+        }
+        List<Method> methods = umlClass.getMethods();
+        if (methods == null) {
+            throw new IllegalArgumentException("Methods not found for class: " + selectedClass);
+        }
+
+        // Filter methods by name and extract parameter names
+        return methods.stream()
+                .filter(method -> method.getName().trim().equalsIgnoreCase(methodName.trim()))
                 .flatMap(method -> method.getParameters().stream())
                 .map(param -> param.getName())
                 .toArray(String[]::new);
