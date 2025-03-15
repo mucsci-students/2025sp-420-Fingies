@@ -57,24 +57,6 @@ public class GUIUMLClass {
         methodsPanel.setBounds(5, 115, DEFAULT_PANEL_WIDTH, DEFAULT_METHOD_PANEL_HEIGHT);
         methodsPanel.setLayout(null);  // Set layout to null
 
-        // JLabel f1 = new JLabel("");
-        // f1.setText("11111");
-        // f1.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
-        // f1.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
-        // f1.setForeground(Color.BLACK);
-        // f1.setBounds(0, 0, 140, 25);
-
-        // JLabel f2 = new JLabel("");
-        // f2.setText("22222");
-        // f2.setHorizontalAlignment(JLabel.LEFT); //LEFT, CENTER, RIGHT
-        // f2.setVerticalAlignment(JLabel.TOP); // TOP, CENTER, BOTTOM
-        // f2.setForeground(Color.BLACK);
-        // f2.setBounds(0, 0, 140, 25);
-
-        // methodsPanel.add(f1);
-        // fieldsPanel.add(f2);
-        
-
         /* Here are the different layers in order for a JLayeredPane:
                 JLayeredPane.DEFAULT_LAYER
                 JLayeredPane.PALETTE_LAYER
@@ -140,11 +122,6 @@ public class GUIUMLClass {
         // Calculate new total height
         int newHeight = classPanel.getHeight() + fieldsPanel.getHeight() + methodsPanel.getHeight() + 20;
         int newWidth = Math.max(DEFAULT_PANEL_WIDTH, Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
-
-        //System.out.println("Update classPanel width is " + classPanel.getWidth());
-        //System.out.println("Update fieldsPanel width is " + fieldsPanel.getWidth());
-        //System.out.println("Update methodsPanel width is " + methodsPanel.getWidth());
-        //System.out.println("Update new width is " + newWidth + "\n");
         
         background.setBounds(background.getX(), background.getY(), newWidth + 10, newHeight);
         

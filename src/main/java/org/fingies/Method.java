@@ -140,7 +140,7 @@ public class Method extends Attribute {
                 .map(param -> param.getType())
                 .reduce((a, b) -> a + ", " + b)
                 .orElse("");
-        return name + "(" + paramString + ")";
+        return name + " (" + paramString + ")";
     }
 
     @Override
@@ -149,6 +149,6 @@ public class Method extends Attribute {
                 .map(param -> param.getType() + " " + param.getName())
                 .reduce((a, b) -> a + ", " + b)
                 .orElse("");
-        return name + "(" + paramString + ")";
+        return returnType + " " + name + " (" + paramString + ")";
     }
 }

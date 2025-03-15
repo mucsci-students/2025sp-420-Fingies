@@ -256,17 +256,86 @@ public class GUIView extends JFrame implements ActionListener, View {
         comboBoxes.forEach(GUIView.this::remove);
         comboBoxes.clear();
         repaint(); // Refresh UI
-    
-        // Process the concatenated arguments (e.g., for addMethod, addParameters, etc.)
-        if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) ||
-            action.equals(Action.REMOVE_PARAMETERS) || action.equals(Action.RENAME_PARAMETER)) {
-            if (allInputs.length > 0) {
-                String[] params = allInputs[allInputs.length - 1].trim().split("\\s+");
-                params = Arrays.stream(params).filter(x -> !x.isBlank()).toArray(String[]::new);
-                allInputs = Arrays.copyOf(allInputs, allInputs.length - 1);
-                allInputs = Stream.concat(Arrays.stream(allInputs), Arrays.stream(params)).toArray(String[]::new);
+        
+        // Special handling for actions that require parameter formatting 
+        // Turns method1 (String int String) into method1 without the type list
+        if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) 
+        || action.equals(Action.REMOVE_METHOD) || action.equals(Action.REMOVE_PARAMETERS) 
+        || action.equals(Action.RENAME_METHOD) || action.equals(Action.RENAME_PARAMETER))
+        {
+            String [] parameters = null;
+            // separates the method name and its parameters
+            if (allInputs.length > 1) { // Ensure there's a method name to process
+                String fullMethodName = allInputs[1];
+                // Extract the method name (before space or parenthesis)
+                String methodName = fullMethodName.split("\\s|\\(")[0];
+                // Extract the method parameters (if any exist)
+                String methodParams = fullMethodName.contains("(") ? 
+                                    fullMethodName.substring(fullMethodName.indexOf("(") + 1, fullMethodName.indexOf(")")) : "";
+                // Store them in a list
+                parameters = methodParams.split(", ");
+                System.out.println("parameters are " + Arrays.toString(parameters));
+                allInputs[1] = methodName;
             }
+
+            if (allInputs.length >= 3) // Ensure we have enough arguments 
+            {
+                String [] types;
+                String [] names;
+
+                if (action.equals(Action.ADD_METHOD))
+                {
+                    types = allInputs[3].trim().split("\\s+");   // Extract types 
+                    names = allInputs[4].trim().split("\\s+");   // Extract names 
+                }
+                else
+                {
+                    types = allInputs[2].trim().split("\\s+");   // Extract types 
+                    names = allInputs[3].trim().split("\\s+");   // Extract names 
+                }
+                
+
+                // Ensure type-name pairing is valid 
+                if (types.length == names.length) { 
+                    List <String> altered = new ArrayList<>();
+                    for (int i = 0; i < types.length; i++)
+                    {
+                        altered.add(types[i]);
+                        altered.add(names[i]);
+                    }
+
+                    String [] alteredArr = altered.toArray(new String[0]);
+
+                    // Initialize a list to store the final inputs
+                    List<String> finalInputsList = new ArrayList<>();
+                    finalInputsList.add(allInputs[0]);  // Class Name
+                    finalInputsList.add(allInputs[1]);  // Method name
+
+                    if (action.equals(Action.ADD_METHOD)) {
+                        finalInputsList.add(allInputs[2]); // return type
+                        finalInputsList.addAll(Arrays.asList(alteredArr));
+                    } 
+                    else if (action.equals(Action.ADD_PARAMETERS) || action.equals(Action.REMOVE_PARAMETERS)) 
+                    {
+                        finalInputsList.addAll(Arrays.asList(parameters));
+                        finalInputsList.add(";"); 
+                        finalInputsList.addAll(Arrays.asList(alteredArr));
+                    } else 
+                    {
+                        finalInputsList.addAll(Arrays.asList(parameters));
+                        finalInputsList.addAll(Arrays.asList(alteredArr));
+                    }
+
+                    // Now finalInputsList will contain the elements in the desired format
+                    allInputs = finalInputsList.toArray(new String[0]);
+
+                    // Output the result (for debugging purposes)
+                    System.out.println(Arrays.toString(allInputs)); // This will show the expected result
+                    // Combine all inputs: allInputs[0], allInputs[1], allInputs[2], and formatted params
+                } 
+            } 
         }
+        System.out.println("Input: " + Arrays.toString(allInputs));
     
         // Call controller helper with the concatenated arguments
         if (controller.runHelper(action, allInputs)) {
@@ -332,7 +401,10 @@ public class GUIView extends JFrame implements ActionListener, View {
                 default:
                     throw new IllegalArgumentException("Unknown placeholder: " + placeholder);
             }
-    
+            
+            // Allows the text to wrap and sets the max amount of rows to be shown per box at a time
+            box.setRenderer(new WrappingComboBoxRenderer());
+            box.setMaximumRowCount(8);
             styleComboBox(box, i);
             comboBoxes.add(box);
             this.add(box);
@@ -416,7 +488,7 @@ public class GUIView extends JFrame implements ActionListener, View {
             case "getFields" -> GUIUMLClasses.get(selectedClass).getUMLClass().getFields().stream()
                     .map(x -> x.getName()).toArray(String[]::new);
             case "getMethods" -> GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
-                    .map(x -> x.getName()).toArray(String[]::new);
+                    .map(x -> x.toTypes()).toArray(String[]::new);
             default -> new String[0];
         };
     }
@@ -483,26 +555,25 @@ public class GUIView extends JFrame implements ActionListener, View {
         else if (e.getSource() == addField && textBoxes.isEmpty())
         {
             makeComboBoxes(a, new String [] {"Class"});
-            makeTextBoxes(a, new String [] {"Type: int char", "Field Name"}, 1);
+            makeTextBoxes(a, new String [] {"Type: int String", "Field Name"}, 1);
             createButtons(a, 3);
         }
         else if (e.getSource() == addMethod && textBoxes.isEmpty())
         {
             makeComboBoxes(a, new String [] {"Class"});
-            makeTextBoxes(a, new String [] {"Return Type", "Method Name", "Parameters: a b c"}, 1);
-            createButtons(a, 4);
+            makeTextBoxes(a, new String [] {"Method Name", "Return Type", "Types: int String", "Parameters: a b c"}, 1);
+            createButtons(a, 5);
         }
         else if (e.getSource() == addParameter && textBoxes.isEmpty())
         {
             makeComboBoxes(a, new String [] {"Class", "Method"});
             makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"}, 2);
-            createButtons(a, 3);
+            createButtons(a, 4);
         }
         else if (e.getSource() == addRelationship && textBoxes.isEmpty())
         {
             makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
             createButtons(a, 3);
-            // makeTextBoxes(a, new String [] {"Src Class", "Dest Class", "Relationship Type"});
         }
         else if (e.getSource() == removeClass && textBoxes.isEmpty())
         {
@@ -578,8 +649,6 @@ public class GUIView extends JFrame implements ActionListener, View {
         		System.exit(0);
         	}
         }
-        
-
     	// String[] args = new String[0];
         // controller.runHelper(a, args);
     }
@@ -638,71 +707,6 @@ public class GUIView extends JFrame implements ActionListener, View {
             }
             updateArrows();
     }
-
-    // private void addEnterKeyListenerToRemove(Action action, JTextField field) {
-    //     field.addKeyListener(new java.awt.event.KeyAdapter() {
-    //         @Override
-    //         public void keyPressed(KeyEvent e) {
-    //             if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-    //                 // Gather the text from text fields
-    //                 String[] textInputs = textBoxes.stream()
-    //                 .map(JTextField::getText)
-    //                 .toArray(String[]::new);
-
-    //                 // Gather the selected items from combo boxes
-    //                 String[] comboBoxInputs = comboBoxes.stream()
-    //                 .map(comboBox -> (String) ((JComboBox<?>) comboBox).getSelectedItem())
-    //                 .toArray(String[]::new);
-
-    //                 // Concatenate both arrays
-    //                 String[] allInputs = Stream.concat(Arrays.stream(comboBoxInputs), Arrays.stream(textInputs))
-    //                 .filter(input -> input != null && !input.trim().isEmpty())  // Remove null or empty values
-    //                 .toArray(String[]::new);   
-
-    //                 textBoxes.forEach(GUIView.this::remove); // Remove all text fields
-    //                 textBoxes.clear();
-    //                 comboBoxes.forEach(GUIView.this::remove); // Remove all comboboxes
-    //                 comboBoxes.clear();
-    //                 repaint(); // Refresh UI
-    //                 // System.out.println("arg0: " + args[0]);
-    //                 // System.out.println("arg0: " + args[0] + "\n" + "arg1: " + args[1]);
-    //                 //System.out.println("Original args: " + Arrays.toString(args));
-
-    //                 // Process the concatenated arguments (e.g., for addMethod, addParameters, etc.)
-    //                 if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) ||
-    //                 action.equals(Action.REMOVE_PARAMETERS) || action.equals(Action.RENAME_PARAMETER)) {
-    //                     // Special handling for parameters if needed, depending on the action
-    //                     if (allInputs.length > 0) {
-    //                         String[] params = allInputs[allInputs.length - 1].trim().split("\\s+");
-
-    //                         // Clean up parameters
-    //                         params = Arrays.stream(params).filter(x -> !x.isBlank()).toArray(String[]::new);
-
-    //                         // Remove the last element from allInputs (parameters part)
-    //                         allInputs = Arrays.copyOf(allInputs, allInputs.length - 1);
-
-    //                         // Combine all inputs and parameters
-    //                         allInputs = Stream.concat(Arrays.stream(allInputs), Arrays.stream(params)).toArray(String[]::new);
-    //                     }
-    //                 }
-
-    //                 if (controller.runHelper(action, allInputs))
-    //                 {
-    //                     actionHelper(action, allInputs); 
-    //                     repaint();
-    //                 }
-                    
-    //             }
-    //             else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-    //                 textBoxes.forEach(GUIView.this::remove); // Remove all text fields
-    //                 textBoxes.clear();
-    //                 comboBoxes.forEach(GUIView.this::remove); // Remove all comboboxes
-    //                 comboBoxes.clear();
-    //                 repaint(); // Refresh UI
-    //             }
-    //         }
-    //     }); 
-    // }
     
     /**
      * Creates a GUIUMLObject for every UMLClass in UMLClassHandler
@@ -891,7 +895,5 @@ public class GUIView extends JFrame implements ActionListener, View {
 	{
 		controller = c;
 	}
-    
-    
 }
 

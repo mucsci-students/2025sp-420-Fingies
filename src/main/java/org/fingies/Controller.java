@@ -515,7 +515,7 @@ public class Controller {
                     	boolean result = getTwoListsFromArray(args, 3, args.length, parameterNames, parameterTypes);
                     	if (!result)
                     	{
-                    		view.notifyFail("Add Metod should have exactly 1 type for every parameter name.");
+                    		view.notifyFail("Add Method should have exactly 1 type for every parameter name.");
                     		return false;
                     	}
                         if (doAddMethod(args[0], args[1], args[2], parameterNames, parameterTypes))
@@ -659,7 +659,7 @@ public class Controller {
                     return false;
                 }
             case ADD_PARAMETERS:
-                if (args.length >= 5) {
+                if (args.length >= 6) {
                     try {
                         int idx = indexOfSymbol(args, ";");
                         if (idx == -1)
@@ -965,12 +965,13 @@ public class Controller {
 
     // ex. e1 e1 e2 e2 e3 e3
     public boolean getTwoListsFromArray(String[] array, int start, int end, List<String> names, List<String> types) {
+        System.out.println("end: " + end + "   " + "start: " + start);
     	if ((end - start) % 2 == 1)
-    		
+            return false;
         for (int i = start; i < end; i += 2)
         {
-        	names.add(array[i]);
-        	types.add(array[i + 1]);
+        	types.add(array[i]);
+        	names.add(array[i + 1]);
         }
     	return true;
     }

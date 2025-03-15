@@ -73,6 +73,6 @@ public class Parameter {
     @Override
     public String toString()
     {
-        return name;
+        return type + " " + name;
     }
 }
