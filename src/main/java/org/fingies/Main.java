@@ -27,8 +27,8 @@ public class Main {
             UMLClassHandler.createClass("ClassA");
             UMLClassHandler.createClass("ClassB");
             UMLClassHandler.createClass("ClassC");
-
-            // Add fields and methods (if needed)
+//
+//           // Add fields and methods (if needed)
             UMLClassHandler.getClass("ClassA").addField("FieldA", "String");
             UMLClassHandler.getClass("ClassA").addField("FieldB", "String");
             UMLClassHandler.getClass("ClassA").addField("FieldC", "String");

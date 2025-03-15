@@ -222,7 +222,7 @@ public class GUIUMLClass {
         methodsPanel.removeAll(); // Clear panel before updating
         int newHeight = methodsPanel.getHeight();
         int maxLength = 0;
-        int maxLineLength = 40;
+        int maxLineLength = 50;
         int offset = 0;
         int lineHeight = 20; // Approximate line height for each wrapped line
 
@@ -276,14 +276,13 @@ public class GUIUMLClass {
             newHeight = offset * lineHeight; // Calculate dynamic height based on total lines
         }
         // Resize the methodsPanel dynamically
-        int panelWidth = Math.min(maxLineLength, maxLength) * PIXELS_PER_CHARACTER - 30;
+        int panelWidth = Math.min(maxLineLength - 10, maxLength) * PIXELS_PER_CHARACTER - 30;
         int panelHeight = Math.max(DEFAULT_METHOD_PANEL_HEIGHT, newHeight - 20);
         
         methodsPanel.setBounds(5, 40 + fieldsPanel.getHeight(), panelWidth, panelHeight);
         methodsPanel.revalidate();
         methodsPanel.repaint();
     }
-    
     
     /**
      * A listener that turns the JLabel invisible and turns a JTextField visible when the label is double clicked
