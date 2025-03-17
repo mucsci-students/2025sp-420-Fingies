@@ -541,15 +541,15 @@ public class Controller {
             case REMOVE_METHOD:
                 if (args.length >= 2)
                 {
-                	List<String> paramTypes = getPartialListFromArray(args, 2, args.length);
+                    List<String> paramTypes = getPartialListFromArray(args, 2, args.length);
                     if (doRemoveMethod(args[0], args[1], paramTypes))
                     {
-                        view.notifySuccess("Successfully removed method " + args[1] + " with return type " + args[2] + " with arity " + args[3] + " from class " + args[0]);
+                        view.notifySuccess("Successfully removed method " + args[1] + " with return type " + args[2] + " from class " + args[0]);
                         madeChange = true;
                         return true;
                     }
                     else {
-                        //view.notifyFail("Failed to remove method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
+                        //view.notifyFail("Failed to remove method " + args[1] + " from class " + args[0]);
                         return false;
                     }
                 }
@@ -564,13 +564,13 @@ public class Controller {
                 	List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 1);
                     if (doRenameMethod(args[0], args[1], paramTypes, args[args.length - 1]))
                     {
-                        view.notifySuccess("Successfully renamed method " + args[1] + " with return type " + args[2] + " with arity " + args[3] + " to " + args[4] + " in class " + args[0]);
+                        view.notifySuccess("Successfully renamed method " + args[1] + " with return type " + args[2] + " to " + args[4] + " in class " + args[0]);
                         madeChange = true;
                         return true;
                     }
                     else
                     {
-                        //view.notifyFail("Failed to rename method " + args[1] + " with arity " + args[2] + " to " + args[3] + " in class " + args[0]);
+                        //view.notifyFail("Failed to rename method " + args[1] + " to " + args[3] + " in class " + args[0]);
                         return false;
                     }
                 }
@@ -678,7 +678,7 @@ public class Controller {
                         }
                         else
                         {
-                            //view.notifyFail("Failed to add parameter(s): " + params + " to method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
+                            //view.notifyFail("Failed to add parameter(s): " + params + " to method " + args[1] + " from class " + args[0]);
                             return false;
                         }
                     }
@@ -709,7 +709,7 @@ public class Controller {
                         return true;
                     }
                     else {
-                        //view.notifyFail("Failed to remove parameter(s): " + params + " from method " + args[1] + " with arity " + args[2] + " from class " + args[0]);
+                        //view.notifyFail("Failed to remove parameter(s): " + params + " from method " + args[1] + " from class " + args[0]);
                         return false;
                     }
                 }
@@ -729,7 +729,7 @@ public class Controller {
                     }
                     else
                     {
-                        //view.notifyFail("Failed to rename parameter " + args[3] + " with arity " + args[4] + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
+                        //view.notifyFail("Failed to rename parameter " + args[3] + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
                         return false;
                     }
                 }
@@ -963,7 +963,7 @@ public class Controller {
 
     // ex. e1 e1 e2 e2 e3 e3
     public boolean getTwoListsFromArray(String[] array, int start, int end, List<String> names, List<String> types) {
-        System.out.println("end: " + end + "   " + "start: " + start);
+        // System.out.println("end: " + end + "   " + "start: " + start);
     	if ((end - start) % 2 == 1)
             return false;
         for (int i = start; i < end; i += 2)

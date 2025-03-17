@@ -84,3 +84,14 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-
 [03/14/25 23:01:03]: Method not found
 [03/14/25 23:02:11]: Method not found
 [03/14/25 23:30:08]: Class aa already exists
+[03/17/25 16:20:40]: Invalid rename operation
+[03/17/25 16:20:40]: Field not found
+[03/17/25 16:20:40]: This relationship already exists.
+[03/17/25 16:20:40]: Invalid rename operation
+[03/17/25 16:20:40]: Test Write to Error Log, Ignore this message.
+[03/17/25 16:21:26]: String contains invalid characters
+[03/17/25 16:21:38]: String contains invalid characters
+[03/17/25 16:23:22]: This relationship does not exist
+[03/17/25 16:42:15]: String contains invalid characters
+[03/17/25 17:02:10]: Method not found
+[03/17/25 17:02:18]: Method not found
