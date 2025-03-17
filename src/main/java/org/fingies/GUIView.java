@@ -282,7 +282,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 String methodName = fullMethodName.split("\\s|\\(")[0];
                 // Extract the method parameters (if any exist)
                 String methodParams = fullMethodName.contains("(") ? 
-                                    fullMethodName.substring(fullMethodName.indexOf("(") + 1, fullMethodName.indexOf(")")) : "";
+                    fullMethodName.substring(fullMethodName.indexOf("(") + 1, fullMethodName.indexOf(")")) : "";
                 // Store them in a list
                 parameters = methodParams.split(", ");
                 // System.out.println("parameters are " + Arrays.toString(parameters));
@@ -366,10 +366,10 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
     }
 
+    // Removes Submit and Cancel buttons when the Cancel button is clicked
     private void handleCancelAction() {
         this.remove(submitButton);
         this.remove(cancelButton);
-        // Escape key action: Clear everything
         textBoxes.forEach(GUIView.this::remove);
         textBoxes.clear();
         comboBoxes.forEach(GUIView.this::remove);
@@ -377,7 +377,11 @@ public class GUIView extends JFrame implements ActionListener, View {
         repaint(); // Refresh UI
     }
     
-    
+    /**
+     * Makes x number of comboboxes based on the number of placeholders
+     * @param a action assigned to the combobox
+     * @param placeholders array of what type of comboboxes should be made
+     */
     public void makeComboBoxes(Action a, String[] placeholders) {
         comboBoxes.clear();
         JComboBox<String> classComboBox = null;
@@ -435,18 +439,34 @@ public class GUIView extends JFrame implements ActionListener, View {
         reload();
     }
     
+    /**
+     * Creates a combobox consisting of all current classes that exist within the model
+     * @return a new combobox with all currect classes that exist within the model
+     */
     private JComboBox<String> createClassComboBox() {
         String[] classes = GUIUMLClasses.keySet().toArray(String[]::new);
         JComboBox<String> classComboBox = new JComboBox<>(classes);
         return classComboBox;
     }
     
+    /**
+     * Creates comboboxes for either the fields or methods based on methodType
+     * @param classComboBox combobox consisting of all currect classes that exist within the model
+     * @param methodType either "getFields" for fields or "getMethods" for methods
+     * @return a combobox containing either all of the fields or methods that exist within a class
+     */
     private JComboBox<String> createComboBoxForClassItems(JComboBox<String> classComboBox, String methodType) {
         JComboBox<String> box = new JComboBox<>();
         updateComboBox(box, classComboBox, methodType);
         return box;
     }
     
+    /**
+     * Adds a listener for the combobox of parameters that will update based on what item is selected in the methodComboBox
+     * @param classComboBox combobox consisting of all currect classes that exist within the model
+     * @param methodComboBox combobox consisting of all currect methods that exist within a certain class
+     * @param paramBox combobox consisting of all currect parameters that exist within a method
+     */
     private void addMethodComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> methodComboBox, JComboBox<String> paramBox) {
         methodComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{paramBox}) {
             @Override
@@ -456,6 +476,12 @@ public class GUIView extends JFrame implements ActionListener, View {
         });
     }
     
+    /**
+     * Updates a combobox to fill it with new updated data
+     * @param box combobox to be updated
+     * @param classComboBox combobox consisting of all currect classes that exist within the model
+     * @param methodType either "getFields" for fields or "getMethods" for methods
+     */
     private void updateComboBox(JComboBox<String> box, JComboBox<String> classComboBox, String methodType) {
         String selectedClass = (String) classComboBox.getSelectedItem();
         if (selectedClass != null) {
@@ -467,6 +493,12 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
     }
     
+    /**
+     * Updates a combobox consisting of all currect parameters that exist within a method and fills it with new updated data
+     * @param paramBox combobox consisting of all currect parameters that exist within a method
+     * @param classComboBox combobox consisting of all currect classes that exist within the model
+     * @param methodComboBox combobox consisting of all currect methods that exist within a certain class
+     */
     private void updateParameterComboBox(JComboBox<String> paramBox, JComboBox<String> classComboBox, JComboBox<String> methodComboBox) {
         String selectedClass = (String) classComboBox.getSelectedItem();
         String selectedMethodSignature = (String) methodComboBox.getSelectedItem();
@@ -483,6 +515,12 @@ public class GUIView extends JFrame implements ActionListener, View {
         }
     }
     
+    /**
+     * Retrieved the info needed to update the parameterComboBox
+     * @param selectedClass combobox consisting of all currect classes that exist within the model
+     * @param methodName combobox consisting of all currect methods that exist within a certain class
+     * @return list containing all parameters that exist within a certain method
+     */
     private String[] getMethodParameters(String selectedClass, String methodName) {
         if (!GUIUMLClasses.containsKey(selectedClass)) {
             throw new IllegalArgumentException("Class not found: " + selectedClass);
@@ -505,6 +543,12 @@ public class GUIView extends JFrame implements ActionListener, View {
                 .toArray(String[]::new);
     }
     
+    /**
+     * Adds a listener for a combobox that will update based on what methodType is provided
+     * @param classComboBox combobox consisting of all currect classes that exist within the model
+     * @param box box to be given a listener and filled with updated data from the model
+     * @param methodType either "getFields" for fields or "getMethods" for methods
+     */
     private void addComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> box, String methodType) {
         classComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{box}) {
             @Override
@@ -521,6 +565,12 @@ public class GUIView extends JFrame implements ActionListener, View {
         });
     }
     
+    /**
+     * Returns list of either fields or methods based on methodType provided
+     * @param selectedClass classname that was selected within the classComboBox
+     * @param methodType either "getFields" for fields or "getMethods" for methods
+     * @return list of either all fields or all methods that exist within a certain class
+     */
     private String[] getClassItems(String selectedClass, String methodType) {
         return switch (methodType) {
             case "getFields" -> GUIUMLClasses.get(selectedClass).getUMLClass().getFields().stream()
@@ -531,6 +581,11 @@ public class GUIView extends JFrame implements ActionListener, View {
         };
     }
     
+    /**
+     * Styles a combobox in order to make it look a little nicer for the user
+     * @param box box to be styled
+     * @param index determines the offset horizontally, so the boxes don't overlap
+     */
     private void styleComboBox(JComboBox<String> box, int index) {
         box.setBounds(index * 130 + 20, 20, 125, 30);
         box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
@@ -581,6 +636,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         reload();
     }
 
+    // Based on the action sent in, make the correct number of textboxes and comboboxes along with the Submit and Cancel buttons
     @Override
     public void actionPerformed(ActionEvent e) {
     	Action a = ((GUIMenuItem) e.getSource()).action;
@@ -691,6 +747,11 @@ public class GUIView extends JFrame implements ActionListener, View {
         // controller.runHelper(a, args);
     }
 
+    /**
+     * Based on the action, perform actions within the GUIView to update it wit new data from JModel
+     * @param action action to be performed
+     * @param args list of arguments 
+     */
     private void actionHelper(Action action, String[] args)
     {
         switch(action) {
@@ -807,6 +868,10 @@ public class GUIView extends JFrame implements ActionListener, View {
         this.repaint();    // Repaint to reflect changes
     }
 
+    /**
+     * Adds a UMLClass to list of GUIUMLClasses, which contains all current classes that exist within the GUI
+     * @param className name of class to be added
+     */
     public void addUMLClass(String className)
     {
         GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this);
@@ -817,6 +882,10 @@ public class GUIView extends JFrame implements ActionListener, View {
         reload();
     }
 
+    /**
+     * Removes a UMLClass from the list of GUIUMLClasses
+     * @param className names of class to be removed
+     */
     public void removeUMLClass(String className)
     {
         // this..getContentPane().remove(GUIUMLClasses.get(name).getJLayeredPane());
@@ -825,6 +894,11 @@ public class GUIView extends JFrame implements ActionListener, View {
         reload();
     }
 
+    /**
+     * Renames a UMLClass in the list of GUIUMLClasses
+     * @param className name of class to be renamed
+     * @param newName new name of class to be assigned
+     */
     public void renameUMLClass(String className, String newName)
     {
         GUIUMLClass temp = GUIUMLClasses.get(className);
@@ -843,8 +917,6 @@ public class GUIView extends JFrame implements ActionListener, View {
         GUIUMLClasses.get(className).update();
     }
 
-    
-    
 	@Override
 	public String promptForInput(String message) {
 		return JOptionPane.showInputDialog(message);
