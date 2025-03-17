@@ -2,8 +2,6 @@ package org.fingies;
 
 import java.util.ArrayList;
 
-import javax.swing.JOptionPane;
-
 /**
  * The Main class for the entire UML editor program.
  * @author Lincoln Craddock

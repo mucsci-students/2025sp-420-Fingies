@@ -1,33 +1,23 @@
 package org.fingies;
 
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JMenu;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -68,7 +58,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     private GUIMenuItem renameRelationshipType;
 
     private ArrayList<JTextField> textBoxes;
-    private ArrayList<JComboBox> comboBoxes;
+    private ArrayList<JComboBox<String>> comboBoxes;
 
     private JButton submitButton;
     private JButton cancelButton;
@@ -87,7 +77,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         GUIUMLClasses = new HashMap<String, GUIUMLClass>();
         arrows = new ArrayList<ArrowComponent>();
         textBoxes = new ArrayList<JTextField>();
-        comboBoxes = new ArrayList<JComboBox>();
+        comboBoxes = new ArrayList<JComboBox<String>>();
 
         // Creates a JMenuBar and menus
         menuBar = new JMenuBar();
@@ -470,7 +460,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     private void addMethodComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> methodComboBox, JComboBox<String> paramBox) {
         methodComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{paramBox}) {
             @Override
-            protected void updateComboBox(JComboBox box) {
+            protected void updateComboBox(JComboBox<String> box) {
                 updateParameterComboBox((JComboBox<String>) box, classComboBox, methodComboBox);
             }
         });
@@ -552,7 +542,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     private void addComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> box, String methodType) {
         classComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{box}) {
             @Override
-            protected void updateComboBox(JComboBox box) {
+            protected void updateComboBox(JComboBox<String> box) {
                 String selectedClass = (String) classComboBox.getSelectedItem();
                 if (selectedClass != null) {
                     box.removeAllItems();
@@ -628,9 +618,6 @@ public class GUIView extends JFrame implements ActionListener, View {
             offset++;
             textBoxes.add(text);
             this.add(text);
-            // if (i == 0)
-            //     text.requestFocus(); // Automatically focus the text field
-            // addEnterKeyListenerToRemove(a, text);
             repaint(); // Refresh UI
         }
         reload();
@@ -743,8 +730,6 @@ public class GUIView extends JFrame implements ActionListener, View {
         		System.exit(0);
         	}
         }
-    	// String[] args = new String[0];
-        // controller.runHelper(a, args);
     }
 
     /**
