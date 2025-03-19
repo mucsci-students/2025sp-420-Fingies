@@ -76,7 +76,7 @@ public class ControllerTest {
     @Test
     public void testDoRemoveField() {
         controller.doAddClass("TestClass");
-        controller.doAddField("TestClass", "field1", "String");
+        controller.doAddField("TestClass", "String", "field1");
         boolean result = controller.doRemoveField("TestClass", "field1");
         assertTrue("Attribute should be removed successfully.", result);
     }
@@ -84,7 +84,7 @@ public class ControllerTest {
     @Test
     public void testDoRenameField() {
         controller.doAddClass("TestClass");
-        controller.doAddField("TestClass", "oldField", "String");
+        controller.doAddField("TestClass", "String", "oldField");
         boolean result = controller.doRenameField("TestClass", "oldField","String", "newField");
         assertTrue("Field should be renamed successfully.", result);
     }
@@ -116,7 +116,7 @@ public class ControllerTest {
     @Test
     public void testRenameFieldAction() {
         String [] args1 = {"JSON"};
-        String [] args2 = {"JSON", "WILLSON", "STRING"};
+        String [] args2 = {"JSON", "STRING", "WILLSON"};
         String [] args3 = {"JSON", "WILLSON", "STRING", "KEVSON"};
         controller.runHelper(Action.ADD_CLASS, args1);
         controller.runHelper(Action.ADD_FIELD, args2);

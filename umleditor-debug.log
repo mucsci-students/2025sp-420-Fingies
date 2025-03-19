@@ -95,3 +95,18 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-
 [03/17/25 16:42:15]: String contains invalid characters
 [03/17/25 17:02:10]: Method not found
 [03/17/25 17:02:18]: Method not found
+[03/18/25 21:12:25]: Invalid rename operation
+[03/18/25 21:12:25]: Field not found
+[03/18/25 21:12:25]: This relationship already exists.
+[03/18/25 21:12:25]: Invalid rename operation
+[03/18/25 21:12:25]: Test Write to Error Log, Ignore this message.
+[03/18/25 21:12:48]: Invalid rename operation
+[03/18/25 21:12:48]: Field not found
+[03/18/25 21:12:48]: This relationship already exists.
+[03/18/25 21:12:48]: Invalid rename operation
+[03/18/25 21:12:48]: Test Write to Error Log, Ignore this message.
+[03/18/25 21:23:55]: Invalid rename operation
+[03/18/25 21:23:55]: This relationship already exists.
+[03/18/25 21:23:55]: Test Write to Error Log, Ignore this message.
+[03/18/25 21:27:44]: This relationship already exists.
+[03/18/25 21:27:44]: Test Write to Error Log, Ignore this message.
