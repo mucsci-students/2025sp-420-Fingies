@@ -1,8 +1,9 @@
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 import org.fingies.*;
 import org.junit.Before;
@@ -24,17 +25,23 @@ public class JModelTest {
         UMLClassHandler.createClass("Car");
         UMLClassHandler.getClass("Car").addField("Wheels", "Wheels");
         UMLClassHandler.getClass("Car").addField("V16Engine", "Engine");
-        HashMap<String, String> carParams = new HashMap<>();
-        carParams.put("ThrottleAmount", "Float");
-        carParams.put("gasAmount", "Float");
-        UMLClassHandler.getClass("Car").addMethod("Drive", "void", carParams);
+        List<String> carParams = new ArrayList<>();
+        List<String> carTypes = new ArrayList<>();
+        carParams.add("ThrottleAmount");
+        carTypes.add("Float");
+        carParams.add("gasAmount");
+        carTypes.add("Float");
+        UMLClassHandler.getClass("Car").addMethod("Drive", "void", carParams, carTypes);
         UMLClassHandler.getClass("Car").setPosition(1000, 500);
         UMLClassHandler.createClass("Animal");
         UMLClassHandler.getClass("Animal").addField("Eyeballs", "int");
-        HashMap<String, String> animalParams = new HashMap<>();
-        animalParams.put("Food", "String");
-        animalParams.put("Calories", "int");
-        UMLClassHandler.getClass("Animal").addMethod("Eat", "void", animalParams);
+        List<String> animalParams = new ArrayList<>();
+        List<String> animalTypes = new ArrayList<>();
+        animalParams.add("Food");
+        animalTypes.add("String");
+        animalParams.add("Calories");
+        animalTypes.add("int");
+        UMLClassHandler.getClass("Animal").addMethod("Eat", "void", animalParams, animalTypes);
         UMLClassHandler.createClass("Food");
         RelationshipHandler.addRelationship("Car", "Animal", RelationshipType.Aggregation);
         RelationshipHandler.addRelationship("Food", "Animal", RelationshipType.Inheritance);

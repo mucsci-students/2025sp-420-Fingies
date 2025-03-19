@@ -59,3 +59,54 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-
 [03/08/25 17:09:21]: Test Write to Error Log, Ignore this message.
 [03/08/25 17:24:11]: The name Class A contains invalid characters
 [03/12/25 22:56:36]: Test Write to Error Log, Ignore this message.
+[03/14/25 16:16:26]: This relationship already exists.
+[03/14/25 16:16:26]: Test Write to Error Log, Ignore this message.
+[03/14/25 16:23:26]: This relationship already exists.
+[03/14/25 16:23:26]: Test Write to Error Log, Ignore this message.
+[03/14/25 16:25:03]: This relationship already exists.
+[03/14/25 16:25:03]: Test Write to Error Log, Ignore this message.
+[03/14/25 16:25:23]: This relationship already exists.
+[03/14/25 16:25:23]: Test Write to Error Log, Ignore this message.
+[03/14/25 16:25:33]: This relationship already exists.
+[03/14/25 16:25:33]: Test Write to Error Log, Ignore this message.
+[03/14/25 19:05:11]: The name Class Name contains invalid characters
+[03/14/25 20:32:26]: String contains invalid characters
+[03/14/25 20:32:39]: String contains invalid characters
+[03/14/25 20:33:39]: String contains invalid characters
+[03/14/25 20:37:40]: String contains invalid characters
+[03/14/25 21:07:24]: String contains invalid characters
+[03/14/25 21:12:12]: String contains invalid characters
+[03/14/25 22:56:13]: Invalid rename operation
+[03/14/25 22:57:05]: Invalid rename operation
+[03/14/25 22:58:02]: Method not found
+[03/14/25 22:58:09]: Method not found
+[03/14/25 23:00:03]: Method not found
+[03/14/25 23:01:03]: Method not found
+[03/14/25 23:02:11]: Method not found
+[03/14/25 23:30:08]: Class aa already exists
+[03/17/25 16:20:40]: Invalid rename operation
+[03/17/25 16:20:40]: Field not found
+[03/17/25 16:20:40]: This relationship already exists.
+[03/17/25 16:20:40]: Invalid rename operation
+[03/17/25 16:20:40]: Test Write to Error Log, Ignore this message.
+[03/17/25 16:21:26]: String contains invalid characters
+[03/17/25 16:21:38]: String contains invalid characters
+[03/17/25 16:23:22]: This relationship does not exist
+[03/17/25 16:42:15]: String contains invalid characters
+[03/17/25 17:02:10]: Method not found
+[03/17/25 17:02:18]: Method not found
+[03/18/25 21:12:25]: Invalid rename operation
+[03/18/25 21:12:25]: Field not found
+[03/18/25 21:12:25]: This relationship already exists.
+[03/18/25 21:12:25]: Invalid rename operation
+[03/18/25 21:12:25]: Test Write to Error Log, Ignore this message.
+[03/18/25 21:12:48]: Invalid rename operation
+[03/18/25 21:12:48]: Field not found
+[03/18/25 21:12:48]: This relationship already exists.
+[03/18/25 21:12:48]: Invalid rename operation
+[03/18/25 21:12:48]: Test Write to Error Log, Ignore this message.
+[03/18/25 21:23:55]: Invalid rename operation
+[03/18/25 21:23:55]: This relationship already exists.
+[03/18/25 21:23:55]: Test Write to Error Log, Ignore this message.
+[03/18/25 21:27:44]: This relationship already exists.
+[03/18/25 21:27:44]: Test Write to Error Log, Ignore this message.

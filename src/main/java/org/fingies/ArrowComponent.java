@@ -8,7 +8,6 @@ import java.awt.Point;
 import java.awt.geom.Arc2D;
 
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 
 public class ArrowComponent extends JComponent {
     private Point start;
@@ -74,12 +73,6 @@ public class ArrowComponent extends JComponent {
         // The offset start & end points:
         Point newStart = new Point(start.x + offset.x, start.y + offset.y);
         Point newEnd = new Point(end.x + offset.x, end.y + offset.y);
-
-//     // Debugging: Draw small circles at newStart and newEnd
-//        int circleDiameter = 8;
-//        g2d.setColor(Color.RED);  // Use a distinct color for debugging
-//        g2d.fillOval(newStart.x - circleDiameter / 2, newStart.y - circleDiameter / 2, circleDiameter, circleDiameter);
-//        g2d.fillOval(newEnd.x - circleDiameter / 2, newEnd.y - circleDiameter / 2, circleDiameter, circleDiameter);
 
         // Calculate the distance from the endpoint to the border of the JPanel
         double borderDistance = calculateBorderDistance(angle, endPanelWidth, endPanelHeight, offset);
