@@ -166,6 +166,21 @@ public class Controller {
         }
     }
 
+    public boolean doChangeMethodReturnType(String srcClass, String method, List<String> types, String newType)
+    {
+        try 
+        {
+            UMLClassHandler.getClass(srcClass).getMethod(method, types).setReturnType(newType);
+            return true;
+        }
+        catch (Exception e) 
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
+            return false;
+        }
+    }
+
     public boolean doRemoveMethod(String srcClass, String methodName, List<String> parameterTypes) 
     {
         try
@@ -756,6 +771,28 @@ public class Controller {
                 else 
                 {
                     view.notifyFail("Changing Parameter type should have exactly 6 arguments.");
+                    return false;
+                }
+            case CHANGE_METHOD_TYPE:
+             
+                if (args.length >= 3)
+                {
+                    List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 1);
+                    if (doChangeMethodReturnType(args[0], args[1], paramTypes, args[args.length - 1]))
+                    {
+                        view.notifySuccess("Successfully changed method " + args[1] + "'s return type to " + args[args.length - 1] + " in class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }  
+                    else
+                    {
+                        //view.notifyFail("Failed to change relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
+                        return false;
+                    }
+                }
+                else
+                {
+                    view.notifyFail("Change method type should have at least 3 arguments.");
                     return false;
                 }
             case CHANGE_RELATIONSHIP_TYPE:
