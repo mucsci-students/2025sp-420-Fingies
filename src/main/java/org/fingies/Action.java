@@ -108,5 +108,5 @@ public enum Action {
     /**
      * Changes a method type
      */
-    CHANGE_METHOD_TYPE;
+    CHANGE_METHOD_RETURN_TYPE;
 }

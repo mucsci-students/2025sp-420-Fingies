@@ -773,7 +773,7 @@ public class Controller {
                     view.notifyFail("Changing Parameter type should have exactly 6 arguments.");
                     return false;
                 }
-            case CHANGE_METHOD_TYPE:
+            case CHANGE_METHOD_RETURN_TYPE:
              
                 if (args.length >= 3)
                 {
