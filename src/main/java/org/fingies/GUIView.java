@@ -374,7 +374,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 allInputs = finalInputsList.toArray(new String[0]);
             } 
         }
-        System.out.println("Input: " + Arrays.toString(allInputs));
+        // System.out.println("Input: " + Arrays.toString(allInputs));
     
         // Call controller helper with the concatenated arguments
         if (controller.runHelper(action, allInputs)) {
