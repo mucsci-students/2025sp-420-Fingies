@@ -879,18 +879,11 @@ public class Controller {
                         if (result.toLowerCase().equals("y"))
                         {
                              return loadCheck(args[0]);
-
-                            // doLoad(args[0]);
-                            // hasSaved = true;
-                            // madeChange = false;
-                            // view.notifySuccess("Successfully loaded your file");
                         }
                         else
                         {
                             saveLoop();
                             return loadCheck(args[0]);
-                            // doLoad(args[0]);
-                            // view.notifySuccess("Successfully loaded your file.");
                         }
                     }
                     else
