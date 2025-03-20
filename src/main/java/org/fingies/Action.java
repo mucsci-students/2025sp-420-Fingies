@@ -104,5 +104,13 @@ public enum Action {
     /**
      * Changes a relationship type
      */
-    CHANGE_RELATIONSHIP_TYPE;
+    CHANGE_RELATIONSHIP_TYPE,
+    /**
+     * Undoes the last change to the UML diagram.
+     */
+    UNDO,
+    /**
+     * Redoes the last undone change.
+     */
+    REDO;
 }

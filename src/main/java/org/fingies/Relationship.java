@@ -48,6 +48,26 @@ public class Relationship
     }
     
     /**
+     * Setter method for the src field
+     * 
+     * @param newSrc The new source class to replace the source with
+     */
+    public void setSrc(UMLClass newSrc)
+    {
+        this.src = newSrc;
+    }
+
+    /**
+     * Setter method for the dest field
+     * 
+     * @param newDest The new destination class to replace the destination with
+     */
+    public void setDest(UMLClass newDest)
+    {
+        this.dest = newDest;
+    }
+    
+    /**
      * Getter for the type of the relationship
      * 
      * @return The type of this relationship

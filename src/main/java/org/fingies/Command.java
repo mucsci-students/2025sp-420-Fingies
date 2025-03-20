@@ -33,7 +33,8 @@ public class Command {
 		    "add method", "remove method", "rename method",
 		    "add field", "remove field", "rename field",
 		    "add parameters", "remove parameters", "change parameter",
-		    "change relationship type", "change parameter type", "change field type"
+		    "change relationship type", "change parameter type", "change field type",
+		    "undo", "redo" //TODO: we need a command for changing position of a class
 		};
 	
 	/**
@@ -47,7 +48,8 @@ public class Command {
 		    "addm", "rmm", "rnm",              // add method, remove method, rename method
 		    "addf", "rmf", "rnf",              // add field, remove field, rename field
 		    "addp", "rmp", "rnp",              // add parameters, remove parameters, rename parameter
-		    "crt", "cpt", "cft"				   // change relationship type, change parameter type, change field type
+		    "crt", "cpt", "cft",			   // change relationship type, change parameter type, change field type
+		    "u", "r"                           // undo and redo
 		};
 	
 	/**
@@ -77,7 +79,9 @@ public class Command {
 			"CLASS_NAME METHOD RETURN_TYPE ARITY PARAMETER NEW_NAME",
 			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE",
 			"SRC_CLASS METHOD RETURN_TYPE ARITY PARAMETER NEW_TYPE",
-			"CLASS_NAME FIELD NEW_TYPE"
+			"CLASS_NAME FIELD NEW_TYPE",
+			"",
+			""
 		};
 	
 	/**
@@ -111,7 +115,9 @@ public class Command {
 			"Gives a parameter of a method a new name.",
 			"Changes the type of a specified relationship.",
 			"Changes the data type of a parameter.",
-			"Changes the data type of a field"
+			"Changes the data type of a field.",
+			"Undoes the last change made.",
+			"Redoes the last undone change."
 		};
 	
 	Command (Action a, String[] args)
