@@ -195,13 +195,21 @@ public class UMLClassHandler {
     }
     
     /**
-     * Replaces one UMLClass object with another one.
-     * @param class1 The old class to replace
-     * @param class2 The new class to replace it with
+     * Replaces one UMLClass object with another one. Both parameters can be null.
+     * 
+     * @param class1 The old class to replace. If null, adds class2 to the diagram
+     * @param class2 The new class to replace it with. If null, removes class1 from the diagram
      */
     public static void replace(UMLClass class1, UMLClass class2)
     {
-    	classes.replace(class1.getName(), class1, class2);
+    	if (class1 == null && class2 == null)
+    		return;
+    	else if (class1 == null)
+    		classes.put(class2.getName(), class2);
+		else if (class2 == null)
+			classes.remove(class1.getName());
+		else
+			classes.replace(class1.getName(), class1, class2);
     }
 }
 
