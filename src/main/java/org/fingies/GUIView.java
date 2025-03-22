@@ -342,7 +342,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 }
                 else
                 {
-                    if (allInputs.length == 4)
+                    if (allInputs.length >= 4)
                     {
                         types = allInputs[2].trim().split("\\s+");   // Extract types 
                         names = allInputs[3].trim().split("\\s+");   // Extract names 
@@ -380,7 +380,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 allInputs = finalInputsList.toArray(new String[0]);
             } 
         }
-        System.out.println("Input: " + Arrays.toString(allInputs));
+        // System.out.println("Input: " + Arrays.toString(allInputs));
     
         // Call controller helper with the concatenated arguments
         if (controller.runHelper(action, allInputs)) {

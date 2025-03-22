@@ -130,3 +130,23 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-
 [03/22/25 17:58:29]: Cannot invoke "org.fingies.Method.addParameters(java.util.List, java.util.List)" because the return value of "org.fingies.UMLClass.getMethod(String, java.util.List)" is null
 [03/22/25 17:58:43]: Cannot invoke "org.fingies.Method.addParameters(java.util.List, java.util.List)" because the return value of "org.fingies.UMLClass.getMethod(String, java.util.List)" is null
 [03/22/25 17:59:15]: Cannot invoke "org.fingies.Method.addParameters(java.util.List, java.util.List)" because the return value of "org.fingies.UMLClass.getMethod(String, java.util.List)" is null
+[03/22/25 18:00:47]: Cannot invoke "org.fingies.Method.addParameters(java.util.List, java.util.List)" because the return value of "org.fingies.UMLClass.getMethod(String, java.util.List)" is null
+[03/22/25 18:04:05]: Cannot invoke "org.fingies.Method.addParameters(java.util.List, java.util.List)" because the return value of "org.fingies.UMLClass.getMethod(String, java.util.List)" is null
+[03/22/25 18:06:27]: Cannot invoke "org.fingies.Method.addParameters(java.util.List, java.util.List)" because the return value of "org.fingies.UMLClass.getMethod(String, java.util.List)" is null
+[03/22/25 18:14:11]: Cannot invoke "org.fingies.Method.addParameters(java.util.List, java.util.List)" because the return value of "org.fingies.UMLClass.getMethod(String, java.util.List)" is null
+[03/22/25 18:17:44]: Cannot invoke "org.fingies.Method.addParameters(java.util.List, java.util.List)" because the return value of "org.fingies.UMLClass.getMethod(String, java.util.List)" is null
+[03/22/25 18:19:26]: Cannot invoke "org.fingies.Method.addParameters(java.util.List, java.util.List)" because the return value of "org.fingies.UMLClass.getMethod(String, java.util.List)" is null
+[03/22/25 18:22:06]: Cannot invoke "org.fingies.Method.addParameters(java.util.List, java.util.List)" because the return value of "org.fingies.UMLClass.getMethod(String, java.util.List)" is null
+[03/22/25 18:23:56]: null
+[03/22/25 18:25:03]: null
+[03/22/25 18:25:47]: null
+[03/22/25 18:27:31]: null
+[03/22/25 18:28:39]: null
+[03/22/25 18:30:10]: null
+[03/22/25 18:30:39]: null
+[03/22/25 18:31:52]: null
+[03/22/25 18:36:59]: Method not found
+[03/22/25 18:37:08]: Method not found
+[03/22/25 18:38:55]: Method not found
+[03/22/25 18:39:45]: Method not found
+[03/22/25 18:50:06]: Method not found
