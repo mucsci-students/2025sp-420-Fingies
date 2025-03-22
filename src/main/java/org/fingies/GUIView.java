@@ -126,7 +126,7 @@ public class GUIView extends JFrame implements ActionListener, View {
 
         // TYPE
         changeFieldType= new GUIMenuItem("Field", Action.CHANGE_FIELD_TYPE);
-        changeMethodType= new GUIMenuItem("Method", Action.CHANGE_METHOD_TYPE);
+        changeMethodType= new GUIMenuItem("Method", Action.CHANGE_METHOD_RETURN_TYPE);
         changeParameterType= new GUIMenuItem("Parameter", Action.CHANGE_PARAMETER_TYPE);
         changeRelatoinshipType = new GUIMenuItem("Relationship", Action.CHANGE_RELATIONSHIP_TYPE);
 
@@ -283,7 +283,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) 
         || action.equals(Action.REMOVE_METHOD) || action.equals(Action.REMOVE_PARAMETERS) 
         || action.equals(Action.RENAME_METHOD) || action.equals(Action.RENAME_PARAMETER)
-        || action.equals(Action.CHANGE_METHOD_TYPE) || action.equals(Action.CHANGE_PARAMETER_TYPE))
+        || action.equals(Action.CHANGE_METHOD_RETURN_TYPE) || action.equals(Action.CHANGE_PARAMETER_TYPE))
         {
             String [] parameters = null;
             // separates the method name and its parameters
@@ -312,8 +312,12 @@ public class GUIView extends JFrame implements ActionListener, View {
 
                 if (action.equals(Action.ADD_METHOD))
                 {
-                    types = allInputs[3].trim().split("\\s+");   // Extract types 
-                    names = allInputs[4].trim().split("\\s+");   // Extract names 
+                    finalInputsList.add(allInputs[2]); // return type
+                    if (allInputs.length == 5)
+                    {
+                        types = allInputs[3].trim().split("\\s+");   // Extract types 
+                        names = allInputs[4].trim().split("\\s+");   // Extract names 
+                    }
                 }
                 else if (action.equals(Action.REMOVE_PARAMETERS))
                 {
@@ -321,7 +325,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                     finalInputsList.add(";"); 
                     finalInputsList.add(allInputs[2]);  // Parameter Name
                 }
-                else if (action.equals(Action.RENAME_METHOD) || action.equals(Action.CHANGE_METHOD_TYPE))
+                else if (action.equals(Action.RENAME_METHOD) || action.equals(Action.CHANGE_METHOD_RETURN_TYPE))
                 {
                     finalInputsList.addAll(Arrays.asList(parameters));
                     finalInputsList.add(allInputs[2]);  // New Method Name or New Method Type
@@ -338,8 +342,11 @@ public class GUIView extends JFrame implements ActionListener, View {
                 }
                 else
                 {
-                    types = allInputs[2].trim().split("\\s+");   // Extract types 
-                    names = allInputs[3].trim().split("\\s+");   // Extract names 
+                    if (allInputs.length == 4)
+                    {
+                        types = allInputs[2].trim().split("\\s+");   // Extract types 
+                        names = allInputs[3].trim().split("\\s+");   // Extract names 
+                    }
                 }
                 
 
@@ -355,7 +362,6 @@ public class GUIView extends JFrame implements ActionListener, View {
                     String [] alteredArr = altered.toArray(new String[0]);
 
                     if (action.equals(Action.ADD_METHOD)) {
-                        finalInputsList.add(allInputs[2]); // return type
                         finalInputsList.addAll(Arrays.asList(alteredArr));
                     } 
                     else if (action.equals(Action.ADD_PARAMETERS))
@@ -374,7 +380,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 allInputs = finalInputsList.toArray(new String[0]);
             } 
         }
-        // System.out.println("Input: " + Arrays.toString(allInputs));
+        System.out.println("Input: " + Arrays.toString(allInputs));
     
         // Call controller helper with the concatenated arguments
         if (controller.runHelper(action, allInputs)) {
@@ -817,7 +823,7 @@ public class GUIView extends JFrame implements ActionListener, View {
             case RENAME_METHOD:
                 updateAttributes(args[0]);
                 break;
-            case CHANGE_METHOD_TYPE:
+            case CHANGE_METHOD_RETURN_TYPE:
                 updateAttributes(args[0]);
             case ADD_FIELD:
                 updateAttributes(args[0]);

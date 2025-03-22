@@ -1,6 +1,10 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertFalse;
 
 import org.fingies.Method;
@@ -77,6 +81,17 @@ public class MethodTest {
         }
     }
 
+    @Test
+    public void addMultipleParametersWithLists_ThenParametersShouldBeAdded()
+    {
+        List<String> parameters = new ArrayList<>(Arrays.asList("Name", "Age", "Sext"));
+        List<String> types = new ArrayList<>(Arrays.asList("String", "int", "String"));
+        m.addParameters(parameters, types);
+
+        assertTrue(m.getParameterNames().equals(parameters));
+        assertTrue(m.getParameterNames().equals(parameters));
+    }
+
     // --------------------- RENAME PARAMETERS ---------------------
 
     @Test
@@ -133,5 +148,36 @@ public class MethodTest {
     public void removeParameterThatDNE_ThrowsIllegalArgumentException()
     {
         assertFalse(m.removeParameter("Param1"));
+    }
+
+    // --------------------- CHANGE PARAMETER TYPES ---------------------
+
+    @Test
+    public void changeOneParameterType_ThenParameterTypeIsChanged()
+    {
+        m.addParameter("Name", "String");
+        assertEquals(m.getParameter("Name").getType(), "String");
+
+        m.getParameter("Name").setType("char");
+        assertEquals(m.getParameter("Name").getType(), "char");
+    }
+
+    @Test
+    public void changeMultipleParameterTypes_ThenParameterTypesAreChanged()
+    {
+        List<String> parameters = new ArrayList<>(Arrays.asList("Name", "Age", "Sex"));
+        List<String> types = new ArrayList<>(Arrays.asList("String", "int", "String"));
+        m.addParameters(parameters, types);
+
+        assertTrue(m.getParameterNames().equals(parameters));
+        assertTrue(m.getParameterNames().equals(parameters));
+
+        m.getParameter("Name").setType("char");
+        m.getParameter("Age").setType("double");
+        m.getParameter("Sex").setType("char");
+
+        assertEquals(m.getParameter("Name").getType(), "char");
+        assertEquals(m.getParameter("Age").getType(), "double");
+        assertEquals(m.getParameter("Sex").getType(), "char");
     }
 }

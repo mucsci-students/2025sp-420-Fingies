@@ -3,6 +3,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.fingies.UMLClass;
@@ -344,4 +345,29 @@ public class UMLClassTest {
             assertEquals("Method not found", e.getMessage());
         }
     }
+
+    // --------------------- CHANGE TYPES ---------------------
+
+    @Test
+    public void changeFieldType_ThenFieldTypeIsChanged()
+    {
+        c.addField("Name", "String");
+        assertEquals(c.getField("Name").getType(), "String");
+
+        c.getField("Name").setType("char");
+        assertEquals(c.getField("Name").getType(), "char");
+    }
+
+    @Test
+    public void changeMethodReturnType_ThenMethodReturnTypeIsChanged()
+    {
+        List<String> parameters = new ArrayList<>(Arrays.asList("Name", "Age"));
+        List<String> types = new ArrayList<>(Arrays.asList("String", "int"));
+        c.addMethod("Person", "void", parameters, types);
+        assertEquals(c.getMethod("Person", types).getReturnType(), "void");
+
+        c.getMethod("Person", types).setReturnType("boolean");
+        assertEquals(c.getMethod("Person", types).getReturnType(), "boolean");
+    }
+
 }

@@ -79,7 +79,7 @@ public class Command {
 			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST OLD_PARAMETER_NAME NEW_PARAMETER_NAME", // rename parameter
 			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE", //change relationship type
 			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST PARAMETER_NAME NEW_TYPE", //change parameter type
-			"CLASS_NAME FIELD NEW_TYPE" //change field type
+			"CLASS_NAME FIELD NEW_TYPE", //change field type
 			"CLASS_NAME METHOD_NAME PARAMETER_TYPES NEW_TYPE" //change method type
 		};
 	
