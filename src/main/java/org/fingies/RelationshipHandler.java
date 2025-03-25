@@ -2,6 +2,7 @@ package org.fingies;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Relationship Handler class to add, delete and get relationships
@@ -177,6 +178,13 @@ public class RelationshipHandler
     
     public static void replaceAllRelationshipsForClassname(String classname, List<Relationship> list)
     {
+    	relationships.removeIf(new Predicate<Relationship> () {
+
+			@Override
+			public boolean test(Relationship t) {
+				return t.getSrc().getName().equals(classname) || t.getDest().getName().equals(classname);
+			}});
     	
+    	relationships.addAll(list);
     }
 }

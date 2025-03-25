@@ -421,6 +421,7 @@ public class Controller {
     		Change change = undoStack.pop();
     		UMLClassHandler.replace(change.getCurrClass(), change.getOldClass());
     		RelationshipHandler.replace(change.getCurrClass(), change.getOldClass());
+    		RelationshipHandler.replaceAllRelationshipsForClassname(change.getOldClass().getName(), change.getOldRelationships());
     		
     		return true;
     	}

@@ -52,5 +52,10 @@ public class Change
 		return currClass;
 	}
 	
+	public List<Relationship> getOldRelationships()
+	{
+		return oldRelationships;
+	}
+	
 	
 }	
