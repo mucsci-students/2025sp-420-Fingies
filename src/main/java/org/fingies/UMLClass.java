@@ -226,4 +226,10 @@ public class UMLClass {
         position.setX(x);
         position.setY(y);
     }
+    
+    @Override
+    public String toString()
+    {
+    	return getName();
+    }
 }

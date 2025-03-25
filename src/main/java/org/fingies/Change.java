@@ -20,7 +20,7 @@ public class Change
 	 * @param oldClass The class to copy
 	 * @param oldRelationships A list of all of the relationships associated with this class to copy
 	 */
-	public Change(UMLClass oldClass, List<Relationship> oldRelatioships)
+	public Change(UMLClass oldClass, List<Relationship> oldRelationships)
 	{
 		if (oldClass != null)
 		{
@@ -39,7 +39,7 @@ public class Change
 		if (currClass != null)
 			this.currClass = new UMLClass(currClass);
 		else
-			this.oldClass = null;
+			this.currClass = null;
 	}
 
 	public UMLClass getOldClass() 

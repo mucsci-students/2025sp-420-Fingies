@@ -81,7 +81,7 @@ public class Controller {
         }
     }
 
-    public boolean doAddRelationship(String srcClass, String destClass, String type) 
+    public boolean doAddRelationship(String srcClass, String destClass, String type) // TODO: implement rest of methods with undo stack
     {
         try
         {
@@ -475,7 +475,8 @@ public class Controller {
     		Change change = undoStack.pop();
     		UMLClassHandler.replace(change.getCurrClass(), change.getOldClass());
     		RelationshipHandler.replace(change.getCurrClass(), change.getOldClass());
-    		RelationshipHandler.replaceAllRelationshipsForClassname(change.getOldClass().getName(), change.getOldRelationships());
+    		if (change.getOldClass() != null)
+    			RelationshipHandler.replaceAllRelationshipsForClassname(change.getOldClass().getName(), change.getOldRelationships());
     		
     		return true;
     	}

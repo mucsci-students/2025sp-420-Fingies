@@ -194,8 +194,13 @@ public class RelationshipHandler
 		}
     }
     
+    /**
+     * Replaces all of the relationships associated with a particular class with a different list of relationships.
+     * @param classname The name of the class associated with all of the relationships to replace.
+     * @param list A list of new relationships to add to the diagram.
+     */
     public static void replaceAllRelationshipsForClassname(String classname, List<Relationship> list)
-    {
+    {	
     	relationships.removeIf(new Predicate<Relationship> () {
 
 			@Override
