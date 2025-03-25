@@ -202,14 +202,14 @@ public class UMLClassHandler {
      */
     public static void replace(UMLClass class1, UMLClass class2)
     {
-    	if (class1 == null && class2 == null)
-    		return;
-    	else if (class1 == null)
-    		classes.put(class2.getName(), class2);
-		else if (class2 == null)
+    	if (class1 != null)
+    	{
 			classes.remove(class1.getName());
-		else
-			classes.replace(class1.getName(), class1, class2);
+    	}
+    	if (class2 != null)
+    	{
+    		classes.put(class2.getName(), class2);
+    	}
     }
 }
 
