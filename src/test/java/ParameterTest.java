@@ -43,7 +43,7 @@ public class ParameterTest {
     }
 
     @Test
-    public void checkParameterEquals()
+    public void checkParameterEqualsTrue()
     {
         Parameter q = new Parameter("Name", "String");
         assertTrue(p.equals(q));
@@ -57,10 +57,17 @@ public class ParameterTest {
     }
 
     @Test
-    public void checkHashCode()
+    public void checkHashCodeEqualsTrue()
     {
         Parameter q = new Parameter("Name", "String");
         assertTrue(p.hashCode() == q.hashCode());
+    }
+
+    @Test
+    public void checkHashCodeEqualsFalse()
+    {
+        Parameter q = new Parameter("Age", "int");
+        assertFalse(p.hashCode() == q.hashCode());
     }
 
     @Test

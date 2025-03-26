@@ -37,6 +37,47 @@ public class UMLClassHandlerTest {
         UMLClassHandler.reset();
     }
 
+    // --------------------- CREATE CLASS ---------------------
+
+    @Test
+    public void createOneClassFromString_ThenClassShouldBeCreated()
+    {
+        UMLClassHandler.createClass("Person");
+        assertTrue(UMLClassHandler.exists("Person"));
+    }
+
+    @Test
+    public void createOneClassFromStringThatAlreadyExists_ThenIllegalArgumentExceptionThrown()
+    {
+        UMLClassHandler.createClass("Person");
+        assertTrue(UMLClassHandler.exists("Person"));
+        try
+        {
+            UMLClassHandler.createClass("Person");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("Class Person already exists", e.getMessage());
+        }
+    }
+
+    @Test
+    public void createOneClassFromClassObject_ThenClassShouldBeCreated()
+    {
+        UMLClass c = new UMLClass ("Person");
+        UMLClassHandler.addClassObject(c);
+        assertTrue(UMLClassHandler.exists("Person"));
+    }
+
+    @Test
+    public void createOneClassFromClassObjectThatAlreadyExists_ThenClassShouldNotBeCreated()
+    {
+        UMLClassHandler.createClass("Person");
+        UMLClass c = new UMLClass ("Person");
+        assertFalse(UMLClassHandler.addClassObject(c));
+    }
+
+
     // --------------------- RENAME CLASS ---------------------
     @Test
     public void renameCarClassToTank()
@@ -109,7 +150,14 @@ public class UMLClassHandlerTest {
     }
 
     
-    // --------------------- DELETE ATTRIBUTE ---------------------
+    // --------------------- EXTRA TESTS ---------------------
+
+    @Test
+    public void testListClass()
+    {
+        assertEquals(UMLClassHandler.listClass(UMLClassHandler.getClass("Car")), "");
+    }
+
     @Test
     public void testResetFunction() {
         try

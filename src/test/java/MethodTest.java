@@ -7,6 +7,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertFalse;
 
+import org.fingies.Parameter;
 import org.fingies.Method;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +24,34 @@ public class MethodTest {
     public void setUp()
     {
         m = new Method ("Method1",  "void");
+    }
+
+    // --------------------- Getters and Setters ---------------------
+
+    @Test
+    public void getMethodName()
+    {
+        assertEquals(m.getName(), "Method1");
+    }
+
+    @Test
+    public void setMethodName()
+    {
+        m.renameAttribute("Method0");
+        assertEquals(m.getName(), "Method0");
+    }
+
+    @Test
+    public void getMethodReturnType()
+    {
+        assertEquals(m.getReturnType(), "void");
+    }
+
+    @Test
+    public void setmethodReturnType()
+    {
+        m.setReturnType("int");
+        assertEquals(m.getReturnType(), "int");
     }
     
     // --------------------- ADD PARAMETERS ---------------------
@@ -67,9 +96,28 @@ public class MethodTest {
     }
 
     @Test
+    public void addTwoParametersToMethod_ThenMethodTypeListShouldContainBothTypes()
+    {
+        m.addParameter("Param1",  "String");
+        m.addParameter("Param2",  "int");
+        List<String> paramTypes = m.getParameterTypes();
+        assertTrue(paramTypes.get(0).equals("String") && paramTypes.get(1).equals("int"));
+    }
+
+    @Test
+    public void addTwoParametersToMethod_ThenMethodParameterListShouldContainBothParameters()
+    {
+        Parameter param1 = new Parameter("Param1",  "String");
+        Parameter param2 = new Parameter("Param2",  "int");
+        m.addParameter(param1.getName(), param1.getType());
+        m.addParameter(param2.getName(), param2.getType());
+        List<Parameter> params = m.getParameters();
+        assertTrue(params.get(0).equals(param1) && params.get(1).equals(param2));
+    }
+
+    @Test
     public void addDuplicateParameters_ThenMethodShouldNotAddDuplicateParameter()
     {
-        
         try
         {
             m.addParameter("Param1",  "String");
@@ -120,6 +168,20 @@ public class MethodTest {
     }
 
     @Test
+    public void addTwoParametersAndRenameOneParameterToOneThatDNE_ThenParameterShouldFailToBeRenamed()
+    {
+        try
+        {
+            m.addParameter("Param1", "String");
+            m.renameParameter("Param2", "Param3");
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("Method Method1 doesn't have a parameter called Param2", e.getMessage());
+        }
+    }
+
+    @Test
     public void renameParameterToSameName_ThenParameterShouldFailToBeRenamed()
     {
         try
@@ -142,6 +204,44 @@ public class MethodTest {
         assertTrue(m.parameterExists("Param1"));
         m.removeParameter("Param1");
         assertFalse(m.parameterExists("Param1"));
+    }
+
+    @Test
+    public void removeListOfParameters_ThenAllParametersShouldBeRemoved()
+    {
+        List<String> paramNames = new ArrayList<String>(Arrays.asList("Param1", "Param2", "Param3"));
+        m.addParameter("Param1",  "String");
+        m.addParameter("Param2",  "int");
+        m.addParameter("Param3",  "boolean");
+
+        assertTrue(m.parameterExists("Param1"));
+        assertTrue(m.parameterExists("Param2"));
+        assertTrue(m.parameterExists("Param3"));
+
+        m.removeParameters(paramNames);
+        
+        assertTrue(m.getParameters().isEmpty());
+    }
+
+    @Test
+    public void removeListOfParametersWithNonExistantParameters_ThenIllegalArgumentExceptionThrown()
+    {
+        List<String> paramNames = new ArrayList<String>(Arrays.asList("Param1", "Param2", "Param4"));
+        m.addParameter("Param1",  "String");
+        m.addParameter("Param2",  "int");
+        m.addParameter("Param3",  "boolean");
+
+        assertTrue(m.parameterExists("Param1"));
+        assertTrue(m.parameterExists("Param2"));
+        assertTrue(m.parameterExists("Param3"));
+        try
+        {
+            m.removeParameters(paramNames);
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals(e.getMessage(), "Method Method1 doesn't have a parameter named Param4");
+        }
     }
 
     @Test
@@ -179,5 +279,75 @@ public class MethodTest {
         assertEquals(m.getParameter("Name").getType(), "char");
         assertEquals(m.getParameter("Age").getType(), "double");
         assertEquals(m.getParameter("Sex").getType(), "char");
+    }
+
+    // --------------------- ADDITIONAL TESTS ---------------------
+
+    @Test
+    public void checkMethodEqualsTrue()
+    {
+        Method m2 = new Method ("Method1", "void");
+        Parameter param1 = new Parameter("Param1",  "String");
+        assertTrue(m.equals(m2));
+
+        m.addParameter(param1.getName(), param1.getType());
+        m2.addParameter(param1.getName(), param1.getType());
+        assertTrue(m.equals(m2));
+    }
+
+    @Test
+    public void checkMethodEqualsFalse()
+    {
+        Method m2 = new Method ("Method2", "void");
+        Parameter param1 = new Parameter("Param1",  "String");
+        assertFalse(m.hashCode() == m2.hashCode());
+
+        m.addParameter(param1.getName(), param1.getType());
+        m2.addParameter(param1.getName(), param1.getType());
+        assertFalse(m.equals(m2));
+    }
+
+    @Test
+    public void checkHashCodeEqualsTrue()
+    {
+        Method m2 = new Method ("Method1", "void");
+        Parameter param1 = new Parameter("Param1",  "String");
+        assertTrue(m.hashCode() == m2.hashCode());
+
+        m.addParameter(param1.getName(), param1.getType());
+        m2.addParameter(param1.getName(), param1.getType());
+        assertTrue(m.hashCode() == m2.hashCode());
+    }
+
+    @Test
+    public void checkHashCodeEqualsFalse()
+    {
+        Method m2 = new Method ("Method2", "void");
+        Parameter param1 = new Parameter("Param1",  "String");
+        assertFalse(m.hashCode() == m2.hashCode());
+
+        m.addParameter(param1.getName(), param1.getType());
+        m2.addParameter(param1.getName(), param1.getType());
+        assertFalse(m.hashCode() == m2.hashCode());
+    }
+
+    @Test
+    public void checkToTypes()
+    {
+        assertEquals(m.toTypes(), "Method1 ()");
+        m.addParameter("Param1", "String");
+        assertEquals(m.toTypes(), "Method1 (String)");
+        m.addParameter("Param2", "int");
+        assertEquals(m.toTypes(), "Method1 (String, int)");
+    }
+
+    @Test
+    public void checkToString()
+    {
+        assertEquals(m.toString(), "void Method1 ()");
+        m.addParameter("Param1", "String");
+        assertEquals(m.toString(), "void Method1 (String Param1)");
+        m.addParameter("Param2", "int");
+        assertEquals(m.toString(), "void Method1 (String Param1, int Param2)");
     }
 }
