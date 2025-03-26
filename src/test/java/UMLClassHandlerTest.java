@@ -1,5 +1,7 @@
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import static org.junit.Assert.assertEquals;
@@ -153,9 +155,56 @@ public class UMLClassHandlerTest {
     // --------------------- EXTRA TESTS ---------------------
 
     @Test
-    public void testListClass()
+    public void testListClassWithNoFieldsOrMethods()
     {
-        assertEquals(UMLClassHandler.listClass(UMLClassHandler.getClass("Car")), "");
+        UMLClassHandler.createClass("Person");
+        assertEquals(UMLClassHandler.listClass(UMLClassHandler.getClass("Person")), "Person");
+    }
+
+    @Test
+    public void testListClassWithOneClass()
+    {
+        assertEquals(UMLClassHandler.listClass(UMLClassHandler.getClass("Car")), "Car\n\tString Engine\n\tString Wheel\n\tString Pedal");
+        ArrayList<String> params = new ArrayList<String>(Arrays.asList("color"));
+        ArrayList<String> types = new ArrayList<String>(Arrays.asList("String"));
+        UMLClassHandler.getClass("Car").addMethod("changeColor", "String", params, types);
+        assertEquals(UMLClassHandler.listClass(UMLClassHandler.getClass("Car")), "Car\n\tString Engine\n\tString Wheel\n\tString Pedal\n\tString changeColor (String color)");
+    }
+
+    @Test
+    public void testListClassesWithNoClasses()
+    {
+        UMLClassHandler.reset();
+        assertEquals(UMLClassHandler.listClasses(), "No current classes exist");
+    }
+
+    @Test
+    public void testListClassesWithOneClasses()
+    {
+        UMLClassHandler.reset();
+        UMLClassHandler.createClass("Car");
+            UMLClassHandler.getClass("Car").addField("Engine", "String");
+            UMLClassHandler.getClass("Car").addField("Wheel", "String");
+            UMLClassHandler.getClass("Car").addField("Pedal", "String");
+        assertEquals(UMLClassHandler.listClasses(), "Car\n\tString Engine\n\tString Wheel\n\tString Pedal");
+        ArrayList<String> params = new ArrayList<String>(Arrays.asList("color"));
+        ArrayList<String> types = new ArrayList<String>(Arrays.asList("String"));
+        UMLClassHandler.getClass("Car").addMethod("changeColor", "String", params, types);
+        assertEquals(UMLClassHandler.listClasses(), "Car\n\tString Engine\n\tString Wheel\n\tString Pedal\n\tString changeColor (String color)");
+    }
+
+    @Test
+    public void testListClassesWithManyClasses()
+    {
+        UMLClassHandler.reset();
+        UMLClassHandler.createClass("Car");
+            UMLClassHandler.getClass("Car").addField("Engine", "String");
+            UMLClassHandler.getClass("Car").addField("Wheel", "String");
+            UMLClassHandler.getClass("Car").addField("Pedal", "String");
+        UMLClassHandler.createClass("Animal");
+                UMLClassHandler.getClass("Animal").addField("Cat", "String");
+                UMLClassHandler.getClass("Animal").addField("Dog", "String");
+        assertEquals(UMLClassHandler.listClasses(), "Car\n\tString Engine\n\tString Wheel\n\tString Pedal\nAnimal\n\tString Cat\n\tString Dog");
     }
 
     @Test
@@ -173,7 +222,6 @@ public class UMLClassHandlerTest {
                 UMLClassHandler.getClass("Food").addField("Breakfast", "String");
                 UMLClassHandler.getClass("Food").addField("Lunch", "String");
                 UMLClassHandler.getClass("Food").addField("Dinner", "String");
-            // UMLClassHandler.addRelationship("Car", "Food");
 
             UMLClassHandler.reset();
             HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
