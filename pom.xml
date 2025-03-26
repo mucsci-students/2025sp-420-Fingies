@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.fingies</groupId>
@@ -62,7 +62,8 @@
                             <finalName>fingies-1.0-SNAPSHOT</finalName>
                             <transformers>
                                 <!-- Add Main-Class to the manifest -->
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                    implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>org.fingies.Main</mainClass>
                                 </transformer>
                             </transformers>
@@ -71,26 +72,62 @@
                 </executions>
             </plugin>
 
-            <!-- Exec plugin to run the main class during package phase -->
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.2.5</version>
                 <configuration>
-                    <mainClass>org.fingies.Main</mainClass>
+                    <argLine>@{argLine}</argLine>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.12</version>
                 <executions>
                     <execution>
-                        <id>run-main-class</id>
+                        <id>default-prepare-agent</id>
                         <goals>
-                            <goal>java</goal>
+                            <goal>prepare-agent</goal>
                         </goals>
-                        <phase>package</phase>
+                    </execution>
+                    <execution>
+                        <id>jacoco-check</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <excludes>
+                        <exclude>org/fingies/ArrowComponent*</exclude>
+                        <exclude>org/fingies/CLITester*</exclude>
+                        <exclude>org/fingies/CLIView*</exclude>
+                        <exclude>org/fingies/ComboBoxListener*</exclude>
+                        <exclude>org/fingies/Command*</exclude>
+                        <exclude>org/fingies/Controller*</exclude>
+                        <exclude>org/fingies/GUI**</exclude>
+                        <exclude>org/fingies/InputCheck*</exclude>
+                        <exclude>org/fingies/Main*</exclude>
+                        <exclude>org/fingies/View*</exclude>
+                        <exclude>org/fingies/WrappingComboBoxRenderer*</exclude>
+                    </excludes>
+                    <rules>
+                        <rule>
+                            <element>PACKAGE</element>
+                            <limits>
+                                <limit>
+                                    <counter>LINE</counter>
+                                    <value>COVEREDRATIO</value>
+                                    <minimum>80%</minimum>
+                                </limit>
+                            </limits>
+                        </rule>
+                    </rules>
+                </configuration>
             </plugin>
         </plugins>
     </build>
-
-
 </project>
