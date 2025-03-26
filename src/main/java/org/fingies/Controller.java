@@ -171,7 +171,7 @@ public class Controller {
         try 
         {
             ArrayList <String> empty = new ArrayList<>();
-            if (parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
                 UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).setReturnType(newType);
                 return true;
@@ -192,7 +192,7 @@ public class Controller {
         try
         {
             ArrayList <String> empty = new ArrayList<>();
-            if (parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
                 UMLClassHandler.getClass(srcClass).removeMethod(methodName, empty);
                 return true;
@@ -226,7 +226,7 @@ public class Controller {
         try
         {
             ArrayList <String> empty = new ArrayList<>();
-            if (parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
                 return UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, empty, newMethodName);
             } 
@@ -246,7 +246,7 @@ public class Controller {
         try
         {
             ArrayList <String> empty = new ArrayList<>();
-            if (parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
                 return UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).addParameters(newParameterNames, newParameterTypes);
             }   
@@ -266,7 +266,7 @@ public class Controller {
         try
         {
             ArrayList <String> empty = new ArrayList<>();
-            if (parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
                 return UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).removeParameters(parameterNamesToRemove);
             }   
@@ -285,7 +285,7 @@ public class Controller {
         try
         {
             ArrayList <String> empty = new ArrayList<>();
-            if (parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
                 return UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).renameParameter(oldParam, newParam);
             }   
@@ -302,7 +302,7 @@ public class Controller {
     public boolean doChangeParameterDataType(String srcClass, String methodName, List<String> parameterTypes, String param, String newType) {
         try {
             ArrayList <String> empty = new ArrayList<>();
-            if (parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
                 UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).getParameter(param).setType(newType);
                 return true;

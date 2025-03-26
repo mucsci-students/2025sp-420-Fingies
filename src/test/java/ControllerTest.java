@@ -109,7 +109,7 @@ public class ControllerTest {
     }
 
     @Test
-    public void changeMethodReturnType()
+    public void changeMethodReturnTypeZeroParameters()
     {
         List<String> empty = new ArrayList<>();
 
