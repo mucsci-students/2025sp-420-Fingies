@@ -113,3 +113,5 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-
 [03/21/25 12:52:39]: Cannot read field "name" because "clazz" is null
 [03/21/25 12:54:36]: java.lang.NullPointerException: Cannot read field "name" because "clazz" is null
 [03/21/25 12:57:35]: Cannot invoke "org.fingies.UMLClass.getName()" because "c" is null
+[03/26/25 15:55:59]: Class a does not exist
+[03/26/25 16:12:44]: String contains invalid characters

@@ -167,7 +167,7 @@ public class UMLClassHandler {
             str += ": \n\tfields:";
             for (Field field : fields)
             {
-                str += " " + field.getName() + ", ";
+                str += " " + field + ", ";
             }
             str = str.substring(0, str.length() - 2); // trim off the extra comma
         }
