@@ -17,9 +17,10 @@ public class RelationshipHandler
     {
     	UMLClass source = UMLClassHandler.getClass(src);
     	UMLClass destination = UMLClassHandler.getClass(dest);
-
-    	Relationship r = new Relationship(source, destination, RelationshipType.DEFAULT);
-    	return relationships.indexOf(r);
+    	Relationship relationship = relationships.stream()
+        .filter(r -> r.getSrc().equals(source) && r.getDest().equals(destination))
+        .findFirst().orElse(null);;
+    	return relationships.indexOf(relationship);
     }
 
     /**
@@ -63,7 +64,7 @@ public class RelationshipHandler
      * 
      * @param src The name of the source class
      * @param dest The name of the destination class
-     * 
+     * @return true if the relationship was removed, false otherwise
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      */
     public static boolean removeRelationship(String src, String dest)
@@ -82,7 +83,7 @@ public class RelationshipHandler
      * @param src The source of the relationship to change
      * @param dest The destination of the relationship to change
      * @param newType The new type to give the relationship
-     * 
+     * @return true if the relationship type was changed, false otherwise
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      */
     public static boolean changeRelationshipType(String src, String dest, RelationshipType newType)
@@ -104,10 +105,24 @@ public class RelationshipHandler
     public static String listRelationships()
     {
     	String lst = "";
-    	for (Relationship r : relationships)
+        if (!relationships.isEmpty())
+        {
+            for (Relationship r : relationships)
     		lst += r + "\n";
-    	lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
+    	    lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
+        }
     	return lst;
+    }
+
+    /**
+     * Checks whether a relationship exists given a src and dest
+     * @param src src class name
+     * @param dest dest class name
+     * @return true if the relationship exists, false otherwise
+     */
+    public static boolean exists(String src, String dest)
+    {
+    	return indexOf(src, dest) != -1;
     }
     
     public static List<Relationship> getRelationships()

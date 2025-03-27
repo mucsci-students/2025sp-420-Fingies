@@ -106,4 +106,19 @@ public class RelationshipTest {
     	r.setType(RelationshipType.Composition);
     	assertEquals(r + " should be the type " + RelationshipType.Composition, RelationshipType.Composition, r.getType());
     }  
+
+    // --------------------- RELATIONSHIP TYPE ---------------------
+
+    @Test
+    public void relatonshipTypeToString()
+    {
+        RelationshipType r = RelationshipType.fromString("a");
+        assertEquals("----◇", r.toString());
+        r = RelationshipType.fromString("c");
+        assertEquals("----◆", r.toString());
+        r = RelationshipType.fromString("i");
+        assertEquals("----▷", r.toString());
+        r = RelationshipType.fromString("r");
+        assertEquals("- - ▷", r.toString());
+    }
 }
