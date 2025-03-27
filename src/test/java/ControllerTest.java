@@ -28,7 +28,7 @@ public class ControllerTest {
 
     @After
     public void resetTest() {
-        UMLClassHandler.reset();
+        RelationshipHandler.reset();
     }
 
     // --------------------- METHOD FUNCTIONALITY ---------------------

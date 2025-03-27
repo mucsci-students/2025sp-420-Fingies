@@ -2,6 +2,7 @@ package org.fingies;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Relationship Handler class to add, delete and get relationships
@@ -17,12 +18,15 @@ public class RelationshipHandler
     {
     	UMLClass source = UMLClassHandler.getClass(src);
     	UMLClass destination = UMLClassHandler.getClass(dest);
-    	Relationship relationship = relationships.stream()
-        .filter(r -> r.getSrc().equals(source) && r.getDest().equals(destination))
-        .findFirst().orElse(null);
-        if (relationship == null)
-            return -1;
-    	return relationships.indexOf(relationship);
+
+    	// Iterate through relationships to find index of relationship (Objects.equals to handle null values)
+        for (int i = 0; i < relationships.size(); i++) {
+            Relationship r = relationships.get(i);
+            if (Objects.equals(r.getSrc(), source) && Objects.equals(r.getDest(), destination)) {
+                return i; // Return index as soon as found
+            }
+        }
+    	return -1;
     }
 
     /**
