@@ -1,1 +1,1 @@
-{"classes":[],"relationships":[]}
+{"classes":[],"relationships":[{"source":"A","destination":"B","type":"Aggregation"}]}

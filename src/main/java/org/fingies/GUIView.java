@@ -897,7 +897,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         arrows.clear();  // Clear the list of arrows
         
         // Get the relationships and create arrows for each one
-        for (Relationship relationship : RelationshipHandler.getRelationships()) 
+        for (Relationship relationship : RelationshipHandler.getRelationObjects()) 
         {
             addArrowForRelationship(relationship);
         }

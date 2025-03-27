@@ -19,7 +19,9 @@ public class RelationshipHandler
     	UMLClass destination = UMLClassHandler.getClass(dest);
     	Relationship relationship = relationships.stream()
         .filter(r -> r.getSrc().equals(source) && r.getDest().equals(destination))
-        .findFirst().orElse(null);;
+        .findFirst().orElse(null);
+        if (relationship == null)
+            return -1;
     	return relationships.indexOf(relationship);
     }
 
@@ -54,7 +56,7 @@ public class RelationshipHandler
     	Relationship r = new Relationship (source, destination, type);
         if(relationships.contains(r))
         {
-            throw new IllegalArgumentException("This relationship already exists.");
+            throw new IllegalArgumentException("This relationship already exists");
         }
         return relationships.add(r);
     }
@@ -108,7 +110,9 @@ public class RelationshipHandler
         if (!relationships.isEmpty())
         {
             for (Relationship r : relationships)
-    		lst += r + "\n";
+            {
+                lst += r + "\n";
+            }
     	    lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
         }
     	return lst;
@@ -123,11 +127,6 @@ public class RelationshipHandler
     public static boolean exists(String src, String dest)
     {
     	return indexOf(src, dest) != -1;
-    }
-    
-    public static List<Relationship> getRelationships()
-    {
-        return relationships;
     }
     
     /**

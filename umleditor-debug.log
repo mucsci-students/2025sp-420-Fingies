@@ -176,3 +176,40 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-
 [03/26/25 15:49:31]: Test Write to Error Log, Ignore this message.
 [03/26/25 16:28:31]: This relationship already exists.
 [03/26/25 16:28:31]: Test Write to Error Log, Ignore this message.
+[03/27/25 19:24:39]: This relationship already exists
+[03/27/25 19:24:39]: This relationship does not exist
+[03/27/25 19:24:39]: Test Write to Error Log, Ignore this message.
+[03/27/25 19:24:39]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:24:39]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:25:49]: This relationship already exists
+[03/27/25 19:25:49]: This relationship does not exist
+[03/27/25 19:25:49]: Test Write to Error Log, Ignore this message.
+[03/27/25 19:25:49]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:25:49]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:26:55]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:27:19]: This relationship already exists
+[03/27/25 19:27:19]: This relationship does not exist
+[03/27/25 19:27:19]: Test Write to Error Log, Ignore this message.
+[03/27/25 19:27:19]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:27:19]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:29:02]: This relationship already exists
+[03/27/25 19:29:02]: This relationship does not exist
+[03/27/25 19:29:02]: Test Write to Error Log, Ignore this message.
+[03/27/25 19:29:02]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:29:02]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:30:39]: This relationship already exists
+[03/27/25 19:30:39]: This relationship does not exist
+[03/27/25 19:30:39]: Test Write to Error Log, Ignore this message.
+[03/27/25 19:30:39]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:30:39]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:32:10]: This relationship already exists
+[03/27/25 19:32:10]: This relationship does not exist
+[03/27/25 19:32:10]: Test Write to Error Log, Ignore this message.
+[03/27/25 19:32:10]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:32:10]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:33:42]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:34:38]: This relationship already exists
+[03/27/25 19:34:38]: This relationship does not exist
+[03/27/25 19:34:38]: Test Write to Error Log, Ignore this message.
+[03/27/25 19:34:38]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
+[03/27/25 19:34:38]: java.lang.NullPointerException: Cannot invoke "org.fingies.JModel.writeToLog(String)" because "this.this$0" is null
