@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.fingies.UMLClass;
+import org.fingies.Position;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -175,8 +176,21 @@ public class UMLClassTest {
         {
             assertEquals("A method with that name and types already exists", e.getMessage());
         }
-        
-        
+    }
+
+    @Test
+    public void addMethodWithSameNameAsClass_ThenClassShouldFailToAddMethod()
+    {
+        try
+        {
+            List<String> parameters = new ArrayList<>();
+            List<String> types = new ArrayList<>();
+            c.addMethod("UMLClass", "void", parameters, types);
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals("A method must have a different name than its class", e.getMessage());
+        }
     }
 
     @Test
@@ -368,6 +382,15 @@ public class UMLClassTest {
 
         c.getMethod("Person", types).setReturnType("boolean");
         assertEquals(c.getMethod("Person", types).getReturnType(), "boolean");
+    }
+
+    // --------------------- POSITION ---------------------
+    
+    @Test
+    public void getPositoin_ThenPositionIsReturned()
+    {
+        c.setPosition(10, 10);
+        assertTrue(c.getPosition().getX() == 10 && c.getPosition().getY() == 10);
     }
 
 }

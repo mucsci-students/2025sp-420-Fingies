@@ -1,6 +1,7 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import org.fingies.Relationship;
 import org.fingies.RelationshipType;
@@ -108,6 +109,13 @@ public class RelationshipTest {
     }  
 
     // --------------------- RELATIONSHIP TYPE ---------------------
+
+    @Test
+    public void createNullRelationshipType()
+    {
+        RelationshipType r = RelationshipType.fromString("b");
+        assertNull(r);
+    }
 
     @Test
     public void relatonshipTypeToString()
