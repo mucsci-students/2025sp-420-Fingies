@@ -2,6 +2,7 @@ package org.fingies;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Relationship Handler class to add, delete and get relationships
@@ -18,8 +19,14 @@ public class RelationshipHandler
     	UMLClass source = UMLClassHandler.getClass(src);
     	UMLClass destination = UMLClassHandler.getClass(dest);
 
-    	Relationship r = new Relationship(source, destination, RelationshipType.DEFAULT);
-    	return relationships.indexOf(r);
+    	// Iterate through relationships to find index of relationship (Objects.equals to handle null values)
+        for (int i = 0; i < relationships.size(); i++) {
+            Relationship r = relationships.get(i);
+            if (Objects.equals(r.getSrc(), source) && Objects.equals(r.getDest(), destination)) {
+                return i; // Return index as soon as found
+            }
+        }
+    	return -1;
     }
 
     /**
@@ -53,7 +60,7 @@ public class RelationshipHandler
     	Relationship r = new Relationship (source, destination, type);
         if(relationships.contains(r))
         {
-            throw new IllegalArgumentException("This relationship already exists.");
+            throw new IllegalArgumentException("This relationship already exists");
         }
         return relationships.add(r);
     }
@@ -63,7 +70,7 @@ public class RelationshipHandler
      * 
      * @param src The name of the source class
      * @param dest The name of the destination class
-     * 
+     * @return true if the relationship was removed, false otherwise
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      */
     public static boolean removeRelationship(String src, String dest)
@@ -82,7 +89,7 @@ public class RelationshipHandler
      * @param src The source of the relationship to change
      * @param dest The destination of the relationship to change
      * @param newType The new type to give the relationship
-     * 
+     * @return true if the relationship type was changed, false otherwise
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      */
     public static boolean changeRelationshipType(String src, String dest, RelationshipType newType)
@@ -104,15 +111,26 @@ public class RelationshipHandler
     public static String listRelationships()
     {
     	String lst = "";
-    	for (Relationship r : relationships)
-    		lst += r + "\n";
-    	lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
+        if (!relationships.isEmpty())
+        {
+            for (Relationship r : relationships)
+            {
+                lst += r + "\n";
+            }
+    	    lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
+        }
     	return lst;
     }
-    
-    public static List<Relationship> getRelationships()
+
+    /**
+     * Checks whether a relationship exists given a src and dest
+     * @param src src class name
+     * @param dest dest class name
+     * @return true if the relationship exists, false otherwise
+     */
+    public static boolean exists(String src, String dest)
     {
-        return relationships;
+    	return indexOf(src, dest) != -1;
     }
     
     /**

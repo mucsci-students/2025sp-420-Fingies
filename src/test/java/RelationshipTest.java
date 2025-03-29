@@ -1,6 +1,7 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import org.fingies.Relationship;
 import org.fingies.RelationshipType;
@@ -106,4 +107,26 @@ public class RelationshipTest {
     	r.setType(RelationshipType.Composition);
     	assertEquals(r + " should be the type " + RelationshipType.Composition, RelationshipType.Composition, r.getType());
     }  
+
+    // --------------------- RELATIONSHIP TYPE ---------------------
+
+    @Test
+    public void createNullRelationshipType()
+    {
+        RelationshipType r = RelationshipType.fromString("b");
+        assertNull(r);
+    }
+
+    @Test
+    public void relatonshipTypeToString()
+    {
+        RelationshipType r = RelationshipType.fromString("a");
+        assertEquals("----◇", r.toString());
+        r = RelationshipType.fromString("c");
+        assertEquals("----◆", r.toString());
+        r = RelationshipType.fromString("i");
+        assertEquals("----▷", r.toString());
+        r = RelationshipType.fromString("r");
+        assertEquals("- - ▷", r.toString());
+    }
 }

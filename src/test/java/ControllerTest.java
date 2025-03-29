@@ -1,5 +1,9 @@
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.fingies.*;
 import org.junit.After;
 import org.junit.Before;
@@ -24,7 +28,7 @@ public class ControllerTest {
 
     @After
     public void resetTest() {
-        UMLClassHandler.reset();
+        RelationshipHandler.reset();
     }
 
     // --------------------- METHOD FUNCTIONALITY ---------------------
@@ -93,6 +97,38 @@ public class ControllerTest {
     public void testDoSave() {
         boolean result = controller.doSave("testfile.json");
         assertTrue("Data should be saved successfully.", result);
+    }
+
+    @Test
+    public void changeFieldType()
+    {
+        controller.doAddClass("TestClass");
+        controller.doAddField("TestClass", "String", "TestField");
+        boolean result = controller.doChangeFieldDataType("TestClass", "TestField", "char");
+        assertTrue("Field type should be changed successfully.", result);
+    }
+
+    @Test
+    public void changeMethodReturnTypeZeroParameters()
+    {
+        List<String> empty = new ArrayList<>();
+
+        controller.doAddClass("TestClass");
+        controller.doAddMethod("TestClass", "TestMethod", "void", empty, empty);
+        boolean result = controller.doChangeMethodReturnType("TestClass", "TestMethod", empty, "int");
+        assertTrue("Method return type should be changed successfully.", result);
+    }
+
+    @Test
+    public void changeParameterType()
+    {
+        List<String> parameters = new ArrayList<>(Arrays.asList("Name", "Age"));
+        List<String> types = new ArrayList<>(Arrays.asList("String", "int"));
+
+        controller.doAddClass("TestClass");
+        controller.doAddMethod("TestClass", "TestMethod", "void", parameters, types);
+        boolean result = controller.doChangeParameterDataType("TestClass", "TestMethod", types, "Name", "char");
+        assertTrue("Parameter type should be changed successfully.", result);
     }
 
     // --------------------- RUN METHODS ---------------------

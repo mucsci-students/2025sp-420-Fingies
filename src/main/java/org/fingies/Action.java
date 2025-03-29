@@ -104,5 +104,9 @@ public enum Action {
     /**
      * Changes a relationship type
      */
-    CHANGE_RELATIONSHIP_TYPE;
+    CHANGE_RELATIONSHIP_TYPE,
+    /**
+     * Changes a method type
+     */
+    CHANGE_METHOD_RETURN_TYPE;
 }
