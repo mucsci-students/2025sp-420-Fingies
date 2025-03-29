@@ -134,6 +134,7 @@ public class Controller {
         {
             model.writeToLog(e.getMessage());
             view.notifyFail(e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -469,7 +470,7 @@ public class Controller {
     {
     	if (undoStack.isEmpty())
     	{
-    		// nothing to undo
+    		// nothing to undo, don't bother giving an error message
     		return false;
     	}
     	else

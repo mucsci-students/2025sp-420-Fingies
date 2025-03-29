@@ -24,6 +24,7 @@ public class UMLClass {
         this.methods = new ArrayList<>();
         this.position = new Position();
     }
+    
     /**
      * Copy constructor
      * @param clazz The class you want to copy
@@ -35,6 +36,7 @@ public class UMLClass {
     	methods = new ArrayList<Method> (clazz.methods);
     	position = new Position(clazz.position);
     }
+    
     /**
      * Throws an IllegalArgumentException if the user provides a string that contains illegal characters
      * @param name name of the new class/attribute the user desires
