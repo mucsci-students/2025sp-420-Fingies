@@ -986,6 +986,7 @@ public class GUIView extends JFrame implements ActionListener, View {
 		// Nothing to be implemented here
 	}
 	
+	@Override
 	public void setController(Controller c)
 	{
 		controller = c;
