@@ -140,4 +140,11 @@ public interface View {
 	 */
 	void help(String command);
 	
+	/**
+	 * Gives the View a Controller to send user input to.
+	 * 
+	 * @param c The Controller for the View to interact with.
+	 */
+	public void setController(Controller c);
+	
 }
