@@ -1,8 +1,12 @@
 package org.fingies;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+
+import org.jline.reader.*;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
 /**
  * Handles the Command Line Interface View
@@ -11,9 +15,12 @@ import java.util.Scanner;
 public class CLIView implements View
 {
 	// fields
-    private Scanner sc = new Scanner(System.in);
     
     public String caret = ">";
+
+	private Terminal terminal;
+    private LineReader lineReader;
+    private Completer completer;
 
 	private Controller controller;
     
@@ -81,7 +88,18 @@ public class CLIView implements View
     public CLIView()
     {
     	setColorMode(colorMode); // Sets all of the text styles to their initial values.
-    }
+    
+		try {
+			terminal = TerminalBuilder.builder().build();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        completer = TabCompletion.getCompleter();
+        lineReader = LineReaderBuilder.builder()
+                .terminal(terminal)
+                .completer(completer)
+                .build();
+	}
 
     @Override
     public void run() 
@@ -90,9 +108,7 @@ public class CLIView implements View
 		Action action;
     	do
     	{
-    		System.out.print(caret + " ");
-
-        	String in = sc.nextLine();
+    		String in = lineReader.readLine(caret + " ");
             command = Command.parseCommand(in);
             while (command == null)
             {
@@ -115,8 +131,7 @@ public class CLIView implements View
             	}
             	else
             		notifyFail("Invalid command");
-            	System.out.print(caret + " ");
-            	in = sc.nextLine();
+					in = lineReader.readLine(caret + " ");
                 command = Command.parseCommand(in);
             }
 			
@@ -129,8 +144,7 @@ public class CLIView implements View
     @Override
     public String promptForInput(String message) 
     {
-        System.out.println(message);
-        return sc.nextLine();
+        return lineReader.readLine(message);
     }
 
     @Override
@@ -156,7 +170,7 @@ public class CLIView implements View
             while(!checkMsg.equals("")) // This loop will keep prompting the user until they input something that satisfies the check
             {
             	notifyFail(checkMsg);
-                ans = sc.nextLine();
+                ans = promptForInput(messages.get(i));
                 checkMsg = checks.get(i).check(ans);
             }
             result.add(ans);

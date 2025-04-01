@@ -1,0 +1,112 @@
+[02/13/25 14:26:19]: Test Write to Error Log, Ignore this message.
+[02/13/25 14:32:14]: java.lang.UnsupportedOperationException: Attempted to serialize java.lang.Class: org.fingies.UMLClassHandler. Forgot to register a type adapter?
+See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-unsupported
+[02/13/25 14:33:03]: java.lang.UnsupportedOperationException: Attempted to serialize java.lang.Class: org.fingies.UMLClassHandler. Forgot to register a type adapter?
+See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-unsupported
+[02/13/25 15:10:59]: Test Write to Error Log, Ignore this message.
+[02/13/25 15:13:25]: Test Write to Error Log, Ignore this message.
+[02/13/25 15:14:43]: Test Write to Error Log, Ignore this message.
+[02/13/25 15:20:49]: java.lang.UnsupportedOperationException: Attempted to serialize java.lang.Class: org.fingies.UMLClassHandler. Forgot to register a type adapter?
+See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-unsupported
+[02/13/25 15:20:49]: Test Write to Error Log, Ignore this message.
+[03/06/25 15:25:58]: Test Write to Error Log, Ignore this message.
+[03/06/25 15:42:52]: Test Write to Error Log, Ignore this message.
+[03/06/25 15:43:51]: This relationship already exists.
+[03/06/25 15:44:36]: Test Write to Error Log, Ignore this message.
+[03/06/25 15:48:45]: Class does not exist
+[03/06/25 16:06:11]: This relationship already exists.
+[03/06/25 16:06:19]: Test Write to Error Log, Ignore this message.
+[03/06/25 16:09:40]: Test Write to Error Log, Ignore this message.
+[03/06/25 16:16:44]: Test Write to Error Log, Ignore this message.
+[03/06/25 16:21:51]: This relationship already exists.
+[03/06/25 16:21:51]: Test Write to Error Log, Ignore this message.
+[03/06/25 16:24:12]: This relationship already exists.
+[03/07/25 00:05:06]: Class does not exist
+[03/07/25 00:06:49]: String contains invalid characters
+[03/07/25 18:48:07]: Class Class A does not exist
+[03/07/25 18:49:37]: Method MethodB already has a parameter called abc
+[03/07/25 18:50:52]: Method MethodB already has a parameter called abc
+[03/07/25 18:54:03]: Class Class B does not exist
+[03/07/25 18:54:53]: Method aaa already has a parameter called d
+[03/07/25 22:01:28]: Method MethodB already has a parameter called abc
+[03/07/25 22:23:46]: Class Class A doesn't have a method named MethodA with the parity 5
+[03/07/25 22:25:39]: Class Class A doesn't have a method named b with the arity 4
+[03/07/25 22:25:55]: For input string: "a"
+[03/07/25 22:25:59]: Class a does not exist
+[03/07/25 22:27:46]: For input string: "abc"
+[03/07/25 22:29:25]: For input string: "abc"
+[03/07/25 22:29:58]: For input string: "abc"
+[03/07/25 22:36:25]: Class Clas B does not exist
+[03/07/25 22:44:18]: Class     does not exist
+[03/07/25 22:44:41]: Class     does not exist
+[03/07/25 22:44:47]: Class    does not exist
+[03/08/25 15:19:06]: This relationship already exists.
+[03/08/25 15:19:25]: This relationship already exists.
+[03/08/25 15:26:46]: This relationship already exists.
+[03/08/25 15:34:18]: This relationship already exists.
+[03/08/25 15:37:23]: This relationship already exists.
+[03/08/25 15:40:53]: This relationship already exists.
+[03/08/25 15:41:36]: This relationship already exists.
+[03/08/25 15:41:37]: Test Write to Error Log, Ignore this message.
+[03/08/25 15:48:50]: This relationship already exists.
+[03/08/25 15:48:50]: Test Write to Error Log, Ignore this message.
+[03/08/25 16:49:24]: This relationship already exists.
+[03/08/25 16:51:50]: This relationship already exists.
+[03/08/25 17:03:47]: This relationship already exists.
+[03/08/25 17:05:48]: This relationship already exists.
+[03/08/25 17:08:04]: This relationship already exists.
+[03/08/25 17:09:21]: This relationship already exists.
+[03/08/25 17:09:21]: Test Write to Error Log, Ignore this message.
+[03/08/25 17:24:11]: The name Class A contains invalid characters
+[03/12/25 22:56:36]: Test Write to Error Log, Ignore this message.
+[03/14/25 16:16:26]: This relationship already exists.
+[03/14/25 16:16:26]: Test Write to Error Log, Ignore this message.
+[03/14/25 16:23:26]: This relationship already exists.
+[03/14/25 16:23:26]: Test Write to Error Log, Ignore this message.
+[03/14/25 16:25:03]: This relationship already exists.
+[03/14/25 16:25:03]: Test Write to Error Log, Ignore this message.
+[03/14/25 16:25:23]: This relationship already exists.
+[03/14/25 16:25:23]: Test Write to Error Log, Ignore this message.
+[03/14/25 16:25:33]: This relationship already exists.
+[03/14/25 16:25:33]: Test Write to Error Log, Ignore this message.
+[03/14/25 19:05:11]: The name Class Name contains invalid characters
+[03/14/25 20:32:26]: String contains invalid characters
+[03/14/25 20:32:39]: String contains invalid characters
+[03/14/25 20:33:39]: String contains invalid characters
+[03/14/25 20:37:40]: String contains invalid characters
+[03/14/25 21:07:24]: String contains invalid characters
+[03/14/25 21:12:12]: String contains invalid characters
+[03/14/25 22:56:13]: Invalid rename operation
+[03/14/25 22:57:05]: Invalid rename operation
+[03/14/25 22:58:02]: Method not found
+[03/14/25 22:58:09]: Method not found
+[03/14/25 23:00:03]: Method not found
+[03/14/25 23:01:03]: Method not found
+[03/14/25 23:02:11]: Method not found
+[03/14/25 23:30:08]: Class aa already exists
+[03/17/25 16:20:40]: Invalid rename operation
+[03/17/25 16:20:40]: Field not found
+[03/17/25 16:20:40]: This relationship already exists.
+[03/17/25 16:20:40]: Invalid rename operation
+[03/17/25 16:20:40]: Test Write to Error Log, Ignore this message.
+[03/17/25 16:21:26]: String contains invalid characters
+[03/17/25 16:21:38]: String contains invalid characters
+[03/17/25 16:23:22]: This relationship does not exist
+[03/17/25 16:42:15]: String contains invalid characters
+[03/17/25 17:02:10]: Method not found
+[03/17/25 17:02:18]: Method not found
+[03/18/25 21:12:25]: Invalid rename operation
+[03/18/25 21:12:25]: Field not found
+[03/18/25 21:12:25]: This relationship already exists.
+[03/18/25 21:12:25]: Invalid rename operation
+[03/18/25 21:12:25]: Test Write to Error Log, Ignore this message.
+[03/18/25 21:12:48]: Invalid rename operation
+[03/18/25 21:12:48]: Field not found
+[03/18/25 21:12:48]: This relationship already exists.
+[03/18/25 21:12:48]: Invalid rename operation
+[03/18/25 21:12:48]: Test Write to Error Log, Ignore this message.
+[03/18/25 21:23:55]: Invalid rename operation
+[03/18/25 21:23:55]: This relationship already exists.
+[03/18/25 21:23:55]: Test Write to Error Log, Ignore this message.
+[03/18/25 21:27:44]: This relationship already exists.
+[03/18/25 21:27:44]: Test Write to Error Log, Ignore this message.
