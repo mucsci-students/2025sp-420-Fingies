@@ -193,5 +193,15 @@ public class UMLClassHandler {
         HashMap<String, UMLClass> reset = new HashMap<>();
         classes = reset;
     }
+    
+    /**
+     * Replaces one UMLClass object with another one.
+     * @param class1 The old class to replace
+     * @param class2 The new class to replace it with
+     */
+    public static void replace(UMLClass class1, UMLClass class2)
+    {
+    	classes.replace(class1.getName(), class1, class2);
+    }
 }
 

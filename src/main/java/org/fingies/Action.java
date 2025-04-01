@@ -9,6 +9,12 @@ package org.fingies;
  */
 public enum Action {
 
+    /*
+     * NOTE:
+     * Do NOT change the order of existing Actions,
+     * append any new Actions to the end of the list
+     */
+
     /**
      * Creates a new class.
      */
@@ -82,10 +88,6 @@ public enum Action {
      */
     RENAME_FIELD,
     /**
-     * Changes the data type of a field.
-     */
-    CHANGE_FIELD_TYPE,
-    /**
      * Adds a list of new parameters to a method
      */
     ADD_PARAMETERS,
@@ -98,15 +100,27 @@ public enum Action {
      */
     RENAME_PARAMETER,
     /**
+     * Changes a relationship type
+     */
+    CHANGE_RELATIONSHIP_TYPE,
+        /**
      * Changes the data type of a parameter to a new one
      */
     CHANGE_PARAMETER_TYPE,
     /**
-     * Changes a relationship type
+     * Changes the data type of a field.
      */
-    CHANGE_RELATIONSHIP_TYPE,
+    CHANGE_FIELD_TYPE,
     /**
      * Changes a method type
      */
-    CHANGE_METHOD_RETURN_TYPE;
+    CHANGE_METHOD_RETURN_TYPE,
+    /**
+     * Undoes the last change to the UML diagram.
+     */
+    UNDO,
+    /**
+     * Redoes the last undone change.
+     */
+    REDO;
 }

@@ -25,6 +25,15 @@ public class Position {
         this.x = x;
         this.y = y;
     }
+    
+    /**
+     * Alternate constructor, makes a copy of a position
+     * @param pos The position to copy the x and y coordinates from
+     */
+    public Position(Position pos) {
+        this.x = pos.x;
+        this.y = pos.y;
+    }
 
     /**
      * Gets the x position of the object

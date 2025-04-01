@@ -150,4 +150,19 @@ public class RelationshipHandler
     public static void reset() {
         relationships = new ArrayList<Relationship>();
     }
+    
+    public static void replace(UMLClass class1, UMLClass class2)
+    {
+    	for(Relationship relationship : relationships)
+    	{
+    		if (relationship.getSrc().getName().equals(class1.getName()))
+    		{
+    			relationship.setSrc(class2);
+    		}
+    		if (relationship.getDest().getName().equals(class1.getName()))
+    		{
+    			relationship.setDest(class2);
+    		}
+    	}
+    }
 }

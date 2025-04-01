@@ -33,8 +33,8 @@ public class Command {
 		    "add method", "remove method", "rename method",
 		    "add field", "remove field", "rename field",
 		    "add parameters", "remove parameters", "change parameter",
-		    "change relationship type", "change parameter type",
-			"change field type", "change method return type"
+		    "change relationship type", "change parameter type", "change field type",
+			"change method type", "undo", "redo" //TODO: we need a command for changing position of a class
 		};
 	
 	/**
@@ -49,7 +49,7 @@ public class Command {
 		    "addf", "rmf", "rnf",              // add field, remove field, rename field
 		    "addp", "rmp", "rnp",              // add parameters, remove parameters, rename parameter
 		    "crt", "cpt", "cft",			   // change relationship type, change parameter type, change field type
-			"cmt"							   // change method return type
+		    "cmt", "u", "r"                    // change method return type, undo, redo
 		};
 	
 	/**
@@ -80,7 +80,9 @@ public class Command {
 			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE", //change relationship type
 			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST PARAMETER_NAME NEW_TYPE", //change parameter type
 			"CLASS_NAME FIELD NEW_TYPE", //change field type
-			"CLASS_NAME METHOD_NAME PARAMETER_TYPES NEW_TYPE" //change method type
+			"CLASS_NAME METHOD_NAME PARAMETER_TYPES NEW_TYPE", //change method type
+			"", //undo
+			"" //redo
 		};
 	
 	/**
@@ -114,8 +116,10 @@ public class Command {
 			"Gives a parameter of a method a new name.",
 			"Changes the type of a specified relationship.",
 			"Changes the data type of a parameter.",
-			"Changes the data type of a field",
-			"Changes the return data type of a method"
+			"Changes the data type of a field.",
+			"Changes the return data type of a method",
+			"Undoes the last change made.",
+			"Redoes the last undone change."
 		};
 	
 	Command (Action a, String[] args)

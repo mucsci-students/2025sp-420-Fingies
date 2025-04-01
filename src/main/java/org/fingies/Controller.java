@@ -1,6 +1,7 @@
 package org.fingies;
 
 import java.util.List;
+import java.util.Stack;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -13,6 +14,9 @@ public class Controller {
     private JModel model;
     private boolean madeChange;
     private boolean hasSaved;
+    
+    private Stack<Change> undoStack = new Stack<Change>();
+    //private Stack<Change> redoStack = new Stack<Change>();
 
     public Controller (View view, JModel model)
     {
@@ -26,7 +30,11 @@ public class Controller {
     {
         try
         {
-            return UMLClassHandler.createClass(className);
+        	Change change = new Change (null);
+        	boolean result = UMLClassHandler.createClass(className);
+        	change.setCurrClass(UMLClassHandler.getClass(className));
+        	undoStack.push(change);
+            return result;
         }
         catch (Exception e)
         {
@@ -40,8 +48,12 @@ public class Controller {
     {
         try
         {
+        	Change change = new Change (UMLClassHandler.getClass(className));
             RelationshipHandler.removeAllRelationshipsForClassname(className);
-            return UMLClassHandler.removeClass(className);
+            boolean result = UMLClassHandler.removeClass(className);
+            change.setCurrClass(null);
+            undoStack.push(change);
+            return result;
         }
         catch (Exception e)
         {
@@ -55,7 +67,11 @@ public class Controller {
     {
         try
         {
-            return UMLClassHandler.renameClass(className, newName);
+        	Change change = new Change (UMLClassHandler.getClass(className));
+        	boolean result = UMLClassHandler.renameClass(className, newName);
+        	change.setCurrClass(UMLClassHandler.getClass(newName));
+        	undoStack.push(change);
+            return result;
         }
         catch (Exception e)
         {
@@ -445,6 +461,22 @@ public class Controller {
         }
         return true;
         
+    }
+    
+    public boolean doUndo()
+    {
+    	if (undoStack.isEmpty())
+    	{
+    		// nothing to undo
+    		return false;
+    	}
+    	else
+    	{
+    		Change change = undoStack.pop();
+    		UMLClassHandler.replace(change.getCurrClass(), change.getOldClass());
+    		RelationshipHandler.replace(change.getCurrClass(), change.getOldClass());
+    		return true;
+    	}
     }
 
     /**
@@ -1021,6 +1053,15 @@ public class Controller {
                     
                 }
                 return true;
+            case UNDO:
+            	if (args.length != 0)
+            	{
+            		return false;
+            	}
+            	else
+            	{
+            		return doUndo();
+            	}
         }
         return false;
     }
