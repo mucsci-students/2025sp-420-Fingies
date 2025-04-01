@@ -30,7 +30,7 @@ public class Controller {
     {
         try
         {
-        	Change change = new Change (null);
+        	Change change = new Change (null, null);
         	boolean result = UMLClassHandler.createClass(className);
         	change.setCurrClass(UMLClassHandler.getClass(className));
         	undoStack.push(change);
@@ -48,7 +48,7 @@ public class Controller {
     {
         try
         {
-        	Change change = new Change (UMLClassHandler.getClass(className));
+        	Change change = new Change (UMLClassHandler.getClass(className), RelationshipHandler.getAllRelationshipsForClassname(className));
             RelationshipHandler.removeAllRelationshipsForClassname(className);
             boolean result = UMLClassHandler.removeClass(className);
             change.setCurrClass(null);
@@ -67,7 +67,7 @@ public class Controller {
     {
         try
         {
-        	Change change = new Change (UMLClassHandler.getClass(className));
+        	Change change = new Change (UMLClassHandler.getClass(className), RelationshipHandler.getAllRelationshipsForClassname(className));
         	boolean result = UMLClassHandler.renameClass(className, newName);
         	change.setCurrClass(UMLClassHandler.getClass(newName));
         	undoStack.push(change);
@@ -475,6 +475,7 @@ public class Controller {
     		Change change = undoStack.pop();
     		UMLClassHandler.replace(change.getCurrClass(), change.getOldClass());
     		RelationshipHandler.replace(change.getCurrClass(), change.getOldClass());
+    		
     		return true;
     	}
     }
