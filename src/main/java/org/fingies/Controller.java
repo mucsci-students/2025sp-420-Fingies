@@ -2,6 +2,9 @@ package org.fingies;
 
 import java.util.List;
 import java.util.Stack;
+
+import javax.swing.text.View;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -85,8 +88,13 @@ public class Controller {
     {
         try
         {
-            RelationshipType rType = RelationshipType.fromString(type);
-            return RelationshipHandler.addRelationship(srcClass, destClass, rType);
+        	// We store a change to src class, but not dest class. Because only one is needed
+        	RelationshipType rType = RelationshipType.fromString(type);
+        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	boolean result = RelationshipHandler.addRelationship(srcClass, destClass, rType);
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+            return result;
         }
         catch (Exception e)
         {
@@ -100,7 +108,11 @@ public class Controller {
     {
         try
         {
-            return RelationshipHandler.removeRelationship(srcClass, destClass);
+        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	boolean result = RelationshipHandler.removeRelationship(srcClass, destClass);
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+            return result;
         }
         catch (Exception e)
         {
@@ -115,7 +127,11 @@ public class Controller {
         try
         {
             RelationshipType rType = RelationshipType.fromString(newType);
-            return RelationshipHandler.changeRelationshipType(srcClass, destClass, rType);
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	boolean result = RelationshipHandler.changeRelationshipType(srcClass, destClass, rType);
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+            return result;
         }
         catch (Exception e)
         {
@@ -129,7 +145,11 @@ public class Controller {
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).addField(field, type);
+        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	boolean result = UMLClassHandler.getClass(srcClass).addField(field, type);
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+            return result; 
         }
         catch (Exception e)
         {
@@ -143,7 +163,11 @@ public class Controller {
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).addMethod(methodName, returnType, parameterNames, parameterTypes);
+        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	boolean result = UMLClassHandler.getClass(srcClass).addMethod(methodName, returnType, parameterNames, parameterTypes);
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+            return result; 
         }
         catch (Exception e)
         {
@@ -157,7 +181,11 @@ public class Controller {
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).removeField(field);
+        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	boolean result = UMLClassHandler.getClass(srcClass).removeField(field);
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+            return result; 
         }
         catch (Exception e)
         {
@@ -171,7 +199,31 @@ public class Controller {
     {
         try 
         {
-            UMLClassHandler.getClass(srcClass).getField(field).setType(newType);
+        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	UMLClassHandler.getClass(srcClass).getField(field).setType(newType);
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+            return true;
+        }
+        catch (Exception e) 
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean doChangeMethodReturnType(String srcClass, String methodName, List<String> parameterTypes, String newType)
+    {
+        try 
+        {
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).setReturnType(newType);
+                return true;
+            }   
+            UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).setReturnType(newType);
             return true;
         }
         catch (Exception e) 
@@ -207,13 +259,20 @@ public class Controller {
     {
         try
         {
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             ArrayList <String> empty = new ArrayList<>();
+            boolean result;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                UMLClassHandler.getClass(srcClass).removeMethod(methodName, empty);
-                return true;
-            }  
-            return UMLClassHandler.getClass(srcClass).removeMethod(methodName, parameterTypes);
+                result = UMLClassHandler.getClass(srcClass).removeMethod(methodName, empty);
+            }
+            else
+            {
+                result = UMLClassHandler.getClass(srcClass).removeMethod(methodName, parameterTypes);
+            }
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+            return result; 
         }
         catch (Exception e)
         {
@@ -227,7 +286,11 @@ public class Controller {
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).renameField(oldField, type, newField);
+        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	boolean result = UMLClassHandler.getClass(srcClass).renameField(oldField, type, newField);
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+            return result; 
         }
         catch (Exception e)
         {
@@ -241,12 +304,20 @@ public class Controller {
     {
         try
         {
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             ArrayList <String> empty = new ArrayList<>();
+            boolean result;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
                 return UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, empty, newMethodName);
             } 
-            return UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, parameterTypes, newMethodName);
+            else
+            {
+                result = UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, parameterTypes, newMethodName);
+            }
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+        	return result;
         }
         catch (Exception e)
         {
@@ -261,13 +332,20 @@ public class Controller {
     {
         try
         {
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+            boolean result;
             ArrayList <String> empty = new ArrayList<>();
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                return UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).addParameters(newParameterNames, newParameterTypes);
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).addParameters(newParameterNames, newParameterTypes);
             }   
-            return UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).addParameters(newParameterNames, newParameterTypes);
-            
+            else
+            {
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).addParameters(newParameterNames, newParameterTypes);
+            }
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+        	return result;
         }
         catch (Exception e)
         {
@@ -281,12 +359,20 @@ public class Controller {
     {
         try
         {
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+            boolean result;
             ArrayList <String> empty = new ArrayList<>();
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                return UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).removeParameters(parameterNamesToRemove);
-            }   
-            return UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).removeParameters(parameterNamesToRemove);
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).removeParameters(parameterNamesToRemove);
+            } 
+            else
+            {
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).removeParameters(parameterNamesToRemove);
+            }  
+            change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+        	return result;
         }
         catch (Exception e)
         {
@@ -300,12 +386,20 @@ public class Controller {
     {
         try
         {
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+            boolean result;
             ArrayList <String> empty = new ArrayList<>();
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                return UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).renameParameter(oldParam, newParam);
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).renameParameter(oldParam, newParam);
             }   
-            return UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).renameParameter(oldParam, newParam);
+            else
+            {
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).renameParameter(oldParam, newParam);
+            }
+            change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+        	return result;
         }
         catch (Exception e)
         {
@@ -316,15 +410,22 @@ public class Controller {
     }
 
     public boolean doChangeParameterDataType(String srcClass, String methodName, List<String> parameterTypes, String param, String newType) {
-        try {
+        try 
+        {
+        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+            boolean result;
             ArrayList <String> empty = new ArrayList<>();
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).getParameter(param).setType(newType);
-                return true;
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).getParameter(param).setType(newType);
             }   
-            UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
-            return true;
+            else
+            {
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
+            }
+        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+        	return true;
         }
         catch (Exception e) {
             model.writeToLog(e.getMessage());

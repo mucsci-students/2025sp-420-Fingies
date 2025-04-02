@@ -127,16 +127,18 @@ public class RelationshipHandler
      */
     public static String listRelationships()
     {
-    	String lst = "";
-        if (!relationships.isEmpty())
-        {
-            for (Relationship r : relationships)
-            {
-                lst += r + "\n";
-            }
-    	    lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
-        }
-    	return lst;
+    	if(relationships.size() != 0)
+    	{
+    		String lst = "";
+        	for (Relationship r : relationships)
+        		lst += r + "\n";
+        	lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
+        	return lst;
+    	}
+    	else
+    	{
+    		return "There are no current relationships";
+    	}
     }
 
     /**
