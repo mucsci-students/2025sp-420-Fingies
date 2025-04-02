@@ -33,7 +33,8 @@ public class Command {
 		    "add method", "remove method", "rename method",
 		    "add field", "remove field", "rename field",
 		    "add parameters", "remove parameters", "change parameter",
-		    "change relationship type", "change parameter type", "change field type"
+		    "change relationship type", "change parameter type",
+			"change field type", "change method return type"
 		};
 	
 	/**
@@ -47,37 +48,39 @@ public class Command {
 		    "addm", "rmm", "rnm",              // add method, remove method, rename method
 		    "addf", "rmf", "rnf",              // add field, remove field, rename field
 		    "addp", "rmp", "rnp",              // add parameters, remove parameters, rename parameter
-		    "crt", "cpt", "cft"				   // change relationship type, change parameter type, change field type
+		    "crt", "cpt", "cft",			   // change relationship type, change parameter type, change field type
+			"cmt"							   // change method return type
 		};
 	
 	/**
 	 * The expected arguments for each command.
 	 */
 	public static final String[] COMMAND_ARGS = {
-			"CLASS_NAME",
-			"CLASS_NAME",
-			"CLASS_NAME NEW_NAME",
-			"SRC_CLASS DEST_CLASS RELATIONSHIP_TYPE",
-			"SRC_CLASS DEST_CLASS",
-			"[ FILE_PATH ]",
-			"[ FILE_PATH ]",
-			"",
-			"CLASS_NAME",
-			"",
-			"[ COMMAND ]",
-			"",
-			"CLASS_NAME METHOD RETURN_TYPE [ PARAMETER ... ]",
-			"CLASS_NAME METHOD RETURN_TYPE ARITY",
-			"CLASS_NAME METHOD_NAME RETURN_TYPE ARITY NEW_NAME",
-			"CLASS_NAME FIELD",
-			"CLASS_NAME FIELD",
-			"CLASS_NAME FIELD NEW_NAME",
-			"CLASS_NAME METHOD RETURN_TYPE ARITY PARAMETER1 [ PARAMETER2 ... ]",
-			"CLASS_NAME METHOD RETURN_TYPE ARITY PARAMETER1 [ PARAMETER2 ... ]",
-			"CLASS_NAME METHOD RETURN_TYPE ARITY PARAMETER NEW_NAME",
-			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE",
-			"SRC_CLASS METHOD RETURN_TYPE ARITY PARAMETER NEW_TYPE",
-			"CLASS_NAME FIELD NEW_TYPE"
+			"CLASS_NAME", //add class
+			"CLASS_NAME", //remove class
+			"CLASS_NAME NEW_NAME", //rename class
+			"SRC_CLASS DEST_CLASS RELATIONSHIP_TYPE", //add relationship
+			"SRC_CLASS DEST_CLASS", //remove relationship
+			"[ FILE_PATH ]", //save
+			"[ FILE_PATH ]", //load
+			"", //list classes
+			"CLASS_NAME", //list class
+			"", //list relationships
+			"[ COMMAND ]", //help
+			"", //exit
+			"CLASS_NAME METHOD_NAME RETURN_TYPE PARAMETER_TYPE_LIST PARAMETER_LIST", //add method
+			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST", //remove method
+			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST NEW_NAME", //rename method
+			"CLASS_NAME FIELD", //add field
+			"CLASS_NAME FIELD", //remove field
+			"CLASS_NAME FIELD NEW_NAME", //rename field
+			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST ; NEW_PARAMETER_TYPE_LIST NEW_PARAMETER_LIST", //add parameters
+			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST ; OLD_PARAMETER_TYPE_LIST ", //remove parameters
+			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST OLD_PARAMETER_NAME NEW_PARAMETER_NAME", // rename parameter
+			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE", //change relationship type
+			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST PARAMETER_NAME NEW_TYPE", //change parameter type
+			"CLASS_NAME FIELD NEW_TYPE", //change field type
+			"CLASS_NAME METHOD_NAME PARAMETER_TYPES NEW_TYPE" //change method type
 		};
 	
 	/**
@@ -111,7 +114,8 @@ public class Command {
 			"Gives a parameter of a method a new name.",
 			"Changes the type of a specified relationship.",
 			"Changes the data type of a parameter.",
-			"Changes the data type of a field"
+			"Changes the data type of a field",
+			"Changes the return data type of a method"
 		};
 	
 	Command (Action a, String[] args)

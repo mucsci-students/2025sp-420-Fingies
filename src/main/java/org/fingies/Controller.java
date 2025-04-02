@@ -166,10 +166,37 @@ public class Controller {
         }
     }
 
+    public boolean doChangeMethodReturnType(String srcClass, String methodName, List<String> parameterTypes, String newType)
+    {
+        try 
+        {
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).setReturnType(newType);
+                return true;
+            }   
+            UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).setReturnType(newType);
+            return true;
+        }
+        catch (Exception e) 
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
+            return false;
+        }
+    }
+
     public boolean doRemoveMethod(String srcClass, String methodName, List<String> parameterTypes) 
     {
         try
         {
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                UMLClassHandler.getClass(srcClass).removeMethod(methodName, empty);
+                return true;
+            }  
             return UMLClassHandler.getClass(srcClass).removeMethod(methodName, parameterTypes);
         }
         catch (Exception e)
@@ -198,6 +225,11 @@ public class Controller {
     {
         try
         {
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                return UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, empty, newMethodName);
+            } 
             return UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, parameterTypes, newMethodName);
         }
         catch (Exception e)
@@ -213,7 +245,13 @@ public class Controller {
     {
         try
         {
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                return UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).addParameters(newParameterNames, newParameterTypes);
+            }   
             return UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).addParameters(newParameterNames, newParameterTypes);
+            
         }
         catch (Exception e)
         {
@@ -223,11 +261,16 @@ public class Controller {
         }
     }
 
-    public boolean doRemoveParameters(String srcClass, String method, List<String> parameterTypes, List<String> parameterNamesToRemove)
+    public boolean doRemoveParameters(String srcClass, String methodName, List<String> parameterTypes, List<String> parameterNamesToRemove)
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).getMethod(method, parameterTypes).removeParameters(parameterNamesToRemove);
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                return UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).removeParameters(parameterNamesToRemove);
+            }   
+            return UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).removeParameters(parameterNamesToRemove);
         }
         catch (Exception e)
         {
@@ -237,11 +280,16 @@ public class Controller {
         }
     }
     
-    public boolean doRenameParameter(String srcClass, String method, List<String> parameterTypes, String oldParam, String newParam)
+    public boolean doRenameParameter(String srcClass, String methodName, List<String> parameterTypes, String oldParam, String newParam)
     {
         try
         {
-            return UMLClassHandler.getClass(srcClass).getMethod(method, parameterTypes).renameParameter(oldParam, newParam);
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                return UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).renameParameter(oldParam, newParam);
+            }   
+            return UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).renameParameter(oldParam, newParam);
         }
         catch (Exception e)
         {
@@ -253,6 +301,12 @@ public class Controller {
 
     public boolean doChangeParameterDataType(String srcClass, String methodName, List<String> parameterTypes, String param, String newType) {
         try {
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).getParameter(param).setType(newType);
+                return true;
+            }   
             UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
             return true;
         }
@@ -559,12 +613,12 @@ public class Controller {
                     return false;
                 }
             case RENAME_METHOD:
-                if (args.length >= 5)
+                if (args.length >= 4)
                 {
                 	List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 1);
                     if (doRenameMethod(args[0], args[1], paramTypes, args[args.length - 1]))
                     {
-                        view.notifySuccess("Successfully renamed method " + args[1] + " with return type " + args[2] + " to " + args[4] + " in class " + args[0]);
+                        view.notifySuccess("Successfully renamed method " + args[1] + " to " + args[args.length - 1] + " in class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -688,7 +742,7 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Add Parameters should have 5 or more parameters.");
+                    view.notifyFail("Add Parameters should have 6 or more parameters.");
                     return false;
                 }
             case REMOVE_PARAMETERS:
@@ -756,6 +810,28 @@ public class Controller {
                 else 
                 {
                     view.notifyFail("Changing Parameter type should have exactly 6 arguments.");
+                    return false;
+                }
+            case CHANGE_METHOD_RETURN_TYPE:
+             
+                if (args.length >= 3)
+                {
+                    List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 1);
+                    if (doChangeMethodReturnType(args[0], args[1], paramTypes, args[args.length - 1]))
+                    {
+                        view.notifySuccess("Successfully changed method " + args[1] + "'s return type to " + args[args.length - 1] + " in class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }  
+                    else
+                    {
+                        //view.notifyFail("Failed to change relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
+                        return false;
+                    }
+                }
+                else
+                {
+                    view.notifyFail("Change method type should have at least 3 arguments.");
                     return false;
                 }
             case CHANGE_RELATIONSHIP_TYPE:
@@ -842,18 +918,11 @@ public class Controller {
                         if (result.toLowerCase().equals("y"))
                         {
                              return loadCheck(args[0]);
-
-                            // doLoad(args[0]);
-                            // hasSaved = true;
-                            // madeChange = false;
-                            // view.notifySuccess("Successfully loaded your file");
                         }
                         else
                         {
                             saveLoop();
                             return loadCheck(args[0]);
-                            // doLoad(args[0]);
-                            // view.notifySuccess("Successfully loaded your file.");
                         }
                     }
                     else

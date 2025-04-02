@@ -164,23 +164,23 @@ public class UMLClassHandler {
         // prints each field if the list of fields isn't empty
         if (!fields.isEmpty())
         {
-            str += ": \n\tfields:";
+            str += "\n\t";
             for (Field field : fields)
             {
-                str += " " + field.getName() + ", ";
+                str += field + "\n\t";
             }
-            str = str.substring(0, str.length() - 2); // trim off the extra comma
+            str = str.substring(0, str.length() - 2); // trim off the extra \n\t
         }
         
         // prints each method followed a list of it's parameters if the list of methods isn't empty
         if (!methods.isEmpty())
         {
-            str += "\n\tmethods:";
+            str += "\n\t";
             for (Method method : methods)
             {
-                str += method + ", ";
+                str += method + "\n\t";
             }
-            str = str.substring(0, str.length() - 2); // trim off the extra comma
+            str = str.substring(0, str.length() - 2); // trim off the extra \n\t
         }
         return str;
     }
