@@ -1,7 +1,5 @@
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.fingies.*;
@@ -14,21 +12,37 @@ import org.junit.Test;
  * @author kdichter
  */
 public class ControllerTest {
-    private CLIView view;
+    private View view;
     private JModel model;
     private Controller controller;
 
     @Before
     public void setUp() {
         UMLClassHandler.reset();
-        view = new CLIView();
+     // dummy view
+ 		view = new View() {
+ 		    @Override public void run() {}
+ 		    @Override public String promptForSaveInput(String message) { return null; }
+ 		    @Override public String promptForOpenInput(String message) { return null; }
+ 		    @Override public String promptForInput(String message) { return null; }
+ 		    @Override public List<String> promptForInput(List<String> messages) { return null; }
+ 		    @Override public List<String> promptForInput(List<String> messages, List<InputCheck> checks) { return null; }
+ 		    @Override public void notifySuccess() {}
+ 		    @Override public void notifySuccess(String message) {}
+ 		    @Override public void notifyFail(String message) {}
+ 		    @Override public void display(String message) {}
+ 		    @Override public void help() {}
+ 		    @Override public void help(String command) {}
+ 		    @Override public void setController(Controller c) {}
+ 		};
         model = new JModel();
         controller = new Controller(view, model);
     }
 
     @After
     public void resetTest() {
-        RelationshipHandler.reset();
+        UMLClassHandler.reset(); // both resets must always be called together
+        RelationshipHandler.reset(); 
     }
 
     // --------------------- METHOD FUNCTIONALITY ---------------------

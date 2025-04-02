@@ -1,5 +1,6 @@
 package org.fingies;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -25,6 +26,17 @@ public class Relationship
         this.src = src;
         this.dest = dest;
         this.type = type;
+    }
+    
+    /**
+     * Copy constructor
+     * @param relationship The relationship you want to copy
+     */
+    public Relationship(Relationship relationship)
+    {
+    	this.src = new UMLClass(relationship.getSrc());
+        this.dest = new UMLClass(relationship.getDest());
+        this.type = relationship.getType();
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.fingies;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,7 +26,11 @@ public class Change
 		if (oldClass != null)
 		{
 			this.oldClass = new UMLClass(oldClass);
-			this.oldRelationships = List.copyOf(oldRelationships);
+			this.oldRelationships = new ArrayList<>();
+			for (Relationship r : oldRelationships)
+			{
+				this.oldRelationships.add(new Relationship(r));
+			}
 		}
 		else
 		{
