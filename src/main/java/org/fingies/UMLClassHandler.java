@@ -167,7 +167,7 @@ public class UMLClassHandler {
             str += "\n\t";
             for (Field field : fields)
             {
-                str += field + "\n\t";
+            	str += field + "\n\t";
             }
             str = str.substring(0, str.length() - 2); // trim off the extra \n\t
         }
@@ -192,6 +192,24 @@ public class UMLClassHandler {
     public static void reset() {
         HashMap<String, UMLClass> reset = new HashMap<>();
         classes = reset;
+    }
+    
+    /**
+     * Replaces one UMLClass object with another one. Both parameters can be null.
+     * 
+     * @param class1 The old class to replace. If null, adds class2 to the diagram
+     * @param class2 The new class to replace it with. If null, removes class1 from the diagram
+     */
+    public static void replace(UMLClass class1, UMLClass class2)
+    {
+    	if (class1 != null)
+    	{
+			classes.remove(class1.getName());
+    	}
+    	if (class2 != null)
+    	{
+    		classes.put(class2.getName(), class2);
+    	}
     }
 }
 

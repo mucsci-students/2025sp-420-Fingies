@@ -14,21 +14,37 @@ import org.junit.Test;
  * @author kdichter
  */
 public class ControllerTest {
-    private CLIView view;
+    private View view;
     private JModel model;
     private Controller controller;
 
     @Before
     public void setUp() {
         UMLClassHandler.reset();
-        view = new CLIView();
+     // dummy view
+ 		view = new View() {
+ 		    @Override public void run() {}
+ 		    @Override public String promptForSaveInput(String message) { return null; }
+ 		    @Override public String promptForOpenInput(String message) { return null; }
+ 		    @Override public String promptForInput(String message) { return null; }
+ 		    @Override public List<String> promptForInput(List<String> messages) { return null; }
+ 		    @Override public List<String> promptForInput(List<String> messages, List<InputCheck> checks) { return null; }
+ 		    @Override public void notifySuccess() {}
+ 		    @Override public void notifySuccess(String message) {}
+ 		    @Override public void notifyFail(String message) {}
+ 		    @Override public void display(String message) {}
+ 		    @Override public void help() {}
+ 		    @Override public void help(String command) {}
+ 		    @Override public void setController(Controller c) {}
+ 		};
         model = new JModel();
         controller = new Controller(view, model);
     }
 
     @After
     public void resetTest() {
-        RelationshipHandler.reset();
+        UMLClassHandler.reset(); // both resets must always be called together
+        RelationshipHandler.reset(); 
     }
 
     // --------------------- METHOD FUNCTIONALITY ---------------------
@@ -89,7 +105,7 @@ public class ControllerTest {
     public void testDoRenameField() {
         controller.doAddClass("TestClass");
         controller.doAddField("TestClass", "String", "oldField");
-        boolean result = controller.doRenameField("TestClass", "oldField","String", "newField");
+        boolean result = controller.doRenameField("TestClass", "oldField", "newField");
         assertTrue("Field should be renamed successfully.", result);
     }
 
@@ -153,10 +169,10 @@ public class ControllerTest {
     public void testRenameFieldAction() {
         String [] args1 = {"JSON"};
         String [] args2 = {"JSON", "STRING", "WILLSON"};
-        String [] args3 = {"JSON", "WILLSON", "STRING", "KEVSON"};
+        String [] args3 = {"JSON", "WILLSON", "KEVSON"};
         controller.runHelper(Action.ADD_CLASS, args1);
         controller.runHelper(Action.ADD_FIELD, args2);
         controller.runHelper(Action.RENAME_FIELD, args3);
-        assertTrue("doRenameClass method was called through runHelper method", UMLClassHandler.getClass(args1[0]).fieldExists(args3[3]));
+        assertTrue("doRenameClass method was called through runHelper method", UMLClassHandler.getClass(args1[0]).fieldExists(args3[2]));
     }
 }

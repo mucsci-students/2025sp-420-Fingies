@@ -2,11 +2,15 @@ package org.fingies;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.Objects;
 
 /**
  * Relationship Handler class to add, delete and get relationships
  * @author Nick Hayes & Lincoln Craddock
+ */
+/**
+ * 
  */
 public class RelationshipHandler
 {
@@ -31,7 +35,7 @@ public class RelationshipHandler
 
     /**
      * Removes all relationships with a src or dest equal to the classname
-     * @param className name of class to remove relationships of
+     * @param className Name of class to remove relationships of
      */
     public static void removeAllRelationshipsForClassname(String className)
     {
@@ -43,6 +47,22 @@ public class RelationshipHandler
                 i--;
             }
         }
+    }
+    
+    /**
+     * Gets all the relationships with a src or dest equal to the classname
+     * @param className Name of class to get the relationships of
+     * @return A list of all of the relationships associated with the class
+     */
+    public static List<Relationship> getAllRelationshipsForClassname(String className)
+    {
+    	List<Relationship> list = new ArrayList<Relationship>();
+    	
+    	for (int i = 0; i < relationships.size(); i++)
+            if (relationships.get(i).getSrc().getName().equals(className) || relationships.get(i).getDest().getName().equals(className))
+                list.add(relationships.get(i));
+    	
+    	return list;
     }
 
     /**
@@ -110,16 +130,18 @@ public class RelationshipHandler
      */
     public static String listRelationships()
     {
-    	String lst = "";
-        if (!relationships.isEmpty())
-        {
-            for (Relationship r : relationships)
-            {
-                lst += r + "\n";
-            }
-    	    lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
-        }
-    	return lst;
+    	if(relationships.size() != 0)
+    	{
+    		String lst = "";
+        	for (Relationship r : relationships)
+        		lst += r + "\n";
+        	lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
+        	return lst;
+    	}
+    	else
+    	{
+    		return "There are no current relationships";
+    	}
     }
 
     /**
@@ -149,5 +171,48 @@ public class RelationshipHandler
      */
     public static void reset() {
         relationships = new ArrayList<Relationship>();
+    }
+    
+    /**
+     * Replaces a class object with another object in each relationship associated with the class.
+     * @param class1 The class to replace in each relationship.
+     * @param class2 The class to replace class1 with.
+     */
+    public static void replace(UMLClass class1, UMLClass class2)
+    {
+    	if (class1 == null)
+			return;
+		else if (class2 == null)
+		{
+			removeAllRelationshipsForClassname(class1.getName());
+		}
+		else
+		{
+			for(Relationship relationship : relationships)
+	    	{
+	    		if (relationship.getSrc().getName().equals(class1.getName()))
+	    			relationship.setSrc(class2);
+				
+	    		if (relationship.getDest().getName().equals(class1.getName()))
+	    			relationship.setDest(class2);
+	    	}
+		}
+    }
+    
+    /**
+     * Replaces all of the relationships associated with a particular class with a different list of relationships.
+     * @param classname The name of the class associated with all of the relationships to replace.
+     * @param list A list of new relationships to add to the diagram.
+     */
+    public static void replaceAllRelationshipsForClassname(String classname, List<Relationship> list)
+    {	
+    	relationships.removeIf(new Predicate<Relationship> () {
+
+			@Override
+			public boolean test(Relationship t) {
+				return t.getSrc().getName().equals(classname) || t.getDest().getName().equals(classname);
+			}});
+    	
+    	relationships.addAll(list);
     }
 }

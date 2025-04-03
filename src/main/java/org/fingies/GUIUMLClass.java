@@ -28,11 +28,13 @@ public class GUIUMLClass {
     private Color color;
 
     private UMLClass umlclass;
+    private Controller controller;
 
     public GUIUMLClass(UMLClass umlclass, Controller controller, GUIView guiView)
         
     {
         this.umlclass = umlclass;
+        this.controller = controller;
 
         // Creates a random color for the class
         color = new Color((int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), 100);
@@ -101,8 +103,8 @@ public class GUIUMLClass {
         	// the position is invalid, so randomize it
         	int randX = (int)(Math.random() * (maxWidth - pane.getWidth()));
             int randY = (int)(Math.random() * (maxHeight - pane.getHeight() - 75)) + 75;
-            pos = new Position(randX, randY);
-            umlclass.setPosition(randX, randY);
+            controller.runHelper(Action.MOVE, new String[] {umlclass.getName(), randX + "", randY + ""});
+            pos = umlclass.getPosition();
         }
         pane.setBounds(pos.getX(), pos.getY(), pane.getWidth(), pane.getHeight());
     }
