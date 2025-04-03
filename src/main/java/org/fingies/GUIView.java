@@ -38,6 +38,8 @@ public class GUIView extends JFrame implements ActionListener, View {
 
     private GUIMenuItem load;
     private GUIMenuItem save;
+    private GUIMenuItem undo;
+    private GUIMenuItem redo;
     private GUIMenuItem exit;
     
     private GUIMenuItem addClass;
@@ -102,6 +104,8 @@ public class GUIView extends JFrame implements ActionListener, View {
         // Creates JMenu submenus
         load = new GUIMenuItem("Open", Action.LOAD);
         save = new GUIMenuItem("Save", Action.SAVE);
+        undo = new GUIMenuItem("Undo", Action.UNDO);
+        redo = new GUIMenuItem("Redo", Action.REDO);
         exit = new GUIMenuItem("Exit", Action.EXIT);
         
         // ADD
@@ -133,6 +137,8 @@ public class GUIView extends JFrame implements ActionListener, View {
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
         save.addActionListener(this);
+        undo.addActionListener(this);
+        redo.addActionListener(this);
         exit.addActionListener(this);
 
         addClass.addActionListener(this);
@@ -158,12 +164,14 @@ public class GUIView extends JFrame implements ActionListener, View {
         changeRelatoinshipType.addActionListener(this);
 
         // Allows the press of a key to do the function of clicking the menu item WHILE in the menu
-        save.setMnemonic(KeyEvent.VK_S); // S for save
-
+        undo.setMnemonic(KeyEvent.VK_U); // Z for undo
+        redo.setMnemonic(KeyEvent.VK_R); // R for redo
 
         // Adds submenus to menu
         fileMenu.add(load);
         fileMenu.add(save);
+        fileMenu.add(undo);
+        fileMenu.add(redo);
         fileMenu.add(exit);
 
         addMenu.add(addClass);
@@ -777,6 +785,20 @@ public class GUIView extends JFrame implements ActionListener, View {
         {
         	controller.runHelper(a, new String[] {});
         }
+        else if (e.getSource() == undo)
+        {
+            if (controller.runHelper(a, new String[] {}))
+            {
+                actionHelper(a, new String[] {});
+            }
+        }
+        else if (e.getSource() == redo)
+        {
+            if (controller.runHelper(a, new String[] {}))
+            {
+                actionHelper(a, new String[] {});
+            }
+        }
         else if (e.getSource() == exit)
         {
         	boolean result = controller.runHelper(a, new String[] {});
@@ -847,7 +869,9 @@ public class GUIView extends JFrame implements ActionListener, View {
                 break;
             case CHANGE_PARAMETER_TYPE:
                 updateAttributes(args[0]);
+                break;
             default:
+                System.out.println("beep beep bop");
                 break;
             }
             updateArrows();
@@ -952,6 +976,15 @@ public class GUIView extends JFrame implements ActionListener, View {
         temp.update();
         GUIUMLClasses.put(newName, temp);
         reload();
+    }
+
+    public void updateClasses()
+    {
+        HashMap<String, GUIUMLClass> temp = GUIUMLClasses;
+        for (UMLClass c : UMLClassHandler.getAllClasses())
+        {
+            
+        }
     }
 
     /**

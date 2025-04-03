@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Main {
   
 	public static void main(String[] args) {
-		args = new String[] {"--cli"};
+		// args = new String[] {"--cli"};
         if (hasCLIFlag(args)) {
             CLIView view = new CLIView();
             Controller controller = new Controller(view, new JModel());
@@ -25,8 +25,8 @@ public class Main {
             UMLClassHandler.createClass("ClassA");
             UMLClassHandler.createClass("ClassB");
             UMLClassHandler.createClass("ClassC");
-//
-//           // Add fields and methods (if needed)
+
+            // Add fields and methods (if needed)
             UMLClassHandler.getClass("ClassA").addField("FieldA", "String");
             UMLClassHandler.getClass("ClassA").addField("FieldB", "String");
             UMLClassHandler.getClass("ClassA").addField("FieldC", "String");
@@ -55,34 +55,30 @@ public class Main {
            types.add("String");
            types.add("String");
            UMLClassHandler.getClass("ClassA").addMethod("MethodA", "void", params, types);
-//
-//            // Add the UML classes to the view
+
+           // Add the UML classes to the view
            view.addUMLClass("ClassA");
            view.addUMLClass("ClassB");
            view.addUMLClass("ClassC");
-//
-//            // Add relationships between classes to test arrows
+
+           // Add relationships between classes to test arrows
            RelationshipHandler.addRelationship("ClassA", "ClassC", RelationshipType.Inheritance);
            RelationshipHandler.addRelationship("ClassC", "ClassA", RelationshipType.Composition);
            RelationshipHandler.addRelationship("ClassB", "ClassC", RelationshipType.Aggregation);
            RelationshipHandler.addRelationship("ClassA", "ClassA", RelationshipType.Realization);
            RelationshipHandler.addRelationship("ClassC", "ClassC", RelationshipType.Composition);
            RelationshipHandler.addRelationship("ClassC", "ClassB", RelationshipType.Realization);
-//
-//            // Add arrows for these relationships
-//            view.addArrowForRelationship(RelationshipHandler.getRelationships().get(0));
-//            view.addArrowForRelationship(RelationshipHandler.getRelationships().get(1));
+                   
+           // Add arrows for these relationships
+           // view.addArrowForRelationship(RelationshipHandler.getRelationships().get(0));        
+           // view.addArrowForRelationship(RelationshipHandler.getRelationships().get(1));
+           // RelationshipHandler.removeRelationship("ClassB", "ClassC");
+           // view.removeArrowForRelationship(RelationshipHandler.getRelationships().get(1));
 
-            // RelationshipHandler.removeRelationship("ClassB", "ClassC");
-            // //view.removeArrowForRelationship(RelationshipHandler.getRelationships().get(1));
-
-            // // Test updating arrows (in case relationships are modified or removed)
-            view.updateArrows();  // Call this to refresh and redraw arrows
-
-            view.run();
-            
-        }
-        
+           //Test updating arrows (in case relationships are modified or removed)
+           view.updateArrows();  // Call this to refresh and redraw arrows
+           view.run();     
+        }   
 	}
 
 	public static boolean hasCLIFlag(String[] args) {
