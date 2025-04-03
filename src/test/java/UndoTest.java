@@ -320,6 +320,94 @@ public class UndoTest {
 	    assertFalse("The UMLClassHandler shouldn't have a class named \"Person\" after undoing an Add Class command", UMLClassHandler.exists("Person"));
 	}
 	
+	// TODO: need to fix
+	
+//	@Test
+//    public void addAndChangeFieldType()
+//    {
+//        controller.runHelper(Action.ADD_CLASS, new String[] {"Person"});
+//        assertTrue("The UMLClassHandler should have a class named \"Person\" after adding one.", UMLClassHandler.exists("Person"));
+//
+//        controller.runHelper(Action.ADD_FIELD, new String[] {"Person", "int", "age"});
+//        UMLClass personClass = UMLClassHandler.getClass("Person");
+//        assertTrue("The class \"Person\" should contain the field \"age\".", personClass.fieldExists("age"));
+//
+//        controller.runHelper(Action.CHANGE_FIELD_TYPE, new String [] {personClass.getName(), "age", "String"});
+//        assertEquals("The class \"Person\" should contain the field \"age\" with the type of \"String\".", "String", personClass.getField("age").getType());
+//
+//        controller.runHelper(Action.UNDO, new String[] {});
+//        assertEquals("The class \"Person\" should have the right correct type.", "int", personClass.getField("age").getType());
+//    }
+//	
+//	// --------------------- PARAMETERS ---------------------
+//	
+//	@Test
+//    public void addParam()
+//    {
+//        controller.runHelper(Action.ADD_CLASS, new String[] {"Person"});
+//        assertTrue("The UMLClassHandler should have a class named \"Person\" after adding one.", UMLClassHandler.exists("Person"));
+//
+//        controller.runHelper(Action.ADD_METHOD, new String[] {"Person", "getName", "String"});
+//        UMLClass personClass = UMLClassHandler.getClass("Person");
+//        assertTrue("The class \"Person\" should contain the method \"getName\".", personClass.methodExists("getName", List.of()));
+//
+//        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), "", "num", "int"});
+//        assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
+//        assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
+//
+//        controller.runHelper(Action.UNDO, new String[] {});
+//        assertEquals(true, personClass.getMethods().get(0).getParameterTypes().isEmpty());
+//        assertEquals(true, personClass.getMethods().get(0).getParameterNames().isEmpty());
+//    }
+//	
+//	@Test
+//    public void addAndRemoveParam()
+//    {
+//        controller.runHelper(Action.ADD_CLASS, new String[] {"Person"});
+//        assertTrue("The UMLClassHandler should have a class named \"Person\" after adding one.", UMLClassHandler.exists("Person"));
+//
+//        controller.runHelper(Action.ADD_METHOD, new String[] {"Person", "getName", "String"});
+//        UMLClass personClass = UMLClassHandler.getClass("Person");
+//        assertTrue("The class \"Person\" should contain the method \"getName\".", personClass.methodExists("getName", List.of()));
+//
+//        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), "", "num", "int"});
+//        assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
+//        assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
+//
+//        controller.runHelper(Action.REMOVE_PARAMETERS, new String[] {personClass.getName(), "getName", "int", "num"});
+//        assertEquals(true, personClass.getMethods().get(0).getParameterTypes().isEmpty());
+//        assertEquals(true, personClass.getMethods().get(0).getParameterNames().isEmpty());
+//
+//        controller.runHelper(Action.UNDO, new String[] {});
+//        assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
+//        assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
+//    }
+//	
+//	@Test
+//    public void addAndRenameParam()
+//    {
+//        controller.runHelper(Action.ADD_CLASS, new String[] {"Person"});
+//        assertTrue("The UMLClassHandler should have a class named \"Person\" after adding one.", UMLClassHandler.exists("Person"));
+//
+//        controller.runHelper(Action.ADD_METHOD, new String[] {"Person", "getName", "String"});
+//        UMLClass personClass = UMLClassHandler.getClass("Person");
+//        assertTrue("The class \"Person\" should contain the method \"getName\".", personClass.methodExists("getName", List.of()));
+//
+//        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), "", "num", "int"});
+//        assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
+//        assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
+//
+//        controller.runHelper(Action.RENAME_PARAMETER, new String[] {personClass.getName(), "getName", "int", "num", "bobby"});
+//        assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
+//        assertEquals("bobby", personClass.getMethods().get(0).getParameterNames().get(0));
+//
+//        controller.runHelper(Action.UNDO, new String[] {});
+//        assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
+//        assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
+//    }
+//	
+//	
+
 
 
 }
