@@ -39,6 +39,9 @@ public class Main {
            // Create a method in Class A (optional)
            ArrayList<String> params = new ArrayList<>();
            ArrayList<String> types = new ArrayList<>();
+           
+           UMLClassHandler.getClass("ClassC").addMethod("MethodC", "void", params, types);
+
            params.add("Param1");
            params.add("Param2");
            params.add("Param3");
