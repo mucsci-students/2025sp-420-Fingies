@@ -9,11 +9,8 @@ package org.fingies;
  */
 public enum Action {
 
-    /*
-     * NOTE:
-     * Do NOT change the order of existing Actions,
-     * append any new Actions to the end of the list
-     */
+    // append new commands that can be selected in the CLI to the end of this list,
+	// DON'T change the order of them
 
     /**
      * Creates a new class.
@@ -122,5 +119,13 @@ public enum Action {
     /**
      * Redoes the last undone change.
      */
-    REDO;
+    REDO,
+    
+    
+    // commands that can't be selected in the CLI start here
+    
+    /*
+     * Moves a class to a new x, y coordinate.
+     */
+    MOVE;
 }

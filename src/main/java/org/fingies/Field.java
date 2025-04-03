@@ -13,6 +13,17 @@ public class Field extends Attribute {
         this.name = name;
         this.type = type;
     }
+    
+    /**
+     * Copy ctor
+     * 
+     * @param field The field to copy the name & type of
+     */
+    public Field (Field field)
+    {
+    	this.name = field.name;
+    	this.type = field.type;
+    }
 
     @Override
     public String getName() {

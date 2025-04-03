@@ -1,5 +1,7 @@
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.fingies.*;
@@ -103,7 +105,7 @@ public class ControllerTest {
     public void testDoRenameField() {
         controller.doAddClass("TestClass");
         controller.doAddField("TestClass", "String", "oldField");
-        boolean result = controller.doRenameField("TestClass", "oldField","String", "newField");
+        boolean result = controller.doRenameField("TestClass", "oldField", "newField");
         assertTrue("Field should be renamed successfully.", result);
     }
 
@@ -167,10 +169,10 @@ public class ControllerTest {
     public void testRenameFieldAction() {
         String [] args1 = {"JSON"};
         String [] args2 = {"JSON", "STRING", "WILLSON"};
-        String [] args3 = {"JSON", "WILLSON", "STRING", "KEVSON"};
+        String [] args3 = {"JSON", "WILLSON", "KEVSON"};
         controller.runHelper(Action.ADD_CLASS, args1);
         controller.runHelper(Action.ADD_FIELD, args2);
         controller.runHelper(Action.RENAME_FIELD, args3);
-        assertTrue("doRenameClass method was called through runHelper method", UMLClassHandler.getClass(args1[0]).fieldExists(args3[3]));
+        assertTrue("doRenameClass method was called through runHelper method", UMLClassHandler.getClass(args1[0]).fieldExists(args3[2]));
     }
 }

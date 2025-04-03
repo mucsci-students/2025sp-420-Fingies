@@ -215,7 +215,7 @@ public class UMLClassTest {
         c.addField("Engine", "String");
         assertTrue(c.fieldExists("Engine"));
 
-        c.renameField("Engine", "String", "Wheel");
+        c.renameField("Engine", "Wheel");
         assertTrue(c.fieldExists("Wheel"));
     }
 
@@ -226,7 +226,7 @@ public class UMLClassTest {
         {
             c.addField("Engine", "String");
             c.addField("Wheel", "String");
-            c.renameField("Engine", "String", "Wheel");
+            c.renameField("Engine", "Wheel");
         }
         catch (IllegalArgumentException e)
         {
@@ -240,7 +240,7 @@ public class UMLClassTest {
         try
         {
             c.addField("Engine", "String");
-            c.renameField("Engine", "String", "Engine");
+            c.renameField("Engine", "Engine");
         }
         catch (IllegalArgumentException e)
         {

@@ -167,7 +167,7 @@ public class UMLClassHandler {
             str += "\n\t";
             for (Field field : fields)
             {
-                str += " " + field + ", ";
+            	str += field + "\n\t";
             }
             str = str.substring(0, str.length() - 2); // trim off the extra \n\t
         }

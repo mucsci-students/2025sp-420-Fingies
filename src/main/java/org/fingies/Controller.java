@@ -3,8 +3,6 @@ package org.fingies;
 import java.util.List;
 import java.util.Stack;
 
-import javax.swing.text.View;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -235,27 +233,6 @@ public class Controller {
         }
     }
 
-    public boolean doChangeMethodReturnType(String srcClass, String methodName, List<String> parameterTypes, String newType)
-    {
-        try 
-        {
-            ArrayList <String> empty = new ArrayList<>();
-            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
-            {
-                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).setReturnType(newType);
-                return true;
-            }   
-            UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).setReturnType(newType);
-            return true;
-        }
-        catch (Exception e) 
-        {
-            model.writeToLog(e.getMessage());
-            view.notifyFail(e.getMessage());
-            return false;
-        }
-    }
-
     public boolean doRemoveMethod(String srcClass, String methodName, List<String> parameterTypes) 
     {
         try
@@ -283,12 +260,12 @@ public class Controller {
         }
     }
 
-    public boolean doRenameField(String srcClass, String oldField, String type, String newField) 
+    public boolean doRenameField(String srcClass, String oldField, String newField) 
     {
         try
         {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = UMLClassHandler.getClass(srcClass).renameField(oldField, type, newField);
+        	boolean result = UMLClassHandler.getClass(srcClass).renameField(oldField, newField);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	undoStack.push(change);
             return result; 
@@ -328,7 +305,7 @@ public class Controller {
         }
     }
     
-    // class method type1 type2 ; newName1 newType1
+    // expected format: class method type1 type2 ; newName1 newType1
     public boolean doAddParameters(String srcClass, String methodName, List<String> parameterTypes, List<String> newParameterNames, List<String> newParameterTypes)
     {
         try
@@ -414,21 +391,22 @@ public class Controller {
         try 
         {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-            boolean result;
             ArrayList <String> empty = new ArrayList<>();
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).getParameter(param).setType(newType);
+                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).getParameter(param).setType(newType);
             }   
             else
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
+                UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
             }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	undoStack.push(change);
         	return true;
         }
         catch (Exception e) {
+        	System.out.println(e.getMessage());
+        	e.printStackTrace();
             model.writeToLog(e.getMessage());
             view.notifyFail(e.getMessage());
             return false;
@@ -449,11 +427,6 @@ public class Controller {
     {
         return model.loadData(filepath);
     }
-
-    // public UMLClassHandler doLoad(String filepath) 
-    // {
-    //     return model.loadData(filepath);
-    // }
 
     public void doListClasses() 
     {
@@ -579,8 +552,31 @@ public class Controller {
     		RelationshipHandler.replace(change.getCurrClass(), change.getOldClass());
     		if (change.getOldClass() != null)
     			RelationshipHandler.replaceAllRelationshipsForClassname(change.getOldClass().getName(), change.getOldRelationships());
-    		
     		return true;
+    	}
+    }
+    
+    public boolean doRedo()
+    {
+    	throw new UnsupportedOperationException("Redo isn't implemented yet.");
+    }
+    
+    public boolean doMove(String className, String newX, String newY)
+    {
+    	try
+    	{
+    		UMLClass umlClass = UMLClassHandler.getClass(className);
+        	Change change = new Change(umlClass, RelationshipHandler.getAllRelationshipsForClassname(className));
+        	umlClass.setPosition(Integer.valueOf(newX), Integer.valueOf(newY));
+        	change.setCurrClass(umlClass);
+        	undoStack.push(change);
+        	return true;
+    	}
+    	catch (Exception e)
+    	{
+    		model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
+            return false;
     	}
     }
 
@@ -810,11 +806,11 @@ public class Controller {
                     return false;
                 }
             case RENAME_FIELD:
-                if (args.length == 4)
+                if (args.length == 3)
                 {
-                    if (doRenameField(args[0], args[1], args[2], args[3]))
+                    if (doRenameField(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully renamed field " + args[1] + " to " + args[3] + " in class " + args[0]);
+                        view.notifySuccess("Successfully renamed field " + args[1] + " to " + args[2] + " in class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -826,7 +822,7 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Rename field should have exactly 4 arguments.");
+                	view.notifyFail("Rename field should have exactly 3 arguments.");
                     return false;
                 }
             case CHANGE_FIELD_TYPE: 

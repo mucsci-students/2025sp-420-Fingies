@@ -112,7 +112,7 @@ public class RelationshipHandlerTest {
     @Test
     public void relationshipHandlerListRelationships()
     {
-        assertEquals(RelationshipHandler.listRelationships(), "");
+        assertEquals(RelationshipHandler.listRelationships(), "There are no current relationships");
         RelationshipHandler.addRelationship("A", "B", RelationshipType.Aggregation);
         assertEquals(RelationshipHandler.listRelationships(), "A ----◇ B");
         RelationshipHandler.addRelationship("C", "D", RelationshipType.Composition);

@@ -30,6 +30,18 @@ public class Method extends Attribute {
             addParameter(parameterNames.get(i), parameterTypes.get(i));
         }
     }
+    
+    /**
+     * Copy ctor
+     * @param method The method to copy from.
+     */
+    public Method(Method method)
+    {
+    	this(method.name, method.returnType);
+        for (int i = 0; i < method.params.size(); i++) {
+            addParameter(method.params.get(i).getName(), method.params.get(i).getType());
+        }
+    }
 
     @Override
     public String getName() {

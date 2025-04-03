@@ -34,7 +34,7 @@ public class Command {
 		    "add field", "remove field", "rename field",
 		    "add parameters", "remove parameters", "change parameter",
 		    "change relationship type", "change parameter type", "change field type",
-			"change method type", "undo", "redo" //TODO: we need a command for changing position of a class
+			"change method type", "undo", "redo"
 		};
 	
 	/**
@@ -68,19 +68,19 @@ public class Command {
 			"", //list relationships
 			"[ COMMAND ]", //help
 			"", //exit
-			"CLASS_NAME METHOD_NAME RETURN_TYPE PARAMETER_TYPE_LIST PARAMETER_LIST", //add method
-			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST", //remove method
-			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST NEW_NAME", //rename method
-			"CLASS_NAME FIELD", //add field
-			"CLASS_NAME FIELD", //remove field
-			"CLASS_NAME FIELD NEW_NAME", //rename field
-			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST ; NEW_PARAMETER_TYPE_LIST NEW_PARAMETER_LIST", //add parameters
-			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST ; OLD_PARAMETER_TYPE_LIST ", //remove parameters
-			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST OLD_PARAMETER_NAME NEW_PARAMETER_NAME", // rename parameter
+			"CLASS_NAME METHOD_NAME RETURN_TYPE [ PARAMETER ... ] [ PARAMETER_TYPE ... ]", //add method
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ]", //remove method
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] NEW_NAME", //rename method
+			"CLASS_NAME FIELD_NAME TYPE", //add field
+			"CLASS_NAME FIELD_NAME", //remove field
+			"CLASS_NAME FIELD_NAME NEW_NAME", //rename field
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ NEW_PARAMETER ... ] [ NEW_PARAMETER_TYPE ... ]", //add parameters
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; OLD_PARAMETER_TYPE_LIST ", //remove parameters
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_NAME", // rename parameter
 			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE", //change relationship type
-			"CLASS_NAME METHOD_NAME PARAMETER_TYPE_LIST PARAMETER_NAME NEW_TYPE", //change parameter type
-			"CLASS_NAME FIELD NEW_TYPE", //change field type
-			"CLASS_NAME METHOD_NAME PARAMETER_TYPES NEW_TYPE", //change method type
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_TYPE", //change parameter type
+			"CLASS_NAME FIELD_NAME NEW_TYPE", //change field type
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] NEW_TYPE", //change method type
 			"", //undo
 			"" //redo
 		};
