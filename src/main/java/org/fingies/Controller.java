@@ -2,6 +2,7 @@ package org.fingies;
 
 import java.util.List;
 import java.util.Stack;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -211,12 +212,42 @@ public class Controller {
         }
     }
 
+    public boolean doChangeMethodReturnType(String srcClass, String methodName, List<String> parameterTypes, String newType)
+    {
+        try 
+        {
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).setReturnType(newType);
+                return true;
+            }   
+            UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).setReturnType(newType);
+            return true;
+        }
+        catch (Exception e) 
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
+            return false;
+        }
+    }
+
     public boolean doRemoveMethod(String srcClass, String methodName, List<String> parameterTypes) 
     {
         try
         {
-        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = UMLClassHandler.getClass(srcClass).removeMethod(methodName, parameterTypes);
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+            ArrayList <String> empty = new ArrayList<>();
+            boolean result;
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                result = UMLClassHandler.getClass(srcClass).removeMethod(methodName, empty);
+            }
+            else
+            {
+                result = UMLClassHandler.getClass(srcClass).removeMethod(methodName, parameterTypes);
+            }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	undoStack.push(change);
             return result; 
@@ -229,12 +260,12 @@ public class Controller {
         }
     }
 
-    public boolean doRenameField(String srcClass, String oldField, String type, String newField) 
+    public boolean doRenameField(String srcClass, String oldField, String newField) 
     {
         try
         {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = UMLClassHandler.getClass(srcClass).renameField(oldField, type, newField);
+        	boolean result = UMLClassHandler.getClass(srcClass).renameField(oldField, newField);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	undoStack.push(change);
             return result; 
@@ -251,8 +282,17 @@ public class Controller {
     {
         try
         {
-        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, parameterTypes, newMethodName);
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+            ArrayList <String> empty = new ArrayList<>();
+            boolean result;
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                return UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, empty, newMethodName);
+            } 
+            else
+            {
+                result = UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, parameterTypes, newMethodName);
+            }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	undoStack.push(change);
         	return result;
@@ -265,13 +305,22 @@ public class Controller {
         }
     }
     
-    // class method type1 type2 ; newName1 newType1
+    // expected format: class method type1 type2 ; newName1 newType1
     public boolean doAddParameters(String srcClass, String methodName, List<String> parameterTypes, List<String> newParameterNames, List<String> newParameterTypes)
     {
         try
         {
-        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).addParameters(newParameterNames, newParameterTypes);
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+            boolean result;
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).addParameters(newParameterNames, newParameterTypes);
+            }   
+            else
+            {
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).addParameters(newParameterNames, newParameterTypes);
+            }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	undoStack.push(change);
         	return result;
@@ -284,13 +333,22 @@ public class Controller {
         }
     }
 
-    public boolean doRemoveParameters(String srcClass, String method, List<String> parameterTypes, List<String> parameterNamesToRemove)
+    public boolean doRemoveParameters(String srcClass, String methodName, List<String> parameterTypes, List<String> parameterNamesToRemove)
     {
         try
         {
-        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = UMLClassHandler.getClass(srcClass).getMethod(method, parameterTypes).removeParameters(parameterNamesToRemove);
-        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+            boolean result;
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).removeParameters(parameterNamesToRemove);
+            } 
+            else
+            {
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).removeParameters(parameterNamesToRemove);
+            }  
+            change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	undoStack.push(change);
         	return result;
         }
@@ -302,13 +360,22 @@ public class Controller {
         }
     }
     
-    public boolean doRenameParameter(String srcClass, String method, List<String> parameterTypes, String oldParam, String newParam)
+    public boolean doRenameParameter(String srcClass, String methodName, List<String> parameterTypes, String oldParam, String newParam)
     {
         try
         {
-        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = UMLClassHandler.getClass(srcClass).getMethod(method, parameterTypes).renameParameter(oldParam, newParam);
-        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+            boolean result;
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).renameParameter(oldParam, newParam);
+            }   
+            else
+            {
+                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).renameParameter(oldParam, newParam);
+            }
+            change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	undoStack.push(change);
         	return result;
         }
@@ -324,12 +391,22 @@ public class Controller {
         try 
         {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-            UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
+            ArrayList <String> empty = new ArrayList<>();
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).getParameter(param).setType(newType);
+            }   
+            else
+            {
+                UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
+            }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	undoStack.push(change);
         	return true;
         }
         catch (Exception e) {
+        	System.out.println(e.getMessage());
+        	e.printStackTrace();
             model.writeToLog(e.getMessage());
             view.notifyFail(e.getMessage());
             return false;
@@ -350,11 +427,6 @@ public class Controller {
     {
         return model.loadData(filepath);
     }
-
-    // public UMLClassHandler doLoad(String filepath) 
-    // {
-    //     return model.loadData(filepath);
-    // }
 
     public void doListClasses() 
     {
@@ -480,8 +552,31 @@ public class Controller {
     		RelationshipHandler.replace(change.getCurrClass(), change.getOldClass());
     		if (change.getOldClass() != null)
     			RelationshipHandler.replaceAllRelationshipsForClassname(change.getOldClass().getName(), change.getOldRelationships());
-    		
     		return true;
+    	}
+    }
+    
+    public boolean doRedo()
+    {
+    	throw new UnsupportedOperationException("Redo isn't implemented yet.");
+    }
+    
+    public boolean doMove(String className, String newX, String newY)
+    {
+    	try
+    	{
+    		UMLClass umlClass = UMLClassHandler.getClass(className);
+        	Change change = new Change(umlClass, RelationshipHandler.getAllRelationshipsForClassname(className));
+        	umlClass.setPosition(Integer.valueOf(newX), Integer.valueOf(newY));
+        	change.setCurrClass(umlClass);
+        	undoStack.push(change);
+        	return true;
+    	}
+    	catch (Exception e)
+    	{
+    		model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
+            return false;
     	}
     }
 
@@ -651,12 +746,12 @@ public class Controller {
                     return false;
                 }
             case RENAME_METHOD:
-                if (args.length >= 5)
+                if (args.length >= 4)
                 {
                 	List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 1);
                     if (doRenameMethod(args[0], args[1], paramTypes, args[args.length - 1]))
                     {
-                        view.notifySuccess("Successfully renamed method " + args[1] + " with return type " + args[2] + " to " + args[4] + " in class " + args[0]);
+                        view.notifySuccess("Successfully renamed method " + args[1] + " to " + args[args.length - 1] + " in class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -711,11 +806,11 @@ public class Controller {
                     return false;
                 }
             case RENAME_FIELD:
-                if (args.length == 4)
+                if (args.length == 3)
                 {
-                    if (doRenameField(args[0], args[1], args[2], args[3]))
+                    if (doRenameField(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully renamed field " + args[1] + " to " + args[3] + " in class " + args[0]);
+                        view.notifySuccess("Successfully renamed field " + args[1] + " to " + args[2] + " in class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -727,7 +822,7 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Rename field should have exactly 4 arguments.");
+                	view.notifyFail("Rename field should have exactly 3 arguments.");
                     return false;
                 }
             case CHANGE_FIELD_TYPE: 
@@ -780,7 +875,7 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Add Parameters should have 5 or more parameters.");
+                    view.notifyFail("Add Parameters should have 6 or more parameters.");
                     return false;
                 }
             case REMOVE_PARAMETERS:
@@ -848,6 +943,28 @@ public class Controller {
                 else 
                 {
                     view.notifyFail("Changing Parameter type should have exactly 6 arguments.");
+                    return false;
+                }
+            case CHANGE_METHOD_RETURN_TYPE:
+             
+                if (args.length >= 3)
+                {
+                    List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 1);
+                    if (doChangeMethodReturnType(args[0], args[1], paramTypes, args[args.length - 1]))
+                    {
+                        view.notifySuccess("Successfully changed method " + args[1] + "'s return type to " + args[args.length - 1] + " in class " + args[0]);
+                        madeChange = true;
+                        return true;
+                    }  
+                    else
+                    {
+                        //view.notifyFail("Failed to change relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
+                        return false;
+                    }
+                }
+                else
+                {
+                    view.notifyFail("Change method type should have at least 3 arguments.");
                     return false;
                 }
             case CHANGE_RELATIONSHIP_TYPE:
@@ -934,18 +1051,11 @@ public class Controller {
                         if (result.toLowerCase().equals("y"))
                         {
                              return loadCheck(args[0]);
-
-                            // doLoad(args[0]);
-                            // hasSaved = true;
-                            // madeChange = false;
-                            // view.notifySuccess("Successfully loaded your file");
                         }
                         else
                         {
                             saveLoop();
                             return loadCheck(args[0]);
-                            // doLoad(args[0]);
-                            // view.notifySuccess("Successfully loaded your file.");
                         }
                     }
                     else

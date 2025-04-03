@@ -32,8 +32,15 @@ public class UMLClass {
     public UMLClass(UMLClass clazz)
     {
     	name = clazz.name;
-    	fields = new ArrayList<Field>(clazz.fields);
-    	methods = new ArrayList<Method> (clazz.methods);
+    	
+    	fields = new ArrayList<Field>();
+    	for(Field f : clazz.getFields())
+    		fields.add(new Field(f));
+    	
+    	methods = new ArrayList<Method> ();
+    	for (Method m : clazz.getMethods())
+    		methods.add(new Method(m));
+    	
     	position = new Position(clazz.position);
     }
     
@@ -147,19 +154,16 @@ public class UMLClass {
     /**
      * Attemps to rename an existing field to a new one
      * @param fieldName name of field to be changed
-     * @param type data type of the field to be changed
      * @param newName new name of field to replace old name
      * @return true if the name of the field was replaced, false otherwise
      */
-    public boolean renameField(String fieldName, String type, String newName) {
+    public boolean renameField(String fieldName, String newName) {
         validateCharacters(newName);
         Field field = getField(fieldName);
         if (field == null || fieldExists(newName) || name.equals(newName))
             throw new IllegalArgumentException("Invalid rename operation");
         getField(fieldName).renameAttribute(newName);
         return true;
-        // removeField(fieldName);
-        // return addField(newName, type);
     }
 
     /**
@@ -176,8 +180,6 @@ public class UMLClass {
             throw new IllegalArgumentException("Invalid rename operation");
         getMethod(methodName, types).renameAttribute(newName);
         return true;
-        // removeMethod(methodName, types);
-        // return addMethod(newName, method.getReturnType(), method.getParameterNames(), types);
     }
 
     /**

@@ -30,6 +30,18 @@ public class Method extends Attribute {
             addParameter(parameterNames.get(i), parameterTypes.get(i));
         }
     }
+    
+    /**
+     * Copy ctor
+     * @param method The method to copy from.
+     */
+    public Method(Method method)
+    {
+    	this(method.name, method.returnType);
+        for (int i = 0; i < method.params.size(); i++) {
+            addParameter(method.params.get(i).getName(), method.params.get(i).getType());
+        }
+    }
 
     @Override
     public String getName() {
@@ -126,12 +138,12 @@ public class Method extends Attribute {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Method method = (Method) obj;
-        return name.equals(method.name) && params.equals(method.params);
+        return name.equals(method.name) && returnType.equals(method.returnType) && params.equals(method.params);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, params);
+        return Objects.hash(name, returnType, params);
     }
 
     public String toTypes()
