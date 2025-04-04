@@ -580,7 +580,7 @@ public class Controller {
     
     public boolean doRedo()
     {
-    	if (undoStack.isEmpty())
+    	if (redoStack.isEmpty())
     	{
     		// nothing to redo, don't bother giving an error message
     		return false;

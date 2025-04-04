@@ -17,6 +17,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * @author Nick Hayes & Lincoln Craddock
+ */
 public class UndoTest {
 	
 	Controller controller;
