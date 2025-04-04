@@ -319,9 +319,7 @@ public class UndoTest {
 	    controller.runHelper(Action.UNDO, new String[] {});
 	    assertFalse("The UMLClassHandler shouldn't have a class named \"Person\" after undoing an Add Class command.", UMLClassHandler.exists("Person"));
 	}
-	
-	// TODO: need to fix
-	
+		
 	@Test
     public void addAndChangeFieldType()
     {

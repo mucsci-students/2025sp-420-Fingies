@@ -766,7 +766,7 @@ public class Controller {
                     List<String> paramTypes = getPartialListFromArray(args, 2, args.length);
                     if (doRemoveMethod(args[0], args[1], paramTypes))
                     {
-                        view.notifySuccess("Successfully removed method " + args[1] + " with return type " + args[2] + " from class " + args[0]);
+                        view.notifySuccess("Successfully removed method " + args[1] + " from class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -1195,11 +1195,22 @@ public class Controller {
             case UNDO:
             	if (args.length != 0)
             	{
+            		view.notifyFail("Undo shouldn't have any arguments.");
             		return false;
             	}
             	else
             	{
             		return doUndo();
+            	}
+            case MOVE:
+            	if (args.length != 3)
+            	{
+            		view.notifyFail("Changing field data type should have exactly 3 arguments.");
+            		return false;
+            	}
+            	else
+            	{
+            		return doMove(args[0], args[1], args[2]);
             	}
         }
         return false;
