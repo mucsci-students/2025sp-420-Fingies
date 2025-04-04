@@ -999,21 +999,19 @@ public class GUIView extends JFrame implements ActionListener, View {
     }
 
     /**
-     * Updates all of the classes after Undo is clicked
+     * Updates all of the classes after Undo is clicked and retains color except when name is changed
      */
     public void updateClasses()
     {
         HashMap<String, Color> colors = new HashMap<>();
         for (GUIUMLClass g : GUIUMLClasses.values())
         {
-            // System.out.println("old color is " + g.getColor());
             colors.put(g.getUMLClass().getName(), g.getColor());
             this.remove(g.getJLayeredPane());
         }
         GUIUMLClasses.clear();
         for (UMLClass c : UMLClassHandler.getAllClasses())
         {
-            // System.out.println("new color is " + colors.get(c.getName()));
             addUMLClass(c.getName(), colors.get(c.getName()));
         }
     }
