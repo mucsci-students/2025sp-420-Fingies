@@ -135,7 +135,6 @@ public class Controller {
         {
             model.writeToLog(e.getMessage());
             view.notifyFail(e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -412,7 +411,6 @@ public class Controller {
         }
         catch (Exception e) {
         	System.out.println(e.getMessage());
-        	e.printStackTrace();
             model.writeToLog(e.getMessage());
             view.notifyFail(e.getMessage());
             return false;
