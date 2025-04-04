@@ -16,6 +16,8 @@ public class Change
 	/** A copy of all of the relationships the old class was the source or destination for before the change. */
 	private List<Relationship> oldRelationships;
 	
+	private List<Relationship> currRelationships;
+	
 	/**
 	 * Default constructor of a Change Object
 	 * @param oldClass The class to copy
@@ -45,6 +47,24 @@ public class Change
 			this.currClass = new UMLClass(currClass);
 		else
 			this.currClass = null;
+	}
+	
+	public void setCurrRelationships(List<Relationship> currRelationships)
+	{
+		this.currRelationships = new ArrayList<Relationship>();
+		if(currRelationships == null)
+		{
+			return;
+		}
+		for (Relationship r : currRelationships)
+		{
+			this.currRelationships.add(new Relationship(r));
+		}
+	}
+	
+	public List<Relationship> getCurrRelationships()
+	{
+		return currRelationships;
 	}
 
 	public UMLClass getOldClass() 
