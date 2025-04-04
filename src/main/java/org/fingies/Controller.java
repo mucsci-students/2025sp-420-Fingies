@@ -1202,6 +1202,16 @@ public class Controller {
             	{
             		return doUndo();
             	}
+            case REDO:
+            	if (args.length != 0)
+            	{
+            		view.notifyFail("Redo shouldn't have any arguments.");
+            		return false;
+            	}
+            	else
+            	{
+            		return doRedo();
+            	}
             case MOVE:
             	if (args.length != 3)
             	{
