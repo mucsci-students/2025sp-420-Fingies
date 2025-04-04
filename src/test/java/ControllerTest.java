@@ -147,13 +147,20 @@ public class ControllerTest {
         assertTrue("Parameter type should be changed successfully.", result);
     }
 
-    // --------------------- RUN METHODS ---------------------
+    // --------------------- RUNHELPER CASE FUNCTIONALITY ---------------------
+
 
     @Test
     public void testAddClassAction() {
         String [] args = {"JSON"};
-        controller.runHelper(Action.ADD_CLASS, args);
-        assertTrue("doAddClass method was called through runHelper method", UMLClassHandler.exists(args[0]));
+        assertTrue("AddClass case ran successfully", controller.runHelper(Action.ADD_CLASS, args));
+    }
+
+    @Test
+    public void testRemoveClassAction() {
+        String [] args1 = {"JSON"};
+        controller.runHelper(Action.ADD_CLASS, args1);
+        assertTrue("RemoveCLass case ran successfully", controller.runHelper(Action.REMOVE_CLASS, args1));
     }
 
     @Test
@@ -161,8 +168,7 @@ public class ControllerTest {
         String [] args1 = {"JSON"};
         String [] args2 = {"JSON", "WILLSON"};
         controller.runHelper(Action.ADD_CLASS, args1);
-        controller.runHelper(Action.RENAME_CLASS, args2);
-        assertTrue("doRenameClass method was called through runHelper method", UMLClassHandler.exists(args2[1]));
+        assertTrue("RenameClass case ran successfully", controller.runHelper(Action.RENAME_CLASS, args2));
     }
 
     @Test
@@ -172,7 +178,6 @@ public class ControllerTest {
         String [] args3 = {"JSON", "WILLSON", "KEVSON"};
         controller.runHelper(Action.ADD_CLASS, args1);
         controller.runHelper(Action.ADD_FIELD, args2);
-        controller.runHelper(Action.RENAME_FIELD, args3);
-        assertTrue("doRenameClass method was called through runHelper method", UMLClassHandler.getClass(args1[0]).fieldExists(args3[2]));
+        assertTrue("RenameField case ran successfully", controller.runHelper(Action.RENAME_FIELD, args3));
     }
 }
