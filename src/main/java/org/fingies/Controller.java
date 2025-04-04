@@ -17,7 +17,7 @@ public class Controller {
     private boolean hasSaved;
     
     private Stack<Change> undoStack = new Stack<Change>();
-    //private Stack<Change> redoStack = new Stack<Change>();
+    private Stack<Change> redoStack = new Stack<Change>();
 
     public Controller (View view, JModel model)
     {
@@ -34,6 +34,7 @@ public class Controller {
         	Change change = new Change (null, null);
         	boolean result = UMLClassHandler.createClass(className);
         	change.setCurrClass(UMLClassHandler.getClass(className));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(className));
         	undoStack.push(change);
             return result;
         }
@@ -53,6 +54,7 @@ public class Controller {
             RelationshipHandler.removeAllRelationshipsForClassname(className);
             boolean result = UMLClassHandler.removeClass(className);
             change.setCurrClass(null);
+            change.setCurrRelationships(null);
             undoStack.push(change);
             return result;
         }
@@ -71,6 +73,7 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(className), RelationshipHandler.getAllRelationshipsForClassname(className));
         	boolean result = UMLClassHandler.renameClass(className, newName);
         	change.setCurrClass(UMLClassHandler.getClass(newName));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(newName));
         	undoStack.push(change);
             return result;
         }
@@ -91,6 +94,7 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = RelationshipHandler.addRelationship(srcClass, destClass, rType);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
             return result;
         }
@@ -109,6 +113,7 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = RelationshipHandler.removeRelationship(srcClass, destClass);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
             return result;
         }
@@ -128,6 +133,7 @@ public class Controller {
             Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = RelationshipHandler.changeRelationshipType(srcClass, destClass, rType);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
             return result;
         }
@@ -147,6 +153,7 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = UMLClassHandler.getClass(srcClass).addField(field, type);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
             return result; 
         }
@@ -165,6 +172,7 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = UMLClassHandler.getClass(srcClass).addMethod(methodName, returnType, parameterNames, parameterTypes);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
             return result; 
         }
@@ -183,6 +191,7 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = UMLClassHandler.getClass(srcClass).removeField(field);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
             return result; 
         }
@@ -201,6 +210,7 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	UMLClassHandler.getClass(srcClass).getField(field).setType(newType);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
             return true;
         }
@@ -249,6 +259,7 @@ public class Controller {
                 result = UMLClassHandler.getClass(srcClass).removeMethod(methodName, parameterTypes);
             }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
             return result; 
         }
@@ -267,6 +278,7 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = UMLClassHandler.getClass(srcClass).renameField(oldField, newField);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
             return result; 
         }
@@ -294,6 +306,7 @@ public class Controller {
                 result = UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, parameterTypes, newMethodName);
             }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	return result;
         }
@@ -322,6 +335,7 @@ public class Controller {
                 result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).addParameters(newParameterNames, newParameterTypes);
             }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	return result;
         }
@@ -349,6 +363,7 @@ public class Controller {
                 result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).removeParameters(parameterNamesToRemove);
             }  
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
+            change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	return result;
         }
@@ -376,6 +391,7 @@ public class Controller {
                 result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).renameParameter(oldParam, newParam);
             }
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
+            change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	return result;
         }
@@ -401,6 +417,7 @@ public class Controller {
                 UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
             }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	return true;
         }
@@ -548,6 +565,7 @@ public class Controller {
     	else
     	{
     		Change change = undoStack.pop();
+    		redoStack.push(change);
     		UMLClassHandler.replace(change.getCurrClass(), change.getOldClass());
     		RelationshipHandler.replace(change.getCurrClass(), change.getOldClass());
     		if (change.getOldClass() != null)
@@ -558,7 +576,21 @@ public class Controller {
     
     public boolean doRedo()
     {
-    	throw new UnsupportedOperationException("Redo isn't implemented yet.");
+    	if (undoStack.isEmpty())
+    	{
+    		// nothing to redo, don't bother giving an error message
+    		return false;
+    	}
+    	else
+    	{
+    		Change change = redoStack.pop();
+    		undoStack.push(change);
+    		UMLClassHandler.replace(change.getOldClass(), change.getCurrClass());
+    		RelationshipHandler.replace(change.getOldClass(), change.getCurrClass());
+    		if (change.getCurrClass() != null)
+    			RelationshipHandler.replaceAllRelationshipsForClassname(change.getCurrClass().getName(), change.getCurrRelationships());
+    		return true;
+    	}
     }
     
     public boolean doMove(String className, String newX, String newY)
