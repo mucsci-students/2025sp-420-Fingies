@@ -217,13 +217,19 @@ public class Controller {
         try 
         {
             ArrayList <String> empty = new ArrayList<>();
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).setReturnType(newType);
-                return true;
-            }   
-            UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).setReturnType(newType);
-            return true;
+            	UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).setReturnType(newType);
+            }
+            else
+            {
+            	UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).setReturnType(newType); 
+            }
+            change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	undoStack.push(change);
+        	return true;
         }
         catch (Exception e) 
         {
