@@ -274,17 +274,6 @@ public class GUIView extends JFrame implements ActionListener, View {
         comboBoxes.forEach(GUIView.this::remove);
         comboBoxes.clear();
         repaint(); // Refresh UI
-        
-        if (action.equals(Action.RENAME_FIELD))
-        {
-            // Initialize a list to store the final inputs
-            List<String> finalInputsList = new ArrayList<>();
-            finalInputsList.add(allInputs[0]);  // Class Name
-            finalInputsList.add(allInputs[1]);  // Field Name
-            finalInputsList.add(UMLClassHandler.getClass(allInputs[0]).getField(allInputs[1]).getType());
-            finalInputsList.add(allInputs[2]);  // New Field Name
-            allInputs = finalInputsList.toArray(new String[0]);
-        }
 
         // Special handling for actions that require parameter formatting 
         // Turns method1 (String int String) into method1 without the type list
@@ -388,7 +377,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 allInputs = finalInputsList.toArray(new String[0]);
             } 
         }
-        // System.out.println("Input: " + Arrays.toString(allInputs));
+        System.out.println("Input: " + Arrays.toString(allInputs));
     
         // Call controller helper with the concatenated arguments
         if (controller.runHelper(action, allInputs)) {
@@ -418,6 +407,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         JComboBox<String> classComboBox = null;
         JComboBox<String> methodComboBox = null;
         JComboBox<String> parameterComboBox = null;
+        JComboBox<String> destinationComboBox = null;
     
         for (int i = 0; i < placeholders.length; i++) {
             String placeholder = placeholders[i];
@@ -445,6 +435,12 @@ public class GUIView extends JFrame implements ActionListener, View {
                     updateParameterComboBox(parameterComboBox, classComboBox, methodComboBox); // Initial population
                     addMethodComboBoxListener(classComboBox, methodComboBox, parameterComboBox);
                     box = parameterComboBox;
+                    break;
+
+                case "Desination":
+                    destinationComboBox = createComboBoxForClassItems(classComboBox, "getDesinations");
+                    addComboBoxListener(classComboBox, destinationComboBox, "getDesinations");
+                    box = destinationComboBox;
                     break;
                     
                 case "Relationship":
@@ -608,6 +604,10 @@ public class GUIView extends JFrame implements ActionListener, View {
                     .map(x -> x.getName()).toArray(String[]::new);
             case "getMethods" -> GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
                     .map(x -> x.toTypes()).toArray(String[]::new);
+            case "getDesinations" -> RelationshipHandler.getAllRelationshipsForClassname(selectedClass).stream()
+                    .filter(x -> x.getSrc().getName().equals(selectedClass))
+                    .map (x -> x.getDest().getName())
+                    .toArray(String[]::new);
             default -> new String[0];
         };
     }
@@ -721,7 +721,7 @@ public class GUIView extends JFrame implements ActionListener, View {
             }
             else if (e.getSource() == removeRelationship)
             {
-                makeComboBoxes(a, new String [] {"Class", "Class"});
+                makeComboBoxes(a, new String [] {"Class", "Desination"});
                 createButtons(a, 2);
             }
             else if (e.getSource() == renameClass)
@@ -768,7 +768,7 @@ public class GUIView extends JFrame implements ActionListener, View {
             }
             else if (e.getSource() == changeRelatoinshipType)
             {
-                makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
+                makeComboBoxes(a, new String [] {"Class", "Desination", "Relationship"});
                 createButtons(a, 3);
             }
             
@@ -1003,16 +1003,18 @@ public class GUIView extends JFrame implements ActionListener, View {
      */
     public void updateClasses()
     {
-        HashMap<UMLClass, Color> colors = new HashMap<>();
+        HashMap<String, Color> colors = new HashMap<>();
         for (GUIUMLClass g : GUIUMLClasses.values())
         {
-            colors.put(g.getUMLClass(), g.getColor());
+            // System.out.println("old color is " + g.getColor());
+            colors.put(g.getUMLClass().getName(), g.getColor());
             this.remove(g.getJLayeredPane());
         }
         GUIUMLClasses.clear();
         for (UMLClass c : UMLClassHandler.getAllClasses())
         {
-            addUMLClass(c.getName(), colors.get(c));
+            // System.out.println("new color is " + colors.get(c.getName()));
+            addUMLClass(c.getName(), colors.get(c.getName()));
         }
     }
 

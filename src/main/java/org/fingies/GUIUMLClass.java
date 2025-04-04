@@ -30,17 +30,17 @@ public class GUIUMLClass {
     private UMLClass umlclass;
     private Controller controller;
 
-    public GUIUMLClass(UMLClass umlclass, Controller controller, GUIView guiView, Color color)
-        
+    public GUIUMLClass(UMLClass umlclass, Controller controller, GUIView guiView, Color col)
     {
         this.umlclass = umlclass;
         this.controller = controller;
 
         // Creates a random color for the class
-        if (color == null)
+        if (col == null)
             color = new Color((int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), 100);
+        // System.out.println("MEGA COLOR is " + color);
         else
-            this.color = color;
+            color = col;
 
         classPanel = new JPanel();
         classPanel.setBackground(color);
