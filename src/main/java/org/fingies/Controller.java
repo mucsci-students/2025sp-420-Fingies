@@ -140,7 +140,7 @@ public class Controller {
         }
     }
 
-    public boolean doAddField(String srcClass, String type, String field) 
+    public boolean doAddField(String srcClass, String field, String type) 
     {
         try
         {

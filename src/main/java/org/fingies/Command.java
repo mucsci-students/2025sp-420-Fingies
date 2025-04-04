@@ -75,7 +75,7 @@ public class Command {
 			"CLASS_NAME FIELD_NAME", //remove field
 			"CLASS_NAME FIELD_NAME NEW_NAME", //rename field
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ NEW_PARAMETER ... ] [ NEW_PARAMETER_TYPE ... ]", //add parameters
-			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; OLD_PARAMETER_TYPE_LIST ", //remove parameters
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ OLD_PARAMETER ... ] ", //remove parameters
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_NAME", // rename parameter
 			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE", //change relationship type
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_TYPE", //change parameter type

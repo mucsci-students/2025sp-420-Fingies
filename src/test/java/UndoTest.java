@@ -256,7 +256,7 @@ public class UndoTest {
 	    controller.runHelper(Action.ADD_CLASS, new String[] {"Person"});
 	    assertTrue("The UMLClassHandler should have a class named \"Person\" after adding one.", UMLClassHandler.exists("Person"));
 
-	    controller.runHelper(Action.ADD_FIELD, new String[] {"Person", "int", "age"});
+	    controller.runHelper(Action.ADD_FIELD, new String[] {"Person", "age", "int"});
 	    UMLClass personClass = UMLClassHandler.getClass("Person");
 	    assertTrue("The class \"Person\" should have a field named \"age\".", personClass.fieldExists("age"));
 
@@ -273,7 +273,7 @@ public class UndoTest {
 	    controller.runHelper(Action.ADD_CLASS, new String[] {"Person"});
 	    assertTrue("The UMLClassHandler should have a class named \"Person\" after adding one.", UMLClassHandler.exists("Person"));
 
-	    controller.runHelper(Action.ADD_FIELD, new String[] {"Person", "int", "age"});
+	    controller.runHelper(Action.ADD_FIELD, new String[] {"Person", "age", "int"});
 	    UMLClass personClass = UMLClassHandler.getClass("Person");
 	    assertTrue("The class \"Person\" should have a field named \"age\".", personClass.fieldExists("age"));
 	    
@@ -298,7 +298,7 @@ public class UndoTest {
 	    controller.runHelper(Action.ADD_CLASS, new String[] {"Person"});
 	    assertTrue("The UMLClassHandler should have a class named \"Person\" after adding one.", UMLClassHandler.exists("Person"));
 
-	    controller.runHelper(Action.ADD_FIELD, new String[] {"Person", "int", "age"});
+	    controller.runHelper(Action.ADD_FIELD, new String[] {"Person", "age", "int"});
 	    UMLClass personClass = UMLClassHandler.getClass("Person");
 	    assertTrue("The class \"Person\" should have a field named \"age\".", personClass.fieldExists("age"));
 	    
