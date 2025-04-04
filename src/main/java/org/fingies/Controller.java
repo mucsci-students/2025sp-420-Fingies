@@ -588,7 +588,6 @@ public class Controller {
      */
     public boolean runHelper(Action action, String[] args)
     {
-    	//TODO Refactor attribute cases and update with fields, and methods
         switch(action) {
             case ADD_CLASS:
                 if (args.length == 1)
@@ -844,7 +843,7 @@ public class Controller {
                     return false;
                 }
             case ADD_PARAMETERS:
-                if (args.length >= 6) {
+                if (args.length >= 5) {
                     try {
                         int idx = indexOfSymbol(args, ";");
                         if (idx == -1)
@@ -854,6 +853,9 @@ public class Controller {
                         	return false;
                         }
                         List<String> oldParamTypes = getPartialListFromArray(args, 2, idx);
+                        if (idx == 3) {
+                            oldParamTypes = new ArrayList<String>();
+                        }
                         List<String> newParamNames = new ArrayList<String>();
                         List<String> newParamTypes = new ArrayList<String>();
                         getTwoListsFromArray(args, idx + 1, args.length, newParamNames, newParamTypes);
@@ -875,7 +877,7 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Add Parameters should have 6 or more parameters.");
+                    view.notifyFail("Add Parameters should have 5 or more parameters.");
                     return false;
                 }
             case REMOVE_PARAMETERS:
