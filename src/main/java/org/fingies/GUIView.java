@@ -870,8 +870,14 @@ public class GUIView extends JFrame implements ActionListener, View {
             case CHANGE_PARAMETER_TYPE:
                 updateAttributes(args[0]);
                 break;
+            case UNDO:
+                System.out.println("UNDO Initiated");
+                updateClasses();
+                break;
+            case REDO:
+                updateClasses();
+                break;
             default:
-                System.out.println("beep beep bop");
                 break;
             }
             updateArrows();
@@ -944,7 +950,21 @@ public class GUIView extends JFrame implements ActionListener, View {
      */
     public void addUMLClass(String className)
     {
-        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this);
+        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this, null);
+
+        // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
+        this.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
+        GUIUMLClasses.put(className, newUMLClass);
+        reload();
+    }
+
+    /**
+     * Adds a UMLClass to list of GUIUMLClasses, which contains all current classes that exist within the GUI
+     * @param className name of class to be added
+     */
+    public void addUMLClass(String className, Color color)
+    {
+        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this, color);
 
         // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
         this.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
@@ -978,12 +998,21 @@ public class GUIView extends JFrame implements ActionListener, View {
         reload();
     }
 
+    /**
+     * Updates all of the classes after Undo is clicked
+     */
     public void updateClasses()
     {
-        HashMap<String, GUIUMLClass> temp = GUIUMLClasses;
+        HashMap<UMLClass, Color> colors = new HashMap<>();
+        for (GUIUMLClass g : GUIUMLClasses.values())
+        {
+            colors.put(g.getUMLClass(), g.getColor());
+            this.remove(g.getJLayeredPane());
+        }
+        GUIUMLClasses.clear();
         for (UMLClass c : UMLClassHandler.getAllClasses())
         {
-            
+            addUMLClass(c.getName(), colors.get(c));
         }
     }
 

@@ -30,14 +30,17 @@ public class GUIUMLClass {
     private UMLClass umlclass;
     private Controller controller;
 
-    public GUIUMLClass(UMLClass umlclass, Controller controller, GUIView guiView)
+    public GUIUMLClass(UMLClass umlclass, Controller controller, GUIView guiView, Color color)
         
     {
         this.umlclass = umlclass;
         this.controller = controller;
 
         // Creates a random color for the class
-        color = new Color((int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), 100);
+        if (color == null)
+            color = new Color((int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), 100);
+        else
+            this.color = color;
 
         classPanel = new JPanel();
         classPanel.setBackground(color);
@@ -83,6 +86,11 @@ public class GUIUMLClass {
         initializePosition(background, guiView.getWidth(), guiView.getHeight());
 
         update();
+    }
+
+    public Color getColor()
+    {
+        return color;
     }
 
     public UMLClass getUMLClass()
