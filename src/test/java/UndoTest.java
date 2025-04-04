@@ -334,6 +334,7 @@ public class UndoTest {
         assertTrue("The class \"Person\" should contain the field \"age\".", personClass.fieldExists("age"));
 
         controller.runHelper(Action.CHANGE_FIELD_TYPE, new String [] {personClass.getName(), "age", "String"});
+        personClass = UMLClassHandler.getClass("Person");
         assertEquals("The class \"Person\" should contain the field \"age\" with the type of \"String\".", "String", personClass.getField("age").getType());
 
         controller.runHelper(Action.UNDO, new String[] {});
@@ -480,10 +481,10 @@ public class UndoTest {
 		Position oldPos = new Position(UMLClassHandler.getClass("jerry").getPosition());
 		
 		controller.runHelper(Action.MOVE, new String[] {"jerry", "20", "30"});
-		assertEquals("", new Position(20, 30), UMLClassHandler.getClass("jerry").getPosition());
+		assertEquals("The position should be correct after moving the class.", new Position(20, 30), UMLClassHandler.getClass("jerry").getPosition());
 		
 		controller.runHelper(Action.UNDO, new String[] {});
-		assertEquals("", oldPos, UMLClassHandler.getClass("jerry").getPosition());
+		assertEquals("The position should be correct after undoing.", oldPos, UMLClassHandler.getClass("jerry").getPosition());
 		
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));

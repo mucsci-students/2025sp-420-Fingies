@@ -36,6 +36,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(className));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(className));
         	undoStack.push(change);
+        	redoStack.clear();
             return result;
         }
         catch (Exception e)
@@ -56,6 +57,7 @@ public class Controller {
             change.setCurrClass(null);
             change.setCurrRelationships(null);
             undoStack.push(change);
+            redoStack.clear();
             return result;
         }
         catch (Exception e)
@@ -75,6 +77,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(newName));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(newName));
         	undoStack.push(change);
+        	redoStack.clear();
             return result;
         }
         catch (Exception e)
@@ -96,6 +99,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result;
         }
         catch (Exception e)
@@ -115,6 +119,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result;
         }
         catch (Exception e)
@@ -135,6 +140,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result;
         }
         catch (Exception e)
@@ -154,6 +160,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result; 
         }
         catch (Exception e)
@@ -173,6 +180,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result; 
         }
         catch (Exception e)
@@ -192,6 +200,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result; 
         }
         catch (Exception e)
@@ -211,6 +220,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return true;
         }
         catch (Exception e) 
@@ -237,7 +247,9 @@ public class Controller {
             	UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).setReturnType(newType); 
             }
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
+            change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
         	return true;
         }
         catch (Exception e) 
@@ -266,6 +278,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result; 
         }
         catch (Exception e)
@@ -285,6 +298,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result; 
         }
         catch (Exception e)
@@ -313,6 +327,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
         	return result;
         }
         catch (Exception e)
@@ -342,6 +357,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
         	return result;
         }
         catch (Exception e)
@@ -370,6 +386,7 @@ public class Controller {
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
             change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
         	return result;
         }
         catch (Exception e)
@@ -398,6 +415,7 @@ public class Controller {
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
             change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
         	return result;
         }
         catch (Exception e)
@@ -424,6 +442,7 @@ public class Controller {
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
         	return true;
         }
         catch (Exception e) {
@@ -439,7 +458,7 @@ public class Controller {
         return model.saveData();
     }
 
-    public boolean doSave(String filepath) 
+    public boolean doSave(String filepath)
     {
         return model.saveData(filepath);
     }
@@ -605,7 +624,9 @@ public class Controller {
         	Change change = new Change(umlClass, RelationshipHandler.getAllRelationshipsForClassname(className));
         	umlClass.setPosition(Integer.valueOf(newX), Integer.valueOf(newY));
         	change.setCurrClass(umlClass);
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(className));
         	undoStack.push(change);
+        	redoStack.clear();
         	return true;
     	}
     	catch (Exception e)
