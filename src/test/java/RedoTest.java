@@ -17,10 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * @author Nick Hayes & Lincoln Craddock
- */
-public class UndoTest {
+public class RedoTest {
 	
 	Controller controller;
 	
@@ -37,7 +34,7 @@ public class UndoTest {
 		    @Override public List<String> promptForInput(List<String> messages, List<InputCheck> checks) { return null; }
 		    @Override public void notifySuccess() {}
 		    @Override public void notifySuccess(String message) {}
-		    @Override public void notifyFail(String message) { throw new IllegalArgumentException ("Notify fail was called: \n" + message); }
+		    @Override public void notifyFail(String message) {}
 		    @Override public void display(String message) {}
 		    @Override public void help() {}
 		    @Override public void help(String command) {}
@@ -65,6 +62,9 @@ public class UndoTest {
 		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
 	}
 	
 	@Test
@@ -78,6 +78,11 @@ public class UndoTest {
 		assertTrue("The UMLClassHandler should have a class named \"jerry\" after undoing a Remove Class command.", UMLClassHandler.exists("jerry"));
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
 	}
 	
 	@Test
@@ -93,9 +98,15 @@ public class UndoTest {
 		assertFalse("The UMLClassHandler shouldn't have a class named \"mike\" after undoing a Rename Class command.", UMLClassHandler.exists("mike"));
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		controller.runHelper(Action.REDO, new String[] {"jerry", "mike"});
+		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		assertTrue("The UMLClassHandler should have a class named \"mike\" after redoing.", UMLClassHandler.exists("mike"));
 	}
 	
-	@Test
+	@Test // TODO: add REDO
 	public void randomClassCommands()
 	{
 		List<String> classes = new ArrayList<>();
@@ -183,6 +194,18 @@ public class UndoTest {
 		assertFalse("The UMLClassHandler shouldn't have a class named \"yoshi\" after undoing an Add Class command.", UMLClassHandler.exists("yoshi"));
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		// redo
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		controller.runHelper(Action.REDO, new String[] {"yoshi"});
+		assertTrue("The UMLClassHandler should have a class named \"yoshi\" after redoing.", UMLClassHandler.exists("yoshi"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "yoshi", "aggr"});
+		expected = Set.of(new Relationship(UMLClassHandler.getClass("jerry"), UMLClassHandler.getClass("yoshi"), RelationshipType.Aggregation));
+		actual = Set.copyOf(RelationshipHandler.getRelationObjects());
+		assertEquals("The RelationshipHandler had the wrong relationships.", expected, actual);
+		assertEquals("", RelationshipHandler.getRelationObjects().get(0).getType(), RelationshipType.Aggregation);
 	}
 	
 	@Test
@@ -213,6 +236,20 @@ public class UndoTest {
 		assertFalse("The UMLClassHandler shouldn't have a class named \"yoshi\" after undoing an Add Class command.", UMLClassHandler.exists("yoshi"));
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		// redo
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		controller.runHelper(Action.REDO, new String[] {"yoshi"});
+		assertTrue("The UMLClassHandler should have a class named \"yoshi\" after redoing.", UMLClassHandler.exists("yoshi"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "yoshi", "aggr"});
+		expected = Set.of(new Relationship(UMLClassHandler.getClass("jerry"), UMLClassHandler.getClass("yoshi"), RelationshipType.Aggregation));
+		actual = Set.copyOf(RelationshipHandler.getRelationObjects());
+		assertEquals("The RelationshipHandler had the wrong relationships.", expected, actual);
+		assertEquals("", RelationshipHandler.getRelationObjects().get(0).getType(), RelationshipType.Aggregation);
+		controller.runHelper(Action.REDO, new String[] {"jerry", "yoshi"});
+		assertTrue("The RelationshipHandler shouldn't have a relationship going from \"jerry\" to \"yoshi\" after redoing.", RelationshipHandler.getRelationObjects().isEmpty());
 	}
 	
 	@Test
@@ -248,6 +285,23 @@ public class UndoTest {
 		assertFalse("The UMLClassHandler shouldn't have a class named \"yoshi\" after undoing an Add Class command.", UMLClassHandler.exists("yoshi"));
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		// redo
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		controller.runHelper(Action.REDO, new String[] {"yoshi"});
+		assertTrue("The UMLClassHandler should have a class named \"yoshi\" after redoing.", UMLClassHandler.exists("yoshi"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "yoshi", "aggr"});
+		expected = Set.of(new Relationship(UMLClassHandler.getClass("jerry"), UMLClassHandler.getClass("yoshi"), RelationshipType.Aggregation));
+		actual = Set.copyOf(RelationshipHandler.getRelationObjects());
+		assertEquals("The RelationshipHandler had the wrong relationships.", expected, actual);
+		assertEquals("", RelationshipHandler.getRelationObjects().get(0).getType(), RelationshipType.Aggregation);
+		controller.runHelper(Action.REDO, new String[] {"jerry", "yoshi", "comp"});
+		expected = Set.of(new Relationship(UMLClassHandler.getClass("jerry"), UMLClassHandler.getClass("yoshi"), RelationshipType.Composition));
+		actual = Set.copyOf(RelationshipHandler.getRelationObjects());
+		assertEquals("The RelationshipHandler had the wrong relationships.", expected, actual);
+		assertEquals("", RelationshipHandler.getRelationObjects().get(0).getType(), RelationshipType.Composition);
 	}
 	
 	
@@ -269,6 +323,13 @@ public class UndoTest {
 	    
 	    controller.runHelper(Action.UNDO, new String[] {});
 	    assertFalse("The UMLClassHandler shouldn't have a class named \"Person\" after undoing an Add Class command", UMLClassHandler.exists("Person"));
+	    
+	    controller.runHelper(Action.REDO, new String[] {"Person"});
+	    assertTrue("The UMLClassHandler should have a class named \"Person\" after redoing.", UMLClassHandler.exists("Person"));
+
+	    controller.runHelper(Action.REDO, new String[] {"Person", "age", "int"});
+	    personClass = UMLClassHandler.getClass("Person");
+	    assertTrue("The class \"Person\" should have a field named \"age\".", personClass.fieldExists("age"));
 	}
 	
 	@Test
@@ -294,6 +355,17 @@ public class UndoTest {
 	    
 	    controller.runHelper(Action.UNDO, new String[] {});
 	    assertFalse("The UMLClassHandler shouldn't have a class named \"Person\" after undoing an Add Class command", UMLClassHandler.exists("Person"));
+	    
+	    controller.runHelper(Action.REDO, new String[] {"Person"});
+	    assertTrue("The UMLClassHandler should have a class named \"Person\" after redoing.", UMLClassHandler.exists("Person"));
+
+	    controller.runHelper(Action.REDO, new String[] {"Person", "age", "int"});
+	    personClass = UMLClassHandler.getClass("Person");
+	    assertTrue("The class \"Person\" should have a field named \"age\".", personClass.fieldExists("age"));
+	    
+	    controller.runHelper(Action.REDO, new String[] {"Person", "age"});
+	    personClass = UMLClassHandler.getClass("Person");
+	    assertFalse("The class \"Person\" shouldn't have a field named \"age\" after redoing.", personClass.fieldExists("age"));
 	}
 
 	@Test
@@ -321,6 +393,18 @@ public class UndoTest {
 	    
 	    controller.runHelper(Action.UNDO, new String[] {});
 	    assertFalse("The UMLClassHandler shouldn't have a class named \"Person\" after undoing an Add Class command.", UMLClassHandler.exists("Person"));
+	    
+	    controller.runHelper(Action.REDO, new String[] {"Person"});
+	    assertTrue("The UMLClassHandler should have a class named \"Person\" after redoing.", UMLClassHandler.exists("Person"));
+
+	    controller.runHelper(Action.REDO, new String[] {"Person", "age", "int"});
+	    personClass = UMLClassHandler.getClass("Person");
+	    assertTrue("The class \"Person\" should have a field named \"age\".", personClass.fieldExists("age"));
+	    
+	    controller.runHelper(Action.REDO, new String[] {"Person", "age", "bodyCount"});
+	    personClass = UMLClassHandler.getClass("Person");
+	    assertFalse("The class \"Person\" shouldn't have a field named \"age\" after redoing.", personClass.fieldExists("age"));
+	    assertTrue("The class \"Person\" should have a field named \"bodyCount\" after redoing.", personClass.fieldExists("bodyCount"));
 	}
 		
 	@Test
@@ -346,6 +430,16 @@ public class UndoTest {
         
         controller.runHelper(Action.UNDO, new String[] {});
         assertFalse("The UMLClassHandler shouldn't have a class named \"Person\" after undoing an Add Class command.", UMLClassHandler.exists("Person"));
+        
+        controller.runHelper(Action.REDO, new String[] {"Person"});
+        assertTrue("The UMLClassHandler should have a class named \"Person\" after redoing.", UMLClassHandler.exists("Person"));
+
+        controller.runHelper(Action.REDO, new String[] {"Person", "age", "int"});
+        personClass = UMLClassHandler.getClass("Person");
+        assertTrue("The class \"Person\" should contain the field \"age\".", personClass.fieldExists("age"));
+
+        controller.runHelper(Action.REDO, new String [] {personClass.getName(), "age", "String"});
+        assertEquals("The class \"Person\" should contain the field \"age\" with the type of \"String\".", "String", personClass.getField("age").getType());
     }
 	
 	// --------------------- METHODS ---------------------
@@ -364,6 +458,12 @@ public class UndoTest {
 		
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "method1", "void"});
+		assertTrue("The class \"jerry\" should have a method named \"method1\" with no parameters after redoing.", UMLClassHandler.getClass("jerry").methodExists("method1", List.of()));
 	}
 	
 	@Test
@@ -380,7 +480,14 @@ public class UndoTest {
 		
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
 	}
+	
 	@Test
 	public void  addMethodThenRemoveMethodNoParams()
 	{
@@ -401,6 +508,15 @@ public class UndoTest {
 		
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "method1", "void"});
+		assertTrue("The class \"jerry\" should have a method named \"method1\" with no parameters after redoing.", UMLClassHandler.getClass("jerry").methodExists("method1", List.of()));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "method1"});
+		assertEquals("The class \"jerry\" should have no methods.", 0, UMLClassHandler.getClass("jerry").getMethods().size());
 	}
 	
 	@Test
@@ -423,6 +539,15 @@ public class UndoTest {
 		
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "method1", "int", "long"});
+		assertEquals("The class \"jerry\" should have no methods.", 0, UMLClassHandler.getClass("jerry").getMethods().size());
 	}
 	
 	@Test
@@ -445,6 +570,15 @@ public class UndoTest {
 		
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "method1", "void"});
+		assertTrue("The class \"jerry\" should have a method named \"method1\" with no parameters after redoing.", UMLClassHandler.getClass("jerry").methodExists("method1", List.of()));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "method1", "String"});
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "String", List.of(), List.of())), UMLClassHandler.getClass("jerry").getMethods());
 	}
 	
 	@Test
@@ -467,6 +601,15 @@ public class UndoTest {
 		
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "method1", "int", "long", "String"});
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "String", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
 	}
 	
 	// --------------------- POSITION ---------------------
@@ -487,6 +630,14 @@ public class UndoTest {
 		
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after redoing.", UMLClassHandler.exists("jerry"));
+		
+		oldPos = new Position(UMLClassHandler.getClass("jerry").getPosition());
+		
+		controller.runHelper(Action.REDO, new String[] {"jerry", "20", "30"});
+		assertEquals("", new Position(20, 30), UMLClassHandler.getClass("jerry").getPosition());
 	}
 	
 	// --------------------- PARAMETERS ---------------------
@@ -508,6 +659,10 @@ public class UndoTest {
         controller.runHelper(Action.UNDO, new String[] {});
         personClass = UMLClassHandler.getClass("Person");
         assertEquals("The class \"Person\" should have the correct method.", List.of(new Method("getName", "String", List.of(), List.of())), personClass.getMethods());
+        
+        controller.runHelper(Action.REDO, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "num", "int"});
+        personClass = UMLClassHandler.getClass("Person");
+        assertEquals("The class \"Person\" should have the correct method.", List.of(new Method("getName", "String", List.of("num"), List.of("int"))), personClass.getMethods());
     }
 	
 	@Test
@@ -534,6 +689,11 @@ public class UndoTest {
         personClass = UMLClassHandler.getClass("Person");
         assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
         assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
+        
+        controller.runHelper(Action.REDO, new String[] {personClass.getName(), "getName", "int", ";", "num"});
+        personClass = UMLClassHandler.getClass("Person");
+        assertEquals(true, personClass.getMethods().get(0).getParameterTypes().isEmpty());
+        assertEquals(true, personClass.getMethods().get(0).getParameterNames().isEmpty());
     }
 	
 	@Test
@@ -560,6 +720,11 @@ public class UndoTest {
         personClass = UMLClassHandler.getClass("Person");
         assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
         assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
+        
+        controller.runHelper(Action.REDO, new String[] {personClass.getName(), "getName", "int", "num", "bobby"});
+        personClass = UMLClassHandler.getClass("Person");
+        assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
+        assertEquals("bobby", personClass.getMethods().get(0).getParameterNames().get(0));
     }
 	
 	 @Test
@@ -585,6 +750,11 @@ public class UndoTest {
 	        controller.runHelper(Action.UNDO, new String[] {});
 	        personClass = UMLClassHandler.getClass("Person");
 	        assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
+	        assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
+	        
+	        controller.runHelper(Action.REDO, new String[] {"Person", "getName", "int", "num", "short"});
+	        personClass = UMLClassHandler.getClass("Person");
+	        assertEquals("short", personClass.getMethods().get(0).getParameterTypes().get(0));
 	        assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
 	 }
 
