@@ -317,28 +317,73 @@ public class UndoTest {
 	    assertFalse("The class \"Person\" shouldn't have a field named \"age\" after undoing an Add Field command.", personClass.fieldExists("age"));
 	    
 	    controller.runHelper(Action.UNDO, new String[] {});
-	    assertFalse("The UMLClassHandler shouldn't have a class named \"Person\" after undoing an Add Class command", UMLClassHandler.exists("Person"));
+	    assertFalse("The UMLClassHandler shouldn't have a class named \"Person\" after undoing an Add Class command.", UMLClassHandler.exists("Person"));
 	}
 	
 	// TODO: need to fix
 	
-//	@Test
-//    public void addAndChangeFieldType()
-//    {
-//        controller.runHelper(Action.ADD_CLASS, new String[] {"Person"});
-//        assertTrue("The UMLClassHandler should have a class named \"Person\" after adding one.", UMLClassHandler.exists("Person"));
-//
-//        controller.runHelper(Action.ADD_FIELD, new String[] {"Person", "int", "age"});
-//        UMLClass personClass = UMLClassHandler.getClass("Person");
-//        assertTrue("The class \"Person\" should contain the field \"age\".", personClass.fieldExists("age"));
-//
-//        controller.runHelper(Action.CHANGE_FIELD_TYPE, new String [] {personClass.getName(), "age", "String"});
-//        assertEquals("The class \"Person\" should contain the field \"age\" with the type of \"String\".", "String", personClass.getField("age").getType());
-//
-//        controller.runHelper(Action.UNDO, new String[] {});
-//        assertEquals("The class \"Person\" should have the right correct type.", "int", personClass.getField("age").getType());
-//    }
-//	
+	@Test
+    public void addAndChangeFieldType()
+    {
+        controller.runHelper(Action.ADD_CLASS, new String[] {"Person"});
+        assertTrue("The UMLClassHandler should have a class named \"Person\" after adding one.", UMLClassHandler.exists("Person"));
+
+        controller.runHelper(Action.ADD_FIELD, new String[] {"Person", "age", "int"});
+        UMLClass personClass = UMLClassHandler.getClass("Person");
+        assertTrue("The class \"Person\" should contain the field \"age\".", personClass.fieldExists("age"));
+
+        controller.runHelper(Action.CHANGE_FIELD_TYPE, new String [] {personClass.getName(), "age", "String"});
+        assertEquals("The class \"Person\" should contain the field \"age\" with the type of \"String\".", "String", personClass.getField("age").getType());
+
+        controller.runHelper(Action.UNDO, new String[] {});
+        personClass = UMLClassHandler.getClass("Person");
+        assertEquals("The class \"Person\" should have the correct type.", "int", personClass.getField("age").getType());
+        
+        controller.runHelper(Action.UNDO, new String[] {});
+        personClass = UMLClassHandler.getClass("Person");
+        assertEquals("The class \"Person\" should have no fields.", List.of(), personClass.getFields());
+        
+        controller.runHelper(Action.UNDO, new String[] {});
+        assertFalse("The UMLClassHandler shouldn't have a class named \"Person\" after undoing an Add Class command.", UMLClassHandler.exists("Person"));
+    }
+	
+	// --------------------- METHODS ---------------------
+	
+	@Test
+	public void addMethodWithNoParams()
+	{
+		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void"});
+		assertTrue("The class \"jerry\" should have a method named \"method1\" with no parameters after adding one.", UMLClassHandler.getClass("jerry").methodExists("method1", List.of()));
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertEquals("The class \"jerry\" shouldn't have any methods after undoing an Add Method command.", List.of(), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+	}
+	
+	@Test
+	public void addMethodWithSomeParams()
+	{
+		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		//System.out.println(UMLClassHandler.getClass("jerry").getMethods());
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
+		
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertEquals("The class \"jerry\" shouldn't have any methods after undoing an Add Method command.", List.of(), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+	}
+	
+//	// TODO: Fix parameters, then uncomment tests
 //	// --------------------- PARAMETERS ---------------------
 //	
 //	@Test

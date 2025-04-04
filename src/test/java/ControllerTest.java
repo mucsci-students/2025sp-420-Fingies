@@ -47,7 +47,7 @@ public class ControllerTest {
         RelationshipHandler.reset(); 
     }
 
-    // --------------------- METHOD FUNCTIONALITY ---------------------
+    // --------------------- METHOD FUNCTIONALITY --------------------- 
 
     @Test
     public void testDoAddClass() {
@@ -132,6 +132,18 @@ public class ControllerTest {
         controller.doAddClass("TestClass");
         controller.doAddMethod("TestClass", "TestMethod", "void", empty, empty);
         boolean result = controller.doChangeMethodReturnType("TestClass", "TestMethod", empty, "int");
+        assertTrue("Method return type should be changed successfully.", result);
+    }
+    
+    @Test
+    public void changeMethodReturnTypeManyParameters()
+    {
+        List<String> params = List.of("param1", "param2", "param3", "param4", "param5", "param6", "param7", "param8");
+        List<String> paramTypes = List.of("void", "void", "void", "void", "void", "void", "void", "void");
+        
+        controller.doAddClass("TestClass");
+        controller.doAddMethod("TestClass", "TestMethod", "void", params, paramTypes);
+        boolean result = controller.doChangeMethodReturnType("TestClass", "TestMethod", paramTypes, "int");
         assertTrue("Method return type should be changed successfully.", result);
     }
 

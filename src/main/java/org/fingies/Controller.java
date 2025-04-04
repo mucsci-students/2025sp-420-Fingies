@@ -1183,8 +1183,8 @@ public class Controller {
             return false;
         for (int i = start; i < end; i += 2)
         {
-        	types.add(array[i]);
-        	names.add(array[i + 1]);
+        	names.add(array[i]);
+        	types.add(array[i + 1]);
         }
     	return true;
     }
