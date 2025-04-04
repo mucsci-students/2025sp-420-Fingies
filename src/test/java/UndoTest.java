@@ -372,9 +372,94 @@ public class UndoTest {
 		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
 		
 		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
-		//System.out.println(UMLClassHandler.getClass("jerry").getMethods());
 		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
 		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertEquals("The class \"jerry\" shouldn't have any methods after undoing an Add Method command.", List.of(), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+	}
+	@Test
+	public void  addMethodThenRemoveMethodNoParams()
+	{
+		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void"});
+		assertTrue("The class \"jerry\" should have a method named \"method1\" with no parameters after adding one.", UMLClassHandler.getClass("jerry").methodExists("method1", List.of()));
+		
+		controller.runHelper(Action.REMOVE_METHOD, new String[] {"jerry", "method1"});
+		assertEquals("The class \"jerry\" should have no methods.", 0, UMLClassHandler.getClass("jerry").getMethods().size());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertTrue("The class \"jerry\" should have a method named \"method1\" with no parameters after adding one.", UMLClassHandler.getClass("jerry").methodExists("method1", List.of()));
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertEquals("The class \"jerry\" shouldn't have any methods after undoing an Add Method command.", List.of(), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+	}
+	
+	@Test
+	public void addMethodThenRemoveMethodSomeParams()
+	{
+		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.REMOVE_METHOD, new String[] {"jerry", "method1", "int", "long"});
+		assertEquals("The class \"jerry\" should have no methods.", 0, UMLClassHandler.getClass("jerry").getMethods().size());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertEquals("The class \"jerry\" shouldn't have any methods after undoing an Add Method command.", List.of(), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+	}
+	
+	@Test
+	public void addMethodThenChangeReturnTypeNoParams()
+	{
+		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void"});
+		assertTrue("The class \"jerry\" should have a method named \"method1\" with no parameters after adding one.", UMLClassHandler.getClass("jerry").methodExists("method1", List.of()));
+		
+		controller.runHelper(Action.CHANGE_METHOD_RETURN_TYPE, new String[] {"jerry", "method1", "String"});
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "String", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertTrue("The class \"jerry\" should have a method named \"method1\" with no parameters after adding one.", UMLClassHandler.getClass("jerry").methodExists("method1", List.of()));
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertEquals("The class \"jerry\" shouldn't have any methods after undoing an Add Method command.", List.of(), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertFalse("The UMLClassHandler shouldn't have a class named \"jerry\" after undoing an Add Class command.", UMLClassHandler.exists("jerry"));
+	}
+	
+	@Test
+	public void addMethodThenChangeReturnTypeSomeParams()
+	{
+		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.CHANGE_METHOD_RETURN_TYPE, new String[] {"jerry", "method1", "int", "long", "String"});
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "String", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
 		
 		controller.runHelper(Action.UNDO, new String[] {});
 		assertEquals("The class \"jerry\" shouldn't have any methods after undoing an Add Method command.", List.of(), UMLClassHandler.getClass("jerry").getMethods());
@@ -451,8 +536,11 @@ public class UndoTest {
 //        assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
 //    }
 //	
-//	
-
+//	 @Test
+//	 public void addAndChangeParamType()
+//	 {
+//		
+//	 }
 
 
 }
