@@ -11,12 +11,12 @@ public class TabCompletion {
             public void complete(LineReader lineReader, ParsedLine line, List<Candidate> candidates) {
                 String buffer = line.line(); // Get the current input line
                 // Add command completions (full commands and shorthand)
-                for (String command : CLIView.COMMANDS) {
+                for (String command : Command.COMMANDS) {
                     if (command.startsWith(buffer)) {
                         candidates.add(new Candidate(command));
                     }
                 }
-                for (String shorthand : CLIView.COMMANDS_SHORTHAND) {
+                for (String shorthand : Command.COMMANDS_SHORTHAND) {
                     if (shorthand.startsWith(buffer)) {
                         candidates.add(new Candidate(shorthand));
                     }
