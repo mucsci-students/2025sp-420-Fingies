@@ -17,7 +17,7 @@ public class Controller {
     private boolean hasSaved;
     
     private Stack<Change> undoStack = new Stack<Change>();
-    //private Stack<Change> redoStack = new Stack<Change>();
+    private Stack<Change> redoStack = new Stack<Change>();
 
     public Controller (View view, JModel model)
     {
@@ -34,7 +34,9 @@ public class Controller {
         	Change change = new Change (null, null);
         	boolean result = UMLClassHandler.createClass(className);
         	change.setCurrClass(UMLClassHandler.getClass(className));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(className));
         	undoStack.push(change);
+        	redoStack.clear();
             return result;
         }
         catch (Exception e)
@@ -53,7 +55,9 @@ public class Controller {
             RelationshipHandler.removeAllRelationshipsForClassname(className);
             boolean result = UMLClassHandler.removeClass(className);
             change.setCurrClass(null);
+            change.setCurrRelationships(null);
             undoStack.push(change);
+            redoStack.clear();
             return result;
         }
         catch (Exception e)
@@ -71,7 +75,9 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(className), RelationshipHandler.getAllRelationshipsForClassname(className));
         	boolean result = UMLClassHandler.renameClass(className, newName);
         	change.setCurrClass(UMLClassHandler.getClass(newName));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(newName));
         	undoStack.push(change);
+        	redoStack.clear();
             return result;
         }
         catch (Exception e)
@@ -91,7 +97,9 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = RelationshipHandler.addRelationship(srcClass, destClass, rType);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result;
         }
         catch (Exception e)
@@ -109,7 +117,9 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = RelationshipHandler.removeRelationship(srcClass, destClass);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result;
         }
         catch (Exception e)
@@ -128,26 +138,29 @@ public class Controller {
             Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = RelationshipHandler.changeRelationshipType(srcClass, destClass, rType);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result;
         }
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
             view.notifyFail(e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
 
-    public boolean doAddField(String srcClass, String type, String field) 
+    public boolean doAddField(String srcClass, String field, String type) 
     {
         try
         {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = UMLClassHandler.getClass(srcClass).addField(field, type);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result; 
         }
         catch (Exception e)
@@ -165,7 +178,9 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = UMLClassHandler.getClass(srcClass).addMethod(methodName, returnType, parameterNames, parameterTypes);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result; 
         }
         catch (Exception e)
@@ -183,7 +198,9 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = UMLClassHandler.getClass(srcClass).removeField(field);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result; 
         }
         catch (Exception e)
@@ -201,7 +218,9 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	UMLClassHandler.getClass(srcClass).getField(field).setType(newType);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return true;
         }
         catch (Exception e) 
@@ -217,13 +236,21 @@ public class Controller {
         try 
         {
             ArrayList <String> empty = new ArrayList<>();
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).setReturnType(newType);
-                return true;
-            }   
-            UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).setReturnType(newType);
-            return true;
+            	UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).setReturnType(newType);
+            }
+            else
+            {
+            	UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).setReturnType(newType); 
+            }
+            change.setCurrClass(UMLClassHandler.getClass(srcClass));
+            change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	undoStack.push(change);
+        	redoStack.clear();
+        	return true;
         }
         catch (Exception e) 
         {
@@ -249,7 +276,9 @@ public class Controller {
                 result = UMLClassHandler.getClass(srcClass).removeMethod(methodName, parameterTypes);
             }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result; 
         }
         catch (Exception e)
@@ -267,7 +296,9 @@ public class Controller {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = UMLClassHandler.getClass(srcClass).renameField(oldField, newField);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
             return result; 
         }
         catch (Exception e)
@@ -294,7 +325,9 @@ public class Controller {
                 result = UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, parameterTypes, newMethodName);
             }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
         	return result;
         }
         catch (Exception e)
@@ -322,7 +355,9 @@ public class Controller {
                 result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).addParameters(newParameterNames, newParameterTypes);
             }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
         	return result;
         }
         catch (Exception e)
@@ -349,7 +384,9 @@ public class Controller {
                 result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).removeParameters(parameterNamesToRemove);
             }  
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
+            change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
         	return result;
         }
         catch (Exception e)
@@ -376,7 +413,9 @@ public class Controller {
                 result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).renameParameter(oldParam, newParam);
             }
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
+            change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
         	return result;
         }
         catch (Exception e)
@@ -401,12 +440,13 @@ public class Controller {
                 UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
             }
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
+        	redoStack.clear();
         	return true;
         }
         catch (Exception e) {
         	System.out.println(e.getMessage());
-        	e.printStackTrace();
             model.writeToLog(e.getMessage());
             view.notifyFail(e.getMessage());
             return false;
@@ -418,7 +458,7 @@ public class Controller {
         return model.saveData();
     }
 
-    public boolean doSave(String filepath) 
+    public boolean doSave(String filepath)
     {
         return model.saveData(filepath);
     }
@@ -548,6 +588,7 @@ public class Controller {
     	else
     	{
     		Change change = undoStack.pop();
+    		redoStack.push(change);
     		UMLClassHandler.replace(change.getCurrClass(), change.getOldClass());
     		RelationshipHandler.replace(change.getCurrClass(), change.getOldClass());
     		if (change.getOldClass() != null)
@@ -558,7 +599,21 @@ public class Controller {
     
     public boolean doRedo()
     {
-    	throw new UnsupportedOperationException("Redo isn't implemented yet.");
+    	if (redoStack.isEmpty())
+    	{
+    		// nothing to redo, don't bother giving an error message
+    		return false;
+    	}
+    	else
+    	{
+    		Change change = redoStack.pop();
+    		undoStack.push(change);
+    		UMLClassHandler.replace(change.getOldClass(), change.getCurrClass());
+    		RelationshipHandler.replace(change.getOldClass(), change.getCurrClass());
+    		if (change.getCurrClass() != null)
+    			RelationshipHandler.replaceAllRelationshipsForClassname(change.getCurrClass().getName(), change.getCurrRelationships());
+    		return true;
+    	}
     }
     
     public boolean doMove(String className, String newX, String newY)
@@ -569,7 +624,9 @@ public class Controller {
         	Change change = new Change(umlClass, RelationshipHandler.getAllRelationshipsForClassname(className));
         	umlClass.setPosition(Integer.valueOf(newX), Integer.valueOf(newY));
         	change.setCurrClass(umlClass);
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(className));
         	undoStack.push(change);
+        	redoStack.clear();
         	return true;
     	}
     	catch (Exception e)
@@ -588,7 +645,6 @@ public class Controller {
      */
     public boolean runHelper(Action action, String[] args)
     {
-    	//TODO Refactor attribute cases and update with fields, and methods
         switch(action) {
             case ADD_CLASS:
                 if (args.length == 1)
@@ -731,7 +787,7 @@ public class Controller {
                     List<String> paramTypes = getPartialListFromArray(args, 2, args.length);
                     if (doRemoveMethod(args[0], args[1], paramTypes))
                     {
-                        view.notifySuccess("Successfully removed method " + args[1] + " with return type " + args[2] + " from class " + args[0]);
+                        view.notifySuccess("Successfully removed method " + args[1] + " from class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -844,7 +900,7 @@ public class Controller {
                     return false;
                 }
             case ADD_PARAMETERS:
-                if (args.length >= 6) {
+                if (args.length >= 5) {
                     try {
                         int idx = indexOfSymbol(args, ";");
                         if (idx == -1)
@@ -854,6 +910,9 @@ public class Controller {
                         	return false;
                         }
                         List<String> oldParamTypes = getPartialListFromArray(args, 2, idx);
+                        if (idx == 3) {
+                            oldParamTypes = new ArrayList<String>();
+                        }
                         List<String> newParamNames = new ArrayList<String>();
                         List<String> newParamTypes = new ArrayList<String>();
                         getTwoListsFromArray(args, idx + 1, args.length, newParamNames, newParamTypes);
@@ -875,7 +934,7 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Add Parameters should have 6 or more parameters.");
+                    view.notifyFail("Add Parameters should have 5 or more parameters.");
                     return false;
                 }
             case REMOVE_PARAMETERS:
@@ -1157,11 +1216,32 @@ public class Controller {
             case UNDO:
             	if (args.length != 0)
             	{
+            		view.notifyFail("Undo shouldn't have any arguments.");
             		return false;
             	}
             	else
             	{
             		return doUndo();
+            	}
+            case REDO:
+            	if (args.length != 0)
+            	{
+            		view.notifyFail("Redo shouldn't have any arguments.");
+            		return false;
+            	}
+            	else
+            	{
+            		return doRedo();
+            	}
+            case MOVE:
+            	if (args.length != 3)
+            	{
+            		view.notifyFail("Changing field data type should have exactly 3 arguments.");
+            		return false;
+            	}
+            	else
+            	{
+            		return doMove(args[0], args[1], args[2]);
             	}
         }
         return false;
@@ -1179,8 +1259,8 @@ public class Controller {
             return false;
         for (int i = start; i < end; i += 2)
         {
-        	types.add(array[i]);
-        	names.add(array[i + 1]);
+        	names.add(array[i]);
+        	types.add(array[i + 1]);
         }
     	return true;
     }

@@ -1,5 +1,7 @@
 package org.fingies;
 
+import java.util.Objects;
+
 /**
  * For handling the position of an object in the GUI
  * @author trush
@@ -66,4 +68,23 @@ public class Position {
     public void setY(int y) {
         this.y = y;
     }
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Position other = (Position) obj;
+		return x == other.x && y == other.y;
+	}
+
+	@Override
+	public String toString() {
+		return "Position [x=" + x + ", y=" + y + "]";
+	}
+    
+    
 }

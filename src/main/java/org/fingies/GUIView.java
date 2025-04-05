@@ -679,7 +679,7 @@ public class GUIView extends JFrame implements ActionListener, View {
             else if (e.getSource() == addField)
             {
                 makeComboBoxes(a, new String [] {"Class"});
-                makeTextBoxes(a, new String [] {"Type: int String", "Field Name"}, 1);
+                makeTextBoxes(a, new String [] {"Field Name", "Type: int String"}, 1);
                 createButtons(a, 3);
             }
             else if (e.getSource() == addMethod)
@@ -810,7 +810,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     }
 
     /**
-     * Based on the action, perform actions within the GUIView to update it wit new data from JModel
+     * Based on the action, perform actions within the GUIView to update it with new data from JModel
      * @param action action to be performed
      * @param args list of arguments 
      */
