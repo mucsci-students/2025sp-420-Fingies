@@ -34,6 +34,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     private JMenu addMenu;
     private JMenu removeMenu;
     private JMenu renameMenu;
+    private JMenu typeMenu;
 
     private GUIMenuItem load;
     private GUIMenuItem save;
@@ -55,7 +56,11 @@ public class GUIView extends JFrame implements ActionListener, View {
     private GUIMenuItem renameField;
     private GUIMenuItem renameMethod;
     private GUIMenuItem renameParameter;
-    private GUIMenuItem renameRelationshipType;
+    
+    private GUIMenuItem changeFieldType;
+    private GUIMenuItem changeMethodType;
+    private GUIMenuItem changeParameterType;
+    private GUIMenuItem changeRelatoinshipType;
 
     private ArrayList<JTextField> textBoxes;
     private ArrayList<JComboBox<String>> comboBoxes;
@@ -85,12 +90,14 @@ public class GUIView extends JFrame implements ActionListener, View {
         addMenu = new JMenu("Add");
         removeMenu = new JMenu("Remove");
         renameMenu = new JMenu("Rename");
+        typeMenu = new JMenu("ChangeType");
 
         // Adds menus to menubar
         menuBar.add(fileMenu);
         menuBar.add(addMenu);
         menuBar.add(removeMenu);
         menuBar.add(renameMenu);
+        menuBar.add(typeMenu);
 
         // Creates JMenu submenus
         load = new GUIMenuItem("Open", Action.LOAD);
@@ -116,7 +123,12 @@ public class GUIView extends JFrame implements ActionListener, View {
         renameField = new GUIMenuItem("Field", Action.RENAME_FIELD);
         renameMethod = new GUIMenuItem("Method", Action.RENAME_METHOD);
         renameParameter = new GUIMenuItem("Parameter", Action.RENAME_PARAMETER);
-        renameRelationshipType = new GUIMenuItem("Relationship Type", Action.CHANGE_RELATIONSHIP_TYPE);
+
+        // TYPE
+        changeFieldType= new GUIMenuItem("Field", Action.CHANGE_FIELD_TYPE);
+        changeMethodType= new GUIMenuItem("Method", Action.CHANGE_METHOD_RETURN_TYPE);
+        changeParameterType= new GUIMenuItem("Parameter", Action.CHANGE_PARAMETER_TYPE);
+        changeRelatoinshipType = new GUIMenuItem("Relationship", Action.CHANGE_RELATIONSHIP_TYPE);
 
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
@@ -139,7 +151,11 @@ public class GUIView extends JFrame implements ActionListener, View {
         renameField.addActionListener(this);
         renameMethod.addActionListener(this);
         renameParameter.addActionListener(this);
-        renameRelationshipType.addActionListener(this);
+
+        changeFieldType.addActionListener(this);
+        changeMethodType.addActionListener(this);
+        changeParameterType.addActionListener(this);
+        changeRelatoinshipType.addActionListener(this);
 
         // Allows the press of a key to do the function of clicking the menu item WHILE in the menu
         save.setMnemonic(KeyEvent.VK_S); // S for save
@@ -166,7 +182,11 @@ public class GUIView extends JFrame implements ActionListener, View {
         renameMenu.add(renameField);
         renameMenu.add(renameMethod);
         renameMenu.add(renameParameter);
-        renameMenu.add(renameRelationshipType);
+
+        typeMenu.add(changeFieldType);
+        typeMenu.add(changeMethodType);
+        typeMenu.add(changeParameterType);
+        typeMenu.add(changeRelatoinshipType);
 
         // Sets main attributes of the "frame" (this)
         this.setTitle("UMLEditor");
@@ -262,7 +282,8 @@ public class GUIView extends JFrame implements ActionListener, View {
         // Turns method1 (String int String) into method1 without the type list
         if (action.equals(Action.ADD_METHOD) || action.equals(Action.ADD_PARAMETERS) 
         || action.equals(Action.REMOVE_METHOD) || action.equals(Action.REMOVE_PARAMETERS) 
-        || action.equals(Action.RENAME_METHOD) || action.equals(Action.RENAME_PARAMETER))
+        || action.equals(Action.RENAME_METHOD) || action.equals(Action.RENAME_PARAMETER)
+        || action.equals(Action.CHANGE_METHOD_RETURN_TYPE) || action.equals(Action.CHANGE_PARAMETER_TYPE))
         {
             String [] parameters = null;
             // separates the method name and its parameters
@@ -291,8 +312,12 @@ public class GUIView extends JFrame implements ActionListener, View {
 
                 if (action.equals(Action.ADD_METHOD))
                 {
-                    types = allInputs[3].trim().split("\\s+");   // Extract types 
-                    names = allInputs[4].trim().split("\\s+");   // Extract names 
+                    finalInputsList.add(allInputs[2]); // return type
+                    if (allInputs.length == 5)
+                    {
+                        types = allInputs[3].trim().split("\\s+");   // Extract types 
+                        names = allInputs[4].trim().split("\\s+");   // Extract names 
+                    }
                 }
                 else if (action.equals(Action.REMOVE_PARAMETERS))
                 {
@@ -300,10 +325,16 @@ public class GUIView extends JFrame implements ActionListener, View {
                     finalInputsList.add(";"); 
                     finalInputsList.add(allInputs[2]);  // Parameter Name
                 }
-                else if (action.equals(Action.RENAME_METHOD))
+                else if (action.equals(Action.RENAME_METHOD) || action.equals(Action.CHANGE_METHOD_RETURN_TYPE))
                 {
                     finalInputsList.addAll(Arrays.asList(parameters));
-                    finalInputsList.add(allInputs[2]);  // New Method Name
+                    finalInputsList.add(allInputs[2]);  // New Method Name or New Method Type
+                }
+                else if (action.equals(Action.CHANGE_PARAMETER_TYPE))
+                {
+                    finalInputsList.addAll(Arrays.asList(parameters));
+                    finalInputsList.add(allInputs[2]); // Parameter Name
+                    finalInputsList.add(allInputs[3]); // New Parameter Type
                 }
                 else if (action.equals(Action.REMOVE_METHOD))
                 {
@@ -311,8 +342,11 @@ public class GUIView extends JFrame implements ActionListener, View {
                 }
                 else
                 {
-                    types = allInputs[2].trim().split("\\s+");   // Extract types 
-                    names = allInputs[3].trim().split("\\s+");   // Extract names 
+                    if (allInputs.length >= 4)
+                    {
+                        types = allInputs[2].trim().split("\\s+");   // Extract types 
+                        names = allInputs[3].trim().split("\\s+");   // Extract names 
+                    }
                 }
                 
 
@@ -328,7 +362,6 @@ public class GUIView extends JFrame implements ActionListener, View {
                     String [] alteredArr = altered.toArray(new String[0]);
 
                     if (action.equals(Action.ADD_METHOD)) {
-                        finalInputsList.add(allInputs[2]); // return type
                         finalInputsList.addAll(Arrays.asList(alteredArr));
                     } 
                     else if (action.equals(Action.ADD_PARAMETERS))
@@ -347,7 +380,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 allInputs = finalInputsList.toArray(new String[0]);
             } 
         }
-        System.out.println("Input: " + Arrays.toString(allInputs));
+        // System.out.println("Input: " + Arrays.toString(allInputs));
     
         // Call controller helper with the concatenated arguments
         if (controller.runHelper(action, allInputs)) {
@@ -628,96 +661,118 @@ public class GUIView extends JFrame implements ActionListener, View {
     public void actionPerformed(ActionEvent e) {
     	Action a = ((GUIMenuItem) e.getSource()).action;
 
-        if (e.getSource() == addClass && textBoxes.isEmpty())
+        if (textBoxes.isEmpty() && comboBoxes.isEmpty())
         {
-            makeTextBoxes(a, new String [] {"Class Name"}, 0);
-            createButtons(a, 1);
+            if (e.getSource() == addClass)
+            {
+                makeTextBoxes(a, new String [] {"Class Name"}, 0);
+                createButtons(a, 1);
+            }
+            else if (e.getSource() == addField)
+            {
+                makeComboBoxes(a, new String [] {"Class"});
+                makeTextBoxes(a, new String [] {"Field Name", "Type: int String"}, 1);
+                createButtons(a, 3);
+            }
+            else if (e.getSource() == addMethod)
+            {
+                makeComboBoxes(a, new String [] {"Class"});
+                makeTextBoxes(a, new String [] {"Method Name", "Return Type", "Types: int String", "Parameters: a b c"}, 1);
+                createButtons(a, 5);
+            }
+            else if (e.getSource() == addParameter)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Method"});
+                makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"}, 2);
+                createButtons(a, 4);
+            }
+            else if (e.getSource() == addRelationship)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
+                createButtons(a, 3);
+            }
+            else if (e.getSource() == removeClass)
+            {
+                makeComboBoxes(a, new String [] {"Class"});
+                createButtons(a, 1);
+            }
+            else if (e.getSource() == removeField)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Field"});
+                createButtons(a, 2);
+            }
+            else if (e.getSource() == removeMethod)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Method"});
+                createButtons(a, 2);
+            }
+            else if (e.getSource() == removeParameter)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+                createButtons(a, 3);
+            }
+            else if (e.getSource() == removeRelationship)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Class"});
+                createButtons(a, 2);
+            }
+            else if (e.getSource() == renameClass)
+            {
+                makeComboBoxes(a, new String [] {"Class"});
+                makeTextBoxes(a, new String [] {"New Class Name"}, 1);
+                createButtons(a, 2);
+            }
+            else if (e.getSource() == renameField)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Field"});
+                makeTextBoxes(a, new String [] {"New Field Name"}, 2);
+                createButtons(a, 3);
+            }
+            else if (e.getSource() == renameMethod)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Method"});
+                makeTextBoxes(a, new String [] {"New Method Name"}, 2);
+                createButtons(a, 3);
+            }
+            else if (e.getSource() == renameParameter)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+                makeTextBoxes(a, new String [] {"New Parameter"}, 3);
+                createButtons(a, 4);
+            }
+            else if (e.getSource() == changeFieldType)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Field"});
+                makeTextBoxes(a, new String [] {"New Type"}, 2);
+                createButtons(a, 3);
+            }
+            else if (e.getSource() == changeMethodType)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Method"});
+                makeTextBoxes(a, new String [] {"New Type"}, 2);
+                createButtons(a, 3);
+            }
+            else if (e.getSource() == changeParameterType)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+                makeTextBoxes(a, new String [] {"New Type"}, 3);
+                createButtons(a, 4);
+            }
+            else if (e.getSource() == changeRelatoinshipType)
+            {
+                makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
+                createButtons(a, 3);
+            }
+            
         }
-        else if (e.getSource() == addField && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class"});
-            makeTextBoxes(a, new String [] {"Type: int String", "Field Name"}, 1);
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == addMethod && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class"});
-            makeTextBoxes(a, new String [] {"Method Name", "Return Type", "Types: int String", "Parameters: a b c"}, 1);
-            createButtons(a, 5);
-        }
-        else if (e.getSource() == addParameter && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method"});
-            makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"}, 2);
-            createButtons(a, 4);
-        }
-        else if (e.getSource() == addRelationship && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == removeClass && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class"});
-            createButtons(a, 1);
-        }
-        else if (e.getSource() == removeField && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class", "Field"});
-            createButtons(a, 2);
-        }
-        else if (e.getSource() == removeMethod && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method"});
-            createButtons(a, 2);
-        }
-        else if (e.getSource() == removeParameter && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == removeRelationship && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class", "Class"});
-            createButtons(a, 2);
-        }
-        else if (e.getSource() == renameClass && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class"});
-            makeTextBoxes(a, new String [] {"New Class Name"}, 1);
-            createButtons(a, 2);
-        }
-        else if (e.getSource() == renameField && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class", "Field"});
-            makeTextBoxes(a, new String [] {"New Field Name"}, 2);
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == renameMethod && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method"});
-            makeTextBoxes(a, new String [] {"New Method Name"}, 2);
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == renameParameter && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-            makeTextBoxes(a, new String [] {"New Parameter"}, 3);
-            createButtons(a, 4);
-        }
-        else if (e.getSource() == renameRelationshipType && textBoxes.isEmpty())
-        {
-            makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == load)
-        {
-        	boolean result = controller.runHelper(a, new String[] {});
-        	if (result)
-        	{
-        		loadGUIObjects();
-        	}
-        }
+        if (e.getSource() == load)
+            {
+                boolean result = controller.runHelper(a, new String[] {});
+                if (result)
+                {
+                    loadGUIObjects();
+                }
+            }
         else if (e.getSource() == save)
         {
         	controller.runHelper(a, new String[] {});
@@ -733,7 +788,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     }
 
     /**
-     * Based on the action, perform actions within the GUIView to update it wit new data from JModel
+     * Based on the action, perform actions within the GUIView to update it with new data from JModel
      * @param action action to be performed
      * @param args list of arguments 
      */
@@ -768,6 +823,8 @@ public class GUIView extends JFrame implements ActionListener, View {
             case RENAME_METHOD:
                 updateAttributes(args[0]);
                 break;
+            case CHANGE_METHOD_RETURN_TYPE:
+                updateAttributes(args[0]);
             case ADD_FIELD:
                 updateAttributes(args[0]);
                 break;
@@ -777,6 +834,8 @@ public class GUIView extends JFrame implements ActionListener, View {
             case RENAME_FIELD:
                 updateAttributes(args[0]);
                 break;
+            case CHANGE_FIELD_TYPE:
+                updateAttributes(args[0]);
             case ADD_PARAMETERS:
                 updateAttributes(args[0]);
                 break;
@@ -786,6 +845,8 @@ public class GUIView extends JFrame implements ActionListener, View {
             case RENAME_PARAMETER:
                 updateAttributes(args[0]);
                 break;
+            case CHANGE_PARAMETER_TYPE:
+                updateAttributes(args[0]);
             default:
                 break;
             }
@@ -836,7 +897,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         arrows.clear();  // Clear the list of arrows
         
         // Get the relationships and create arrows for each one
-        for (Relationship relationship : RelationshipHandler.getRelationships()) 
+        for (Relationship relationship : RelationshipHandler.getRelationObjects()) 
         {
             addArrowForRelationship(relationship);
         }
@@ -986,6 +1047,7 @@ public class GUIView extends JFrame implements ActionListener, View {
 		// Nothing to be implemented here
 	}
 	
+	@Override
 	public void setController(Controller c)
 	{
 		controller = c;

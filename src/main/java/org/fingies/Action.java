@@ -9,6 +9,9 @@ package org.fingies;
  */
 public enum Action {
 
+    // append new commands that can be selected in the CLI to the end of this list,
+	// DON'T change the order of them
+
     /**
      * Creates a new class.
      */
@@ -82,10 +85,6 @@ public enum Action {
      */
     RENAME_FIELD,
     /**
-     * Changes the data type of a field.
-     */
-    CHANGE_FIELD_TYPE,
-    /**
      * Adds a list of new parameters to a method
      */
     ADD_PARAMETERS,
@@ -98,11 +97,35 @@ public enum Action {
      */
     RENAME_PARAMETER,
     /**
+     * Changes a relationship type
+     */
+    CHANGE_RELATIONSHIP_TYPE,
+        /**
      * Changes the data type of a parameter to a new one
      */
     CHANGE_PARAMETER_TYPE,
     /**
-     * Changes a relationship type
+     * Changes the data type of a field.
      */
-    CHANGE_RELATIONSHIP_TYPE;
+    CHANGE_FIELD_TYPE,
+    /**
+     * Changes a method type
+     */
+    CHANGE_METHOD_RETURN_TYPE,
+    /**
+     * Undoes the last change to the UML diagram.
+     */
+    UNDO,
+    /**
+     * Redoes the last undone change.
+     */
+    REDO,
+    
+    
+    // commands that can't be selected in the CLI start here
+    
+    /*
+     * Moves a class to a new x, y coordinate.
+     */
+    MOVE;
 }

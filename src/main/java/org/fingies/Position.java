@@ -1,5 +1,7 @@
 package org.fingies;
 
+import java.util.Objects;
+
 /**
  * For handling the position of an object in the GUI
  * @author trush
@@ -24,6 +26,15 @@ public class Position {
     public Position(int x, int y) {
         this.x = x;
         this.y = y;
+    }
+    
+    /**
+     * Alternate constructor, makes a copy of a position
+     * @param pos The position to copy the x and y coordinates from
+     */
+    public Position(Position pos) {
+        this.x = pos.x;
+        this.y = pos.y;
     }
 
     /**
@@ -57,4 +68,23 @@ public class Position {
     public void setY(int y) {
         this.y = y;
     }
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Position other = (Position) obj;
+		return x == other.x && y == other.y;
+	}
+
+	@Override
+	public String toString() {
+		return "Position [x=" + x + ", y=" + y + "]";
+	}
+    
+    
 }

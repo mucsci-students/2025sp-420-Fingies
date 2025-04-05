@@ -303,6 +303,7 @@ public class CLIView implements View
     	System.out.println(result + RESET);
     }
 
+    @Override
 	public void setController(Controller c)
 	{
 		controller = c;

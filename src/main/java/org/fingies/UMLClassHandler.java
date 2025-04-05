@@ -164,23 +164,23 @@ public class UMLClassHandler {
         // prints each field if the list of fields isn't empty
         if (!fields.isEmpty())
         {
-            str += ": \n\tfields:";
+            str += "\n\t";
             for (Field field : fields)
             {
-                str += " " + field.getName() + ", ";
+            	str += field + "\n\t";
             }
-            str = str.substring(0, str.length() - 2); // trim off the extra comma
+            str = str.substring(0, str.length() - 2); // trim off the extra \n\t
         }
         
         // prints each method followed a list of it's parameters if the list of methods isn't empty
         if (!methods.isEmpty())
         {
-            str += "\n\tmethods:";
+            str += "\n\t";
             for (Method method : methods)
             {
-                str += method + ", ";
+                str += method + "\n\t";
             }
-            str = str.substring(0, str.length() - 2); // trim off the extra comma
+            str = str.substring(0, str.length() - 2); // trim off the extra \n\t
         }
         return str;
     }
@@ -192,6 +192,24 @@ public class UMLClassHandler {
     public static void reset() {
         HashMap<String, UMLClass> reset = new HashMap<>();
         classes = reset;
+    }
+    
+    /**
+     * Replaces one UMLClass object with another one. Both parameters can be null.
+     * 
+     * @param class1 The old class to replace. If null, adds class2 to the diagram
+     * @param class2 The new class to replace it with. If null, removes class1 from the diagram
+     */
+    public static void replace(UMLClass class1, UMLClass class2)
+    {
+    	if (class1 != null)
+    	{
+			classes.remove(class1.getName());
+    	}
+    	if (class2 != null)
+    	{
+    		classes.put(class2.getName(), class2);
+    	}
     }
 }
 

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class Main {
   
 	public static void main(String[] args) {
-		//args = new String[] {"--cli"};
+		args = new String[] {"--cli"};
         if (hasCLIFlag(args)) {
             CLIView view = new CLIView();
             Controller controller = new Controller(view, new JModel());
@@ -39,6 +39,9 @@ public class Main {
            // Create a method in Class A (optional)
            ArrayList<String> params = new ArrayList<>();
            ArrayList<String> types = new ArrayList<>();
+           
+           UMLClassHandler.getClass("ClassC").addMethod("MethodC", "void", params, types);
+
            params.add("Param1");
            params.add("Param2");
            params.add("Param3");
