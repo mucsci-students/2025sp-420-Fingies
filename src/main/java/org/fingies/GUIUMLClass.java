@@ -330,7 +330,7 @@ public class GUIUMLClass {
         public void mouseReleased(MouseEvent e)
         {
         	Rectangle r = background.getBounds();
-            umlclass.setPosition(r.x, r.y);
+            controller.runHelper(Action.MOVE, new String[] {umlclass.getName(), "" + r.x, "" + r.y});
         }
     }
     
