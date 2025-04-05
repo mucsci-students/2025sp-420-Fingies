@@ -1,46 +1,27 @@
 package org.fingies;
 
-import org.jline.reader.Completer;
-import org.jline.reader.impl.completer.TreeCompleter;
-import java.util.*;
+import org.jline.reader.*;
+import java.util.List;
 
 public class TabCompletion {
-    public static Completer getCompleter() {
-        Map<String, List<String>> commandTree = new HashMap<>();
 
-        // Build command hierarchy
-        for (String command : Command.COMMANDS) {
-            String[] parts = command.split(" ");
-            if (parts.length > 1) {
-                commandTree.computeIfAbsent(parts[0], k -> new ArrayList<>()).add(parts[1]);
-            } else {
-                commandTree.put(parts[0], Collections.emptyList());
-            }
-        }
-
-        List<TreeCompleter.Node> nodes = new ArrayList<>();
-
-        // Construct TreeCompleter nodes
-        for (Map.Entry<String, List<String>> entry : commandTree.entrySet()) {
-            String rootCommand = entry.getKey();
-            List<String> subCommands = entry.getValue();
-            
-            if (subCommands.isEmpty()) {
-                nodes.add(TreeCompleter.node(rootCommand));
-            } else {
-                List<TreeCompleter.Node> subNodes = new ArrayList<>();
-                for (String subCommand : subCommands) {
-                    subNodes.add(TreeCompleter.node(subCommand));
+    public Completer getCompleter() {
+        return new Completer() {
+            @Override
+            public void complete(LineReader lineReader, ParsedLine line, List<Candidate> candidates) {
+                String buffer = line.line(); // Get the current input line
+                // Add command completions (full commands and shorthand)
+                for (String command : CLIView.COMMANDS) {
+                    if (command.startsWith(buffer)) {
+                        candidates.add(new Candidate(command));
+                    }
                 }
-                nodes.add(TreeCompleter.node(rootCommand, subNodes.toArray(new TreeCompleter.Node[0])));
+                for (String shorthand : CLIView.COMMANDS_SHORTHAND) {
+                    if (shorthand.startsWith(buffer)) {
+                        candidates.add(new Candidate(shorthand));
+                    }
+                }
             }
-        }
-
-        // Add shorthand commands as standalone nodes
-        for (String shorthand : Command.COMMANDS_SHORTHAND) {
-            nodes.add(TreeCompleter.node(shorthand));
-        }
-
-        return new TreeCompleter(nodes.toArray(new TreeCompleter.Node[0]));
+        };
     }
 }

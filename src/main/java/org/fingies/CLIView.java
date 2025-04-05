@@ -94,7 +94,7 @@ public class CLIView implements View
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        completer = TabCompletion.getCompleter();
+        completer = new TabCompletion().getCompleter();
         lineReader = LineReaderBuilder.builder()
                 .terminal(terminal)
                 .completer(completer)
