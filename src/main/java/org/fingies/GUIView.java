@@ -293,7 +293,6 @@ public class GUIView extends JFrame implements ActionListener, View {
                     fullMethodName.substring(fullMethodName.indexOf("(") + 1, fullMethodName.indexOf(")")) : "";
                 // Store them in a list
                 parameters = methodParams.split(", ");
-                // System.out.println("parameters are " + Arrays.toString(parameters));
                 allInputs[1] = methodName;
             }
 
@@ -377,7 +376,7 @@ public class GUIView extends JFrame implements ActionListener, View {
                 allInputs = finalInputsList.toArray(new String[0]);
             } 
         }
-        System.out.println("Input: " + Arrays.toString(allInputs));
+        // System.out.println("Input: " + Arrays.toString(allInputs));
     
         // Call controller helper with the concatenated arguments
         if (controller.runHelper(action, allInputs)) {
@@ -871,7 +870,6 @@ public class GUIView extends JFrame implements ActionListener, View {
                 updateAttributes(args[0]);
                 break;
             case UNDO:
-                System.out.println("UNDO Initiated");
                 updateClasses();
                 break;
             case REDO:

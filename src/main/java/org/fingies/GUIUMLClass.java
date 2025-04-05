@@ -111,8 +111,10 @@ public class GUIUMLClass {
         	// the position is invalid, so randomize it
         	int randX = (int)(Math.random() * (maxWidth - pane.getWidth()));
             int randY = (int)(Math.random() * (maxHeight - pane.getHeight() - 75)) + 75;
-            controller.runHelper(Action.MOVE, new String[] {umlclass.getName(), randX + "", randY + ""});
-            pos = umlclass.getPosition();
+            pos = new Position(randX, randY);
+            umlclass.setPosition(randX, randY);
+            // controller.runHelper(Action.MOVE, new String[] {umlclass.getName(), randX + "", randY + ""});
+            // pos = umlclass.getPosition();
         }
         pane.setBounds(pos.getX(), pos.getY(), pane.getWidth(), pane.getHeight());
     }
