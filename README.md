@@ -32,6 +32,12 @@ Type ``help`` for a list of commands and their arguments, or ``help command_name
 2. After filling the textboxes with arguments, press ENTER to execute the command.
 3. If you want to cancel the current command, press ESC while in one of the text boxes.
 
+### Design Patterns:
+1. Adapter: we used an adapter in our JModel to convert relationships having their sources and destinations as UMLClasses to instead just be the names of the classes as Strings. This insured the propper JSON format was followed using our GSON dependency.
+2. Singleton: we used a singleton for both our UMLClassHandler and RelationshipHandler classes. These classes have one main static list of all of the classes/relationships that currently exist and can be accessed by any other class that needs them.
+3. Decorator: we used a decorator in our WrappingComboBoxRenderer that served as a wrapper class for the JComboBoxes in the GUIView. This wrapper class was able to properly format the JComboBox to meet the needs of the GUI.
+4. Memento: we used a memento for storing the previous states of the UML Diagram using our Change class. The change class stores the previous state and the current state of the program for when either the Undo or Redo actions are taken.
+
 ## Team Fingies
 - Nick Hayes
 - William Wickenheiser

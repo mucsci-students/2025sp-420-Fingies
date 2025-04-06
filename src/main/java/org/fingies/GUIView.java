@@ -38,6 +38,8 @@ public class GUIView extends JFrame implements ActionListener, View {
 
     private GUIMenuItem load;
     private GUIMenuItem save;
+    private GUIMenuItem undo;
+    private GUIMenuItem redo;
     private GUIMenuItem exit;
     
     private GUIMenuItem addClass;
@@ -102,6 +104,8 @@ public class GUIView extends JFrame implements ActionListener, View {
         // Creates JMenu submenus
         load = new GUIMenuItem("Open", Action.LOAD);
         save = new GUIMenuItem("Save", Action.SAVE);
+        undo = new GUIMenuItem("Undo", Action.UNDO);
+        redo = new GUIMenuItem("Redo", Action.REDO);
         exit = new GUIMenuItem("Exit", Action.EXIT);
         
         // ADD
@@ -133,6 +137,8 @@ public class GUIView extends JFrame implements ActionListener, View {
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
         save.addActionListener(this);
+        undo.addActionListener(this);
+        redo.addActionListener(this);
         exit.addActionListener(this);
 
         addClass.addActionListener(this);
@@ -158,12 +164,14 @@ public class GUIView extends JFrame implements ActionListener, View {
         changeRelatoinshipType.addActionListener(this);
 
         // Allows the press of a key to do the function of clicking the menu item WHILE in the menu
-        save.setMnemonic(KeyEvent.VK_S); // S for save
-
+        undo.setMnemonic(KeyEvent.VK_U); // Z for undo
+        redo.setMnemonic(KeyEvent.VK_R); // R for redo
 
         // Adds submenus to menu
         fileMenu.add(load);
         fileMenu.add(save);
+        fileMenu.add(undo);
+        fileMenu.add(redo);
         fileMenu.add(exit);
 
         addMenu.add(addClass);
@@ -266,17 +274,6 @@ public class GUIView extends JFrame implements ActionListener, View {
         comboBoxes.forEach(GUIView.this::remove);
         comboBoxes.clear();
         repaint(); // Refresh UI
-        
-        if (action.equals(Action.RENAME_FIELD))
-        {
-            // Initialize a list to store the final inputs
-            List<String> finalInputsList = new ArrayList<>();
-            finalInputsList.add(allInputs[0]);  // Class Name
-            finalInputsList.add(allInputs[1]);  // Field Name
-            finalInputsList.add(UMLClassHandler.getClass(allInputs[0]).getField(allInputs[1]).getType());
-            finalInputsList.add(allInputs[2]);  // New Field Name
-            allInputs = finalInputsList.toArray(new String[0]);
-        }
 
         // Special handling for actions that require parameter formatting 
         // Turns method1 (String int String) into method1 without the type list
@@ -296,7 +293,6 @@ public class GUIView extends JFrame implements ActionListener, View {
                     fullMethodName.substring(fullMethodName.indexOf("(") + 1, fullMethodName.indexOf(")")) : "";
                 // Store them in a list
                 parameters = methodParams.split(", ");
-                // System.out.println("parameters are " + Arrays.toString(parameters));
                 allInputs[1] = methodName;
             }
 
@@ -410,6 +406,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         JComboBox<String> classComboBox = null;
         JComboBox<String> methodComboBox = null;
         JComboBox<String> parameterComboBox = null;
+        JComboBox<String> destinationComboBox = null;
     
         for (int i = 0; i < placeholders.length; i++) {
             String placeholder = placeholders[i];
@@ -437,6 +434,12 @@ public class GUIView extends JFrame implements ActionListener, View {
                     updateParameterComboBox(parameterComboBox, classComboBox, methodComboBox); // Initial population
                     addMethodComboBoxListener(classComboBox, methodComboBox, parameterComboBox);
                     box = parameterComboBox;
+                    break;
+
+                case "Desination":
+                    destinationComboBox = createComboBoxForClassItems(classComboBox, "getDesinations");
+                    addComboBoxListener(classComboBox, destinationComboBox, "getDesinations");
+                    box = destinationComboBox;
                     break;
                     
                 case "Relationship":
@@ -600,6 +603,10 @@ public class GUIView extends JFrame implements ActionListener, View {
                     .map(x -> x.getName()).toArray(String[]::new);
             case "getMethods" -> GUIUMLClasses.get(selectedClass).getUMLClass().getMethods().stream()
                     .map(x -> x.toTypes()).toArray(String[]::new);
+            case "getDesinations" -> RelationshipHandler.getAllRelationshipsForClassname(selectedClass).stream()
+                    .filter(x -> x.getSrc().getName().equals(selectedClass))
+                    .map (x -> x.getDest().getName())
+                    .toArray(String[]::new);
             default -> new String[0];
         };
     }
@@ -713,7 +720,7 @@ public class GUIView extends JFrame implements ActionListener, View {
             }
             else if (e.getSource() == removeRelationship)
             {
-                makeComboBoxes(a, new String [] {"Class", "Class"});
+                makeComboBoxes(a, new String [] {"Class", "Desination"});
                 createButtons(a, 2);
             }
             else if (e.getSource() == renameClass)
@@ -760,7 +767,7 @@ public class GUIView extends JFrame implements ActionListener, View {
             }
             else if (e.getSource() == changeRelatoinshipType)
             {
-                makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
+                makeComboBoxes(a, new String [] {"Class", "Desination", "Relationship"});
                 createButtons(a, 3);
             }
             
@@ -776,6 +783,20 @@ public class GUIView extends JFrame implements ActionListener, View {
         else if (e.getSource() == save)
         {
         	controller.runHelper(a, new String[] {});
+        }
+        else if (e.getSource() == undo)
+        {
+            if (controller.runHelper(a, new String[] {}))
+            {
+                actionHelper(a, new String[] {});
+            }
+        }
+        else if (e.getSource() == redo)
+        {
+            if (controller.runHelper(a, new String[] {}))
+            {
+                actionHelper(a, new String[] {});
+            }
         }
         else if (e.getSource() == exit)
         {
@@ -847,6 +868,13 @@ public class GUIView extends JFrame implements ActionListener, View {
                 break;
             case CHANGE_PARAMETER_TYPE:
                 updateAttributes(args[0]);
+                break;
+            case UNDO:
+                updateClasses();
+                break;
+            case REDO:
+                updateClasses();
+                break;
             default:
                 break;
             }
@@ -920,7 +948,21 @@ public class GUIView extends JFrame implements ActionListener, View {
      */
     public void addUMLClass(String className)
     {
-        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this);
+        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this, null);
+
+        // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
+        this.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
+        GUIUMLClasses.put(className, newUMLClass);
+        reload();
+    }
+
+    /**
+     * Adds a UMLClass to list of GUIUMLClasses, which contains all current classes that exist within the GUI
+     * @param className name of class to be added
+     */
+    public void addUMLClass(String className, Color color)
+    {
+        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this, color);
 
         // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
         this.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
@@ -952,6 +994,24 @@ public class GUIView extends JFrame implements ActionListener, View {
         temp.update();
         GUIUMLClasses.put(newName, temp);
         reload();
+    }
+
+    /**
+     * Updates all of the classes after Undo is clicked and retains color except when name is changed
+     */
+    public void updateClasses()
+    {
+        HashMap<String, Color> colors = new HashMap<>();
+        for (GUIUMLClass g : GUIUMLClasses.values())
+        {
+            colors.put(g.getUMLClass().getName(), g.getColor());
+            this.remove(g.getJLayeredPane());
+        }
+        GUIUMLClasses.clear();
+        for (UMLClass c : UMLClassHandler.getAllClasses())
+        {
+            addUMLClass(c.getName(), colors.get(c.getName()));
+        }
     }
 
     /**

@@ -622,7 +622,7 @@ public class Controller {
     	{
     		UMLClass umlClass = UMLClassHandler.getClass(className);
         	Change change = new Change(umlClass, RelationshipHandler.getAllRelationshipsForClassname(className));
-        	umlClass.setPosition(Integer.valueOf(newX), Integer.valueOf(newY));
+        	umlClass.setPosition(Integer.parseInt(newX), Integer.parseInt(newY));
         	change.setCurrClass(umlClass);
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(className));
         	undoStack.push(change);
@@ -1259,8 +1259,8 @@ public class Controller {
             return false;
         for (int i = start; i < end; i += 2)
         {
-        	names.add(array[i]);
-        	types.add(array[i + 1]);
+        	types.add(array[i]);
+        	names.add(array[i + 1]);
         }
     	return true;
     }

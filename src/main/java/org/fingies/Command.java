@@ -68,13 +68,13 @@ public class Command {
 			"", //list relationships
 			"[ COMMAND ]", //help
 			"", //exit
-			"CLASS_NAME METHOD_NAME RETURN_TYPE [ PARAMETER PARAMETER_TYPE ... ]", //add method
+			"CLASS_NAME METHOD_NAME RETURN_TYPE [ PARAMETER_TYPE PARAMETER ... ]", //add method
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ]", //remove method
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] NEW_NAME", //rename method
 			"CLASS_NAME FIELD_NAME TYPE", //add field
 			"CLASS_NAME FIELD_NAME", //remove field
 			"CLASS_NAME FIELD_NAME NEW_NAME", //rename field
-			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ NEW_PARAMETER NEW_PARAMETER_TYPE ... ]", //add parameters
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ NEW_PARAMETER_TYPE NEW_PARAMETER ... ]", //add parameters
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ OLD_PARAMETER ... ] ", //remove parameters
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_NAME", // rename parameter
 			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE", //change relationship type

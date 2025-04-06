@@ -412,7 +412,7 @@ public class RedoTest { // TODO: test what happens if we redo after making a cha
 		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
 		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
 		
-		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "int", "param1", "long", "param2"});
 		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
 		
 		controller.runHelper(Action.UNDO, new String[] {});
@@ -465,7 +465,7 @@ public class RedoTest { // TODO: test what happens if we redo after making a cha
 		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
 		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
 		
-		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "int", "param1", "long", "param2"});
 		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
 		
 		controller.runHelper(Action.REMOVE_METHOD, new String[] {"jerry", "method1", "int", "long"});
@@ -527,7 +527,7 @@ public class RedoTest { // TODO: test what happens if we redo after making a cha
 		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
 		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
 		
-		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "int", "param1", "long", "param2"});
 		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
 		
 		controller.runHelper(Action.CHANGE_METHOD_RETURN_TYPE, new String[] {"jerry", "method1", "int", "long", "String"});
@@ -592,7 +592,7 @@ public class RedoTest { // TODO: test what happens if we redo after making a cha
 
         controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "num", "int"});
         personClass = UMLClassHandler.getClass("Person");
-        assertEquals("The class \"Person\" should have the correct method.", List.of(new Method("getName", "String", List.of("num"), List.of("int"))), personClass.getMethods());
+        assertEquals("The class \"Person\" should have the correct method.", List.of(new Method("getName", "String", List.of("int"), List.of("num"))), personClass.getMethods());
 
         controller.runHelper(Action.UNDO, new String[] {});
         personClass = UMLClassHandler.getClass("Person");
@@ -600,7 +600,7 @@ public class RedoTest { // TODO: test what happens if we redo after making a cha
         
         controller.runHelper(Action.REDO, new String[] {});
         personClass = UMLClassHandler.getClass("Person");
-        assertEquals("The class \"Person\" should have the correct method.", List.of(new Method("getName", "String", List.of("num"), List.of("int"))), personClass.getMethods());
+        assertEquals("The class \"Person\" should have the correct method.", List.of(new Method("getName", "String", List.of("int"), List.of("num"))), personClass.getMethods());
     }
 	
 	@Test
@@ -613,7 +613,7 @@ public class RedoTest { // TODO: test what happens if we redo after making a cha
         UMLClass personClass = UMLClassHandler.getClass("Person");
         assertTrue("The class \"Person\" should contain the method \"getName\".", personClass.methodExists("getName", List.of()));
 
-        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "num", "int"});
+        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "int", "num"});
         personClass = UMLClassHandler.getClass("Person");
         assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
         assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
@@ -644,7 +644,7 @@ public class RedoTest { // TODO: test what happens if we redo after making a cha
         UMLClass personClass = UMLClassHandler.getClass("Person");
         assertTrue("The class \"Person\" should contain the method \"getName\".", personClass.methodExists("getName", List.of()));
 
-        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "num", "int"});
+        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "int", "num"});
         personClass = UMLClassHandler.getClass("Person");
         assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
         assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
@@ -675,7 +675,7 @@ public class RedoTest { // TODO: test what happens if we redo after making a cha
 	        UMLClass personClass = UMLClassHandler.getClass("Person");
 	        assertTrue("The class \"Person\" should contain the method \"getName\".", personClass.methodExists("getName", List.of()));
 
-	        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "num", "int"});
+	        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "int", "num"});
 	        personClass = UMLClassHandler.getClass("Person");
 	        assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
 	        assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
