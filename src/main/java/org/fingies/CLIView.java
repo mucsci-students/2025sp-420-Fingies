@@ -108,7 +108,24 @@ public class CLIView implements View
 		Action action;
     	do
     	{
-    		String in = lineReader.readLine(caret + " ");
+    		String in;
+    		
+    		try
+    		{
+    			in = lineReader.readLine(caret + " ");
+    		}
+    		catch (UserInterruptException e)
+    		{
+    			action = Action.EXIT;
+    			controller.runHelper(action, new String[] {});
+    			continue;
+    		}
+    		catch (EndOfFileException e)
+    		{
+    			action = Action.EXIT;
+    			controller.runHelper(action, new String[] {});
+    			continue;
+    		}
             command = Command.parseCommand(in);
             while (command == null)
             {
@@ -144,7 +161,18 @@ public class CLIView implements View
     @Override
     public String promptForInput(String message) 
     {
-        return lineReader.readLine(message);
+        try
+        {
+        	return lineReader.readLine(message + " "); // appends an extra space to separate the message from the user's input
+        }
+        catch (UserInterruptException e)
+		{
+			return "";
+		}
+		catch (EndOfFileException e)
+		{
+			return "";
+		}
     }
 
     @Override
