@@ -373,7 +373,7 @@ public class UndoTest {
 		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
 		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
 		
-		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "int", "param1", "long", "param2"});
 		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
 		
 		controller.runHelper(Action.UNDO, new String[] {});
@@ -410,7 +410,7 @@ public class UndoTest {
 		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
 		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
 		
-		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "int", "param1", "long", "param2"});
 		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
 		
 		controller.runHelper(Action.REMOVE_METHOD, new String[] {"jerry", "method1", "int", "long"});
@@ -454,7 +454,7 @@ public class UndoTest {
 		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
 		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
 		
-		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "param1", "int", "param2", "long"});
+		controller.runHelper(Action.ADD_METHOD, new String[] {"jerry", "method1", "void", "int", "param1", "long", "param2"});
 		assertEquals("The class \"jerry\" should have the correct methods.", List.of(new Method("method1", "void", List.of("param1", "param2"), List.of("int", "long"))), UMLClassHandler.getClass("jerry").getMethods());
 		
 		controller.runHelper(Action.CHANGE_METHOD_RETURN_TYPE, new String[] {"jerry", "method1", "int", "long", "String"});
@@ -502,7 +502,7 @@ public class UndoTest {
         UMLClass personClass = UMLClassHandler.getClass("Person");
         assertTrue("The class \"Person\" should contain the method \"getName\".", personClass.methodExists("getName", List.of()));
 
-        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "num", "int"});
+        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "int", "num"});
         personClass = UMLClassHandler.getClass("Person");
         assertEquals("The class \"Person\" should have the correct method.", List.of(new Method("getName", "String", List.of("num"), List.of("int"))), personClass.getMethods());
 
@@ -521,7 +521,7 @@ public class UndoTest {
         UMLClass personClass = UMLClassHandler.getClass("Person");
         assertTrue("The class \"Person\" should contain the method \"getName\".", personClass.methodExists("getName", List.of()));
 
-        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "num", "int"});
+        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "int", "num"});
         personClass = UMLClassHandler.getClass("Person");
         assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
         assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
@@ -547,7 +547,7 @@ public class UndoTest {
         UMLClass personClass = UMLClassHandler.getClass("Person");
         assertTrue("The class \"Person\" should contain the method \"getName\".", personClass.methodExists("getName", List.of()));
 
-        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "num", "int"});
+        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "int", "num"});
         personClass = UMLClassHandler.getClass("Person");
         assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
         assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
@@ -573,7 +573,7 @@ public class UndoTest {
 	        UMLClass personClass = UMLClassHandler.getClass("Person");
 	        assertTrue("The class \"Person\" should contain the method \"getName\".", personClass.methodExists("getName", List.of()));
 
-	        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "num", "int"});
+	        controller.runHelper(Action.ADD_PARAMETERS, new String[] {personClass.getName(), personClass.getMethods().get(0).getName(), ";", "int", "num"});
 	        personClass = UMLClassHandler.getClass("Person");
 	        assertEquals("int", personClass.getMethods().get(0).getParameterTypes().get(0));
 	        assertEquals("num", personClass.getMethods().get(0).getParameterNames().get(0));
