@@ -2,10 +2,15 @@ package org.fingies;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.Objects;
 
 /**
  * Relationship Handler class to add, delete and get relationships
  * @author Nick Hayes & Lincoln Craddock
+ */
+/**
+ * 
  */
 public class RelationshipHandler
 {
@@ -18,13 +23,19 @@ public class RelationshipHandler
     	UMLClass source = UMLClassHandler.getClass(src);
     	UMLClass destination = UMLClassHandler.getClass(dest);
 
-    	Relationship r = new Relationship(source, destination, RelationshipType.DEFAULT);
-    	return relationships.indexOf(r);
+    	// Iterate through relationships to find index of relationship (Objects.equals to handle null values)
+        for (int i = 0; i < relationships.size(); i++) {
+            Relationship r = relationships.get(i);
+            if (Objects.equals(r.getSrc(), source) && Objects.equals(r.getDest(), destination)) {
+                return i; // Return index as soon as found
+            }
+        }
+    	return -1;
     }
 
     /**
      * Removes all relationships with a src or dest equal to the classname
-     * @param className name of class to remove relationships of
+     * @param className Name of class to remove relationships of
      */
     public static void removeAllRelationshipsForClassname(String className)
     {
@@ -36,6 +47,22 @@ public class RelationshipHandler
                 i--;
             }
         }
+    }
+    
+    /**
+     * Gets all the relationships with a src or dest equal to the classname
+     * @param className Name of class to get the relationships of
+     * @return A list of all of the relationships associated with the class
+     */
+    public static List<Relationship> getAllRelationshipsForClassname(String className)
+    {
+    	List<Relationship> list = new ArrayList<Relationship>();
+    	
+    	for (int i = 0; i < relationships.size(); i++)
+            if (relationships.get(i).getSrc().getName().equals(className) || relationships.get(i).getDest().getName().equals(className))
+                list.add(relationships.get(i));
+    	
+    	return list;
     }
 
     /**
@@ -53,7 +80,7 @@ public class RelationshipHandler
     	Relationship r = new Relationship (source, destination, type);
         if(relationships.contains(r))
         {
-            throw new IllegalArgumentException("This relationship already exists.");
+            throw new IllegalArgumentException("This relationship already exists");
         }
         return relationships.add(r);
     }
@@ -63,7 +90,7 @@ public class RelationshipHandler
      * 
      * @param src The name of the source class
      * @param dest The name of the destination class
-     * 
+     * @return true if the relationship was removed, false otherwise
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      */
     public static boolean removeRelationship(String src, String dest)
@@ -82,7 +109,7 @@ public class RelationshipHandler
      * @param src The source of the relationship to change
      * @param dest The destination of the relationship to change
      * @param newType The new type to give the relationship
-     * 
+     * @return true if the relationship type was changed, false otherwise
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      */
     public static boolean changeRelationshipType(String src, String dest, RelationshipType newType)
@@ -103,16 +130,29 @@ public class RelationshipHandler
      */
     public static String listRelationships()
     {
-    	String lst = "";
-    	for (Relationship r : relationships)
-    		lst += r + "\n";
-    	lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
-    	return lst;
+    	if(relationships.size() != 0)
+    	{
+    		String lst = "";
+        	for (Relationship r : relationships)
+        		lst += r + "\n";
+        	lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
+        	return lst;
+    	}
+    	else
+    	{
+    		return "There are no current relationships";
+    	}
     }
-    
-    public static List<Relationship> getRelationships()
+
+    /**
+     * Checks whether a relationship exists given a src and dest
+     * @param src src class name
+     * @param dest dest class name
+     * @return true if the relationship exists, false otherwise
+     */
+    public static boolean exists(String src, String dest)
     {
-        return relationships;
+    	return indexOf(src, dest) != -1;
     }
     
     /**
@@ -131,5 +171,48 @@ public class RelationshipHandler
      */
     public static void reset() {
         relationships = new ArrayList<Relationship>();
+    }
+    
+    /**
+     * Replaces a class object with another object in each relationship associated with the class.
+     * @param class1 The class to replace in each relationship.
+     * @param class2 The class to replace class1 with.
+     */
+    public static void replace(UMLClass class1, UMLClass class2)
+    {
+    	if (class1 == null)
+			return;
+		else if (class2 == null)
+		{
+			removeAllRelationshipsForClassname(class1.getName());
+		}
+		else
+		{
+			for(Relationship relationship : relationships)
+	    	{
+	    		if (relationship.getSrc().getName().equals(class1.getName()))
+	    			relationship.setSrc(class2);
+				
+	    		if (relationship.getDest().getName().equals(class1.getName()))
+	    			relationship.setDest(class2);
+	    	}
+		}
+    }
+    
+    /**
+     * Replaces all of the relationships associated with a particular class with a different list of relationships.
+     * @param classname The name of the class associated with all of the relationships to replace.
+     * @param list A list of new relationships to add to the diagram.
+     */
+    public static void replaceAllRelationshipsForClassname(String classname, List<Relationship> list)
+    {	
+    	relationships.removeIf(new Predicate<Relationship> () {
+
+			@Override
+			public boolean test(Relationship t) {
+				return t.getSrc().getName().equals(classname) || t.getDest().getName().equals(classname);
+			}});
+    	
+    	relationships.addAll(list);
     }
 }

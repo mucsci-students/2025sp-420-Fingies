@@ -8,7 +8,6 @@ import java.awt.Point;
 import java.awt.geom.Arc2D;
 
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 
 public class ArrowComponent extends JComponent {
     private Point start;
@@ -62,36 +61,42 @@ public class ArrowComponent extends JComponent {
         }
     }
 
-        // Helper method to draw a regular arrow
-        private void drawRegularArrow(Graphics2D g2d) {
-            // Draw the main arrow line
-            g2d.drawLine(start.x, start.y, end.x, end.y);
+    // Helper method to draw a regular arrow
+    private void drawRegularArrow(Graphics2D g2d) {
+        // Calculate the angle of the line between start and end
+        int dx = end.x - start.x;
+        int dy = end.y - start.y;
+        double angle = Math.atan2(dy, dx);
 
-            // Calculate the angle of the line between start and end
-            int dx = end.x - start.x;
-            int dy = end.y - start.y;
-            double angle = Math.atan2(dy, dx);
+        Point offset = new Point((int)(8 * Math.sin(angle)), -(int)(8 * Math.cos(angle)));
 
-            // Calculate the distance from the endpoint to the border of the JPanel
-            // The border is determined by the panel's width and height
-            double borderDistance = calculateBorderDistance(angle, endPanelWidth, endPanelHeight);
+        // The offset start & end points:
+        Point newStart = new Point(start.x + offset.x, start.y + offset.y);
+        Point newEnd = new Point(end.x + offset.x, end.y + offset.y);
 
-            int distanceFromBorder = - 10;
-            // Adjust the distance to be 10 pixels from the border
-            if (relation == RelationshipType.Inheritance || relation == RelationshipType.Realization) 
-            {
-                distanceFromBorder += 10;
-            }
-             // Fixed distance from the border
-            int distanceFromEnd = (int) (borderDistance - distanceFromBorder);
+        // Calculate the distance from the endpoint to the border of the JPanel
+        double borderDistance = calculateBorderDistance(angle, endPanelWidth, endPanelHeight, offset);
 
-            // Calculate the position for the shape at the adjusted distance from the end point
-            int shapeX = (int) (end.x - distanceFromEnd * Math.cos(angle));
-            int shapeY = (int) (end.y - distanceFromEnd * Math.sin(angle));
-
-            // Draw the shape based on the relationship type
-            drawShape(g2d, shapeX, shapeY, angle);
+        int distanceFromBorder = -10;
+        // Adjust the distance to be 10 pixels from the border
+        if (relation == RelationshipType.Inheritance || relation == RelationshipType.Realization) {
+            distanceFromBorder += 10;
         }
+        // Fixed distance from the border
+        int distanceFromEnd = (int) (borderDistance - distanceFromBorder);
+
+        // Calculate the position for the shape at the adjusted distance from the end point
+        int shapeX = (int) (newEnd.x - distanceFromEnd * Math.cos(angle));
+        int shapeY = (int) (newEnd.y - distanceFromEnd * Math.sin(angle));
+
+        // Draw the main arrow line
+        g2d.setColor(Color.BLACK);  // Reset to the original color
+        g2d.drawLine(newStart.x, newStart.y, newEnd.x, newEnd.y);
+
+        // Draw the shape based on the relationship type
+        drawShape(g2d, shapeX, shapeY, angle);
+    }
+
 
         private void drawSelfReferencingArrow(Graphics2D g2d) {
             // Define the fixed size of the loop
@@ -142,15 +147,15 @@ public class ArrowComponent extends JComponent {
     }
 
     // Helper method to calculate the distance from the endpoint to the border of the JPanel
-    private double calculateBorderDistance(double angle, int panelWidth, int panelHeight) {
+    private double calculateBorderDistance(double angle, int panelWidth, int panelHeight, Point offset) {
         // Calculate the intersection point of the line with the panel's border
         double halfWidth = panelWidth / 2.0;
         double halfHeight = panelHeight / 2.0;
 
         // Calculate the distance to the border along the line's direction
         double borderDistance = Math.min(
-            Math.abs(halfWidth / Math.cos(angle)),
-            Math.abs(halfHeight / Math.sin(angle))
+            Math.abs(halfWidth / Math.cos(angle) + offset.x),
+            Math.abs(halfHeight / Math.sin(angle) + offset.y)
         );
         return borderDistance;
     }

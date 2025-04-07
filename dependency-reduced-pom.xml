@@ -38,20 +38,57 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <version>3.1.0</version>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.5</version>
+        <configuration>
+          <argLine>@{argLine}</argLine>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>0.8.12</version>
         <executions>
           <execution>
-            <id>run-main-class</id>
-            <phase>package</phase>
+            <id>default-prepare-agent</id>
             <goals>
-              <goal>java</goal>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-check</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>check</goal>
             </goals>
           </execution>
         </executions>
         <configuration>
-          <mainClass>org.fingies.Main</mainClass>
+          <excludes>
+            <exclude>org/fingies/ArrowComponent*</exclude>
+            <exclude>org/fingies/CLITester*</exclude>
+            <exclude>org/fingies/CLIView*</exclude>
+            <exclude>org/fingies/ComboBoxListener*</exclude>
+            <exclude>org/fingies/Command*</exclude>
+            <exclude>org/fingies/Controller*</exclude>
+            <exclude>org/fingies/GUI**</exclude>
+            <exclude>org/fingies/InputCheck*</exclude>
+            <exclude>org/fingies/Main*</exclude>
+            <exclude>org/fingies/View*</exclude>
+            <exclude>org/fingies/WrappingComboBoxRenderer*</exclude>
+          </excludes>
+          <rules>
+            <rule>
+              <element>PACKAGE</element>
+              <limits>
+                <limit>
+                  <counter>LINE</counter>
+                  <value>COVEREDRATIO</value>
+                  <minimum>80%</minimum>
+                </limit>
+              </limits>
+            </rule>
+          </rules>
         </configuration>
       </plugin>
     </plugins>

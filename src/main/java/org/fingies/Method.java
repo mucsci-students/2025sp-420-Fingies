@@ -4,31 +4,43 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Represents a method of a class in a UML Class Diagram
+ */
 public class Method extends Attribute {
 
-    //This name field is STRICTLY for JSON formatting.
     private String name;
-    private ArrayList<Parameter> params;
+    private String returnType;
+    private List<Parameter> params;
 
-    public Method (String name)
-    {
+    public Method(String name, String returnType) {
         validateCharacters(name);
+        validateCharacters(returnType);
         this.name = name;
-        params = new ArrayList<Parameter>();
+        this.returnType = returnType;
+        this.params = new ArrayList<>();
     }
 
-    public Method (String name, List<String> parameters)
-    {
-        this(name);
-        for (String parameter : parameters)
-        {
-            validateCharacters(parameter);
-            if (!addParameter(parameter))
-            {
-                throw new IllegalArgumentException("Methods cannot contain duplicate params");
-            }
+    public Method(String name, String returnType, List<String> parameterNames, List<String> parameterTypes) {
+        this(name, returnType);
+        if (parameterNames.size() != parameterTypes.size()) {
+            throw new IllegalArgumentException("Every parameter must have one type");
         }
-        this.name = name;
+        for (int i = 0; i < parameterNames.size(); i++) {
+            addParameter(parameterNames.get(i), parameterTypes.get(i));
+        }
+    }
+    
+    /**
+     * Copy ctor
+     * @param method The method to copy from.
+     */
+    public Method(Method method)
+    {
+    	this(method.name, method.returnType);
+        for (int i = 0; i < method.params.size(); i++) {
+            addParameter(method.params.get(i).getName(), method.params.get(i).getType());
+        }
     }
 
     @Override
@@ -38,153 +50,117 @@ public class Method extends Attribute {
 
     @Override
     public void renameAttribute(String name) {
+        validateCharacters(name);
         this.name = name;
     }
 
-    /**
-     * Returns a parameter based on the String parameter
-     * @param parameter parameter to be looked for
-     * @return the parameter based on the String parameter
-     */
-    public Parameter getParameter (String parameter)
-    {
-        for (Parameter param : params)
-        {
-            if (param.getName().equals(parameter))
-                return param;
-        }
-        return null;
+    public String getReturnType() {
+        return returnType;
     }
 
-    /**
-     * Adds a single parameter to the list of params
-     * @param name name of parameter
-     * @return true if the parameter was added, false otherwise
-     */
-    public boolean addParameter (String name)
-    {
+    public void setReturnType(String returnType) {
+        validateCharacters(returnType);
+        this.returnType = returnType;
+    }
+
+    public Parameter getParameter(String name) {
+        return params.stream()
+                .filter(param -> param.getName().equals(name))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public boolean addParameter(String name, String type) {
         validateCharacters(name);
-        if (!parameterExists(name))
-        {
-            params.add(new Parameter(name));
-            return true;
+        validateCharacters(type);
+        if (parameterExists(name)) {
+            throw new IllegalArgumentException("Method " + getName() + " already has a parameter named " + name);
         }
-        throw new IllegalArgumentException("Method " + getName() + " already has a parameter named " + name);
-    }
-
-    public boolean addParameters (List<String> newparams) {
-        for (String newParam : newparams)
-            {
-                validateCharacters(newParam);
-                if (parameterExists(newParam))
-                {
-                	throw new IllegalArgumentException("Method " + getName() + " already has a parameter named " + newParam);
-                }
-            }
-        params.addAll(newparams.stream().map(x -> new Parameter(x)).toList());
+        params.add(new Parameter(name, type));
         return true;
     }
 
-    /**
-     * Removes a single parameter from the list of params
-     * @param name name of parameter to be removed
-     * @return true if the parameter was removed, false otherwise
-     */
-    public boolean removeParameter (String name)
-    {
-        return params.remove(getParameter(name));
-    }
-
-    /**
-     * Removes a list of specifided params from the list of all params, if vall alid
-     * @param junkparams list of params to be removed
-     * @return true if all junkparams successfully removed, false if not
-     */
-    public boolean removeParameters (List<String> junkparams)
-    {
-        // authenticate validity of entire list
-        for (String activeParam : junkparams)
-        {
-            if (!parameterExists(activeParam))
-            {
-            	throw new IllegalArgumentException("Method " + getName() + " doesn't have a parameter named " + activeParam);
-            }
+    public boolean addParameters(List<String> parameterNames, List<String> parameterTypes) {
+        if (parameterNames.size() != parameterTypes.size()) {
+            throw new IllegalArgumentException("Every parameter must have one type");
         }
-        // if authenication passed, execute specified victims
-        for (String victimParam : junkparams) {
-            params.remove(getParameter(victimParam));
+        for (int i = 0; i < parameterNames.size(); i++) {
+            addParameter(parameterNames.get(i), parameterTypes.get(i));
         }
         return true;
     }
 
-    /**
-     * Changes the name of a parameter
-     * @param oldName name of parameter to be changed
-     * @param newName new name to be given to old parameter
-     * @return true if the parameter is renamed, false otherwise
-     */
-    public boolean renameParameter (String oldName, String newName)
-    {
+    public boolean removeParameter(String name) {
+        return params.removeIf(param -> param.getName().equals(name));
+    }
+
+    public boolean removeParameters(List<String> parameterNames) {
+        for (String name : parameterNames) {
+            if (!parameterExists(name)) {
+                throw new IllegalArgumentException("Method " + getName() + " doesn't have a parameter named " + name);
+            }
+        }
+        params.removeIf(param -> parameterNames.contains(param.getName()));
+        return true;
+    }
+
+    public boolean renameParameter(String oldName, String newName) {
         validateCharacters(newName);
-        Parameter oldParam = getParameter(oldName);
-        Parameter newParam = getParameter(newName);
-
-        if (newParam != null)
-        	throw new IllegalArgumentException("Method " + getName() + " already has a parameter called " + newName);
-        if (oldParam != null)
-        {
-            params.set(params.indexOf(oldParam), new Parameter(newName));
+        if (parameterExists(newName)) {
+            throw new IllegalArgumentException("Method " + getName() + " already has a parameter called " + newName);
+        }
+        Parameter param = getParameter(oldName);
+        if (param != null) {
+            params.set(params.indexOf(param), new Parameter(newName, param.getType()));
             return true;
         }
         throw new IllegalArgumentException("Method " + getName() + " doesn't have a parameter called " + oldName);
     }
 
-    /**
-     * Checks to see if a parameter exists within the list of params
-     * @param name name of parameter to be checked
-     * @return true if the parameter exists, false otherwise
-     */
-    public boolean parameterExists (String name)
-    {
-        return params.contains(getParameter(name));
+    public boolean parameterExists(String name) {
+        return getParameter(name) != null;
     }
 
-    /**
-     * Returns the list of params as a hashset
-     * @return list of params as a hashset
-     */
-    public List<String> getParameters ()
-    {
-        return params.stream().map(x -> x.getName()).toList();
+    public List<String> getParameterNames() {
+        return params.stream().map(Parameter::getName).toList();
+    }
+
+    public List<String> getParameterTypes() {
+        return params.stream().map(Parameter::getType).toList();
+    }
+
+    public List<Parameter> getParameters() {
+        return params;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true; // Same object reference
-        if (obj == null || getClass() != obj.getClass()) return false; // Different class
-
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
         Method method = (Method) obj;
-        return getName().equals(method.getName()) && params.equals(method.params);
+        return name.equals(method.name) && returnType.equals(method.returnType) && params.equals(method.params);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), params);
+        return Objects.hash(name, returnType, params);
+    }
+
+    public String toTypes()
+    {
+        String paramString = params.stream()
+                .map(param -> param.getType())
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("");
+        return name + " (" + paramString + ")";
     }
 
     @Override
-    public String toString()
-    {
-        String str = getName() + " (";
-        if (!params.isEmpty())
-        {
-            for (Parameter parameter : params)
-        {
-            str += parameter.getName() + ", ";
-        }
-        str = str.substring(0, str.length() - 2); // trim off the extra comma
-        }
-        str += ")";
-        return str;
+    public String toString() {
+        String paramString = params.stream()
+                .map(param -> param.getType() + " " + param.getName())
+                .reduce((a, b) -> a + ", " + b)
+                .orElse("");
+        return returnType + " " + name + " (" + paramString + ")";
     }
 }
