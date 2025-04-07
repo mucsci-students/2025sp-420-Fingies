@@ -23,6 +23,20 @@
             <version>4.13.2</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/jline/jline -->
+        <dependency>
+            <groupId>jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>3.0.0.M1</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.fusesource.jansi/jansi -->
+        <dependency>
+            <groupId>org.fusesource.jansi</groupId>
+            <artifactId>jansi</artifactId>
+            <version>1.18</version>
+        </dependency>
+
     </dependencies>
 
     <properties>
