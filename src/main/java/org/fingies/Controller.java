@@ -88,12 +88,14 @@ public class Controller {
         }
     }
 
-    public boolean doAddRelationship(String srcClass, String destClass, String type) // TODO: implement rest of methods with undo stack
+    public boolean doAddRelationship(String srcClass, String destClass, String type)
     {
         try
         {
-        	// We store a change to src class, but not dest class. Because only one is needed
         	RelationshipType rType = RelationshipType.fromString(type);
+        	if (rType == null)
+        		throw new IllegalArgumentException(type + " is not a valid relationship type."); // exception is immediately caught
+        	// We store a change to src class, but not dest class. Because only one is needed
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = RelationshipHandler.addRelationship(srcClass, destClass, rType);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
