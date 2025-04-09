@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -30,17 +31,11 @@ public class GUIUMLClass {
     private UMLClass umlclass;
     private Controller controller;
 
-    public GUIUMLClass(UMLClass umlclass, Controller controller, GUIView guiView, Color col)
+    public GUIUMLClass(UMLClass umlclass, Controller controller, GUIView guiView)
     {
         this.umlclass = umlclass;
         this.controller = controller;
-
-        // Creates a random color for the class
-        if (col == null)
-            color = new Color((int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), 100);
-        // System.out.println("MEGA COLOR is " + color);
-        else
-            color = col;
+        setColor();
 
         classPanel = new JPanel();
         classPanel.setBackground(color);
@@ -93,6 +88,21 @@ public class GUIUMLClass {
         return color;
     }
 
+    public void setColor()
+    {
+        int hash = Objects.hash(umlclass.getName());
+        int r = (Math.abs(hash) >> 16) & 0xFF;
+        int g = (Math.abs(hash) >> 8) & 0xFF;
+        int b = Math.abs(hash) & 0xFF;
+
+        // Clamp to 15–240 range
+        r = 15 + (r % 226); 
+        g = 15 + (g % 226);
+        b = 15 + (b % 226);
+
+        color = new Color(r, g, b);
+    }
+
     public UMLClass getUMLClass()
     {
         return umlclass;
@@ -133,9 +143,14 @@ public class GUIUMLClass {
         // Must be called down here because it relies on new size of background
         updateClassName();
 
+        
         classPanel.setSize(newWidth, classPanel.getHeight());
         fieldsPanel.setSize(newWidth, fieldsPanel.getHeight());
         methodsPanel.setSize(newWidth, methodsPanel.getHeight());
+        setColor();
+        classPanel.setBackground(color);
+        fieldsPanel.setBackground(color);
+        methodsPanel.setBackground(color);
 
         // background.revalidate();
         background.repaint();

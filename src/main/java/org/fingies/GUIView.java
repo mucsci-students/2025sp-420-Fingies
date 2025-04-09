@@ -980,21 +980,7 @@ public class GUIView extends JFrame implements ActionListener, View {
      */
     public void addUMLClass(String className)
     {
-        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this, null);
-
-        // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
-        this.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
-        GUIUMLClasses.put(className, newUMLClass);
-        reload();
-    }
-
-    /**
-     * Adds a UMLClass to list of GUIUMLClasses, which contains all current classes that exist within the GUI
-     * @param className name of class to be added
-     */
-    public void addUMLClass(String className, Color color)
-    {
-        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this, color);
+        GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this);
 
         // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
         this.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
@@ -1025,6 +1011,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         GUIUMLClasses.remove(className);
         temp.update();
         GUIUMLClasses.put(newName, temp);
+        updateArrows();
         reload();
     }
 
@@ -1033,17 +1020,16 @@ public class GUIView extends JFrame implements ActionListener, View {
      */
     public void updateClasses()
     {
-        HashMap<String, Color> colors = new HashMap<>();
         for (GUIUMLClass g : GUIUMLClasses.values())
         {
-            colors.put(g.getUMLClass().getName(), g.getColor());
             this.remove(g.getJLayeredPane());
         }
         GUIUMLClasses.clear();
         for (UMLClass c : UMLClassHandler.getAllClasses())
         {
-            addUMLClass(c.getName(), colors.get(c.getName()));
+            addUMLClass(c.getName());
         }
+        updateArrows();
     }
 
     /**
