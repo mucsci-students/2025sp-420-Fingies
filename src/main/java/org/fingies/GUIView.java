@@ -35,9 +35,11 @@ public class GUIView extends JFrame implements ActionListener, View {
     private JMenu removeMenu;
     private JMenu renameMenu;
     private JMenu typeMenu;
+    private JMenu themeMenu;
 
     private GUIMenuItem load;
     private GUIMenuItem save;
+    private GUIMenuItem export;
     private GUIMenuItem undo;
     private GUIMenuItem redo;
     private GUIMenuItem exit;
@@ -63,6 +65,9 @@ public class GUIView extends JFrame implements ActionListener, View {
     private GUIMenuItem changeMethodType;
     private GUIMenuItem changeParameterType;
     private GUIMenuItem changeRelatoinshipType;
+
+    private GUIMenuItem lightMode;
+    private GUIMenuItem darkMode;
 
     private ArrayList<JTextField> textBoxes;
     private ArrayList<JComboBox<String>> comboBoxes;
@@ -93,6 +98,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         removeMenu = new JMenu("Remove");
         renameMenu = new JMenu("Rename");
         typeMenu = new JMenu("ChangeType");
+        themeMenu = new JMenu("Theme");
 
         // Adds menus to menubar
         menuBar.add(fileMenu);
@@ -100,12 +106,14 @@ public class GUIView extends JFrame implements ActionListener, View {
         menuBar.add(removeMenu);
         menuBar.add(renameMenu);
         menuBar.add(typeMenu);
+        menuBar.add(themeMenu);
 
         // Creates JMenu submenus
         load = new GUIMenuItem("Open", Action.LOAD);
         save = new GUIMenuItem("Save", Action.SAVE);
         undo = new GUIMenuItem("Undo", Action.UNDO);
         redo = new GUIMenuItem("Redo", Action.REDO);
+        export = new GUIMenuItem("Export", Action.EXPORT);
         exit = new GUIMenuItem("Exit", Action.EXIT);
         
         // ADD
@@ -134,11 +142,16 @@ public class GUIView extends JFrame implements ActionListener, View {
         changeParameterType= new GUIMenuItem("Parameter", Action.CHANGE_PARAMETER_TYPE);
         changeRelatoinshipType = new GUIMenuItem("Relationship", Action.CHANGE_RELATIONSHIP_TYPE);
 
+        // THEME
+        lightMode = new GUIMenuItem("Light Mode", Action.LIGHT_MODE);
+        darkMode = new GUIMenuItem("Dark Mode", Action.DARK_MODE);
+
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
         save.addActionListener(this);
         undo.addActionListener(this);
         redo.addActionListener(this);
+        export.addActionListener(this);
         exit.addActionListener(this);
 
         addClass.addActionListener(this);
@@ -163,6 +176,9 @@ public class GUIView extends JFrame implements ActionListener, View {
         changeParameterType.addActionListener(this);
         changeRelatoinshipType.addActionListener(this);
 
+        lightMode.addActionListener(this);
+        darkMode.addActionListener(this);
+
         // Allows the press of a key to do the function of clicking the menu item WHILE in the menu
         undo.setMnemonic(KeyEvent.VK_U); // Z for undo
         redo.setMnemonic(KeyEvent.VK_R); // R for redo
@@ -172,6 +188,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         fileMenu.add(save);
         fileMenu.add(undo);
         fileMenu.add(redo);
+        fileMenu.add(export);
         fileMenu.add(exit);
 
         addMenu.add(addClass);
@@ -195,6 +212,9 @@ public class GUIView extends JFrame implements ActionListener, View {
         typeMenu.add(changeMethodType);
         typeMenu.add(changeParameterType);
         typeMenu.add(changeRelatoinshipType);
+
+        themeMenu.add(lightMode);
+        themeMenu.add(darkMode);
 
         // Sets main attributes of the "frame" (this)
         this.setTitle("UMLEditor");
@@ -784,6 +804,10 @@ public class GUIView extends JFrame implements ActionListener, View {
         {
         	controller.runHelper(a, new String[] {});
         }
+        else if (e.getSource() == export)
+        {
+        	// controller.runHelper(a, new String[] {});
+        }
         else if (e.getSource() == undo)
         {
             if (controller.runHelper(a, new String[] {}))
@@ -805,6 +829,14 @@ public class GUIView extends JFrame implements ActionListener, View {
         	{
         		System.exit(0);
         	}
+        }
+        else if (e.getSource() == lightMode)
+        {
+            // for Tristan
+        }
+        else if (e.getSource() == darkMode)
+        {
+            // for Tristan
         }
     }
 
