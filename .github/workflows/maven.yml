@@ -29,6 +29,12 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml
+    - name: Remove Existing Coverage Folder
+      run: rm -rf ./coverage_report
+    - name: Create Coverage Reports
+      run: mvn jacoco:report
+    - name: Move Report to Coverage Report Folder
+      run: mv ./target/site/jacoco/ ./coverage_report/
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph
