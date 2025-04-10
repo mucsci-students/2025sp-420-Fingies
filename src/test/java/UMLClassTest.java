@@ -1,12 +1,14 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.fingies.UMLClass;
+import org.fingies.Field;
 import org.fingies.Position;
 import org.junit.Before;
 import org.junit.Test;
@@ -393,4 +395,22 @@ public class UMLClassTest {
         assertTrue(c.getPosition().getX() == 10 && c.getPosition().getY() == 10);
     }
 
+    @Test
+    public void testFieldHashCode() {
+        Field field = new Field("Name", "Type");
+        assertNotNull(field.hashCode());
+    }
+
+    @Test
+    public void testFieldNotEquals() {
+        Field f = new Field("Name", "Type");
+        assertFalse(f.equals(null));
+    }
+
+    @Test
+    public void testFieldEqualsOtherField() {
+        Field f1 = new Field("Name", "Type");
+        Field f2 = new Field("Name", "Type");
+        assertTrue(f1.equals(f2));
+    }
 }

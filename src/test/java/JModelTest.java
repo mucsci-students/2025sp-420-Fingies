@@ -1,6 +1,10 @@
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,6 +16,7 @@ import org.junit.After;
 
 /**
  * Tests for the JModel.java class
+ * 
  * @author trush
  */
 public class JModelTest {
@@ -51,6 +56,7 @@ public class JModelTest {
     public void resetTest() {
         RelationshipHandler.removeRelationship("Car", "Animal");
         RelationshipHandler.removeRelationship("Food", "Animal");
+        model.setFilepath(path);
     }
 
     @Test
@@ -75,7 +81,7 @@ public class JModelTest {
 
     @Test
     public void loadSave() {
-    	System.out.println("@Test loadSave():");
+        System.out.println("@Test loadSave():");
         assertNotNull(model.loadData(path));
         HashSet<UMLClass> umlClasses = UMLClassHandler.getAllClasses();
         for (UMLClass umlClass : umlClasses) {
@@ -84,12 +90,11 @@ public class JModelTest {
         System.out.println();
         System.out.println(RelationshipHandler.listRelationships());
     }
-    
+
     @Test
-    public void loadTwice()
-    {
-    	System.out.println("@Test loadTwice() (first time):");
-        
+    public void loadTwice() {
+        System.out.println("@Test loadTwice() (first time):");
+
         assertNotNull(model.loadData(path));
         HashSet<UMLClass> umlClasses = UMLClassHandler.getAllClasses();
         for (UMLClass umlClass : umlClasses) {
@@ -97,7 +102,7 @@ public class JModelTest {
         }
         System.out.println();
         System.out.println(RelationshipHandler.listRelationships());
-        
+
         System.out.println("@Test loadTwice() (second time):");
         assertNotNull(model.loadData(path));
         umlClasses = UMLClassHandler.getAllClasses();
@@ -106,5 +111,64 @@ public class JModelTest {
         }
         System.out.println();
         System.out.println(RelationshipHandler.listRelationships());
+    }
+
+    @Test
+    public void testNullFileExist() {
+        assertFalse(model.fileExist(null));
+    }
+
+    @Test
+    public void testFileDoesNotExist() {
+        assertFalse(model.fileExist(""));
+    }
+
+    @Test
+    public void testFilePathConstructor() {
+        JModel filepathModel = new JModel("testFilePath");
+        assertEquals(filepathModel.getFilepath(), "testFilePath");
+    }
+
+    @Test
+    public void testLatestErrorReporting() {
+        assertFalse(model.fileExist(null));
+        assertEquals(model.getLatestError(), "Invalid Argument: null, for fileExist");
+    }
+
+    @Test
+    public void testNullPathSaving() {
+        model.setFilepath(null);
+        assertFalse(model.saveData());
+    }
+
+    @Test
+    public void testLoadingNullFile() {
+        model.setFilepath(null);
+        assertNull(model.loadData());
+    }
+
+    @Test
+    public void testLoadingEmptyFile() {
+        try {
+            FileWriter writer = new FileWriter(absolutePath + "/emptyFile.json", false);
+            writer.write("");
+            writer.close();
+        }
+        catch (Exception e) {
+            assertTrue(false);
+        }
+        assertNull(model.loadData(absolutePath + "/emptyFile.json"));
+    }
+
+    @Test
+    public void writeNullToLog() {
+        try {
+            java.lang.reflect.Field field = JModel.class.getDeclaredField("fullLogPath");
+            field.setAccessible(true);
+            field.set(model, "");
+        } catch(Exception e) {
+            assertTrue(false);
+        }
+        assertFalse(model.writeToLog("This shouldn't write"));
     }
 }

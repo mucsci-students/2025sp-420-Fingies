@@ -76,6 +76,7 @@
             <exclude>org/fingies/Main*</exclude>
             <exclude>org/fingies/View*</exclude>
             <exclude>org/fingies/WrappingComboBoxRenderer*</exclude>
+            <exclude>org/fingies/TabCompletion*</exclude>
           </excludes>
           <rules>
             <rule>
