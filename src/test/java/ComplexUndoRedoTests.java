@@ -164,6 +164,50 @@ public class ComplexUndoRedoTests {
 				List.of(RelationshipType.Aggregation.getName()),
 				RelationshipHandler.getRelationObjects().stream().map(x -> x.getType().getName()).toList());
 	}
+	
+	@Test
+	public void test2()
+	{
+		controller.runHelper(Action.ADD_CLASS, new String[] {"jerry"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after adding one.", UMLClassHandler.exists("jerry"));
+		
+		controller.runHelper(Action.ADD_RELATIONSHIP, new String[] {"jerry", "jerry", "comp"});
+		assertEquals("The RelationshipHandler should have the correct relationships after adding a composition relationship between \"jerry\" and itself.",
+				List.of(new Relationship(new UMLClass("jerry"), new UMLClass("jerry"), RelationshipType.DEFAULT)),
+				RelationshipHandler.getRelationObjects());
+		assertEquals("The RelationshipHandler should have the correct relationship types for all of its relationships after adding a composition relationship between \"jerry\" and itself.",
+				List.of(RelationshipType.Composition.getName()),
+				RelationshipHandler.getRelationObjects().stream().map(x -> x.getType().getName()).toList());
+		
+		controller.runHelper(Action.RENAME_CLASS, new String[] {"jerry", "jerry2"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry2\" after renaming \"jerry\" to it.", UMLClassHandler.exists("jerry2"));
+		assertEquals("The RelationshipHandler should have the correct relationships after renaming \"jerry\" to \"jerry2\".",
+				List.of(new Relationship(new UMLClass("jerry2"), new UMLClass("jerry2"), RelationshipType.DEFAULT)),
+				RelationshipHandler.getRelationObjects());
+		assertEquals("The RelationshipHandler should have the correct relationship types for all of its relationships after renaming \\\"jerry\\\" to \"jerry2\".",
+				List.of(RelationshipType.Composition.getName()),
+				RelationshipHandler.getRelationObjects().stream().map(x -> x.getType().getName()).toList());
+		
+		controller.runHelper(Action.UNDO, new String[] {});
+		assertTrue("The UMLClassHandler should have a class named \"jerry\" after undoing a Rename Class action.", UMLClassHandler.exists("jerry"));
+		assertEquals("The RelationshipHandler should have the correct relationships after undoing a Rename Class action.",
+				List.of(new Relationship(new UMLClass("jerry"), new UMLClass("jerry"), RelationshipType.DEFAULT)),
+				RelationshipHandler.getRelationObjects());
+		assertEquals("The RelationshipHandler should have the correct relationship types for all of its relationships after undoing a Rename Class action.",
+				List.of(RelationshipType.Composition.getName()),
+				RelationshipHandler.getRelationObjects().stream().map(x -> x.getType().getName()).toList());
+		
+		controller.runHelper(Action.RENAME_CLASS, new String[] {"jerry", "jerry2"});
+		assertTrue("The UMLClassHandler should have a class named \"jerry2\" after renaming \"jerry\" to it.", UMLClassHandler.exists("jerry2"));
+		assertEquals("The RelationshipHandler should have the correct relationships after renaming \"jerry\" to \"jerry2\".",
+				List.of(new Relationship(new UMLClass("jerry2"), new UMLClass("jerry2"), RelationshipType.DEFAULT)),
+				RelationshipHandler.getRelationObjects());
+		assertEquals("The RelationshipHandler should have the correct relationship types for all of its relationships after renaming \\\"jerry\\\" to \"jerry2\".",
+				List.of(RelationshipType.Composition.getName()),
+				RelationshipHandler.getRelationObjects().stream().map(x -> x.getType().getName()).toList());
+	}
+	
+	
 }
 
 

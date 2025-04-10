@@ -503,10 +503,11 @@ public class Controller {
     	{
     		Change change = undoStack.pop();
     		redoStack.push(change);
-    		UMLClassHandler.replace(change.getCurrClass(), change.getOldClass());
-    		RelationshipHandler.replace(change.getCurrClass(), change.getOldClass());
-    		if (change.getOldClass() != null)
-    			RelationshipHandler.replaceAllRelationshipsForClassname(change.getOldClass().getName(), change.getOldRelationships());
+    		UMLClass newClass = change.getOldClass(); // its important that UMLClassHandler & RelationshipHandler recieve links to the same UMLClass object
+    		UMLClassHandler.replace(change.getCurrClass(), newClass);
+    		RelationshipHandler.replace(change.getCurrClass(), newClass);
+    		if (newClass != null)
+    			RelationshipHandler.replaceAllRelationshipsForClassname(newClass.getName(), change.getOldRelationshipsUsingLink(newClass));
     		return true;
     	}
     }
@@ -528,10 +529,11 @@ public class Controller {
     	{
     		Change change = redoStack.pop();
     		undoStack.push(change);
-    		UMLClassHandler.replace(change.getOldClass(), change.getCurrClass());
-    		RelationshipHandler.replace(change.getOldClass(), change.getCurrClass());
-    		if (change.getCurrClass() != null)
-    			RelationshipHandler.replaceAllRelationshipsForClassname(change.getCurrClass().getName(), change.getCurrRelationships());
+    		UMLClass newClass = change.getCurrClass();
+    		UMLClassHandler.replace(change.getOldClass(), newClass);
+    		RelationshipHandler.replace(change.getOldClass(), newClass);
+    		if (newClass != null)
+    			RelationshipHandler.replaceAllRelationshipsForClassname(change.getCurrClass().getName(), change.getCurrRelationshipsUsingLink(newClass));
     		return true;
     	}
     }
