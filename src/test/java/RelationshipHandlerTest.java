@@ -110,13 +110,13 @@ public class RelationshipHandlerTest {
     }
 
     @Test
-    public void relationshipHandlerListRelationships()
+    public void relationshipHandlerListRelationships() // TODO: These tests are difficult to maintain, can we just delete them? --Lincoln
     {
         assertEquals(RelationshipHandler.listRelationships(), "There are no current relationships");
         RelationshipHandler.addRelationship("A", "B", RelationshipType.Aggregation);
-        assertEquals(RelationshipHandler.listRelationships(), "A ----◇ B");
+        assertEquals(RelationshipHandler.listRelationships(), "A ----◇ B (Aggregation)");
         RelationshipHandler.addRelationship("C", "D", RelationshipType.Composition);
-        assertEquals(RelationshipHandler.listRelationships(), "A ----◇ B\nC ----◆ D");
+        assertEquals(RelationshipHandler.listRelationships(), "A ----◇ B (Aggregation)\nC ----◆ D (Composition)");
     }
 
 

@@ -41,6 +41,12 @@ public class Change
 		}
 	}
 	
+	/*
+	 * Getter & Setter methods all create a copy to return/store.
+	 * It is important that the Change class doesn't contain any links to existing any objects
+	 * in the diagram, just copies of their data values.
+	 */
+	
 	public void setCurrClass(UMLClass currClass)
 	{
 		if (currClass != null)
