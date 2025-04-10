@@ -57,5 +57,5 @@ jobs:
       run: |
         git checkout develop
         git pull origin develop
-        git merge --no-ff $BRANCH_NAME -m "Merge Coverage Branch $BRANCH_NAME"
+        git merge --no-ff $BRANCH_NAME -m "Merge Coverage Branch $BRANCH_NAME [skip ci]"
         git push origin develop
