@@ -64,21 +64,45 @@ public class Change
 	
 	public List<Relationship> getCurrRelationships()
 	{
+		List<Relationship> currRelationships = new ArrayList<Relationship>();
+		if(this.currRelationships == null)
+		{
+			return null;
+		}
+		for (Relationship r : this.currRelationships)
+		{
+			currRelationships.add(new Relationship(r));
+		}
 		return currRelationships;
 	}
 
 	public UMLClass getOldClass() 
 	{
-		return oldClass;
+		if (oldClass != null)
+			return new UMLClass(oldClass);
+		else
+			return null;
 	}
 
 	public UMLClass getCurrClass() 
 	{
-		return currClass;
+		if (currClass != null)
+			return new UMLClass(currClass);
+		else
+			return null;
 	}
 	
 	public List<Relationship> getOldRelationships()
 	{
+		List<Relationship> oldRelationships = new ArrayList<Relationship>();
+		if(this.oldRelationships == null)
+		{
+			return null;
+		}
+		for (Relationship r : this.oldRelationships)
+		{
+			oldRelationships.add(new Relationship(r));
+		}
 		return oldRelationships;
 	}
 	
