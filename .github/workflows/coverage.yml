@@ -40,9 +40,11 @@ jobs:
     - name: Build project
       run: |
         mvn package
+    - name: Remove Previous Report
+      run: rm -rf ./coverage_report/
+      continue-on-error: true
     - name: Create Coverage Report
       run: |
-        rm -rf ./coverage_report/
         mvn jacoco:report
         mv ./target/site/jacoco ./coverage_report
     - name: Commit Coverage Report
