@@ -1,8 +1,8 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import org.fingies.Action;
-import org.fingies.Command;
+import org.fingies.Controller.Action;
+import org.fingies.Controller.Command;
 import org.junit.Assert;
 import org.junit.Test;
 

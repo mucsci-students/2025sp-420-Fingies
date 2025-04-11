@@ -1,5 +1,6 @@
 package org.fingies;
 
+import org.fingies.Controller.Command;
 import org.jline.reader.*;
 import java.util.List;
 
