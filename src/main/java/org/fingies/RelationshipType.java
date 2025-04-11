@@ -2,14 +2,14 @@ package org.fingies;
 
 public enum RelationshipType {
 	
-	Aggregation("----◇"),
-	Composition("----◆"),
-	Inheritance("----▷"),
-	Realization("- - ▷"),
+	Aggregation("----◇", "Aggregation"),
+	Composition("----◆", "Composition"),
+	Inheritance("----▷", "Inheritance"),
+	Realization("- - ▷", "Realization"),
 	/**
 	 * For creating temporary, internal relationships; not for the user.
 	 */
-	DEFAULT("");
+	DEFAULT("", "default");
 	
 	private static final String[] AGGR_NAMES = {"aggregation", "aggr", "a"};
 	private static final String[] COMP_NAMES = {"composition", "comp", "c"};
@@ -17,16 +17,23 @@ public enum RelationshipType {
 	private static final String[] REAL_NAMES = {"realization", "real", "r"};
 	
 	private final String symbol;
+	private final String name;
 	
-	RelationshipType(String s)
+	RelationshipType(String s, String n)
 	{
 		symbol = s;
+		name = n;
 	}
 	
 	@Override
 	public String toString()
 	{
 		return symbol;
+	}
+	
+	public String getName()
+	{
+		return name;
 	}
 	
 	public static RelationshipType fromString(String arg0)

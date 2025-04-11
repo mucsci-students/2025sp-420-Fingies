@@ -26,6 +26,16 @@ public class Controller {
         madeChange = false;
         hasSaved = false;
     }
+    
+    
+    //////////////////////////////////////////// MODEL-RELATED DO METHODS ////////////////////////////////////////////
+    
+    /*
+     * Each of these methods try to perform their titular action on the model, returning true if successful, and false otheriwse.
+     * They notify the view if the action failed.
+     * 
+     * They also push a Change memento onto the Undo stack for later use.
+     */
 
     public boolean doAddClass(String className) 
     {
@@ -138,7 +148,7 @@ public class Controller {
         {
             RelationshipType rType = RelationshipType.fromString(newType);
             Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = RelationshipHandler.changeRelationshipType(srcClass, destClass, rType);
+            boolean result = RelationshipHandler.changeRelationshipType(srcClass, destClass, rType);        	
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
@@ -454,6 +464,87 @@ public class Controller {
             return false;
         }
     }
+    
+    public boolean doMove(String className, String newX, String newY)
+    {
+    	try
+    	{
+    		UMLClass umlClass = UMLClassHandler.getClass(className);
+        	Change change = new Change(umlClass, RelationshipHandler.getAllRelationshipsForClassname(className));
+        	umlClass.setPosition(Integer.parseInt(newX), Integer.parseInt(newY));
+        	change.setCurrClass(umlClass);
+        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(className));
+        	undoStack.push(change);
+        	redoStack.clear();
+        	return true;
+    	}
+    	catch (Exception e)
+    	{
+    		model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
+            return false;
+    	}
+    }
+    
+    /**
+     * Pops the top change off the undo stack and reverts it in the model.
+     * Then, pushes that change to the redo stack.
+     * 
+     * @return true If the undo was successful.
+     */
+    public boolean doUndo()
+    {
+    	if (undoStack.isEmpty())
+    	{
+    		// nothing to undo, don't bother giving an error message
+    		return false;
+    	}
+    	else
+    	{
+    		Change change = undoStack.pop();
+    		redoStack.push(change);
+    		UMLClass newClass = change.getOldClass(); // its important that UMLClassHandler & RelationshipHandler recieve links to the same UMLClass object
+    		UMLClassHandler.replace(change.getCurrClass(), newClass);
+    		RelationshipHandler.replace(change.getCurrClass(), newClass);
+    		if (newClass != null)
+    			RelationshipHandler.replaceAllRelationshipsForClassname(newClass.getName(), change.getOldRelationshipsUsingLink(newClass));
+    		return true;
+    	}
+    }
+    
+    /**
+     * Pops the top change off the redo stack and re-applies it in the model.
+     * Then, pushes that change to the undo stack.
+     * 
+     * @return true If the redo was successful.
+     */
+    public boolean doRedo()
+    {
+    	if (redoStack.isEmpty())
+    	{
+    		// nothing to redo, don't bother giving an error message
+    		return false;
+    	}
+    	else
+    	{
+    		Change change = redoStack.pop();
+    		undoStack.push(change);
+    		UMLClass newClass = change.getCurrClass();
+    		UMLClassHandler.replace(change.getOldClass(), newClass);
+    		RelationshipHandler.replace(change.getOldClass(), newClass);
+    		if (newClass != null)
+    			RelationshipHandler.replaceAllRelationshipsForClassname(change.getCurrClass().getName(), change.getCurrRelationshipsUsingLink(newClass));
+    		return true;
+    	}
+    }
+    
+    
+    //////////////////////////////////////////// OTHER DO METHODS ////////////////////////////////////////////
+    
+    /*
+     * These methods perform other actions, such as saving, loading, and listing classes.
+     * They notify the view of a fail, if appropriate.
+     */
 
     public boolean doSave() 
     {
@@ -512,7 +603,13 @@ public class Controller {
     {
     	view.help(command);
     }
+    
+    
+    //////////////////////////////////////////// OTHER METHODS ////////////////////////////////////////////
 
+    /**
+     * Prompts the user to save their diagram, and saves their changes once they provide a valid filepath.
+     */
     public void saveLoop()
     {
         while (true)
@@ -535,6 +632,12 @@ public class Controller {
         }
     }
 
+    /**
+     * Checks whether the provided file path is valid or not, and if it is, calls doLoad()
+     * 
+     * @param filepath The file to load.
+     * @return True if the file was successfully loaded, false otherwise.
+     */
     public boolean loadCheck(String filepath)
     {
     	if (filepath == null)
@@ -543,18 +646,19 @@ public class Controller {
         {
             hasSaved = true;
             madeChange = false;
-            view.notifySuccess("Successfully loaded your file");
+            view.notifySuccess("Successfully loaded " + filepath);
             return true;
         }
         else
         {
-            view.notifyFail("Invalid filepath provided. Filepath should look something like this:");
+            view.notifyFail("Invalid filepath provided. Filepath should look something like this:\n(C:\\\\Users\\\\Zoppetti\\\\Demos\\\\Test.txt)");
             return false;
         }
     }
 
     /**
-     * Prompts the user to either load in an existing JSON file with data or create a new one
+     * Prompts the user to either load in an existing JSON file with data or create a new one.
+     * If the user provides a filepath, loads that filepath.
      */
     public boolean getData()
     {
@@ -568,7 +672,6 @@ public class Controller {
                 {
                     return true; 
                 }
-                view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
                 String again = view.promptForInput("Type T to try again, E to exit, or any other key to make a new JSON file instead");
                 if (again.equals("E") && !again.equals("e"))
                     return false;
@@ -580,65 +683,11 @@ public class Controller {
         
     }
     
-    public boolean doUndo()
-    {
-    	if (undoStack.isEmpty())
-    	{
-    		// nothing to undo, don't bother giving an error message
-    		return false;
-    	}
-    	else
-    	{
-    		Change change = undoStack.pop();
-    		redoStack.push(change);
-    		UMLClassHandler.replace(change.getCurrClass(), change.getOldClass());
-    		RelationshipHandler.replace(change.getCurrClass(), change.getOldClass());
-    		if (change.getOldClass() != null)
-    			RelationshipHandler.replaceAllRelationshipsForClassname(change.getOldClass().getName(), change.getOldRelationships());
-    		return true;
-    	}
-    }
     
-    public boolean doRedo()
-    {
-    	if (redoStack.isEmpty())
-    	{
-    		// nothing to redo, don't bother giving an error message
-    		return false;
-    	}
-    	else
-    	{
-    		Change change = redoStack.pop();
-    		undoStack.push(change);
-    		UMLClassHandler.replace(change.getOldClass(), change.getCurrClass());
-    		RelationshipHandler.replace(change.getOldClass(), change.getCurrClass());
-    		if (change.getCurrClass() != null)
-    			RelationshipHandler.replaceAllRelationshipsForClassname(change.getCurrClass().getName(), change.getCurrRelationships());
-    		return true;
-    	}
-    }
-    
-    public boolean doMove(String className, String newX, String newY)
-    {
-    	try
-    	{
-    		UMLClass umlClass = UMLClassHandler.getClass(className);
-        	Change change = new Change(umlClass, RelationshipHandler.getAllRelationshipsForClassname(className));
-        	umlClass.setPosition(Integer.parseInt(newX), Integer.parseInt(newY));
-        	change.setCurrClass(umlClass);
-        	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(className));
-        	undoStack.push(change);
-        	redoStack.clear();
-        	return true;
-    	}
-    	catch (Exception e)
-    	{
-    		model.writeToLog(e.getMessage());
-            view.notifyFail(e.getMessage());
-            return false;
-    	}
-    }
+    //////////////////////////////////////////// RUN HELPER ////////////////////////////////////////////
 
+    // runHelper() calls the above methods ^^^ based on which action is supplied
+    
     /**
      * Executes the action with the commands arguments as inputs
      *
@@ -658,7 +707,6 @@ public class Controller {
                         return true;
                     }
                     else {
-                        //view.notifyFail("Failed to add class " + args[0]);
                         return false;
                     }
                         
@@ -678,7 +726,6 @@ public class Controller {
                         return true;
                     }
                     else {
-                        //view.notifyFail("Failed to remove class " + args[0]);
                         return false;
                     }
                         
@@ -699,7 +746,6 @@ public class Controller {
                     }
                     else
                     {
-                        //view.notifyFail("Failed to rename class " + args[0] + " to " + args[1]);
                         return false;
                     }
                 }
@@ -714,13 +760,13 @@ public class Controller {
 
                     if (doAddRelationship(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully added relationship " + args[0] + " " + RelationshipType.fromString(args[2]) + " " + args[1]);
+                    	RelationshipType r = RelationshipType.fromString(args[2]);
+                        view.notifySuccess("Successfully added relationship " + args[0] + " " + r + " " + args[1] + " (" + r.getName() + ")");
                         madeChange = true;
                         return true;
                     }
                     else
                     {
-                        //view.notifyFail("Failed to add relationship " + args[0] + " --> " + args[1] + " of type " + args[2]);
                         return false;
                     }
                 }
@@ -740,7 +786,6 @@ public class Controller {
                     }
                     else
                     {
-                        //view.notifyFail("Failed to remove relationship " + args[0] + " --> " + args[1]);
                         return false;
                     }
                 }
@@ -769,12 +814,10 @@ public class Controller {
                         }
                         else
                         {
-                            //view.notifyFail("Method couldn't be added.");
                             return false;
                         }
                     }
                     catch (IllegalArgumentException e) {
-                        //view.notifyFail("Each parameter name must have a type")
                         return false;
                     }
                 }
@@ -794,7 +837,6 @@ public class Controller {
                         return true;
                     }
                     else {
-                        //view.notifyFail("Failed to remove method " + args[1] + " from class " + args[0]);
                         return false;
                     }
                 }
@@ -815,7 +857,6 @@ public class Controller {
                     }
                     else
                     {
-                        //view.notifyFail("Failed to rename method " + args[1] + " to " + args[3] + " in class " + args[0]);
                         return false;
                     }
                 }
@@ -829,13 +870,12 @@ public class Controller {
                 {
                     if (doAddField(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully added field " + args[2] + " with type " + args[1] + " to class " + args[0]);
+                        view.notifySuccess("Successfully added field " + args[1] + " with type " + args[2] + " to class " + args[0]);
                         madeChange = true;
                         return true;
                     }
                     else
                     {
-                        //view.notifyFail("Field couldn't be added.");
                         return false;
                     }
                 }
@@ -854,7 +894,6 @@ public class Controller {
                         return true;
                     }
                     else {
-                        //view.notifyFail("Failed to remove field " + args[1] + " from class " + args[0]);
                         return false;
                     }
                 }
@@ -874,7 +913,6 @@ public class Controller {
                     }
                     else
                     {
-                        //view.notifyFail("Failed to rename field " + args[1] + " to " + args[2] + " in class " + args[0]);
                         return false;
                     }
                 }
@@ -926,7 +964,6 @@ public class Controller {
                         }
                         else
                         {
-                            //view.notifyFail("Failed to add parameter(s): " + params + " to method " + args[1] + " from class " + args[0]);
                             return false;
                         }
                     }
@@ -957,7 +994,6 @@ public class Controller {
                         return true;
                     }
                     else {
-                        //view.notifyFail("Failed to remove parameter(s): " + params + " from method " + args[1] + " from class " + args[0]);
                         return false;
                     }
                 }
@@ -977,7 +1013,6 @@ public class Controller {
                     }
                     else
                     {
-                        //view.notifyFail("Failed to rename parameter " + args[3] + " of method " + args[1] + " of class " + args[0] + " to " + args[4]);
                         return false;
                     }
                 }
@@ -1019,7 +1054,6 @@ public class Controller {
                     }  
                     else
                     {
-                        //view.notifyFail("Failed to change relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
                         return false;
                     }
                 }
@@ -1032,14 +1066,14 @@ public class Controller {
                 if (args.length == 3)
                 {
                     if (doChangeRelationshipType(args[0], args[1], args[2]))
-                    {
-                        view.notifySuccess("Successfully changed relationship type to " + args[0] + " " + args[2] + " " + args[1]);
+                    {   
+                        RelationshipType r = RelationshipType.fromString(args[2]);
+                        view.notifySuccess("Successfully changed relationship type to " + args[0] + " " + r + " " + args[1] + " (" + r.getName() + ")");
                         madeChange = true;
                         return true;
                     }
                     else
                     {
-                        //view.notifyFail("Failed to change relationship type of " + args[0] + " --> " + args[1] + " to " + args[2]);
                         return false;
                     }
                 }
@@ -1191,7 +1225,6 @@ public class Controller {
                 }
             case EXIT:
                 if (args.length != 0) {
-                    //view.notifyFail("Failed to exit program.");
                     return false;
                 }
                 else if (madeChange)
@@ -1249,14 +1282,32 @@ public class Controller {
         return false;
     }
 
+    /**
+     * Returns a list containing a subarray, given an array and start & end points.
+     * 
+     * @param array The array to get a partial list from.
+     * @param start The start of the subarray to convert into a list.
+     * @param end The end of the subarray to convert into a list.
+     * @return A list containing all of the elements in the array between start (inclusive) and end (exclusive)
+     */
     public List<String> getPartialListFromArray(String[] array, int start, int end)
     {
         return Arrays.asList(Arrays.copyOfRange(array, start, end));
     }
 
     // ex. e1 e1 e2 e2 e3 e3
+    /**
+     * Converts a subarray into two lists, where the first list contains all of the elements with even indices in the subarray, and the
+     * second list contains all of the odd elements.
+     * 
+     * @param array The array to get the elements from.
+     * @param start The first index to get elements in the array from.
+     * @param end The index of one element past the last element to get.
+     * @param names The list to put all of the even indexed elements into.
+     * @param types The list to put all of the odd indexed elements into.
+     * @return true If the conversion was successful.
+     */
     public boolean getTwoListsFromArray(String[] array, int start, int end, List<String> names, List<String> types) {
-        // System.out.println("end: " + end + "   " + "start: " + start);
     	if ((end - start) % 2 == 1)
             return false;
         for (int i = start; i < end; i += 2)
@@ -1267,6 +1318,13 @@ public class Controller {
     	return true;
     }
     
+    /**
+     * Finds the index of the first instance of a particular string in a string array.
+     * 
+     * @param array The array to search through.
+     * @param symbol The string to look for.
+     * @return The index of the first instance of the string in the array, or -1 if it does not exist.
+     */
     public int indexOfSymbol (String[] array, String symbol)
     {
     	for (int i = 0; i < array.length; ++i)
