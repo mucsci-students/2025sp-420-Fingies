@@ -93,14 +93,14 @@ public class RelationshipHandler
      * @return true if the relationship was removed, false otherwise
      * @throws IllegalArgumentException when trying to add a relationship that already exists
      */
-    public static boolean removeRelationship(String src, String dest)
+    public static void removeRelationship(String src, String dest)
     {
         int i = indexOf(src, dest);
         if(i == -1)
         {
         	throw new IllegalArgumentException("This relationship does not exist");
         }
-        return relationships.remove(i) != null;
+        relationships.remove(i);
     }
     
     /**

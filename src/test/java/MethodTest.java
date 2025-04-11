@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 
 import org.fingies.Parameter;
 import org.fingies.Method;
@@ -349,5 +350,48 @@ public class MethodTest {
         assertEquals(m.toString(), "void Method1 (String Param1)");
         m.addParameter("Param2", "int");
         assertEquals(m.toString(), "void Method1 (String Param1, int Param2)");
+    }
+
+    @Test
+    public void testMethodNamesNotEqualTypes() {
+        List<String> pNames = new ArrayList<>();
+        List<String> pTypes = new ArrayList<>();
+        pNames.add("test1");
+        pNames.add("test2");
+        pTypes.add("void");
+        try {
+            new Method("Test", "Void", pNames, pTypes);
+            //Should have thrown an exception, so now we say it fails because it didn't.
+            assertTrue(false);
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), "Every parameter must have one type");
+        }
+    }
+
+    @Test
+    public void testMethodAddNamesNotEqualTypes() {
+        List<String> pNames = new ArrayList<>();
+        List<String> pTypes = new ArrayList<>();
+        pNames.add("test1");
+        pNames.add("test2");
+        pTypes.add("void");
+        try {
+            m.addParameters(pNames, pTypes);
+            //Should have thrown an exception, so now we say it fails because it didn't.
+            assertTrue(false);
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), "Every parameter must have one type");
+        }
+    }
+
+    @Test
+    public void testNotEqualsWrongObject() {
+        assertFalse(m.equals(null));
+    }
+
+    @Test
+    public void testNotEqualsDifferentObject() {
+        Method z = new Method("Womp", "Different");
+        assertFalse(m.equals(z));
     }
 }

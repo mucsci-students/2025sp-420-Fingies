@@ -47,24 +47,22 @@ public class Controller {
         }
     }
 
-    public boolean doRemoveClass(String className) 
+    public void doRemoveClass(String className) 
     {
         try
         {
         	Change change = new Change (UMLClassHandler.getClass(className), RelationshipHandler.getAllRelationshipsForClassname(className));
             RelationshipHandler.removeAllRelationshipsForClassname(className);
-            boolean result = UMLClassHandler.removeClass(className);
+            UMLClassHandler.removeClass(className);
             change.setCurrClass(null);
             change.setCurrRelationships(null);
             undoStack.push(change);
             redoStack.clear();
-            return result;
         }
         catch (Exception e)
         {
             model.writeToLog(e.getMessage());
             view.notifyFail(e.getMessage());
-            return false;
         }
     }
 
@@ -117,12 +115,12 @@ public class Controller {
         try
         {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = RelationshipHandler.removeRelationship(srcClass, destClass);
+        	RelationshipHandler.removeRelationship(srcClass, destClass);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	redoStack.clear();
-            return result;
+            return true;
         }
         catch (Exception e)
         {
@@ -671,13 +669,14 @@ public class Controller {
             case REMOVE_CLASS:
                 if (args.length == 1)
                 {
-                    if (doRemoveClass(args[0]))
+                    try
                     {
+                        doRemoveClass(args[0]);
                         view.notifySuccess("Successfully removed class " + args[0]);
                         madeChange = true;
                         return true;
                     }
-                    else {
+                    catch(Exception e) {
                         //view.notifyFail("Failed to remove class " + args[0]);
                         return false;
                     }

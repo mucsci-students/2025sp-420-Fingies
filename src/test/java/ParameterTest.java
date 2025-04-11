@@ -75,4 +75,9 @@ public class ParameterTest {
     {
         assertEquals(p.toString(), "String Name");
     }
+
+    @Test
+    public void testNotEquals() {
+        
+    }
 }

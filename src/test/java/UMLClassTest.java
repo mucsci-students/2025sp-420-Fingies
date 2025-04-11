@@ -387,13 +387,43 @@ public class UMLClassTest {
     }
 
     // --------------------- POSITION ---------------------
+
+    Position p = new Position(10, 10);
     
     @Test
-    public void getPositoin_ThenPositionIsReturned()
+    public void getPosition_ThenPositionIsReturned()
     {
         c.setPosition(10, 10);
         assertTrue(c.getPosition().getX() == 10 && c.getPosition().getY() == 10);
     }
+
+    @Test
+    public void testPositionEqualsSameObject() {
+        assertTrue(p.equals(p));
+    }
+
+    @Test
+    public void testPositionNotEqualsNull() {
+        assertFalse(p.equals(null));
+    }
+
+    @Test
+    public void testPositionNotEqualOtherObject() {
+        assertFalse(p.equals(c));
+    }
+
+    @Test
+    public void testPositionNotEqualOtherPosition() {
+        Position z = new Position(69, 420);
+        assertFalse(p.equals(z));
+    }
+
+    @Test
+    public void testPositionToString() {
+        assertEquals(p.toString(), "Position [x=10, y=10]");
+    }
+
+    // --------------------- FIELD ---------------------
 
     @Test
     public void testFieldHashCode() {
@@ -412,5 +442,10 @@ public class UMLClassTest {
         Field f1 = new Field("Name", "Type");
         Field f2 = new Field("Name", "Type");
         assertTrue(f1.equals(f2));
+    }
+
+    @Test
+    public void testToString() {
+        assertEquals(c.toString(), "UMLClass");
     }
 }

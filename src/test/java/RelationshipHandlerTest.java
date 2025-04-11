@@ -1,9 +1,17 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import org.fingies.Relationship;
 import org.fingies.RelationshipHandler;
 import org.fingies.RelationshipType;
+import org.fingies.UMLClass;
 import org.fingies.UMLClassHandler;
 import org.junit.After;
 import org.junit.Before;
@@ -119,7 +127,61 @@ public class RelationshipHandlerTest {
         assertEquals(RelationshipHandler.listRelationships(), "A ----◇ B\nC ----◆ D");
     }
 
+    @Test
+    public void testReplaceSrcAndDest() {
+        RelationshipHandler.addRelationship("A", "A", RelationshipType.Aggregation);
+        UMLClass classA = new UMLClass("A");
+        UMLClass classB = new UMLClass("B");
+        RelationshipHandler.replace(classA, classB);
+        assertEquals(RelationshipHandler.listRelationships(), "B ----◇ B");
+    }
 
+    @Test
+    public void testGetAllRelationshipsByClassname() {
+        RelationshipHandler.addRelationship("A", "A", RelationshipType.Aggregation);
+        RelationshipHandler.addRelationship("A", "B", RelationshipType.Aggregation);
+        RelationshipHandler.addRelationship("C", "D", RelationshipType.Composition);
+        List<Relationship> relA = RelationshipHandler.getAllRelationshipsForClassname("A");
+        List<Relationship> relB = RelationshipHandler.getAllRelationshipsForClassname("C");
+        assertNotNull(relA);
+        assertNotNull(relB);
+    }
+
+    @Test
+    public void testRemoveAllRelationshipsByClassname() {
+        RelationshipHandler.addRelationship("A", "A", RelationshipType.Aggregation);
+        RelationshipHandler.addRelationship("A", "B", RelationshipType.Aggregation);
+        RelationshipHandler.addRelationship("C", "D", RelationshipType.Composition);
+        RelationshipHandler.removeAllRelationshipsForClassname("A");
+        RelationshipHandler.removeAllRelationshipsForClassname("C");
+        List<Relationship> relA = RelationshipHandler.getAllRelationshipsForClassname("A");
+        List<Relationship> relB = RelationshipHandler.getAllRelationshipsForClassname("C");
+        assertTrue(relA.isEmpty());
+        assertTrue(relB.isEmpty());
+    }
+
+    @Test
+    public void testRelationshipHandlerConstruction() {
+        RelationshipHandler relHandler = new RelationshipHandler();
+        assertNotNull(relHandler);
+    }
+
+    @Test
+    public void testReplacingAllRelationshipsForClassName() {
+        List<Relationship> relations = new ArrayList<>();
+        UMLClass classA = new UMLClass("A");
+        UMLClass classB = new UMLClass("B");
+        UMLClass classC = new UMLClass("C");
+        UMLClass classD = new UMLClass("D");
+        Relationship relA = new Relationship(classA, classA , RelationshipType.Aggregation);
+        Relationship relB = new Relationship(classA, classB, RelationshipType.Composition);
+        Relationship relC = new Relationship(classC, classD, RelationshipType.Inheritance);
+        relations.add(relA);
+        relations.add(relB);
+        relations.add(relC);
+        RelationshipHandler.replaceAllRelationshipsForClassname("A", relations);
+        assertEquals(RelationshipHandler.listRelationships(), "A ----◇ A\nA ----◆ B\nC ----▷ D");
+    }
 }
 
     

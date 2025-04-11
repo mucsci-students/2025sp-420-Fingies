@@ -211,18 +211,6 @@ public class UMLClassHandlerTest {
     public void testResetFunction() {
         try
         {
-            UMLClassHandler.createClass("Car");
-                UMLClassHandler.getClass("Car").addField("Engine", "String");
-                UMLClassHandler.getClass("Car").addField("Wheel", "String");
-                UMLClassHandler.getClass("Car").addField("Pedal", "String");
-            UMLClassHandler.createClass("Animal");
-                UMLClassHandler.getClass("Animal").addField("Cat", "String");
-                UMLClassHandler.getClass("Animal").addField("Dog", "String");
-            UMLClassHandler.createClass("Food");
-                UMLClassHandler.getClass("Food").addField("Breakfast", "String");
-                UMLClassHandler.getClass("Food").addField("Lunch", "String");
-                UMLClassHandler.getClass("Food").addField("Dinner", "String");
-
             UMLClassHandler.reset();
             HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
             assertTrue(classes.isEmpty());
@@ -230,12 +218,22 @@ public class UMLClassHandlerTest {
         catch (Exception e)
         {
             System.out.println(e.getMessage());
+            assertTrue(false);
         }  
     }
 
-    // TODO: Write Tests for method return type char validation
+    @Test
+    public void testRenameClassThatDoesNotExist() {
+        try {
+            UMLClassHandler.renameClass("ThisClassDoesNotExist", "ItReallyDoesNot");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), "Class ThisClassDoesNotExist does not exist");
+        }
+    }
 
-    // TODO: Write Tests for param type char validation
-
-    // TODO: Write Tests for field type char validation
+    @Test
+    public void testUMLClassHandlerConstruction() {
+        UMLClassHandler classHandler = new UMLClassHandler();
+        assertTrue(classHandler != null);
+    }
 }

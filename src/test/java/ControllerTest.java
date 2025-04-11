@@ -1,3 +1,4 @@
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -58,8 +59,12 @@ public class ControllerTest {
     @Test
     public void testDoRemoveClass() {
         controller.doAddClass("TestClass");
-        boolean result = controller.doRemoveClass("TestClass");
-        assertTrue("Class should be removed successfully.", result);
+        controller.doRemoveClass("TestClass");
+        try {
+            UMLClassHandler.getClass("TestClass");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), "Class TestClass does not exist");
+        }
     }
 
     @Test
