@@ -108,6 +108,28 @@ public class RelationshipHandlerTest {
             assertEquals("This relationship does not exist", e.getMessage());
         }
     }
+    
+    @Test
+    public void relationshipHandlerListRelationships()
+    {
+    	// tests whether the resturned string at least contains the necessary information
+    	// doesn't care what the particular format is
+        assertEquals(RelationshipHandler.listRelationships(), "There are no current relationships");
+        RelationshipHandler.addRelationship("A", "B", RelationshipType.Aggregation);
+        String result = RelationshipHandler.listRelationships();
+        assertTrue("The string returned by listRelationships() should contain the class name \"A\", but was: \n" + result, result.contains("A"));
+        assertTrue("The string returned by listRelationships() should contain the class name \"B\", but was: \n" + result, result.contains("B"));
+        assertTrue("The string returned by listRelationships() should contain the relationship type \"" + RelationshipType.Aggregation.getName() + "\", but was: \n" + result, result.contains(RelationshipType.Aggregation.getName()));
+        
+        RelationshipHandler.addRelationship("C", "D", RelationshipType.Composition);
+        result = RelationshipHandler.listRelationships();
+        assertTrue("The string returned by listRelationships() should contain the class name \"A\", but was: \n" + result, result.contains("A"));
+        assertTrue("The string returned by listRelationships() should contain the class name \"B\", but was: \n" + result, result.contains("B"));
+        assertTrue("The string returned by listRelationships() should contain the relationship type \"" + RelationshipType.Aggregation.getName() + "\", but was: \n" + result, result.contains(RelationshipType.Aggregation.getName()));
+        assertTrue("The string returned by listRelationships() should contain the class name \"C\", but was: \n" + result, result.contains("C"));
+        assertTrue("The string returned by listRelationships() should contain the class name \"D\", but was: \n" + result, result.contains("D"));
+        assertTrue("The string returned by listRelationships() should contain the relationship type \"" + RelationshipType.Aggregation.getName() + "\", but was: \n" + result, result.contains(RelationshipType.Composition.getName()));
+    }
 
 
 }
