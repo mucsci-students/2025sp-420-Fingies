@@ -64,20 +64,9 @@
           </execution>
         </executions>
         <configuration>
-          <excludes>
-            <exclude>org/fingies/ArrowComponent*</exclude>
-            <exclude>org/fingies/CLITester*</exclude>
-            <exclude>org/fingies/CLIView*</exclude>
-            <exclude>org/fingies/ComboBoxListener*</exclude>
-            <exclude>org/fingies/Command*</exclude>
-            <exclude>org/fingies/Controller*</exclude>
-            <exclude>org/fingies/GUI**</exclude>
-            <exclude>org/fingies/InputCheck*</exclude>
-            <exclude>org/fingies/Main*</exclude>
-            <exclude>org/fingies/View*</exclude>
-            <exclude>org/fingies/WrappingComboBoxRenderer*</exclude>
-            <exclude>org/fingies/TabCompletion*</exclude>
-          </excludes>
+          <includes>
+            <include>org/fingies/Model/*</include>
+          </includes>
           <rules>
             <rule>
               <element>PACKAGE</element>
@@ -85,7 +74,7 @@
                 <limit>
                   <counter>LINE</counter>
                   <value>COVEREDRATIO</value>
-                  <minimum>80%</minimum>
+                  <minimum>100%</minimum>
                 </limit>
               </limits>
             </rule>
