@@ -38,6 +38,11 @@ Type ``help`` for a list of commands and their arguments, or ``help command_name
 3. Decorator: we used a decorator in our WrappingComboBoxRenderer that served as a wrapper class for the JComboBoxes in the GUIView. This wrapper class was able to properly format the JComboBox to meet the needs of the GUI.
 4. Memento: we used a memento for storing the previous states of the UML Diagram using our Change class. The change class stores the previous state and the current state of the program for when either the Undo or Redo actions are taken.
 
+### Code Coverage:
+A comprehensive code coverage report can be found in the directory coverage_report.
+ - Open index.html in the directory for a web view
+ - Jacoco.csv provides a comma-seperated value version of the report
+
 ## Team Fingies
 - Nick Hayes
 - William Wickenheiser
