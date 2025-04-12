@@ -132,7 +132,12 @@ public class ArrowComponent extends JComponent {
     private void drawShape(Graphics2D g2d, int x, int y, double angle) {
         if (relation == RelationshipType.Aggregation || relation == RelationshipType.Composition) 
         {
-            drawDiamond(g2d, x, y);
+            if (!isSelfReferencing)
+                drawDiamond(g2d, x, y);
+            else
+            {
+                drawDiamond(g2d, x - 48, y + 30);
+            }
         }
         else
         {
@@ -141,7 +146,7 @@ public class ArrowComponent extends JComponent {
                 drawArrowhead(g2d, x, y, angle);
             else
             {
-                drawArrowhead(g2d, x, y - 13, angle);
+                drawArrowhead(g2d, x - 34, y + 28, angle + 1.5);
             }
         }
     }
