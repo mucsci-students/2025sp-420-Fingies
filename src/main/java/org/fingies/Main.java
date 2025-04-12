@@ -10,7 +10,7 @@ public class Main {
   
 	public static void main(String[] args) {
 		// args = new String[] {"--cli"};
-        if (hasCLIFlag(args)) {
+        if (!hasCLIFlag(args)) {
             CLIView view = new CLIView();
             Controller controller = new Controller(view, new JModel());
 		    view.setController(controller);
