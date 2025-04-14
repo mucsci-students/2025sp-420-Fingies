@@ -32,11 +32,13 @@ public class GUIUMLClass {
 
     private UMLClass umlclass;
     private Controller controller;
+    private GUIView guiView;
 
     public GUIUMLClass(UMLClass umlclass, Controller controller, GUIView guiView)
     {
         this.umlclass = umlclass;
         this.controller = controller;
+        this.guiView = guiView;
         setColor();
 
         classPanel = new JPanel();
@@ -127,6 +129,21 @@ public class GUIUMLClass {
             umlclass.setPosition(randX, randY);
             // controller.runHelper(Action.MOVE, new String[] {umlclass.getName(), randX + "", randY + ""});
             // pos = umlclass.getPosition();
+        }
+        if (pos.getX() > maxWidth && pos.getY() > maxHeight)
+        {
+            guiView.getCanvas().setPreferredSize(new Dimension(pos.getX() + background.getWidth(), pos.getY() + background.getHeight()));
+            guiView.revalidate();
+        }
+        else if (pos.getX() > maxWidth)
+        {
+            guiView.getCanvas().setPreferredSize(new Dimension(pos.getX() + background.getWidth(), maxHeight));
+            guiView.revalidate();
+        }
+        else if (pos.getY() > maxHeight)
+        {
+            guiView.getCanvas().setPreferredSize(new Dimension(maxWidth, pos.getY() + background.getHeight()));
+            guiView.revalidate();
         }
         pane.setBounds(pos.getX(), pos.getY(), pane.getWidth(), pane.getHeight());
     }
