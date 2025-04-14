@@ -39,6 +39,7 @@ public class RedoTest { // TODO: test what happens if we redo after making a cha
 		    @Override public void help() {}
 		    @Override public void help(String command) {}
 		    @Override public void setController(Controller c) {}
+		    @Override public int promptForYesNoInput(String message, String title) { return 2; }
 		};
 
         controller = new Controller(view, new JModel());

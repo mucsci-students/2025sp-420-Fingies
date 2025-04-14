@@ -717,7 +717,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Add class should have exactly 1 argument.");
+                	int idx = Action.ADD_CLASS.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case REMOVE_CLASS:
@@ -736,7 +737,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Remove class should have exactly 1 argument.");
+                	int idx = Action.REMOVE_CLASS.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case RENAME_CLASS:
@@ -755,7 +757,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Rename class should have exactly 2 arguments.");
+                	int idx = Action.RENAME_CLASS.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case ADD_RELATIONSHIP:
@@ -776,7 +779,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Add relationship should have exactly 3 arguments.");
+                	int idx = Action.ADD_RELATIONSHIP.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case REMOVE_RELATIONSHIP:
@@ -795,7 +799,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Remove relationship should have exactly 2 arguments.");
+                	int idx = Action.REMOVE_RELATIONSHIP.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case ADD_METHOD:
@@ -827,7 +832,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Add Method should have 3 or more arguments.");
+                	int idx = Action.ADD_METHOD.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case REMOVE_METHOD:
@@ -846,7 +852,8 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Remove method should have 2 or more arguments.");
+                	int idx = Action.REMOVE_METHOD.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case RENAME_METHOD:
@@ -866,7 +873,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Rename method should have exactly 5 arguments.");
+                	int idx = Action.RENAME_METHOD.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case ADD_FIELD:
@@ -885,7 +893,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Add field should have exactly 3 arguments.");
+                	int idx = Action.ADD_FIELD.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case REMOVE_FIELD:
@@ -903,7 +912,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Remove field should have exactly 2 arguments.");
+                	int idx = Action.REMOVE_FIELD.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case RENAME_FIELD:
@@ -922,7 +932,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Rename field should have exactly 3 arguments.");
+                	int idx = Action.RENAME_FIELD.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case CHANGE_FIELD_TYPE: 
@@ -940,7 +951,8 @@ public class Controller {
                     }
                 }
                 else {
-                    view.notifyFail("Changing field data type should have exactly 3 arguments.");
+                	int idx = Action.CHANGE_FIELD_TYPE.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case ADD_PARAMETERS:
@@ -977,7 +989,8 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Add Parameters should have 5 or more parameters.");
+                	int idx = Action.ADD_PARAMETERS.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case REMOVE_PARAMETERS:
@@ -1003,7 +1016,8 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Remove Parameters should have 5 or more parameters.");
+                	int idx = Action.REMOVE_PARAMETERS.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case RENAME_PARAMETER:
@@ -1022,7 +1036,8 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Parameters should have 5 or more arguments.");
+                	int idx = Action.RENAME_PARAMETER.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case CHANGE_PARAMETER_TYPE:
@@ -1042,7 +1057,8 @@ public class Controller {
                 }
                 else 
                 {
-                    view.notifyFail("Changing Parameter type should have exactly 6 arguments.");
+                	int idx = Action.CHANGE_PARAMETER_TYPE.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case CHANGE_METHOD_RETURN_TYPE:
@@ -1063,7 +1079,8 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Change method type should have at least 3 arguments.");
+                	int idx = Action.CHANGE_METHOD_RETURN_TYPE.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case CHANGE_RELATIONSHIP_TYPE:
@@ -1083,7 +1100,8 @@ public class Controller {
                 }
                 else
                 {
-                    view.notifyFail("Change Relationship Type should have exactly 3 arguments.");
+                	int idx = Action.CHANGE_RELATIONSHIP_TYPE.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case SAVE:
@@ -1132,7 +1150,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Save should have either 0 or 1 arguments.");
+                	int idx = Action.SAVE.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case LOAD:     
@@ -1190,7 +1209,9 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Load should have either 0 or 1 arguments.");
+                	int idx = Action.LOAD.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                    return false;
                 }
                 
             case LIST_CLASSES:
@@ -1201,7 +1222,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("List classes shouldn't have any arguments.");
+                	int idx = Action.LIST_CLASSES.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case LIST_CLASS:
@@ -1212,7 +1234,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("List class should have exactly 1 argument.");
+                	int idx = Action.LIST_CLASS.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case LIST_RELATIONSHIPS:
@@ -1223,7 +1246,8 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("List relationships shouldn't have any arguments.");
+                	int idx = Action.LIST_RELATIONSHIPS.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case HELP:
@@ -1239,11 +1263,14 @@ public class Controller {
                 }
                 else
                 {
-                	view.notifyFail("Too many arguments. Arguments with spaces require quotes.");
+                	int idx = Action.HELP.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case EXIT:
                 if (args.length != 0) {
+                	int idx = Action.EXIT.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
                 else if (madeChange)
@@ -1271,8 +1298,9 @@ public class Controller {
             case UNDO:
             	if (args.length != 0)
             	{
-            		view.notifyFail("Undo shouldn't have any arguments.");
-            		return false;
+            		int idx = Action.UNDO.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                    return false;
             	}
             	else
             	{
@@ -1281,8 +1309,9 @@ public class Controller {
             case REDO:
             	if (args.length != 0)
             	{
-            		view.notifyFail("Redo shouldn't have any arguments.");
-            		return false;
+            		int idx = Action.UNDO.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                    return false;
             	}
             	else
             	{
@@ -1291,8 +1320,9 @@ public class Controller {
             case MOVE:
             	if (args.length != 3)
             	{
-            		view.notifyFail("Changing field data type should have exactly 3 arguments.");
-            		return false;
+            		int idx = Action.MOVE.ordinal();
+                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                    return false;
             	}
             	else
             	{

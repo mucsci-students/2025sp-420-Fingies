@@ -347,5 +347,20 @@ public class CLIView implements View
 	public String promptForOpenInput(String message) {
 		return promptForInput(message);
 	}
+
+	@Override
+	public int promptForYesNoInput(String message, String title) {
+		List<String> result = promptForInput(List.of(message), List.of(new InputCheck() {
+
+			@Override
+			public String check(String t) {
+				if (t.equalsIgnoreCase("Y") || t.equalsIgnoreCase("Yes") || t.equalsIgnoreCase("N") || t.equalsIgnoreCase("No"))
+					return "";
+				else
+					return "Please type either Y for Yes, or N for No.";
+			}}));
+		String ans = result.get(0);
+		return ans.equalsIgnoreCase("Y") || ans.equalsIgnoreCase("Yes") ? 0 : 1;
+	}
     
 }
