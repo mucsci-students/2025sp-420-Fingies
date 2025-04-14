@@ -610,19 +610,23 @@ public class Controller {
     /**
      * Prompts the user to save their diagram, and saves their changes once they provide a valid filepath.
      */
-    public void saveLoop()
+    public boolean saveLoop()
     {
         while (true)
         {
             String input = view.promptForSaveInput("Enter a valid filepath to save to or type EXIT to quit the program.");
+            if(input == null)
+            {
+            	return false;
+            }
             if (input.toUpperCase().equals("EXIT"))
-                break;
+                return false;;
             if (doSave(input))
             {
                 madeChange = false;
                 hasSaved = true;
                 view.notifySuccess("Successfully loaded your file.");
-                break;
+                return true;
             }
             else
             {
@@ -1140,17 +1144,32 @@ public class Controller {
                 
                 if (args.length == 1)
                 {
+                	if(args[0] == null)
+                	{
+                		return false;
+                	}
                     if (madeChange)
                     {
-                        String result = view.promptForInput("Are you sure that you want to load without saving? Type Y for yes or any other key to save before loading");
-                        if (result.toLowerCase().equals("y"))
+                        int result = view.promptForYesNoInput("Would you like to save before loading a file?", "Warning");
+                        if (result == 1)
                         {
-                             return loadCheck(args[0]);
+                            return loadCheck(args[0]);
+                        }
+                        else if(result == 0)
+                        {
+                            boolean saveResult = saveLoop();
+                            if(saveResult)
+                            {
+                            	return loadCheck(args[0]);
+                            }
+                            else
+                            {
+                            	return false;
+                            }
                         }
                         else
                         {
-                            saveLoop();
-                            return loadCheck(args[0]);
+                        	return false;
                         }
                     }
                     else
@@ -1229,15 +1248,16 @@ public class Controller {
                 }
                 else if (madeChange)
                 {
-                    String result = view.promptForInput("Are you sure that you want to exit without saving? Type Y for yes or any other key to save before exiting");
-                    if (result == null)
+                    int result = view.promptForYesNoInput("Do you want to save before exiting?", "Warning");
+                    if (result == 2)
                     	return false;
-                    if (!result.toLowerCase().equals("y"))
+                    if (result == 0)
                     {
                         //needs to be changed for overload with 0 arguments ... could prompt for a new path
                         if (!hasSaved)
                         {
-                            saveLoop();
+                            boolean saveResult = saveLoop();
+                            return saveResult;
                         }
                         else
                         {
