@@ -1,9 +1,12 @@
 package org.fingies;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
@@ -14,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 import javax.swing.JMenu;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -76,6 +80,8 @@ public class GUIView extends JFrame implements ActionListener, View {
     private JButton cancelButton;
 
     private Controller controller;
+    private JLayeredPane canvas;
+    private JScrollPane scrollPane;
     final JFileChooser fileChooser = new JFileChooser();
 
     // HashMap with key as name of class and value as GUIUMLClass associated with the name
@@ -216,17 +222,49 @@ public class GUIView extends JFrame implements ActionListener, View {
         themeMenu.add(lightMode);
         themeMenu.add(darkMode);
 
+        // Create the canvas (JLayeredPane)
+        canvas = new JLayeredPane();
+        canvas.setLayout(null);  // You want absolute positioning for the panels
+        canvas.setPreferredSize(new Dimension(1000, 1000));  // Initial canvas size (larger than window)
+
+        // Create a JScrollPane to hold the canvas
+        scrollPane = new JScrollPane(canvas);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+
+        // Add the scrollPane to the JFrame (content pane)
+        this.setContentPane(scrollPane);
+        this.setSize(1000, 1000);
+        this.setVisible(true);
+
         // Sets main attributes of the "frame" (this)
         this.setTitle("UMLEditor");
         //this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent default closing behavior
         this.setLayout(null);
-        // this.setLayout(new FlowLayout());
-        this.setSize(1000, 1000);
         this.setJMenuBar(menuBar);
+        // this.setVisible(true);
 
-        this.setVisible(true);
-        
+        // Add a ComponentListener to resize the JScrollPane's viewport dynamically
+        // this.addComponentListener(new ComponentAdapter() {
+        //     @Override
+        //     public void componentResized(ComponentEvent e) {
+        //         // Get the new size of the JFrame (this will resize the JScrollPane's viewport)
+        //         int frameWidth = getWidth();
+        //         int frameHeight = getHeight();
+
+        //         // Update the preferred size of the canvas inside the scrollPane
+        //         canvas.setPreferredSize(new Dimension(frameWidth * 2, frameHeight * 2));  // Example resize logic
+
+        //         // Revalidate and repaint the canvas so that the layout updates
+        //         canvas.revalidate();
+        //         canvas.repaint();
+
+        //         // Resize the JScrollPane to fit the new window size
+        //         scrollPane.setSize(frameWidth, frameHeight);
+        //     }
+        // });
+                
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -238,6 +276,17 @@ public class GUIView extends JFrame implements ActionListener, View {
             }
         });
     }
+
+    public JLayeredPane getCanvas()
+    {
+        return canvas;
+    }
+
+    public JScrollPane getScrollPane()
+    {
+        return scrollPane;
+    }
+
 
     private void createButtons(Action a, int offset) {
         submitButton = new JButton("Submit");
@@ -265,15 +314,15 @@ public class GUIView extends JFrame implements ActionListener, View {
         });
     
         // Add the buttons to the GUI
-        this.add(submitButton);
-        this.add(cancelButton);
+        canvas.add(submitButton);
+        canvas.add(cancelButton);
         repaint(); // Refresh UI
     }
 
     private void handleSubmitAction(Action action) {
         // Concatenate the text from text fields and combo boxes just like pressing Enter
-        this.remove(submitButton);
-        this.remove(cancelButton);
+        canvas.remove(submitButton);
+        canvas.remove(cancelButton);
 
         String[] textInputs = textBoxes.stream()
                 .map(JTextField::getText)
@@ -407,8 +456,8 @@ public class GUIView extends JFrame implements ActionListener, View {
 
     // Removes Submit and Cancel buttons when the Cancel button is clicked
     private void handleCancelAction() {
-        this.remove(submitButton);
-        this.remove(cancelButton);
+        canvas.remove(submitButton);
+        canvas.remove(cancelButton);
         textBoxes.forEach(GUIView.this::remove);
         textBoxes.clear();
         comboBoxes.forEach(GUIView.this::remove);
@@ -480,7 +529,7 @@ public class GUIView extends JFrame implements ActionListener, View {
             box.setMaximumRowCount(8);
             styleComboBox(box, i);
             comboBoxes.add(box);
-            this.add(box);
+            canvas.add(box);
         }
         reload();
     }
@@ -677,7 +726,7 @@ public class GUIView extends JFrame implements ActionListener, View {
 
             offset++;
             textBoxes.add(text);
-            this.add(text);
+            canvas.add(text);
             repaint(); // Refresh UI
         }
         reload();
@@ -942,7 +991,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         arrows.add(arrow);
 
         // Add the arrow to the JLayeredPane (or other container)
-        this.add(arrow, JLayeredPane.DEFAULT_LAYER);
+        canvas.add(arrow, JLayeredPane.DEFAULT_LAYER);
         reload();  // Force a reload to revalidate and repaint
     }
 
@@ -952,7 +1001,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     public void updateArrows() {
         for (ArrowComponent arrow : arrows) 
         {
-            this.remove(arrow); // Remove from JFrame
+            canvas.remove(arrow); // Remove from JFrame
         }
         arrows.clear();  // Clear the list of arrows
         
@@ -970,8 +1019,8 @@ public class GUIView extends JFrame implements ActionListener, View {
     public void reload()
     {
         // Force the GUI to refresh and update
-        this.revalidate(); // Recalculate layout
-        this.repaint();    // Repaint to reflect changes
+        canvas.revalidate(); // Recalculate layout
+        canvas.repaint();    // Repaint to reflect changes
     }
 
     /**
@@ -983,7 +1032,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         GUIUMLClass newUMLClass = new GUIUMLClass(UMLClassHandler.getClass(className), controller, this);
 
         // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
-        this.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
+        canvas.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
         GUIUMLClasses.put(className, newUMLClass);
         reload();
     }
@@ -995,7 +1044,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     public void removeUMLClass(String className)
     {
         // this..getContentPane().remove(GUIUMLClasses.get(name).getJLayeredPane());
-        this.remove(GUIUMLClasses.get(className).getJLayeredPane());
+        canvas.remove(GUIUMLClasses.get(className).getJLayeredPane());
         GUIUMLClasses.remove(className);
         reload();
     }
@@ -1022,7 +1071,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     {
         for (GUIUMLClass g : GUIUMLClasses.values())
         {
-            this.remove(g.getJLayeredPane());
+            canvas.remove(g.getJLayeredPane());
         }
         GUIUMLClasses.clear();
         for (UMLClass c : UMLClassHandler.getAllClasses())
