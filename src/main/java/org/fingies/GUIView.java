@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
@@ -1111,6 +1112,12 @@ public class GUIView extends JFrame implements ActionListener, View {
 	public void setController(Controller c)
 	{
 		controller = c;
+	}
+
+	@Override
+	public JComponent getJComponentRepresentation() {
+		// TODO return the scroll-pane once that gets implemented. @Kevin
+		return null;
 	}
 }
 

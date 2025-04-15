@@ -2,6 +2,8 @@ package org.fingies;
 
 import java.util.List;
 
+import javax.swing.JComponent;
+
 /**
  * An interface for the view component of the UML editor, which could be a command line interface,
  * a graphical user interface, or any other kind of front-end for the user.
@@ -146,5 +148,13 @@ public interface View {
 	 * @param c The Controller for the View to interact with.
 	 */
 	public void setController(Controller c);
+	
+	/**
+	 * Creates a representation of the diagram as a JComponent and returns it, or returns
+	 * an existing representation if it has one.
+	 * 
+	 * @return A JComponent that represents the entire diagram.
+	 */
+	public JComponent getJComponentRepresentation();
 	
 }

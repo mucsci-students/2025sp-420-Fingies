@@ -1,13 +1,21 @@
 package org.fingies;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+
+import javax.imageio.ImageIO;
+import javax.swing.JComponent;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -318,4 +326,34 @@ public class JModel {
         setFilepath(filepath);
         return loadData();
     }
+
+	/**
+	 * Represents a JComponent as an image, and exports it to the filepath.
+	 * @param filepath The filepath to export the image to.
+	 * @param component The JComponent to convert into an image.
+	 * @return True if the export was successful, false otherwise.
+	 */
+	public boolean exportImage(String filepath, JComponent component) {
+		File file;
+        try {
+        	if (filepath == null)
+                throw new IllegalArgumentException("Invalid Argument: null, in exportImage");
+            file = new File(filepath);
+        } catch (Exception e) {
+            writeToLog(e.toString());
+            latestError = e.toString();
+            return false;
+        }
+        BufferedImage image = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = image.createGraphics();
+        g.dispose();
+        try { 
+            ImageIO.write(image, "png", file); 
+            return true;
+        } catch (IOException e) {
+        	writeToLog(e.toString());
+            latestError = e.toString();
+            return false;
+        }
+	}
 }

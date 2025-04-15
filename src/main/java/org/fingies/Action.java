@@ -100,7 +100,7 @@ public enum Action {
      * Changes a relationship type
      */
     CHANGE_RELATIONSHIP_TYPE,
-        /**
+     /**
      * Changes the data type of a parameter to a new one
      */
     CHANGE_PARAMETER_TYPE,
@@ -124,6 +124,10 @@ public enum Action {
     
     // commands that can't be selected in the CLI start here
     
+    /**
+     * Exports the current diagram as an image.
+     */
+    EXPORT_IMAGE,
     /*
      * Moves a class to a new x, y coordinate.
      */

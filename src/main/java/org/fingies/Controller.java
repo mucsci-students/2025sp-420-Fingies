@@ -604,6 +604,11 @@ public class Controller {
     	view.help(command);
     }
     
+    public boolean doExportImage(String filepath)
+    {
+    	return model.exportImage(filepath, view.getJComponentRepresentation());
+    }
+    
     
     //////////////////////////////////////////// OTHER METHODS ////////////////////////////////////////////
 
@@ -1135,7 +1140,7 @@ public class Controller {
                 if (args.length == 0)
                 {
                 	String path = view.promptForOpenInput("Please designate a filepath to open");
-                	args = new String[] {path}; // make it so the if() below will run
+                	args = new String[] {path};
                 }
                 
                 if (args.length == 1)
@@ -1267,6 +1272,32 @@ public class Controller {
             	else
             	{
             		return doRedo();
+            	}
+            case EXPORT_IMAGE:
+            	
+            	if (args.length == 0)
+            	{
+            		String input = view.promptForSaveInput("Please designate a filepath to export to");
+                	args = new String[] {input};
+            	}
+            	
+            	if (args.length == 1)
+            	{
+            		if (doExportImage(args[0]))
+                    {
+                        view.notifySuccess("Successfully exported the diagram");
+                        return true;
+                    }
+                    else
+                    {
+                	    view.notifyFail("Invalid filepath provided.");
+                        return false;
+                    }
+            	}
+            	else
+            	{
+            		view.notifyFail("Export Image should have either 0 or 1 arguments.");
+            		return false;
             	}
             case MOVE:
             	if (args.length != 3)

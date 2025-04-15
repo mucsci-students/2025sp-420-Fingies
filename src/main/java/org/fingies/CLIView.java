@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComponent;
+
 import org.jline.reader.*;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
@@ -346,6 +348,11 @@ public class CLIView implements View
 	@Override
 	public String promptForOpenInput(String message) {
 		return promptForInput(message);
+	}
+
+	@Override
+	public JComponent getJComponentRepresentation() {
+		throw new UnsupportedOperationException("The CLI doesn't support representing the diagram as a JComponent, how di this get called?");
 	}
     
 }
