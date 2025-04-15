@@ -346,6 +346,7 @@ public class JModel {
         }
         BufferedImage image = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g = image.createGraphics();
+        component.printAll(g);
         g.dispose();
         try { 
             ImageIO.write(image, "png", file); 
