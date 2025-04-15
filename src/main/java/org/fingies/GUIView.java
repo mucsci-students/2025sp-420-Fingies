@@ -42,6 +42,7 @@ public class GUIView extends JFrame implements ActionListener, View {
     private GUIMenuItem undo;
     private GUIMenuItem redo;
     private GUIMenuItem exit;
+    private GUIMenuItem export;
     
     private GUIMenuItem addClass;
     private GUIMenuItem addField;
@@ -108,6 +109,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         undo = new GUIMenuItem("Undo", Action.UNDO);
         redo = new GUIMenuItem("Redo", Action.REDO);
         exit = new GUIMenuItem("Exit", Action.EXIT);
+        export = new GUIMenuItem("Export", Action.EXPORT_IMAGE);
         
         // ADD
         addClass = new GUIMenuItem("Class", Action.ADD_CLASS);
@@ -141,6 +143,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         undo.addActionListener(this);
         redo.addActionListener(this);
         exit.addActionListener(this);
+        export.addActionListener(this);
 
         addClass.addActionListener(this);
         addField.addActionListener(this);
@@ -174,6 +177,7 @@ public class GUIView extends JFrame implements ActionListener, View {
         fileMenu.add(undo);
         fileMenu.add(redo);
         fileMenu.add(exit);
+        fileMenu.add(export);
 
         addMenu.add(addClass);
         addMenu.add(addField);
@@ -806,6 +810,10 @@ public class GUIView extends JFrame implements ActionListener, View {
         	{
         		System.exit(0);
         	}
+        }
+        else if(e.getSource() == export)
+        {
+        	controller.runHelper(a, new String[] {});
         }
     }
 
