@@ -82,7 +82,8 @@ public class Command {
 			"CLASS_NAME FIELD_NAME NEW_TYPE", //change field type
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] NEW_TYPE", //change method type
 			"", //undo
-			"" //redo
+			"", //redo
+			"[ FILE_PATH ]" //export image
 		};
 	
 	/**

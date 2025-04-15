@@ -1296,8 +1296,9 @@ public class Controller {
             	}
             	else
             	{
-            		view.notifyFail("Export Image should have either 0 or 1 arguments.");
-            		return false;
+            		int idx = Action.EXPORT_IMAGE.ordinal();
+                	view.notifyFail("Export Image should follow this format: \n" + "Export Image " + Command.COMMAND_ARGS[idx]);
+                    return false;
             	}
             case MOVE:
             	if (args.length != 3)
