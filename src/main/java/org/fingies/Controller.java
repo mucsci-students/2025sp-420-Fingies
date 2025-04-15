@@ -1321,7 +1321,7 @@ public class Controller {
             	if (args.length != 3)
             	{
             		int idx = Action.MOVE.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail("Move should follow this format: \n" + "Move " + Command.COMMAND_ARGS[idx]);
                     return false;
             	}
             	else
