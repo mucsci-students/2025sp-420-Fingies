@@ -309,9 +309,7 @@ public class GUIUMLClass {
             if (initialClick == null) return;
 
             // Brings current frame being dragged to the front
-            gui.getContentPane().setComponentZOrder(component, JLayeredPane.DEFAULT_LAYER); // Bring to front
-            gui.getContentPane().revalidate();
-            gui.getContentPane().repaint();
+            canvas.setComponentZOrder(component, JLayeredPane.DEFAULT_LAYER); // Bring to front
 
             // Calculate the new position based on mouse movement
             int newX = component.getX() + e.getX() - initialClick.x;
