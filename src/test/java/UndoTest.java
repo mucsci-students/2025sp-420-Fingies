@@ -50,6 +50,7 @@ public class UndoTest {
 		    @Override public void help() {}
 		    @Override public void help(String command) {}
 		    @Override public void setController(UMLController c) {}
+		    @Override public int promptForYesNoInput(String message, String title) { return 2; }
 		};
 
         controller = new UMLController(view, new JModel());

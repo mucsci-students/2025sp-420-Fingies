@@ -19,14 +19,14 @@ public class RelationshipHandler
     
     // Gets the index of a relationship in 'relationships', given the src & dest strings
     private static int indexOf(String src, String dest)
-    {
-    	UMLClass source = UMLClassHandler.getClass(src);
-    	UMLClass destination = UMLClassHandler.getClass(dest);
+    {	
+    	if(UMLClassHandler.getClass(src) == null || UMLClassHandler.getClass(dest) == null)
+    		return -1;
 
     	// Iterate through relationships to find index of relationship (Objects.equals to handle null values)
         for (int i = 0; i < relationships.size(); i++) {
             Relationship r = relationships.get(i);
-            if (Objects.equals(r.getSrc(), source) && Objects.equals(r.getDest(), destination)) {
+            if (r.getSrc().getName().equals(src) && r.getDest().getName().equals(dest)) {
                 return i; // Return index as soon as found
             }
         }
@@ -134,7 +134,7 @@ public class RelationshipHandler
     	{
     		String lst = "";
         	for (Relationship r : relationships)
-        		lst += r + "\n";
+        		lst += r + " (" + r.getType().getName() + ")\n";
         	lst = lst.substring(0, lst.length() - 1); // trims the remaining \n
         	return lst;
     	}

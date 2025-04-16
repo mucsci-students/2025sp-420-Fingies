@@ -44,6 +44,12 @@ public class Change
 		}
 	}
 	
+	/*
+	 * Getter & Setter methods all create a copy to return/store.
+	 * It is important that the Change class doesn't contain any links to existing any objects
+	 * in the diagram, just copies of their data values.
+	 */
+	
 	public void setCurrClass(UMLClass currClass)
 	{
 		if (currClass != null)
@@ -64,25 +70,99 @@ public class Change
 			this.currRelationships.add(new Relationship(r));
 		}
 	}
-	
-	public List<Relationship> getCurrRelationships()
-	{
-		return currRelationships;
-	}
 
 	public UMLClass getOldClass() 
 	{
-		return oldClass;
+		if (oldClass != null)
+			return new UMLClass(oldClass);
+		else
+			return null;
 	}
 
 	public UMLClass getCurrClass() 
 	{
-		return currClass;
+		if (currClass != null)
+			return new UMLClass(currClass);
+		else
+			return null;
 	}
 	
 	public List<Relationship> getOldRelationships()
 	{
+		List<Relationship> oldRelationships = new ArrayList<Relationship>();
+		if(this.oldRelationships == null)
+		{
+			return null;
+		}
+		for (Relationship r : this.oldRelationships)
+		{
+			oldRelationships.add(r);
+		}
 		return oldRelationships;
+	}
+	
+	public List<Relationship> getCurrRelationships()
+	{
+		List<Relationship> currRelationships = new ArrayList<Relationship>();
+		if(this.currRelationships == null)
+		{
+			return null;
+		}
+		for (Relationship r : this.currRelationships)
+		{
+			currRelationships.add(new Relationship(r));
+		}
+		return currRelationships;
+	}
+	
+	/**
+	 * Gets the old relationships of this class.
+	 * 
+	 * Since its important for Relationship objects to store links to the correct UMLClass objects in the diagram,
+	 * this method accepts a UMLClass and links each relationship in the returned list to that class.
+	 * 
+	 * @param classToLinkTo The UMLClass to replace every instance of oldClass in the list of relationships with.
+	 * @return A list of relationships, with each relationship linking to the given UMLClass object.
+	 */
+	public List<Relationship> getOldRelationshipsUsingLink(UMLClass classToLinkTo)
+	{
+		List<Relationship> oldRelationships = new ArrayList<Relationship>();
+		if(this.oldRelationships == null)
+		{
+			return null;
+		}
+		for (Relationship r : this.oldRelationships)
+		{
+			oldRelationships.add(new Relationship(r.getSrc().getName().equals(classToLinkTo.getName()) ? classToLinkTo : r.getSrc(),
+					r.getDest().getName().equals(classToLinkTo.getName()) ? classToLinkTo : r.getDest(),
+					r.getType()));
+		}
+		return oldRelationships;
+	}
+	
+	/**
+	 * Gets the old relationships of this class.
+	 * 
+	 * Since its important for Relationship objects to store links to the correct UMLClass objects in the diagram,
+	 * this method accepts a UMLClass and links each relationship in the returned list to that class.
+	 * 
+	 * @param classToLinkTo The UMLClass to replace every instance of oldClass in the list of relationships with.
+	 * @return A list of relationships, with each relationship linking to the given UMLClass object.
+	 */
+	public List<Relationship> getCurrRelationshipsUsingLink(UMLClass classToLinkTo)
+	{
+		List<Relationship> currRelationships = new ArrayList<Relationship>();
+		if(this.currRelationships == null)
+		{
+			return null;
+		}
+		for (Relationship r : this.currRelationships)
+		{
+			currRelationships.add(new Relationship(r.getSrc().getName().equals(classToLinkTo.getName()) ? classToLinkTo : r.getSrc(),
+					r.getDest().getName().equals(classToLinkTo.getName()) ? classToLinkTo : r.getDest(),
+					r.getType()));
+		}
+		return currRelationships;
 	}
 	
 	
