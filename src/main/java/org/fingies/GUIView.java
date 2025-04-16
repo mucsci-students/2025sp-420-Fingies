@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JMenu;
 import javax.swing.JTextField;
@@ -225,24 +226,30 @@ public class GUIView extends JFrame implements ActionListener, View {
 
         // Create the canvas (JLayeredPane)
         canvas = new JLayeredPane();
-        canvas.setLayout(null);  // You want absolute positioning for the panels
-        canvas.setPreferredSize(new Dimension(1000, 1000));  // Initial canvas size (larger than window)
+        canvas.setLayout(null);  // Absolute positioning
+        canvas.setPreferredSize(new Dimension(1500, 1500));  // Bigger than the frame
 
-        // Create a JScrollPane to hold the canvas
+        // Create the scroll pane to hold the canvas
         scrollPane = new JScrollPane(canvas);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        // Add the scrollPane to the JFrame (content pane)
+        // Set scrollPane as content pane
         this.setContentPane(scrollPane);
         this.setSize(1000, 1000);
+
+        // Set JFrame attributes
+        this.setTitle("UMLEditor");
+        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        this.setJMenuBar(menuBar);
+
+        // Show the frame
         this.setVisible(true);
 
-        // Sets main attributes of the "frame" (this)
-        this.setTitle("UMLEditor");
-        this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE); // Prevent default closing behavior
-        this.setLayout(null);
-        this.setJMenuBar(menuBar);
+        // Force layout refresh
+        Dimension size = this.getSize();
+        this.setSize(size.width + 1, size.height + 1); // Tiny resize to force re-layout
+        this.setSize(size); // Set back to original size
                 
         this.addWindowListener(new WindowAdapter() {
             @Override
