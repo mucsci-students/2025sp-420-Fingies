@@ -976,6 +976,17 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     {
     	new HashSet<>(GUIUMLClasses.keySet()).forEach(x -> removeUMLClass(x));
     	UMLClassHandler.getAllClasses().stream().forEach(x -> addUMLClass(x.getName()));
+    	int maxX = 0, maxY = 0;
+    	for (GUIUMLClass g : GUIUMLClasses.values()) {
+    	    Position p = g.getUMLClass().getPosition();
+    	    int w = g.getWidth();
+    	    int h = g.getHeight();
+    	    maxX = Math.max(maxX, p.getX() + w * 3);
+    	    maxY = Math.max(maxY, p.getY() + h * 2);
+    	}
+    	canvas.setPreferredSize(new Dimension(maxX, maxY));
+    	revalidate();
+
     	updateArrows();
     }
 
