@@ -15,6 +15,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 
 public class GUIUMLClass {
@@ -304,8 +305,13 @@ public class GUIUMLClass {
         }
 
         @Override
-        public void mouseDragged(MouseEvent e) {
+       public void mouseDragged(MouseEvent e) {
             if (initialClick == null) return;
+
+            // Brings current frame being dragged to the front
+            gui.getContentPane().setComponentZOrder(component, JLayeredPane.DEFAULT_LAYER); // Bring to front
+            gui.getContentPane().revalidate();
+            gui.getContentPane().repaint();
 
             // Calculate the new position based on mouse movement
             int newX = component.getX() + e.getX() - initialClick.x;
@@ -323,7 +329,7 @@ public class GUIUMLClass {
             if (newX > maxX) newX = maxX; // Constrain to the right edge
             if (newY < 75) newY = 75; // Prevent going above a minimum threshold
             if (newY > maxY) newY = maxY; // Constrain to the bottom edge
-    
+            
             // Move the component to the new constrained position
             component.setLocation(newX, newY);
     
@@ -333,8 +339,7 @@ public class GUIUMLClass {
             }
     
             // Resize the canvas dynamically if the component moves near the edge
-            int buffer = 100;  // Space buffer around the component
-            int step = 10;     // Step increment for resizing canvas
+            int buffer = 2;  // Space buffer around the component
     
             // Calculate required width and height for the canvas
             int requiredWidth = newX + component.getWidth() + buffer;
@@ -347,10 +352,10 @@ public class GUIUMLClass {
     
             // Update canvas size if the component moves near the edge
             if (requiredWidth > currentSize.width) {
-                newWidth = currentSize.width + step;
+                newWidth = requiredWidth;
             }
             if (requiredHeight > currentSize.height) {
-                newHeight = currentSize.height + step;
+                newHeight = requiredHeight;
             }
     
             // Update canvas size and revalidate if necessary
@@ -361,6 +366,29 @@ public class GUIUMLClass {
     
             // Update arrows or any other visual components after moving the class
             gui.updateArrows();  // This will update the arrows to reflect new positions
+            
+            JViewport vp = scrollPane.getViewport();
+            
+            int newVPX = vp.getViewPosition().x;
+            int newVPY = vp.getViewPosition().y;
+            if (requiredWidth >= vp.getViewPosition().x + vp.getWidth())
+            {
+            	newVPX = requiredWidth - vp.getWidth();
+            }
+            if (newX < vp.getViewPosition().x)
+            {
+            	newVPX = newX;
+            }
+            if (requiredHeight >= vp.getViewPosition().y + vp.getHeight())
+            {
+            	newVPY = requiredHeight - vp.getHeight();
+            }
+            if (newY < vp.getViewPosition().y)
+            {
+            	newVPY = newY;
+            }
+            
+            vp.setViewPosition(new Point(newVPX, newVPY));
         }
         @Override
         public void mouseReleased(MouseEvent e)
