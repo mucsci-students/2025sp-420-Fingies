@@ -1184,7 +1184,7 @@ public class GUIView extends JFrame implements ActionListener, View {
 		controller = c;
 	}
 
-	@Override
+    @Override
 	public int promptForYesNoInput(String message, String title) {
 		int res = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_CANCEL_OPTION);
 		if(res == 0 || res == 1 )
