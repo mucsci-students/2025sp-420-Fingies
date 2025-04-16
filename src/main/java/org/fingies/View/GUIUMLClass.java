@@ -106,10 +106,12 @@ public class GUIUMLClass {
         int g = (Math.abs(hash) >> 8) & 0xFF;
         int b = Math.abs(hash) & 0xFF;
 
-        // Clamp to 15–240 range
-        r = 15 + (r % 226); 
-        g = 15 + (g % 226);
-        b = 15 + (b % 226);
+        // Clamp to 100–240 range so that they aren't too dark
+        r = 100 + (r % 141); 
+        g = 100 + (g % 141);
+        b = 100 + (b % 141);
+        
+        // TODO: change color generation for dark mode
 
         color = new Color(r, g, b);
     }

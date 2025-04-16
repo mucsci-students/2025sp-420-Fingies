@@ -124,18 +124,14 @@ public enum Action {
     
     // commands that can't be selected in the CLI start here
     
-    /**
-     * Exports the current diagram as an image.
-     */
-    EXPORT_IMAGE,
-    /*
-     * Moves a class to a new x, y coordinate.
-     */
-    MOVE,
     /*
      * Exports an image of the current UML diagram in the GUI
      */
     EXPORT,
+    /*
+     * Moves a class to a new x, y coordinate.
+     */
+    MOVE,
     /*
      * Light Mode
      */

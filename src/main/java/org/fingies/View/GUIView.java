@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
@@ -859,7 +860,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         }
         else if (e.getSource() == export)
         {
-        	// controller.runHelper(a, new String[] {});
+        	controller.runHelper(a, new String[] {});
         }
         else if (e.getSource() == undo)
         {
@@ -886,10 +887,12 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         else if (e.getSource() == lightMode)
         {
             // for Tristan
+        	//controller.runHelper(a, new String[] {});
         }
         else if (e.getSource() == darkMode)
         {
             // for Tristan
+        	//controller.runHelper(a, new String[] {});
         }
     }
 
@@ -1195,6 +1198,11 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 		{
 			return 2;
 		}
+	}
+    
+    @Override
+	public JComponent getJComponentRepresentation() {
+		return canvas;
 	}
 }
 

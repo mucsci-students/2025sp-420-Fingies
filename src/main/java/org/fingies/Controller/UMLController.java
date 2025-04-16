@@ -1330,7 +1330,7 @@ public class UMLController {
             	{
             		return doRedo();
             	}
-            case EXPORT_IMAGE:
+            case EXPORT:
             	
             	if (args.length == 0)
             	{
@@ -1353,7 +1353,7 @@ public class UMLController {
             	}
             	else
             	{
-            		int idx = Action.EXPORT_IMAGE.ordinal();
+            		int idx = Action.EXPORT.ordinal();
                 	view.notifyFail("Export Image should follow this format: \n" + "Export Image " + Command.COMMAND_ARGS[idx]);
                     return false;
             	}
@@ -1368,6 +1368,7 @@ public class UMLController {
             	{
             		return doMove(args[0], args[1], args[2]);
             	}
+            	// TODO: add case for light & dark mode
         }
         return false;
     }

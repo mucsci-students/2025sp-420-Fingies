@@ -1,5 +1,6 @@
 package org.fingies.Model;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -15,6 +16,7 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -316,6 +318,8 @@ public class JModel {
         try {
         	if (filepath == null)
                 throw new IllegalArgumentException("Invalid Argument: null, in exportImage");
+        	if (!filepath.endsWith(".png"))
+        		filepath += ".png";
             file = new File(filepath);
         } catch (Exception e) {
             writeToLog(e.toString());
@@ -324,7 +328,12 @@ public class JModel {
         }
         BufferedImage image = new BufferedImage(component.getWidth(), component.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D g = image.createGraphics();
+        
+        // paint the image
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, component.getWidth(), component.getHeight());
         component.printAll(g);
+        
         g.dispose();
         try { 
             ImageIO.write(image, "png", file); 
