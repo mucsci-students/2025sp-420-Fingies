@@ -269,3 +269,6 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-
 [04/16/25 16:16:49]: java.util.NoSuchElementException: No line found
 [04/16/25 16:16:49]: Test Write to Error Log, Ignore this message.
 [04/16/25 16:16:49]: java.lang.NullPointerException
+[04/16/25 20:47:55]: java.util.NoSuchElementException: No line found
+[04/16/25 20:47:55]: Test Write to Error Log, Ignore this message.
+[04/16/25 20:47:55]: java.lang.NullPointerException
