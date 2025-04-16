@@ -243,3 +243,9 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#java-lang-class-
 [03/28/25 18:54:41]: Test Write to Error Log, Ignore this message.
 [04/05/25 22:36:41]: Test Write to Error Log, Ignore this message.
 [04/05/25 22:36:59]: Test Write to Error Log, Ignore this message.
+[04/14/25 14:17:15]: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 2 path $
+See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure
+[04/14/25 14:17:39]: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 2 path $
+See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure
+[04/14/25 14:18:05]: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 2 path $
+See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure

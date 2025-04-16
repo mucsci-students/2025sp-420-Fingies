@@ -1,10 +1,17 @@
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.fingies.*;
+import org.fingies.Controller.Action;
+import org.fingies.Controller.UMLController;
+import org.fingies.Model.JModel;
+import org.fingies.Model.RelationshipHandler;
+import org.fingies.Model.UMLClassHandler;
+import org.fingies.View.InputCheck;
+import org.fingies.View.UMLView;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,15 +21,15 @@ import org.junit.Test;
  * @author kdichter
  */
 public class ControllerTest {
-    private View view;
+    private UMLView view;
     private JModel model;
-    private Controller controller;
+    private UMLController controller;
 
     @Before
     public void setUp() {
         UMLClassHandler.reset();
      // dummy view
- 		view = new View() {
+ 		view = new UMLView() {
  		    @Override public void run() {}
  		    @Override public String promptForSaveInput(String message) { return null; }
  		    @Override public String promptForOpenInput(String message) { return null; }
@@ -35,10 +42,11 @@ public class ControllerTest {
  		    @Override public void display(String message) {}
  		    @Override public void help() {}
  		    @Override public void help(String command) {}
- 		    @Override public void setController(Controller c) {}
+ 		    @Override public void setController(UMLController c) {}
+ 		    @Override public int promptForYesNoInput(String message, String title) { return 2; }
  		};
         model = new JModel();
-        controller = new Controller(view, model);
+        controller = new UMLController(view, model);
     }
 
     @After
@@ -58,8 +66,12 @@ public class ControllerTest {
     @Test
     public void testDoRemoveClass() {
         controller.doAddClass("TestClass");
-        boolean result = controller.doRemoveClass("TestClass");
-        assertTrue("Class should be removed successfully.", result);
+        controller.doRemoveClass("TestClass");
+        try {
+            UMLClassHandler.getClass("TestClass");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), "Class TestClass does not exist");
+        }
     }
 
     @Test
