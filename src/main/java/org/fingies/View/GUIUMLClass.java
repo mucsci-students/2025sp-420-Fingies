@@ -1,4 +1,4 @@
-package org.fingies;
+package org.fingies.View;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -14,9 +14,15 @@ import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
+
+import org.fingies.Controller.Action;
+import org.fingies.Controller.UMLController;
+import org.fingies.Model.Field;
+import org.fingies.Model.Method;
+import org.fingies.Model.Position;
+import org.fingies.Model.UMLClass;
 
 public class GUIUMLClass {
     private final int PIXELS_PER_CHARACTER = 9;
@@ -32,10 +38,10 @@ public class GUIUMLClass {
     private Color color;
 
     private UMLClass umlclass;
-    private Controller controller;
+    private UMLController controller;
     private GUIView guiView;
 
-    public GUIUMLClass(UMLClass umlclass, Controller controller, GUIView guiView)
+    public GUIUMLClass(UMLClass umlclass, UMLController controller, GUIView guiView)
     {
         this.umlclass = umlclass;
         this.controller = controller;

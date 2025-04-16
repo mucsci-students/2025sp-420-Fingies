@@ -1,7 +1,12 @@
 package org.fingies;
 
+import java.util.ArrayList;
+
 import org.fingies.Controller.UMLController;
 import org.fingies.Model.JModel;
+import org.fingies.Model.RelationshipHandler;
+import org.fingies.Model.RelationshipType;
+import org.fingies.Model.UMLClassHandler;
 import org.fingies.View.CLIView;
 import org.fingies.View.GUIView;
 
