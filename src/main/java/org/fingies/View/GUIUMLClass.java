@@ -1,17 +1,20 @@
 package org.fingies.View;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Objects;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.JScrollPane;
+import javax.swing.JViewport;
 import javax.swing.SwingConstants;
 
 import org.fingies.Controller.Action;
@@ -36,18 +39,14 @@ public class GUIUMLClass {
 
     private UMLClass umlclass;
     private UMLController controller;
+    private GUIView guiView;
 
-    public GUIUMLClass(UMLClass umlclass, UMLController controller, GUIView guiView, Color col)
+    public GUIUMLClass(UMLClass umlclass, UMLController controller, GUIView guiView)
     {
         this.umlclass = umlclass;
         this.controller = controller;
-
-        // Creates a random color for the class
-        if (col == null)
-            color = new Color((int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), (int)(Math.random() * 225 + 15), 100);
-        // System.out.println("MEGA COLOR is " + color);
-        else
-            color = col;
+        this.guiView = guiView;
+        setColor();
 
         classPanel = new JPanel();
         classPanel.setBackground(color);
@@ -100,6 +99,21 @@ public class GUIUMLClass {
         return color;
     }
 
+    public void setColor()
+    {
+        int hash = Objects.hash(umlclass.getName());
+        int r = (Math.abs(hash) >> 16) & 0xFF;
+        int g = (Math.abs(hash) >> 8) & 0xFF;
+        int b = Math.abs(hash) & 0xFF;
+
+        // Clamp to 15–240 range
+        r = 15 + (r % 226); 
+        g = 15 + (g % 226);
+        b = 15 + (b % 226);
+
+        color = new Color(r, g, b);
+    }
+
     public UMLClass getUMLClass()
     {
         return umlclass;
@@ -123,6 +137,21 @@ public class GUIUMLClass {
             // controller.runHelper(Action.MOVE, new String[] {umlclass.getName(), randX + "", randY + ""});
             // pos = umlclass.getPosition();
         }
+        if (pos.getX() > maxWidth && pos.getY() > maxHeight)
+        {
+            guiView.getCanvas().setPreferredSize(new Dimension(pos.getX() + background.getWidth() * 3, pos.getY() + background.getHeight() * 2));
+            guiView.revalidate();
+        }
+        else if (pos.getX() > maxWidth)
+        {
+            guiView.getCanvas().setPreferredSize(new Dimension(pos.getX() + background.getWidth() * 3, maxHeight));
+            guiView.revalidate();
+        }
+        else if (pos.getY() > maxHeight)
+        {
+            guiView.getCanvas().setPreferredSize(new Dimension(maxWidth, pos.getY() + background.getHeight() * 2));
+            guiView.revalidate();
+        }
         pane.setBounds(pos.getX(), pos.getY(), pane.getWidth(), pane.getHeight());
     }
 
@@ -140,9 +169,14 @@ public class GUIUMLClass {
         // Must be called down here because it relies on new size of background
         updateClassName();
 
+        
         classPanel.setSize(newWidth, classPanel.getHeight());
         fieldsPanel.setSize(newWidth, fieldsPanel.getHeight());
         methodsPanel.setSize(newWidth, methodsPanel.getHeight());
+        setColor();
+        classPanel.setBackground(color);
+        fieldsPanel.setBackground(color);
+        methodsPanel.setBackground(color);
 
         // background.revalidate();
         background.repaint();
@@ -254,95 +288,112 @@ public class GUIUMLClass {
         methodsPanel.repaint();
     }
     
-    /**
-     * A listener that turns the JLabel invisible and turns a JTextField visible when the label is double clicked
-     */
-    class JLabelDoubleClickListener extends MouseAdapter 
-    {
-    	JTextField field;
-    	JLayeredPane parentPane;
-    	
-    	public JLabelDoubleClickListener (JTextField field, JLayeredPane parentPane)
-    	{
-    		this.field = field;
-    		this.parentPane = parentPane;
-    	}
-    	
-    	public void mouseClicked(MouseEvent me)
-    	{
-    		if (me.getClickCount() == 2)
-    		{
-    			JLabel src = ((JLabel)me.getSource());
-    			src.setVisible(false);
-    			field.setVisible(true);
-    			field.requestFocusInWindow();
-    		}
-    	}
-    	
-    	@Override
-        public void mousePressed(MouseEvent e) {
-    		e.setSource(parentPane);
-    		parentPane.dispatchEvent(e);
-        }
-
-        @Override
-        public void mouseDragged(MouseEvent e) {
-        	e.setSource(parentPane);
-    		parentPane.dispatchEvent(e);
-        }
-    }
-    
     // Drag listener for JLayeredPane
     class DragListener extends MouseAdapter {
         private final JComponent component;
-        private final GUIView parentView;
+        private final GUIView gui;
+        private final JLayeredPane canvas;
+        private final JScrollPane scrollPane;
         private Point initialClick;
 
         public DragListener(JComponent component, GUIView parentView) {
             this.component = component;
-            this.parentView = parentView;
+            gui = parentView;
+            canvas = parentView.getCanvas();
+            scrollPane = parentView.getScrollPane();
         }
 
         @Override
         public void mousePressed(MouseEvent e) {
             initialClick = e.getPoint(); // Store initial click position
-            ((JComponent)e.getSource()).requestFocusInWindow();
+            component.requestFocusInWindow();
+            //((JComponent)e.getSource()).requestFocusInWindow();
         }
 
         @Override
-        public void mouseDragged(MouseEvent e) {
+       public void mouseDragged(MouseEvent e) {
             if (initialClick == null) return;
 
             // Brings current frame being dragged to the front
-            parentView.getContentPane().setComponentZOrder(component, JLayeredPane.DEFAULT_LAYER); // Bring to front
-            parentView.getContentPane().revalidate();
-            parentView.getContentPane().repaint();
+            canvas.setComponentZOrder(component, JLayeredPane.DEFAULT_LAYER); // Bring to front
 
-            // Get current location of the JLayeredPane
-            int x = component.getX() + e.getX() - initialClick.x;
-            int y = component.getY() + e.getY() - initialClick.y;
-
-            // Get parent frame size
-            int frameWidth = parentView.getWidth();
-            int frameHeight = parentView.getHeight();
-
-            // Prevent dragging off the screen (Constrain within parent frame)
-            int maxX = frameWidth - component.getWidth();
-            int maxY = frameHeight - component.getHeight();
-
-            // Constrain X and Y to stay within the frame bounds
-            if (x < 0) x = 0;
-            if (x > maxX) x = maxX;
-            if (y < 75) y = 75;
-            if (y > maxY) y = maxY;
-
-            // Move JLayeredPane to new position within bounds
-            component.setLocation(x, y);
-
-            // Update the arrows after moving the class
-            parentView.updateArrows();  // This will update the arrows to reflect new positions
+            // Calculate the new position based on mouse movement
+            int newX = component.getX() + e.getX() - initialClick.x;
+            int newY = component.getY() + e.getY() - initialClick.y;
+    
+            // Get the current viewable rectangle of the scroll pane's viewport
+            Rectangle view = scrollPane.getViewport().getViewRect();
+    
+            // Constrain the component within the bounds of the scroll pane's visible area
+            int maxX = canvas.getWidth() - component.getWidth();  // Maximum X position (right edge)
+            int maxY = canvas.getHeight() - component.getHeight(); // Maximum Y position (bottom edge)
+    
+            // Prevent component from going outside the visible area
+            if (newX < 0) newX = 0; // Constrain to the left edge
+            if (newX > maxX) newX = maxX; // Constrain to the right edge
+            if (newY < 75) newY = 75; // Prevent going above a minimum threshold
+            if (newY > maxY) newY = maxY; // Constrain to the bottom edge
+            
+            // Move the component to the new constrained position
+            component.setLocation(newX, newY);
+    
+            // Scroll the canvas if the component moves outside the visible area
+            if (!view.contains(newX, newY)) {
+                canvas.scrollRectToVisible(new Rectangle(newX, newY, component.getWidth(), component.getHeight()));
+            }
+    
+            // Resize the canvas dynamically if the component moves near the edge
+            int buffer = 2;  // Space buffer around the component
+    
+            // Calculate required width and height for the canvas
+            int requiredWidth = newX + component.getWidth() + buffer;
+            int requiredHeight = newY + component.getHeight() + buffer;
+    
+            // Get the current canvas size
+            Dimension currentSize = canvas.getPreferredSize();
+            int newWidth = currentSize.width;
+            int newHeight = currentSize.height;
+    
+            // Update canvas size if the component moves near the edge
+            if (requiredWidth > currentSize.width) {
+                newWidth = requiredWidth;
+            }
+            if (requiredHeight > currentSize.height) {
+                newHeight = requiredHeight;
+            }
+    
+            // Update canvas size and revalidate if necessary
+            if (newWidth != currentSize.width || newHeight != currentSize.height) {
+                canvas.setPreferredSize(new Dimension(newWidth, newHeight));
+                canvas.revalidate();
+            }
+    
+            // Update arrows or any other visual components after moving the class
+            gui.updateArrows();  // This will update the arrows to reflect new positions
+            
+            JViewport vp = scrollPane.getViewport();
+            
+            int newVPX = vp.getViewPosition().x;
+            int newVPY = vp.getViewPosition().y;
+            if (requiredWidth >= vp.getViewPosition().x + vp.getWidth())
+            {
+            	newVPX = requiredWidth - vp.getWidth();
+            }
+            if (newX < vp.getViewPosition().x)
+            {
+            	newVPX = newX;
+            }
+            if (requiredHeight >= vp.getViewPosition().y + vp.getHeight())
+            {
+            	newVPY = requiredHeight - vp.getHeight();
+            }
+            if (newY < vp.getViewPosition().y)
+            {
+            	newVPY = newY;
+            }
+            
+            vp.setViewPosition(new Point(newVPX, newVPY));
         }
-        
         @Override
         public void mouseReleased(MouseEvent e)
         {
@@ -350,5 +401,4 @@ public class GUIUMLClass {
             controller.runHelper(Action.MOVE, new String[] {umlclass.getName(), "" + r.x, "" + r.y});
         }
     }
-    
 }

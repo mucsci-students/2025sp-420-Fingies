@@ -1,7 +1,12 @@
 package org.fingies;
 
+import java.util.ArrayList;
+
 import org.fingies.Controller.UMLController;
 import org.fingies.Model.JModel;
+import org.fingies.Model.RelationshipHandler;
+import org.fingies.Model.RelationshipType;
+import org.fingies.Model.UMLClassHandler;
 import org.fingies.View.CLIView;
 import org.fingies.View.GUIView;
 
@@ -23,57 +28,61 @@ public class Main {
             GUIView view = new GUIView();
             UMLController controller = new UMLController(view, new JModel());
             view.setController(controller);
-            view.run();
+            // view.run();
 
-        //     UMLClassHandler.createClass("ClassA");
-        //     UMLClassHandler.createClass("ClassB");
-        //     UMLClassHandler.createClass("ClassC");
+            String class1 = "ClassA";
+            String class2 = "ClassB";
+            String class3 = "zzzz";
 
-        //     // Add fields and methods (if needed)
-        //     UMLClassHandler.getClass("ClassA").addField("FieldA", "String");
-        //     UMLClassHandler.getClass("ClassA").addField("FieldB", "String");
-        //     UMLClassHandler.getClass("ClassA").addField("FieldC", "String");
-        //     UMLClassHandler.getClass("ClassA").addField("FieldD", "String");
-        //     UMLClassHandler.getClass("ClassA").addField("FieldE", "String");
-        //     UMLClassHandler.getClass("ClassA").addField("FieldF", "String");
+            UMLClassHandler.createClass(class1);
+            UMLClassHandler.createClass(class2);
+            UMLClassHandler.createClass(class3);
 
-        //    // UMLClassHandler.getClass("ClassB").addField("FieldA");
-        //    // UMLClassHandler.getClass("ClassB").addField("FieldAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-        //    // Create a method in Class A (optional)
-        //    ArrayList<String> params = new ArrayList<>();
-        //    ArrayList<String> types = new ArrayList<>();
+            // Add fields and methods (if needed)
+            UMLClassHandler.getClass(class1).addField("FieldA", "String");
+            UMLClassHandler.getClass(class1).addField("FieldB", "String");
+            UMLClassHandler.getClass(class1).addField("FieldC", "String");
+            UMLClassHandler.getClass(class1).addField("FieldD", "String");
+            UMLClassHandler.getClass(class1).addField("FieldE", "String");
+            UMLClassHandler.getClass(class1).addField("FieldF", "String");
+
+           // UMLClassHandler.getClass(class2).addField("FieldA");
+           // UMLClassHandler.getClass(class2).addField("FieldAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+           // Create a method in Class A (optional)
+           ArrayList<String> params = new ArrayList<>();
+           ArrayList<String> types = new ArrayList<>();
            
-        //    UMLClassHandler.getClass("ClassC").addMethod("MethodC", "void", params, types);
+           UMLClassHandler.getClass(class3).addMethod("MethodC", "void", params, types);
 
-        //    params.add("Param1");
-        //    params.add("Param2");
-        //    params.add("Param3");
-        //    types.add("String");
-        //    types.add("String");
-        //    types.add("String");
-        //    UMLClassHandler.getClass("ClassB").addMethod("MethodB", "void", params, types);
+           params.add("Param1");
+           params.add("Param2");
+           params.add("Param3");
+           types.add("String");
+           types.add("String");
+           types.add("String");
+           UMLClassHandler.getClass(class2).addMethod("MethodB", "void", params, types);
 
-        //    params.add("Param4");
-        //    params.add("Param5");
-        //    types.add("String");
-        //    types.add("String");
-        //    UMLClassHandler.getClass("ClassA").addMethod("MethodA", "void", params, types);
+           params.add("Param4");
+           params.add("Param5");
+           types.add("String");
+           types.add("String");
+           UMLClassHandler.getClass(class1).addMethod("MethodA", "void", params, types);
 
-        //    // Add the UML classes to the view
-        //    view.addUMLClass("ClassA");
-        //    view.addUMLClass("ClassB");
-        //    view.addUMLClass("ClassC");
+           // Add the UML classes to the view
+           view.addUMLClass(class1);
+           view.addUMLClass(class2);
+           view.addUMLClass(class3);
 
-        //    // Add relationships between classes to test arrows
-        //    RelationshipHandler.addRelationship("ClassA", "ClassC", RelationshipType.Inheritance);
-        //    RelationshipHandler.addRelationship("ClassC", "ClassA", RelationshipType.Composition);
-        //    RelationshipHandler.addRelationship("ClassB", "ClassC", RelationshipType.Aggregation);
-        //    RelationshipHandler.addRelationship("ClassA", "ClassA", RelationshipType.Realization);
-        //    RelationshipHandler.addRelationship("ClassC", "ClassC", RelationshipType.Composition);
-        //    RelationshipHandler.addRelationship("ClassC", "ClassB", RelationshipType.Realization);
+           // Add relationships between classes to test arrows
+           RelationshipHandler.addRelationship(class1, class3, RelationshipType.Inheritance);
+           RelationshipHandler.addRelationship(class3, class1, RelationshipType.Composition);
+           RelationshipHandler.addRelationship(class2, class3, RelationshipType.Aggregation);
+           RelationshipHandler.addRelationship(class1, class1, RelationshipType.Realization);
+           RelationshipHandler.addRelationship(class3, class3, RelationshipType.Composition);
+           RelationshipHandler.addRelationship(class3, class2, RelationshipType.Realization);
 
-        //    view.updateArrows();  // Call this to refresh and redraw arrows
-        //    view.run();     
+           view.updateArrows();  // Call this to refresh and redraw arrows
+           view.run();     
         }   
 	}
 

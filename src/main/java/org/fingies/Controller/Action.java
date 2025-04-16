@@ -127,5 +127,17 @@ public enum Action {
     /*
      * Moves a class to a new x, y coordinate.
      */
-    MOVE;
+    MOVE,
+    /*
+     * Exports an image of the current UML diagram in the GUI
+     */
+    EXPORT,
+    /*
+     * Light Mode
+     */
+    LIGHT_MODE,
+    /*
+     * Dark Mode
+     */
+    DARK_MODE;
 }
