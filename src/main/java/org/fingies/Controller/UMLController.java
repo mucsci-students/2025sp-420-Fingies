@@ -734,7 +734,6 @@ public class UMLController {
                 {
                     if (doRemoveClass(args[0]))
                     {
-                        doRemoveClass(args[0]);
                         view.notifySuccess("Successfully removed class " + args[0]);
                         madeChange = true;
                         return true;

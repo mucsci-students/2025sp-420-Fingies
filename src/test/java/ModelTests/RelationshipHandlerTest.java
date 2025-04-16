@@ -145,7 +145,7 @@ public class RelationshipHandlerTest {
         UMLClass classA = new UMLClass("A");
         UMLClass classB = new UMLClass("B");
         RelationshipHandler.replace(classA, classB);
-        assertEquals(RelationshipHandler.listRelationships(), "B ----◇ B");
+        assertEquals(RelationshipHandler.listRelationships(), "B ----◇ B (Aggregation)");
     }
 
     @Test
@@ -191,7 +191,7 @@ public class RelationshipHandlerTest {
         RelationshipHandler.addRelationship("A", "B", RelationshipType.Aggregation);
         RelationshipHandler.addRelationship("C", "D", RelationshipType.Composition);
         RelationshipHandler.replaceAllRelationshipsForClassname("A", relations);
-        assertEquals(RelationshipHandler.listRelationships(), "C ----◆ D\nA ----◇ A\nA ----◆ B");
+        assertEquals(RelationshipHandler.listRelationships(), "C ----◆ D (Composition)\nA ----◇ A (Aggregation)\nA ----◆ B (Composition)");
     }
 }
 
