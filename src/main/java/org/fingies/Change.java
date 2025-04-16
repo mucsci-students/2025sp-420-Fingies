@@ -3,6 +3,9 @@ package org.fingies;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.fingies.Model.Relationship;
+import org.fingies.Model.UMLClass;
+
 /**
  * @Author Nick Hayes & Lincoln Craddock
  */
