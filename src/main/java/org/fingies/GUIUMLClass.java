@@ -133,17 +133,17 @@ public class GUIUMLClass {
         }
         if (pos.getX() > maxWidth && pos.getY() > maxHeight)
         {
-            guiView.getCanvas().setPreferredSize(new Dimension(pos.getX() + background.getWidth(), pos.getY() + background.getHeight()));
+            guiView.getCanvas().setPreferredSize(new Dimension(pos.getX() + background.getWidth() * 3, pos.getY() + background.getHeight() * 2));
             guiView.revalidate();
         }
         else if (pos.getX() > maxWidth)
         {
-            guiView.getCanvas().setPreferredSize(new Dimension(pos.getX() + background.getWidth(), maxHeight));
+            guiView.getCanvas().setPreferredSize(new Dimension(pos.getX() + background.getWidth() * 3, maxHeight));
             guiView.revalidate();
         }
         else if (pos.getY() > maxHeight)
         {
-            guiView.getCanvas().setPreferredSize(new Dimension(maxWidth, pos.getY() + background.getHeight()));
+            guiView.getCanvas().setPreferredSize(new Dimension(maxWidth, pos.getY() + background.getHeight() * 2));
             guiView.revalidate();
         }
         pane.setBounds(pos.getX(), pos.getY(), pane.getWidth(), pane.getHeight());
