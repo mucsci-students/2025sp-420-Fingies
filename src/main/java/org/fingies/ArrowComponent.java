@@ -133,10 +133,10 @@ public class ArrowComponent extends JComponent {
         if (relation == RelationshipType.Aggregation || relation == RelationshipType.Composition) 
         {
             if (!isSelfReferencing)
-                drawDiamond(g2d, x, y);
+                drawDiamond(g2d, x, y, angle);
             else
             {
-                drawDiamond(g2d, x - 48, y + 30);
+                drawDiamond(g2d, x - 48, y + 30, angle);
             }
         }
         else
@@ -166,11 +166,21 @@ public class ArrowComponent extends JComponent {
     }
 
     // Helper method to draw a diamond
-    private void drawDiamond(Graphics2D g2d, int x, int y) {
+    private void drawDiamond(Graphics2D g2d, int x, int y, double angle) {
         int diamondSize = 10;  // Size of the diamond
         int[] xPoints = {x - diamondSize, x, x + diamondSize, x};
         int[] yPoints = {y, y - diamondSize, y, y + diamondSize};
 
+        // Add Rotation
+        for (int i = 0; i < 4; i++) {
+            int originalX = xPoints[i];
+            int originalY = yPoints[i];
+            
+            // Apply rotation formula
+            xPoints[i] = (int) (x + (originalX - x) * Math.cos(angle) - (originalY - y) * Math.sin(angle));
+            yPoints[i] = (int) (y + (originalX - x) * Math.sin(angle) + (originalY - y) * Math.cos(angle));
+        }
+        
         if (relation == RelationshipType.Aggregation) {
         	// Draw the diamond inside (filled)
         	g2d.setColor(Color.WHITE);

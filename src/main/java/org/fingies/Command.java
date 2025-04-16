@@ -32,7 +32,7 @@ public class Command {
 		    "list relationships", "help", "exit",
 		    "add method", "remove method", "rename method",
 		    "add field", "remove field", "rename field",
-		    "add parameters", "remove parameters", "change parameter",
+		    "add parameters", "remove parameters", "rename parameter",
 		    "change relationship type", "change parameter type", "change field type",
 			"change method type", "undo", "redo"
 		};
@@ -76,13 +76,14 @@ public class Command {
 			"CLASS_NAME FIELD_NAME NEW_NAME", //rename field
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ NEW_PARAMETER_TYPE NEW_PARAMETER ... ]", //add parameters
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ OLD_PARAMETER ... ] ", //remove parameters
-			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_NAME", // rename parameter
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_NAME", //rename parameter
 			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE", //change relationship type
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_TYPE", //change parameter type
 			"CLASS_NAME FIELD_NAME NEW_TYPE", //change field type
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] NEW_TYPE", //change method type
 			"", //undo
-			"" //redo
+			"", //redo
+			"CLASS_NAME NEW_X NEW_Y" //move
 		};
 	
 	/**

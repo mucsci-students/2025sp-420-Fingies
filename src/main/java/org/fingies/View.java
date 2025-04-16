@@ -147,4 +147,20 @@ public interface View {
 	 */
 	public void setController(Controller c);
 	
+	
+	/**
+	 * Displays a message to the user and stalls the program until they respond.
+	 * 
+	 * In a CLI the user might receive a message they can only type y or n to
+	 * 
+	 * In a GUI they might receive a pop-up window with the prompt and yes or no buttons to choose between
+	 * 
+	 * Returns their response as a string.
+	 * 
+	 * @param message The message to display to the user, prompting them for input.
+	 * @param title The title of the pop up window
+	 * @return A int representing the choice of the user, 0 is yes, 1 is no, 2 is cancel
+	 */
+	int promptForYesNoInput(String message, String title);
+	
 }
