@@ -193,6 +193,16 @@ public class RelationshipHandlerTest {
         RelationshipHandler.replaceAllRelationshipsForClassname("A", relations);
         assertEquals(RelationshipHandler.listRelationships(), "C ----◆ D (Composition)\nA ----◇ A (Aggregation)\nA ----◆ B (Composition)");
     }
+
+    @Test
+    public void testIndexOfNullObjects() {
+        //We are testing the indexOf method for null objects by calling other classes
+        try {
+            RelationshipHandler.removeRelationship("A", "x");
+        } catch (IllegalArgumentException e) {
+            assertEquals(e.getMessage(), "Class x does not exist");
+        }
+    }
 }
 
     
