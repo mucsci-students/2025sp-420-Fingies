@@ -1,6 +1,9 @@
 package org.fingies;
 
-import java.util.ArrayList;
+import org.fingies.Controller.UMLController;
+import org.fingies.Model.JModel;
+import org.fingies.View.CLIView;
+import org.fingies.View.GUIView;
 
 /**
  * The Main class for the entire UML editor program.
@@ -12,13 +15,13 @@ public class Main {
 		// args = new String[] {"--cli"};
         if (hasCLIFlag(args)) {
             CLIView view = new CLIView();
-            Controller controller = new Controller(view, new JModel());
+            UMLController controller = new UMLController(view, new JModel());
 		    view.setController(controller);
             view.run();
         }
         else {
             GUIView view = new GUIView();
-            Controller controller = new Controller(view, new JModel());
+            UMLController controller = new UMLController(view, new JModel());
             view.setController(controller);
             // view.run();
 
