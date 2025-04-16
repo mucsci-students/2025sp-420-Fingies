@@ -249,3 +249,6 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-
 See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure
 [04/14/25 14:18:05]: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 2 path $
 See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure
+[04/16/25 21:12:18]: java.util.NoSuchElementException: No line found
+[04/16/25 21:12:18]: Test Write to Error Log, Ignore this message.
+[04/16/25 21:12:19]: java.lang.NullPointerException
