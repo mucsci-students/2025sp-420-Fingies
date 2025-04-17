@@ -5,10 +5,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
+import java.awt.Dimension;
+import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import javax.swing.BoxLayout;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import org.fingies.Model.JModel;
 import org.fingies.Model.RelationshipHandler;
@@ -175,5 +183,71 @@ public class JModelTest {
             assertTrue(false);
         }
         assertFalse(model.writeToLog("This shouldn't write"));
+    }
+    
+    @Test
+    public void exportImage()
+    {
+    	JPanel component = new JPanel();
+    	component.setBackground(Color.green);
+    	component.setLayout(new BoxLayout(component, BoxLayout.Y_AXIS));
+    	JLabel label1 = new JLabel("test component");
+    	JLabel label2 = new JLabel("if you can see this, the export image method is working in the JModel");
+    	label1.setPreferredSize(new Dimension(500, 250));
+    	label2.setPreferredSize(new Dimension(500, 250));
+    	component.add(label1);
+    	component.add(label2);
+    	component.setSize(new Dimension(500, 500));
+    	component.doLayout();
+    	component.validate();
+
+    	assertTrue("exportImage() should return true after exporting a JPanel.", model.exportImage(absolutePath + "/modelTestImage.png", component));
+    }
+    
+    @Test
+    public void exportImageNullFilepath()
+    {
+    	JPanel component = new JPanel();
+    	component.setBackground(Color.red);
+    	component.setLayout(new BoxLayout(component, BoxLayout.Y_AXIS));
+    	JLabel label1 = new JLabel("test component");
+    	JLabel label2 = new JLabel("if you can see this, the export image method isn't working in the JModel!!");
+    	label1.setPreferredSize(new Dimension(500, 250));
+    	label2.setPreferredSize(new Dimension(500, 250));
+    	component.add(label1);
+    	component.add(label2);
+    	component.setSize(new Dimension(500, 500));
+    	component.doLayout();
+    	component.validate();
+
+    	assertFalse("exportImage() should return false when given 'null' for a filepath.", model.exportImage(null, component));
+    }
+    
+    @Test
+    public void exportImageInvalidFilepath()
+    {
+    	JPanel component = new JPanel();
+    	component.setBackground(Color.red);
+    	component.setLayout(new BoxLayout(component, BoxLayout.Y_AXIS));
+    	JLabel label1 = new JLabel("test component");
+    	JLabel label2 = new JLabel("if you can see this, the export image method isn't working in the JModel!!");
+    	label1.setPreferredSize(new Dimension(500, 250));
+    	label2.setPreferredSize(new Dimension(500, 250));
+    	component.add(label1);
+    	component.add(label2);
+    	component.setSize(new Dimension(500, 500));
+    	component.doLayout();
+    	component.validate();
+    	
+    	// from ChatGPT:
+    	// This is a directory path — writing to it as a file should cause an IOException
+        String badPath = System.getProperty("java.io.tmpdir"); // e.g., "/tmp" or "C:\\Temp"
+        
+        // Ensure it doesn't already have ".png"
+        if (badPath.endsWith(File.separator)) {
+            badPath = badPath.substring(0, badPath.length() - 1);
+        }
+
+    	assertFalse("exportImage() should return false when given the temp directory for a filepath.", model.exportImage(badPath, component));
     }
 }

@@ -318,8 +318,6 @@ public class JModel {
         try {
         	if (filepath == null)
                 throw new IllegalArgumentException("Invalid Argument: null, in exportImage");
-        	if (!filepath.endsWith(".png"))
-        		filepath += ".png";
             file = new File(filepath);
         } catch (Exception e) {
             writeToLog(e.toString());

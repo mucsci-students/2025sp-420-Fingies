@@ -1339,6 +1339,8 @@ public class UMLController {
             	
             	if (args.length == 1)
             	{
+                	if (!args[0].endsWith(".png"))
+                		args[0] += ".png";
             		if (doExportImage(args[0]))
                     {
                         view.notifySuccess("Successfully exported the diagram");
