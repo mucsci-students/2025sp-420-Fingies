@@ -432,9 +432,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 // Now finalInputsList will contain the elements in the desired format
                 allInputs = finalInputsList.toArray(new String[0]);
             } 
-        }
-        // System.out.println("Input: " + Arrays.toString(allInputs));
-    
+        }    
         // Call controller helper with the concatenated arguments
         if (controller.runHelper(action, allInputs)) {
             actionHelper(action, allInputs);
@@ -976,6 +974,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     {
     	new HashSet<>(GUIUMLClasses.keySet()).forEach(x -> removeUMLClass(x));
     	UMLClassHandler.getAllClasses().stream().forEach(x -> addUMLClass(x.getName()));
+    	
     	int maxX = 0, maxY = 0;
     	for (GUIUMLClass g : GUIUMLClasses.values()) {
     	    Position p = g.getUMLClass().getPosition();

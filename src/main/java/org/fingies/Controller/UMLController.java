@@ -466,7 +466,6 @@ public class UMLController {
         	return true;
         }
         catch (Exception e) {
-        	System.out.println(e.getMessage());
             model.writeToLog(e.getMessage());
             view.notifyFail(e.getMessage());
             return false;

@@ -90,10 +90,7 @@ public class GUIUMLClass {
         background.addMouseListener(dragListener);
         background.addMouseMotionListener(dragListener);
 
-        SwingUtilities.invokeLater(() -> {
-            System.out.println(guiView.getWidth() + ", " + guiView.getHeight());
-            initializePosition(background, guiView.getWidth() - background.getWidth() * 2, guiView.getHeight() - background.getHeight() * 2);
-        });
+        initializePosition(background, guiView.getWidth() - background.getWidth() * 2, guiView.getHeight() - background.getHeight() * 2);
 
         update();
     }

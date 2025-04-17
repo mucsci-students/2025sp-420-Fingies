@@ -30,7 +30,6 @@ public class ColorUtil {
 	 */
 	public static Color colorOfString(String str)
 	{
-		System.out.println(minecraftMobNames.length + " " + minecraftMobHexes.length);
 		return colorOfString(str, false);
 	}
 	
