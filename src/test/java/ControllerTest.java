@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.swing.JComponent;
+
 import org.fingies.Controller.Action;
 import org.fingies.Controller.UMLController;
 import org.fingies.Model.JModel;
@@ -44,6 +46,7 @@ public class ControllerTest {
  		    @Override public void help(String command) {}
  		    @Override public void setController(UMLController c) {}
  		    @Override public int promptForYesNoInput(String message, String title) { return 2; }
+ 		    @Override public JComponent getJComponentRepresentation() { return null; }
  		};
         model = new JModel();
         controller = new UMLController(view, model);
