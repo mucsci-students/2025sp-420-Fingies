@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
@@ -16,10 +17,13 @@ import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JMenu;
 import javax.swing.JTextField;
+import javax.swing.OverlayLayout;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 import org.fingies.Controller.*;
 import org.fingies.Model.*;
@@ -84,6 +88,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private UMLController controller;
     private JLayeredPane canvas;
     private JScrollPane scrollPane;
+    private JPanel topPanel;
+    private JPanel theAllPanel;
     final JFileChooser fileChooser = new JFileChooser();
 
     // HashMap with key as name of class and value as GUIUMLClass associated with the name
@@ -223,20 +229,53 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
         themeMenu.add(lightMode);
         themeMenu.add(darkMode);
+        
+        // all panel
+        theAllPanel = new JPanel();
+        theAllPanel.setLayout(new OverlayLayout(theAllPanel));
+        this.setContentPane(theAllPanel);
 
         // Create the canvas (JLayeredPane)
         canvas = new JLayeredPane();
         canvas.setLayout(null);  // Absolute positioning
         canvas.setPreferredSize(new Dimension(1500, 1500));  // Bigger than the frame
 
-        // Create the scroll pane to hold the canvas
+        // Scroll pane to hold the canvas
         scrollPane = new JScrollPane(canvas);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        // Set scrollPane as content pane
-        this.setContentPane(scrollPane);
+        // Make scrollPane fill the container
+        scrollPane.setAlignmentX(0f);
+        scrollPane.setAlignmentY(0f);
+        
+        // listener
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
+            theAllPanel.repaint();
+        });
+
+        scrollPane.getHorizontalScrollBar().addAdjustmentListener(e -> {
+            theAllPanel.repaint();
+        });
+
+        // top panel
+        topPanel = new JPanel();
+        topPanel.setBackground(new Color (0, 0, 50, 50));
+        topPanel.setPreferredSize(new Dimension(1000, 50)); // Width may be ignored by layout
+        topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        topPanel.setAlignmentX(0f);
+        topPanel.setAlignmentY(0f);
+        topPanel.setOpaque(true); // Ensure it's painted
+        //topPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+
+        // Add scrollPane and topPanel in reverse order so topPanel is on top
+        theAllPanel.add(topPanel);
+        theAllPanel.add(scrollPane);
+        
+
         this.setSize(1000, 1000);
+
 
         // Set JFrame attributes
         this.setTitle("UMLEditor");
@@ -281,8 +320,12 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         Rectangle view = scrollPane.getViewport().getViewRect();
         submitButton.setBounds(view.x + offset * 130 + 20, 20, 125, 30); // Position and size for submit button
         submitButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        submitButton.setBackground(Color.WHITE);
+        submitButton.setOpaque(true);
         cancelButton.setBounds(view.x + (offset + 1) * 130 + 20, 20, 125, 30); // Position and size for cancel button
         cancelButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        cancelButton.setBackground(Color.WHITE);
+        cancelButton.setOpaque(true);
     
         // Add ActionListener for Submit button
         submitButton.addActionListener(new ActionListener() {
@@ -301,15 +344,15 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         });
     
         // Add the buttons to the GUI
-        canvas.add(submitButton);
-        canvas.add(cancelButton);
+        topPanel.add(submitButton);
+        topPanel.add(cancelButton);
         repaint(); // Refresh UI
     }
 
     private void handleSubmitAction(Action action) {
         // Concatenate the text from text fields and combo boxes just like pressing Enter
-        canvas.remove(submitButton);
-        canvas.remove(cancelButton);
+        topPanel.remove(submitButton);
+        topPanel.remove(cancelButton);
 
         String[] textInputs = textBoxes.stream()
                 .map(JTextField::getText)
@@ -325,9 +368,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 .toArray(String[]::new);
     
         // Remove all text fields and combo boxes
-        textBoxes.forEach(canvas::remove);
+        textBoxes.forEach(topPanel::remove);
         textBoxes.clear();
-        comboBoxes.forEach(canvas::remove);
+        comboBoxes.forEach(topPanel::remove);
         comboBoxes.clear();
         repaint(); // Refresh UI
 
@@ -443,11 +486,11 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
     // Removes Submit and Cancel buttons when the Cancel button is clicked
     private void handleCancelAction() {
-        canvas.remove(submitButton);
-        canvas.remove(cancelButton);
-        textBoxes.forEach(canvas::remove);
+        topPanel.remove(submitButton);
+        topPanel.remove(cancelButton);
+        textBoxes.forEach(topPanel::remove);
         textBoxes.clear();
-        comboBoxes.forEach(canvas::remove);
+        comboBoxes.forEach(topPanel::remove);
         comboBoxes.clear();
         repaint(); // Refresh UI
     }
@@ -517,7 +560,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             box.setMaximumRowCount(8);
             styleComboBox(box, i, view);
             comboBoxes.add(box);
-            canvas.add(box);
+            topPanel.add(box);
         }
         reload();
     }
@@ -730,7 +773,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
             offset++;
             textBoxes.add(text);
-            canvas.add(text);
+            topPanel.add(text);
             repaint(); // Refresh UI
         }
         reload();
@@ -1023,8 +1066,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     public void reload()
     {
         // Force the GUI to refresh and update
-        canvas.revalidate(); // Recalculate layout
-        canvas.repaint();    // Repaint to reflect changes
+        theAllPanel.revalidate(); // Recalculate layout
+        theAllPanel.repaint();    // Repaint to reflect changes
     }
 
     /**
