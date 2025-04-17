@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JComponent;
+
 import org.fingies.TabCompletion;
 import org.fingies.Controller.Action;
 import org.fingies.Controller.Command;
@@ -365,6 +367,11 @@ public class CLIView implements UMLView
 			}}));
 		String ans = result.get(0);
 		return ans.equalsIgnoreCase("Y") || ans.equalsIgnoreCase("Yes") ? 0 : 1;
+	}
+	
+	@Override
+	public JComponent getJComponentRepresentation() {
+		throw new UnsupportedOperationException("The CLI doesn't support representing the diagram as a JComponent, how di this get called?");
 	}
     
 }
