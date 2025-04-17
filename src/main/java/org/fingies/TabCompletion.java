@@ -1,6 +1,7 @@
 package org.fingies;
 
 import org.fingies.Controller.Command;
+import org.fingies.Model.UMLClassHandler;
 import org.jline.reader.*;
 
 import java.util.*;
@@ -35,6 +36,7 @@ public class TabCompletion {
             public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
                 List<String> words = line.words();
                 int wordIndex = line.wordIndex();
+                //Action a = Command.LINCOLNSPARSER(words);
 
                 if (words.isEmpty()) return;
 
@@ -64,6 +66,25 @@ public class TabCompletion {
                         }
                     }
                 }
+                // else if (a != null) {
+                //     swtich statement:
+                //     case(a == ADD_CLASS) {
+                //         cannot complete new name
+                //     }
+                //     case(a == remove class) {
+                //         if (wordIndex == 2) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //     }
+                //     case(a == remove field) {
+                //         if (wordIndex == 2) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //         if (wordIndex == 3) {
+                //             candidates.add(UMLClassHandler.getClass(line.get(2).getallfields()));
+                //         }
+                //     }
+                // }
             }
         };
     }
