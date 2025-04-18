@@ -332,6 +332,7 @@ public class JModel {
         g.fillRect(0, 0, component.getWidth(), component.getHeight());
         component.printAll(g);
         
+        
         g.dispose();
         try { 
             ImageIO.write(image, "png", file); 

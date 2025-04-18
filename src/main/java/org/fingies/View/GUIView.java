@@ -1050,6 +1050,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
         // Adds the JLayeredPane to the Frame (this) and to the HashMap of GUIUMLClasses
         canvas.add(newUMLClass.getJLayeredPane(), JLayeredPane.PALETTE_LAYER);
+        canvas.setComponentZOrder(newUMLClass.getJLayeredPane(), JLayeredPane.DEFAULT_LAYER); // Bring to front
         GUIUMLClasses.put(className, newUMLClass);
         reload();
     }
