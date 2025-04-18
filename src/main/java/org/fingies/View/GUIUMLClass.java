@@ -128,11 +128,11 @@ public class GUIUMLClass {
     public void initializePosition (JLayeredPane pane, int maxWidth, int maxHeight)
     {
         Position pos = umlclass.getPosition();
-        if (pos.getX() < 0 || pos.getY() < 75)
+        if (pos.getX() < 0 || pos.getY() < 0)
         {
         	// the position is invalid, so randomize it
         	int randX = (int)(Math.random() * (maxWidth - pane.getWidth()));
-            int randY = (int)(Math.random() * (maxHeight - pane.getHeight() - 75)) + 75;
+            int randY = (int)(Math.random() * (maxHeight - pane.getHeight()));
             pos = new Position(randX, randY);
             umlclass.setPosition(randX, randY);
         }
@@ -315,7 +315,7 @@ public class GUIUMLClass {
             // Prevent component from going outside the visible area
             if (newX < 0) newX = 0; // Constrain to the left edge
             if (newX > maxX) newX = maxX; // Constrain to the right edge
-            if (newY < 75) newY = 75; // Prevent going above a minimum threshold
+            if (newY < 0) newY = 0; // Prevent going above a minimum threshold
             if (newY > maxY) newY = maxY; // Constrain to the bottom edge
             
             // Move the component to the new constrained position
