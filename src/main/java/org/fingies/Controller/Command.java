@@ -152,6 +152,33 @@ public class Command {
 	}
 	
 	/**
+	 * Gets the Action enum that represents the command in the string. The string must start with the command.
+	 * Spaces at the beginning and end of the string are ignored.
+	 * 
+	 * @param input The string to get the Action out of.
+	 * @return The Action enum that represents the command at the beginning of the string, or null if there is none.
+	 */
+	public static Action getActionOutOfString(String input)
+	{
+		// parse command
+		input = input.trim();
+		Action a = null;
+		
+		for (int i = 0; i < COMMANDS.length && a == null; ++i)
+			if (input.startsWith(COMMANDS[i]))
+				a = Action.values()[i];	
+		
+		for (int i = 0; i < COMMANDS_SHORTHAND.length && a == null; ++i)
+			if (input.startsWith(COMMANDS_SHORTHAND[i]))
+				a = Action.values()[i];
+		
+		if (a == null)
+			return null;
+		
+		return a;
+	}
+	
+	/**
 	 * Parses the string argument as a Command.
 	 * 
 	 * Commands should be formatted 'command ARGS' where 'command' is the keyword or
@@ -165,29 +192,15 @@ public class Command {
 	 */
 	public static Command parseCommand(String input)
 	{
-		// parse command
 		input = input.trim();
-		Action a = null;
+		
+		Action a = getActionOutOfString(input);
+		
 		int cmdLen = 0;
-		for (int i = 0; i < COMMANDS.length && a == null; ++i)
-		{
-			if (input.startsWith(COMMANDS[i]))
-			{
-				a = Action.values()[i];
-				cmdLen = COMMANDS[i].length();
-				
-			}
-		}
-		for (int i = 0; i < COMMANDS_SHORTHAND.length && a == null; ++i)
-		{
-			if (input.startsWith(COMMANDS_SHORTHAND[i]))
-			{
-				a = Action.values()[i];
-				cmdLen = COMMANDS_SHORTHAND[i].length();
-			}
-		}
-		if (a == null)
-			return null;
+		if (input.startsWith(COMMANDS[a.ordinal()]))
+			cmdLen = COMMANDS[a.ordinal()].length();
+		else
+			cmdLen = COMMANDS_SHORTHAND[a.ordinal()].length();
 		
 		// trim 'input' to be just the arguments
 		if (input.length() > cmdLen)
