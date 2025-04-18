@@ -466,7 +466,6 @@ public class UMLController {
         	return true;
         }
         catch (Exception e) {
-        	System.out.println(e.getMessage());
             model.writeToLog(e.getMessage());
             view.notifyFail(e.getMessage());
             return false;
@@ -610,6 +609,11 @@ public class UMLController {
     public void doSpecificCommandHelp(String command)
     {
     	view.help(command);
+    }
+    
+    public boolean doExportImage(String filepath)
+    {
+    	return model.exportImage(filepath, view.getJComponentRepresentation());
     }
     
     
@@ -1166,7 +1170,7 @@ public class UMLController {
                 if (args.length == 0)
                 {
                 	String path = view.promptForOpenInput("Please designate a filepath to open");
-                	args = new String[] {path}; // make it so the if() below will run
+                	args = new String[] {path};
                 }
                 
                 if (args.length == 1)
@@ -1325,6 +1329,35 @@ public class UMLController {
             	{
             		return doRedo();
             	}
+            case EXPORT:
+            	
+            	if (args.length == 0)
+            	{
+            		String input = view.promptForSaveInput("Please designate a filepath to export to");
+                	args = new String[] {input};
+            	}
+            	
+            	if (args.length == 1)
+            	{
+                	if (!args[0].endsWith(".png"))
+                		args[0] += ".png";
+            		if (doExportImage(args[0]))
+                    {
+                        view.notifySuccess("Successfully exported the diagram");
+                        return true;
+                    }
+                    else
+                    {
+                	    view.notifyFail("Invalid filepath provided.");
+                        return false;
+                    }
+            	}
+            	else
+            	{
+            		int idx = Action.EXPORT.ordinal();
+                	view.notifyFail("Export Image should follow this format: \n" + "Export Image " + Command.COMMAND_ARGS[idx]);
+                    return false;
+            	}
             case MOVE:
             	if (args.length != 3)
             	{
@@ -1336,6 +1369,7 @@ public class UMLController {
             	{
             		return doMove(args[0], args[1], args[2]);
             	}
+            	// TODO: add case for light & dark mode
         }
         return false;
     }

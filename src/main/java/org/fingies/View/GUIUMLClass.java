@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import org.fingies.Controller.Action;
 import org.fingies.Controller.UMLController;
@@ -89,7 +90,7 @@ public class GUIUMLClass {
         background.addMouseListener(dragListener);
         background.addMouseMotionListener(dragListener);
 
-        initializePosition(background, guiView.getWidth(), guiView.getHeight());
+        initializePosition(background, guiView.getWidth() - background.getWidth() * 2, guiView.getHeight() - background.getHeight() * 2);
 
         update();
     }
@@ -101,17 +102,7 @@ public class GUIUMLClass {
 
     public void setColor()
     {
-        int hash = Objects.hash(umlclass.getName());
-        int r = (Math.abs(hash) >> 16) & 0xFF;
-        int g = (Math.abs(hash) >> 8) & 0xFF;
-        int b = Math.abs(hash) & 0xFF;
-
-        // Clamp to 15–240 range
-        r = 15 + (r % 226); 
-        g = 15 + (g % 226);
-        b = 15 + (b % 226);
-
-        color = new Color(r, g, b);
+        color = ColorUtil.colorOfString(umlclass.getName());
     }
 
     public UMLClass getUMLClass()
@@ -122,6 +113,16 @@ public class GUIUMLClass {
     public JLayeredPane getJLayeredPane()
     {
         return background;
+    }
+    
+    public int getWidth()
+    {
+    	return background.getWidth();
+    }
+    
+    public int getHeight()
+    {
+    	return background.getHeight();
     }
 
     public void initializePosition (JLayeredPane pane, int maxWidth, int maxHeight)
@@ -134,23 +135,6 @@ public class GUIUMLClass {
             int randY = (int)(Math.random() * (maxHeight - pane.getHeight() - 75)) + 75;
             pos = new Position(randX, randY);
             umlclass.setPosition(randX, randY);
-            // controller.runHelper(Action.MOVE, new String[] {umlclass.getName(), randX + "", randY + ""});
-            // pos = umlclass.getPosition();
-        }
-        if (pos.getX() > maxWidth && pos.getY() > maxHeight)
-        {
-            guiView.getCanvas().setPreferredSize(new Dimension(pos.getX() + background.getWidth() * 3, pos.getY() + background.getHeight() * 2));
-            guiView.revalidate();
-        }
-        else if (pos.getX() > maxWidth)
-        {
-            guiView.getCanvas().setPreferredSize(new Dimension(pos.getX() + background.getWidth() * 3, maxHeight));
-            guiView.revalidate();
-        }
-        else if (pos.getY() > maxHeight)
-        {
-            guiView.getCanvas().setPreferredSize(new Dimension(maxWidth, pos.getY() + background.getHeight() * 2));
-            guiView.revalidate();
         }
         pane.setBounds(pos.getX(), pos.getY(), pane.getWidth(), pane.getHeight());
     }

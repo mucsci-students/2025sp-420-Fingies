@@ -100,7 +100,7 @@ public enum Action {
      * Changes a relationship type
      */
     CHANGE_RELATIONSHIP_TYPE,
-        /**
+     /**
      * Changes the data type of a parameter to a new one
      */
     CHANGE_PARAMETER_TYPE,
@@ -125,13 +125,13 @@ public enum Action {
     // commands that can't be selected in the CLI start here
     
     /*
-     * Moves a class to a new x, y coordinate.
-     */
-    MOVE,
-    /*
      * Exports an image of the current UML diagram in the GUI
      */
     EXPORT,
+    /*
+     * Moves a class to a new x, y coordinate.
+     */
+    MOVE,
     /*
      * Light Mode
      */
