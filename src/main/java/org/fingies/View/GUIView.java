@@ -375,8 +375,11 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 else if (action.equals(Action.REMOVE_PARAMETERS))
                 {
                     finalInputsList.addAll(Arrays.asList(parameters));
-                    finalInputsList.add(";"); 
-                    finalInputsList.add(allInputs[2]);  // Parameter Name
+                    if (!allInputs[2].equals("All Parameters"))
+                    {
+                    	finalInputsList.add(";"); 
+                    	finalInputsList.add(allInputs[2]);  // Parameter Name
+                    }
                 }
                 else if (action.equals(Action.RENAME_METHOD) || action.equals(Action.CHANGE_METHOD_RETURN_TYPE))
                 {
@@ -594,6 +597,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             for (String param : parameters) {
                 paramBox.addItem(param);
             }
+            paramBox.addItem("All Parameters");
         }
     }
     

@@ -75,7 +75,7 @@ public class Command {
 			"CLASS_NAME FIELD_NAME", //remove field
 			"CLASS_NAME FIELD_NAME NEW_NAME", //rename field
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ NEW_PARAMETER_TYPE NEW_PARAMETER ... ]", //add parameters
-			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ OLD_PARAMETER ... ] ", //remove parameters
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] [ ; [ OLD_PARAMETER ... ] ] ", //remove parameters
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_NAME", //rename parameter
 			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE", //change relationship type
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_TYPE", //change parameter type
@@ -116,7 +116,8 @@ public class Command {
 			"Removes a field from a class.",
 			"Gives a field of a class a new name.",
 			"Adds a set of parameters to a method of a class.",
-			"Removes a set of parameters from a method of a class.",
+			"Removes a set of parameters from a method of a class.\n"
+			+ "If no parameters are supplied, all parameters are removed.",
 			"Gives a parameter of a method a new name.",
 			"Changes the type of a specified relationship.",
 			"Changes the data type of a parameter.",

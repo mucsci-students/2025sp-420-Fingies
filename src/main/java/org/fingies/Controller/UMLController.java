@@ -5,6 +5,8 @@ import java.util.Stack;
 
 import org.fingies.Change;
 import org.fingies.Model.JModel;
+import org.fingies.Model.Method;
+import org.fingies.Model.Parameter;
 import org.fingies.Model.RelationshipHandler;
 import org.fingies.Model.RelationshipType;
 import org.fingies.Model.UMLClass;
@@ -366,14 +368,24 @@ public class UMLController {
             Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             boolean result;
             ArrayList <String> empty = new ArrayList<>();
+            
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).addParameters(newParameterNames, newParameterTypes);
-            }   
+            	method = srcUMLClass.getMethod(methodName, empty);
+            } 
             else
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).addParameters(newParameterNames, newParameterTypes);
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
             }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            result = method.addParameters(newParameterNames, newParameterTypes);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
@@ -395,14 +407,66 @@ public class UMLController {
             Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             boolean result;
             ArrayList <String> empty = new ArrayList<>();
+            
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).removeParameters(parameterNamesToRemove);
+            	method = srcUMLClass.getMethod(methodName, empty);
             } 
             else
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).removeParameters(parameterNamesToRemove);
-            }  
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
+            }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            result = method.removeParameters(parameterNamesToRemove);
+    		
+            change.setCurrClass(UMLClassHandler.getClass(srcClass));
+            change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	undoStack.push(change);
+        	redoStack.clear();
+        	return result;
+        }
+        catch (Exception e)
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
+            return false;
+        }
+    }
+    
+    // overloaded variant for removing all parameters
+    public boolean doRemoveParameters(String srcClass, String methodName, List<String> parameterTypes)
+    {
+        try
+        {
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+            boolean result;
+            ArrayList <String> empty = new ArrayList<>();
+            
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+            	method = srcUMLClass.getMethod(methodName, empty);
+            } 
+            else
+            {
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
+            }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            result = method.clearParameters();
+    		
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
             change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
@@ -424,14 +488,25 @@ public class UMLController {
             Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             boolean result;
             ArrayList <String> empty = new ArrayList<>();
+            
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).renameParameter(oldParam, newParam);
-            }   
+            	method = srcUMLClass.getMethod(methodName, empty);
+            } 
             else
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).renameParameter(oldParam, newParam);
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
             }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            result = method.renameParameter(oldParam, newParam);
+            
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
             change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
@@ -451,14 +526,32 @@ public class UMLController {
         {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             ArrayList <String> empty = new ArrayList<>();
+            
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).getParameter(param).setType(newType);
-            }   
+            	method = srcUMLClass.getMethod(methodName, empty);
+            } 
             else
             {
-                UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
             }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            Parameter parameter = method.getParameter(param);
+            
+            if (parameter == null)
+            {
+            	throw new IllegalArgumentException("The method " + methodName + " with the parameter types " + parameterTypes + " does not have a parameter named " + param);
+            }
+            
+            parameter.setType(newType);
+            
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
@@ -970,20 +1063,21 @@ public class UMLController {
             case ADD_PARAMETERS:
                 if (args.length >= 5) {
                     try {
-                        int idx = indexOfSymbol(args, ";");
-                        if (idx == -1)
+                        int index = indexOfSymbol(args, ";");
+                        if (index == -1)
                         {
+                        	int idx = Action.ADD_PARAMETERS.ordinal();
                         	view.notifyFail("Add Parameters should have a semicolon as an argument in between the method's signature and the new parameters\n"
-                        			+ "ex. addp class_name method_name param_type1 param_type2 ; new_param_type new_param_name");
+                        			+ Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                         	return false;
                         }
-                        List<String> oldParamTypes = getPartialListFromArray(args, 2, idx);
-                        if (idx == 3) {
+                        List<String> oldParamTypes = getPartialListFromArray(args, 2, index);
+                        if (index == 3) {
                             oldParamTypes = new ArrayList<String>();
                         }
                         List<String> newParamNames = new ArrayList<String>();
                         List<String> newParamTypes = new ArrayList<String>();
-                        getTwoListsFromArray(args, idx + 1, args.length, newParamNames, newParamTypes);
+                        getTwoListsFromArray(args, index + 1, args.length, newParamNames, newParamTypes);
                         if (doAddParameters(args[0], args[1], oldParamTypes, newParamNames, newParamTypes))
                         {
                             view.notifySuccess("Succesfully added parameter(s): " + newParamNames + " to method " + args[1] + " from class " + args[0]);
@@ -1006,24 +1100,34 @@ public class UMLController {
                     return false;
                 }
             case REMOVE_PARAMETERS:
-                if (args.length >= 5) {
+                if (args.length >= 2) {
                     int idx = indexOfSymbol(args, ";");
                     if (idx == -1)
                     {
-                    	view.notifyFail("Remove Parameters should have a semicolon as an argument in between the method's signature and the parameters to remove\n"
-                    			+ "ex. rmp class_name method_name param_type1 param_type2 ; param_type param_name");
-                    	return false;
+                    	List<String> paramTypes = getPartialListFromArray(args, 2, args.length);
+                    	if (doRemoveParameters(args[0], args[1], paramTypes))
+                        {
+                            view.notifySuccess("Succesfully removed all parameters from method " + args[1] + " from class " + args[0]);
+                            madeChange = true;
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
                     }
-                    List<String> paramTypes = getPartialListFromArray(args, 2, idx);
-                    List<String> paramNames = getPartialListFromArray(args, idx + 1, args.length);
-                    if (doRemoveParameters(args[0], args[1], paramTypes, paramNames))
+                    else
                     {
-                        view.notifySuccess("Succesfully removed parameter(s): " + paramNames + " from method " + args[1] + " from class " + args[0]);
-                        madeChange = true;
-                        return true;
-                    }
-                    else {
-                        return false;
+                    	List<String> paramTypes = getPartialListFromArray(args, 2, idx);
+                        List<String> paramNames = getPartialListFromArray(args, idx + 1, args.length);
+                        if (doRemoveParameters(args[0], args[1], paramTypes, paramNames))
+                        {
+                            view.notifySuccess("Succesfully removed parameter(s): " + paramNames + " from method " + args[1] + " from class " + args[0]);
+                            madeChange = true;
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
                     }
                 }
                 else
