@@ -2,6 +2,9 @@ package org.fingies.View;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -249,7 +252,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         scrollPane.setAlignmentX(0f);
         scrollPane.setAlignmentY(0f);
         
-        // listener
+        // ensure sure the topPanel is painted on top of the scrollPane whenever the scrollPane gets painted
         scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
             theAllPanel.repaint();
         });
@@ -258,18 +261,46 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             theAllPanel.repaint();
         });
 
-        // top panel
-        topPanel = new JPanel();
-        topPanel.setBackground(new Color (0, 0, 50, 50));
-        topPanel.setPreferredSize(new Dimension(1000, 50)); // Width may be ignored by layout
-        topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
+        // Top panel to hold the command text boxes, combo boxes, submit & cancel buttons
+        topPanel = new JPanel() {
+        	
+        	// from ChatGPT:
+        	// overriding this gives the panel a semi-transparent gradient, which looks nice
+        	// apparently this is the standard way to do it in Java Swing
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g.create();
+
+                int width = getWidth();
+                int height = getHeight();
+
+                // Draw row by row with a custom alpha gradient
+                for (int y = 0; y < height; y++) {
+                    // Map y to angle in radians from 0 to π
+                    double t = (double) y / height;
+                    double angle = Math.PI * t;
+                    // cos(x) + 1 goes from 2 → 0, divide by 2 to get 1 → 0
+                    float alpha = (float) ((Math.cos(angle) + 1.0) / 2.0);
+
+                    // Clamp alpha and scale to 0–255
+                    int a = Math.min(255, Math.max(0, (int)(alpha * 50))); // 200 is max alpha
+
+                    g2d.setColor(new Color(0, 0, 50, a));
+                    g2d.drawLine(0, y, width, y);
+                }
+
+                g2d.dispose();
+            }
+        };
+        topPanel.setOpaque(false);
+        topPanel.setPreferredSize(new Dimension(1000, 65)); // Width is ignored by layout
+        topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 65));
         topPanel.setAlignmentX(0f);
         topPanel.setAlignmentY(0f);
-        topPanel.setOpaque(true); // Ensure it's painted
-        //topPanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        topPanel.setVisible(false); // topPanel will be invisible until textboxes & comboboxes are added to it
 
-
-        // Add scrollPane and topPanel in reverse order so topPanel is on top
+        // Add topPanel and scrollPane in order so topPanel is on top
         theAllPanel.add(topPanel);
         theAllPanel.add(scrollPane);
         
@@ -346,6 +377,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         // Add the buttons to the GUI
         topPanel.add(submitButton);
         topPanel.add(cancelButton);
+        topPanel.setVisible(true); // make the topPanel visible until the command is submitted or cancelled
         repaint(); // Refresh UI
     }
 
@@ -372,6 +404,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         textBoxes.clear();
         comboBoxes.forEach(topPanel::remove);
         comboBoxes.clear();
+        topPanel.setVisible(false); // hide topPanel until next command
         repaint(); // Refresh UI
 
         // Special handling for actions that require parameter formatting 
@@ -475,8 +508,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 allInputs = finalInputsList.toArray(new String[0]);
             } 
         }
-        // System.out.println("Input: " + Arrays.toString(allInputs));
-    
+        
         // Call controller helper with the concatenated arguments
         if (controller.runHelper(action, allInputs)) {
             actionHelper(action, allInputs);
@@ -492,6 +524,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         textBoxes.clear();
         comboBoxes.forEach(topPanel::remove);
         comboBoxes.clear();
+        topPanel.setVisible(false); // hide topPanel until next command
         repaint(); // Refresh UI
     }
     
