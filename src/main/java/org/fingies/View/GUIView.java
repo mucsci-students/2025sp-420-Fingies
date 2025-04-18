@@ -2,6 +2,7 @@ package org.fingies.View;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -11,6 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -25,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JMenu;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
 import javax.swing.OverlayLayout;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
@@ -297,6 +300,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         topPanel.setOpaque(false);
         topPanel.setPreferredSize(new Dimension(1000, 65)); // Width is ignored by layout
         topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 65));
+        topPanel.setLayout(null);
         topPanel.setAlignmentX(0f);
         topPanel.setAlignmentY(0f);
         topPanel.setVisible(false); // topPanel will be invisible until textboxes & comboboxes are added to it
@@ -305,9 +309,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         theAllPanel.add(topPanel);
         theAllPanel.add(scrollPane);
         
-
         this.setSize(1000, 1000);
-
 
         // Set JFrame attributes
         this.setTitle("UMLEditor");
@@ -349,12 +351,12 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         submitButton = new JButton("Submit");
         cancelButton = new JButton("Cancel");
 
-        Rectangle view = scrollPane.getViewport().getViewRect();
-        submitButton.setBounds(view.x + offset * 130 + 20, 20, 125, 30); // Position and size for submit button
+        submitButton.setBounds(offset * 130 + 20, 20, 125, 30); // Position and size for submit button
         submitButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         submitButton.setBackground(Color.WHITE);
         submitButton.setOpaque(true);
-        cancelButton.setBounds(view.x + (offset + 1) * 130 + 20, 20, 125, 30); // Position and size for cancel button
+
+        cancelButton.setBounds((offset + 1) * 130 + 20, 20, 125, 30); // Position and size for cancel button
         cancelButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
         cancelButton.setBackground(Color.WHITE);
         cancelButton.setOpaque(true);
@@ -379,6 +381,19 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         topPanel.add(submitButton);
         topPanel.add(cancelButton);
         topPanel.setVisible(true); // make the topPanel visible until the command is submitted or cancelled
+
+        // Make Enter key trigger Submit
+        getRootPane().setDefaultButton(submitButton);
+
+        // Make Escape key trigger Cancel
+        topPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "cancel");
+        topPanel.getActionMap().put("cancel", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleCancelAction();
+            }
+        });
+
         repaint(); // Refresh UI
     }
 
@@ -536,7 +551,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      */
     public void makeComboBoxes(Action a, String[] placeholders) {
         comboBoxes.clear();
-        Rectangle view = scrollPane.getViewport().getViewRect();
+        // Rectangle view = scrollPane.getViewport().getViewRect();
         JComboBox<String> classComboBox = null;
         JComboBox<String> methodComboBox = null;
         JComboBox<String> parameterComboBox = null;
@@ -592,7 +607,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             // Allows the text to wrap and sets the max amount of rows to be shown per box at a time
             box.setRenderer(new WrappingComboBoxRenderer());
             box.setMaximumRowCount(8);
-            styleComboBox(box, i, view);
+            // styleComboBox(box, i, view);
+            styleComboBox(box, i);
             comboBoxes.add(box);
             topPanel.add(box);
         }
@@ -750,10 +766,15 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param box box to be styled
      * @param index determines the offset horizontally, so the boxes don't overlap
      */
-    private void styleComboBox(JComboBox<String> box, int index, Rectangle view) {
-        box.setBounds(view.x + index * 130 + 20, 20, 125, 30);
+    private void styleComboBox(JComboBox<String> box, int index) {
+        box.setBounds(index * 130 + 20, 20, 125, 30);
         box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     }
+
+    // private void styleComboBox(JComboBox<String> box, int index, Rectangle view) {
+    //     box.setBounds(view.x + index * 130 + 20, 20, 125, 30);
+    //     box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+    // }
     
 
     /**
@@ -764,7 +785,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      */
     public void makeTextBoxes(Action a, String [] placeholders, int offset)
     {
-        Rectangle view = scrollPane.getViewport().getViewRect();
+        // Rectangle view = scrollPane.getViewport().getViewRect();
         textBoxes.clear();
         for (int i = 0; i < placeholders.length; i++)
         {
@@ -772,17 +793,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
             // text.setBounds(offset * 130 + 20, 20, 125, 30); // Set position and size
 
-            int xPosition = view.x + (offset * 130) + 20; // x relative to the visible area
+            // int xPosition = view.x + (offset * 130) + 20; // x relative to the visible area
+            int xPosition = offset * 130 + 20; // x relative to the visible area
             int yPosition = 20; // y relative to the visible area
-
-            // Ensure that the text box stays within the bounds of the visible area
-            // if (xPosition + text.getWidth() > view.x + view.width) {
-            //     xPosition = view.x + view.width - text.getWidth(); // Keep it within the visible width
-            // }
-
-            // if (yPosition + text.getHeight() > view.y + view.height) {
-            //     yPosition = view.y + view.height - text.getHeight(); // Keep it within the visible height
-            // }
 
             text.setBounds(xPosition, yPosition, 125, 30); // Set position and size
 
