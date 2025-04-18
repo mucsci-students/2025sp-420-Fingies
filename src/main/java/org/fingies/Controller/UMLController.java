@@ -260,14 +260,24 @@ public class UMLController {
             ArrayList <String> empty = new ArrayList<>();
             Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-            	UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).setReturnType(newType);
-            }
+            	method = srcUMLClass.getMethod(methodName, empty);
+            } 
             else
             {
-            	UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).setReturnType(newType); 
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
             }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            method.setReturnType(newType);
+            
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
             change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
