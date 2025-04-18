@@ -2,6 +2,8 @@ package org.fingies.View;
 
 import java.util.List;
 
+import javax.swing.JComponent;
+
 import org.fingies.Controller.UMLController;
 
 /**
@@ -164,5 +166,13 @@ public interface UMLView {
 	 * @return A int representing the choice of the user, 0 is yes, 1 is no, 2 is cancel
 	 */
 	int promptForYesNoInput(String message, String title);
+	
+	/**
+	 * Creates a representation of the diagram as a JComponent and returns it, or returns
+	 * an existing representation if it has one.
+	 * 
+	 * @return A JComponent that represents the entire diagram.
+	 */
+	public JComponent getJComponentRepresentation();
 	
 }
