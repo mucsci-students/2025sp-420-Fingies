@@ -87,9 +87,8 @@ public class GUIUMLClass {
         background.addMouseListener(dragListener);
         background.addMouseMotionListener(dragListener);
 
-        initializePosition(background, guiView.getWidth() - 2, guiView.getHeight() - 2); // subtract 2 for a little buffer
-
         update();
+        initializePosition(background, guiView.getWidth() - 20, guiView.getHeight() - 70); // subtract 20 and 70 to give a proper buffer
     }
 
     public Color getColor()
@@ -128,7 +127,7 @@ public class GUIUMLClass {
         if (pos.getX() < 0 || pos.getY() < 75)
         {
         	JViewport vp = scrollPane.getViewport();
-        	
+
         	// the position is invalid, so randomize it
         	int randX = (int)(Math.random() * Math.max(0, maxWidth - pane.getWidth())) + vp.getViewPosition().x;
             int randY = (int)(Math.random() * Math.max(0, maxHeight - pane.getHeight() - 75)) + 75 + vp.getViewPosition().y;
