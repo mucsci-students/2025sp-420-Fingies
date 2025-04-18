@@ -4,6 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
+import javax.swing.JComponent;
+
 import org.junit.Test;
 import org.fingies.Controller.Action;
 import org.fingies.Controller.UMLController;
@@ -44,6 +46,7 @@ public class ComplexUndoRedoTests {
 		    @Override public void help(String command) {}
 		    @Override public void setController(UMLController c) {}
 			@Override public int promptForYesNoInput(String message, String title) { return 2; }
+			@Override public JComponent getJComponentRepresentation() { return null; }
 		};
 
         controller = new UMLController(view, new JModel());

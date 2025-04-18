@@ -83,7 +83,10 @@ public class Command {
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] NEW_TYPE", //change method type
 			"", //undo
 			"", //redo
-			"CLASS_NAME NEW_X NEW_Y" //move
+			"[ FILEPATH ]", //export
+			"CLASS_NAME NEW_X NEW_Y", //move
+			"", //light mode
+			"" //dark mode
 		};
 	
 	/**

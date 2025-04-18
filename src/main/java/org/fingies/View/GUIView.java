@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
@@ -431,9 +432,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 // Now finalInputsList will contain the elements in the desired format
                 allInputs = finalInputsList.toArray(new String[0]);
             } 
-        }
-        // System.out.println("Input: " + Arrays.toString(allInputs));
-    
+        }    
         // Call controller helper with the concatenated arguments
         if (controller.runHelper(action, allInputs)) {
             actionHelper(action, allInputs);
@@ -859,7 +858,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         }
         else if (e.getSource() == export)
         {
-        	// controller.runHelper(a, new String[] {});
+        	controller.runHelper(a, new String[] {});
         }
         else if (e.getSource() == undo)
         {
@@ -886,10 +885,12 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         else if (e.getSource() == lightMode)
         {
             // for Tristan
+        	//controller.runHelper(a, new String[] {});
         }
         else if (e.getSource() == darkMode)
         {
             // for Tristan
+        	//controller.runHelper(a, new String[] {});
         }
     }
 
@@ -973,6 +974,18 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     {
     	new HashSet<>(GUIUMLClasses.keySet()).forEach(x -> removeUMLClass(x));
     	UMLClassHandler.getAllClasses().stream().forEach(x -> addUMLClass(x.getName()));
+    	
+    	int maxX = 0, maxY = 0;
+    	for (GUIUMLClass g : GUIUMLClasses.values()) {
+    	    Position p = g.getUMLClass().getPosition();
+    	    int w = g.getWidth();
+    	    int h = g.getHeight();
+    	    maxX = Math.max(maxX, p.getX() + w * 3);
+    	    maxY = Math.max(maxY, p.getY() + h * 2);
+    	}
+    	canvas.setPreferredSize(new Dimension(maxX, maxY));
+    	revalidate();
+
     	updateArrows();
     }
 
@@ -1195,6 +1208,11 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 		{
 			return 2;
 		}
+	}
+    
+    @Override
+	public JComponent getJComponentRepresentation() {
+		return canvas;
 	}
 }
 

@@ -9,6 +9,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.Stack;
 
+import javax.swing.JComponent;
+
 import org.junit.Test;
 import org.fingies.Controller.Action;
 import org.fingies.Controller.UMLController;
@@ -51,6 +53,7 @@ public class UndoTest {
 		    @Override public void help(String command) {}
 		    @Override public void setController(UMLController c) {}
 		    @Override public int promptForYesNoInput(String message, String title) { return 2; }
+		    @Override public JComponent getJComponentRepresentation() { return null; }
 		};
 
         controller = new UMLController(view, new JModel());
