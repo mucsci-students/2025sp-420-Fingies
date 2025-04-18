@@ -250,6 +250,46 @@ public class MethodTest {
     {
         assertFalse(m.removeParameter("Param1"));
     }
+    
+    // --------------------- CLEAR PARAMETERS ---------------------
+
+    @Test
+    public void addOneParameterToMethodAndClear_ThenMethodShouldContainParameter()
+    {
+        m.addParameter("Param1",  "String");
+        assertTrue(m.parameterExists("Param1"));
+        m.clearParameters();
+        assertFalse(m.parameterExists("Param1"));
+    }
+
+    @Test
+    public void clearListOfParameters_ThenAllParametersShouldBeRemoved()
+    {
+        m.addParameter("Param1",  "String");
+        m.addParameter("Param2",  "int");
+        m.addParameter("Param3",  "boolean");
+
+        assertTrue(m.parameterExists("Param1"));
+        assertTrue(m.parameterExists("Param2"));
+        assertTrue(m.parameterExists("Param3"));
+
+        m.clearParameters();
+        
+        assertTrue(m.getParameters().isEmpty());
+    }
+
+    @Test
+    public void clearWithNonExistantParameters_ThenIllegalArgumentExceptionThrown()
+    {
+        try
+        {
+            m.clearParameters();
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals(e.getMessage(), "Method " + m.getName() + " doesn't have any parameters.");
+        }
+    }
 
     // --------------------- CHANGE PARAMETER TYPES ---------------------
 
