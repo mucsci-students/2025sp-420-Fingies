@@ -4,6 +4,7 @@ import org.fingies.Controller.Command;
 import org.fingies.Model.UMLClassHandler;
 import org.jline.reader.*;
 
+import java.lang.reflect.Type;
 import java.util.*;
 
 public class TabCompletion {
@@ -69,11 +70,67 @@ public class TabCompletion {
                 // else if (a != null) {
                 //     swtich statement:
                 //     case(a == ADD_CLASS) {
-                //         cannot complete new name
+                //         //cannot complete new name
                 //     }
                 //     case(a == remove class) {
                 //         if (wordIndex == 2) {
                 //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //     }
+                //     case(a == rename class) {
+                //         if (wordIndex == 2) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //     }
+                //     case(a == add relationship) {
+                //         if (wordIndex == 2) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //         if (wordIndex == 3) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //         // GET RELATIONSHIP TYPE
+                //     }
+                //     case(a == remove relationship) {
+                //         if (wordIndex == 2) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //         if (wordIndex == 3) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //     }
+                //     case(a == save) {
+                //         //cannot complete save
+                //     }
+                //     case(a == load) {
+                //         //cannot complete load
+                //     }
+                //     case(a == list class) {
+                //         if (wordIndex == 2) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //     }
+                //     case(a == help) {
+                //         //cannot complete help
+                //     }
+
+
+
+                //     ADD METHOD
+                //     REMOVE METHOD
+                //     RENAME METHOD
+
+
+
+                //     case(a == add field) {
+                //         if (wordIndex == 2) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //         if (wordIndex == 3) {
+                //             cannot complete new field name
+                //         }
+                //         if (wordIndex == 4) {
+                //             // GET LIST OF TYPES
                 //         }
                 //     }
                 //     case(a == remove field) {
@@ -84,6 +141,70 @@ public class TabCompletion {
                 //             candidates.add(UMLClassHandler.getClass(line.get(2).getallfields()));
                 //         }
                 //     }
+                //     case(a == rename field) {
+                //         if (wordIndex == 2) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //         if (wordIndex == 3) {
+                //             candidates.add(UMLClassHandler.getClass(line.get(2).getallfields()));
+                //         }
+                //         if (wordIndex == 4) {
+                //            // cannot complete new field name
+                //         }
+                //     }
+
+
+
+                //     ADD PARAMETER
+                //     REMOVE PARAMETER
+                //     RENAME PARATMETER
+
+
+
+                //     case(a == change relationship type) {
+                //         if (wordIndex == 2) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //         if (wordIndex == 3) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //         // GET RELATIONSHIP TYPE
+                //     } 
+
+
+                //     CHANGE PARAMETER TYPE
+
+
+
+                //     case(a == change field type) {
+                //         if (wordIndex == 2) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //         if (wordIndex == 3) {
+                //             candidates.add(UMLClassHandler.getClass(line.get(2).getallfields()));
+                //         }
+                //         if (wordIndex == 4) {
+                //            // GET FIELD TYPE
+                //         }
+                //     }
+
+
+
+                //     CHANGE METHOD TYPE
+
+
+
+                //     case(a == move) {
+                //         if (wordIndex == 1) {
+                //             candidates.add(UMLClassHandler.getAllClasses());
+                //         }
+                //         if (wordIndex == 2) {
+                //             cannot complete new x
+                //         }
+                //         if (wordIndex == 3) {
+                //             cannot complete new y
+                //         }
+                //     } 
                 // }
             }
         };
