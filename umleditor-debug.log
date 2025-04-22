@@ -257,3 +257,8 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-
 [04/18/25 15:52:32]: The name Class Name contains invalid characters
 [04/18/25 15:59:25]: The name Class Name contains invalid characters
 [04/19/25 01:35:13]: The name Class Name contains invalid characters
+[04/22/25 17:16:26]: javax.imageio.IIOException: Can't create an ImageOutputStream!
+[04/22/25 17:16:26]: java.lang.IllegalArgumentException: Invalid Argument: null, in exportImage
+[04/22/25 17:16:26]: java.lang.NullPointerException: Cannot invoke "org.fingies.Model.JModel$UMLModel.reloadClasses()" because "data" is null
+[04/22/25 17:16:26]: Test Write to Error Log, Ignore this message.
+[04/22/25 17:16:26]: java.lang.NullPointerException

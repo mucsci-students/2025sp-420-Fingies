@@ -75,7 +75,7 @@ public class Command {
 			"CLASS_NAME FIELD_NAME", //remove field
 			"CLASS_NAME FIELD_NAME NEW_NAME", //rename field
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ NEW_PARAMETER_TYPE NEW_PARAMETER ... ]", //add parameters
-			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ OLD_PARAMETER ... ] ", //remove parameters
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] [ ; [ OLD_PARAMETER ... ] ] ", //remove parameters
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_NAME", //rename parameter
 			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE", //change relationship type
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_TYPE", //change parameter type
@@ -114,7 +114,8 @@ public class Command {
 			"Removes a field from a class.",
 			"Gives a field of a class a new name.",
 			"Adds a set of parameters to a method of a class.",
-			"Removes a set of parameters from a method of a class.",
+			"Removes a set of parameters from a method of a class.\n"
+			+ "If no parameters are supplied, all parameters are removed.",
 			"Gives a parameter of a method a new name.",
 			"Changes the type of a specified relationship.",
 			"Changes the data type of a parameter.",
@@ -150,6 +151,33 @@ public class Command {
 	}
 	
 	/**
+	 * Gets the Action enum that represents the command in the string. The string must start with the command.
+	 * Spaces at the beginning and end of the string are ignored.
+	 * 
+	 * @param input The string to get the Action out of.
+	 * @return The Action enum that represents the command at the beginning of the string, or null if there is none.
+	 */
+	public static Action getActionOutOfString(String input)
+	{
+		// parse command
+		input = input.trim();
+		Action a = null;
+		
+		for (int i = 0; i < COMMANDS.length && a == null; ++i)
+			if (input.startsWith(COMMANDS[i]))
+				a = Action.values()[i];	
+		
+		for (int i = 0; i < COMMANDS_SHORTHAND.length && a == null; ++i)
+			if (input.startsWith(COMMANDS_SHORTHAND[i]))
+				a = Action.values()[i];
+		
+		if (a == null)
+			return null;
+		
+		return a;
+	}
+	
+	/**
 	 * Parses the string argument as a Command.
 	 * 
 	 * Commands should be formatted 'command ARGS' where 'command' is the keyword or
@@ -163,29 +191,15 @@ public class Command {
 	 */
 	public static Command parseCommand(String input)
 	{
-		// parse command
 		input = input.trim();
-		Action a = null;
+		
+		Action a = getActionOutOfString(input);
+		
 		int cmdLen = 0;
-		for (int i = 0; i < COMMANDS.length && a == null; ++i)
-		{
-			if (input.startsWith(COMMANDS[i]))
-			{
-				a = Action.values()[i];
-				cmdLen = COMMANDS[i].length();
-				
-			}
-		}
-		for (int i = 0; i < COMMANDS_SHORTHAND.length && a == null; ++i)
-		{
-			if (input.startsWith(COMMANDS_SHORTHAND[i]))
-			{
-				a = Action.values()[i];
-				cmdLen = COMMANDS_SHORTHAND[i].length();
-			}
-		}
-		if (a == null)
-			return null;
+		if (input.startsWith(COMMANDS[a.ordinal()]))
+			cmdLen = COMMANDS[a.ordinal()].length();
+		else
+			cmdLen = COMMANDS_SHORTHAND[a.ordinal()].length();
 		
 		// trim 'input' to be just the arguments
 		if (input.length() > cmdLen)
