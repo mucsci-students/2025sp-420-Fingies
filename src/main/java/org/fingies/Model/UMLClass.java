@@ -49,9 +49,6 @@ public class UMLClass {
      * @param name name of the new class/attribute the user desires
      */
     public void validateCharacters(String name) {
-        if (name.length() > 50) {
-            throw new IllegalArgumentException("Class names must not be longer than 50 characters");
-        }
         for (char c : name.toCharArray()) {
             if (allowedCharacters.indexOf(c) == -1) {
                 throw new IllegalArgumentException("The name " + name + " contains invalid characters");
