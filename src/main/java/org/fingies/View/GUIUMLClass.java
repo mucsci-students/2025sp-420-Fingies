@@ -65,11 +65,11 @@ public class GUIUMLClass {
         methodsPanel.setLayout(null);  // Set layout to null
 
         /* Here are the different layers in order for a JLayeredPane:
-                JLayeredPane.DEFAULT_LAYER
-                JLayeredPane.PALETTE_LAYER
-                JLayeredPane.MODAL_LAYER
-                JLayeredPane.POPUP_LAYER
-                JLayeredPane.DRAG_LAYER 
+            JLayeredPane.DEFAULT_LAYER
+            JLayeredPane.PALETTE_LAYER
+            JLayeredPane.MODAL_LAYER
+            JLayeredPane.POPUP_LAYER
+            JLayeredPane.DRAG_LAYER 
         */
 
         // Create a JLayeredPane
@@ -85,7 +85,7 @@ public class GUIUMLClass {
         background.add(fieldsPanel, JLayeredPane.PALETTE_LAYER);
         background.add(methodsPanel, JLayeredPane.PALETTE_LAYER);
         
-     // Creates new listener for the newly added JLayeredPane
+        // Creates new listener for the newly added JLayeredPane
         DragListener dragListener = new DragListener(background, guiView);
         background.addMouseListener(dragListener);
         background.addMouseMotionListener(dragListener);
@@ -95,36 +95,60 @@ public class GUIUMLClass {
         update();
     }
 
+    /**
+     * Gets the color of the class
+     */
     public Color getColor()
     {
         return color;
     }
 
+    /**
+     * Sets the color of the class
+     */
     public void setColor()
     {
         color = ColorUtil.colorOfString(umlclass.getName());
     }
 
+    /**
+     * Gets the UMLClass that the GUIUMLClass is based on
+     */
     public UMLClass getUMLClass()
     {
         return umlclass;
     }
 
+    /**
+     * Gets the JLayeredPane that holds all other JPanels
+     */
     public JLayeredPane getJLayeredPane()
     {
         return background;
     }
     
+    /**
+     * Gets the width of JLayeredPane that holds all other JPanels
+     */
     public int getWidth()
     {
     	return background.getWidth();
     }
     
+    /**
+     * Gets the height of the JLayeredPane that holds all other JPanels
+     */
     public int getHeight()
     {
     	return background.getHeight();
     }
 
+    /**
+     * Initializes the x and y positions of the GUIUMLClass within the GUI
+     * @param pane the JLayeredPane that holds all UMLClasses
+     * @param maxWidth the maxWidth of the pane
+     * @param maxHeight the maxHight of the pane
+     */
     public void initializePosition (JLayeredPane pane, int maxWidth, int maxHeight)
     {
         Position pos = umlclass.getPosition();
@@ -139,6 +163,9 @@ public class GUIUMLClass {
         pane.setBounds(pos.getX(), pos.getY(), pane.getWidth(), pane.getHeight());
     }
 
+    /**
+     * Updates all of the content (className, fields, and methods) within a GUIUMLClass upon an action made in the GUI
+     */
     public void update ()
     {
         updateFields();
@@ -166,6 +193,9 @@ public class GUIUMLClass {
         background.repaint();
     }
 
+    /**
+     * Updates the name of the class based on updated information from UMLClass
+     */
     public void updateClassName()
     {
         classPanel.removeAll(); // Clear panel before updating
@@ -184,6 +214,9 @@ public class GUIUMLClass {
         classPanel.repaint();
     }
 
+    /**
+     * Updates the fields of the class based on updated information from UMLClass
+     */
     public void updateFields ()
     {
         fieldsPanel.removeAll(); // Clear panel before updating
@@ -221,6 +254,9 @@ public class GUIUMLClass {
         fieldsPanel.repaint();
     }
 
+    /**
+     * Updates the methods and parameters of the class based on updated information from UMLClass
+     */
     public void updateMethods ()
     {
         methodsPanel.removeAll(); // Clear panel before updating

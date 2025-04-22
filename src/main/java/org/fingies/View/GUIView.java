@@ -52,7 +52,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private JMenu removeMenu;
     private JMenu renameMenu;
     private JMenu typeMenu;
-    private JMenu themeMenu;
 
     private GUIMenuItem load;
     private GUIMenuItem save;
@@ -82,9 +81,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private GUIMenuItem changeMethodType;
     private GUIMenuItem changeParameterType;
     private GUIMenuItem changeRelatoinshipType;
-
-    private GUIMenuItem lightMode;
-    private GUIMenuItem darkMode;
 
     private ArrayList<JTextField> textBoxes;
     private ArrayList<JComboBox<String>> comboBoxes;
@@ -119,7 +115,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         removeMenu = new JMenu("Remove");
         renameMenu = new JMenu("Rename");
         typeMenu = new JMenu("ChangeType");
-        themeMenu = new JMenu("Theme");
 
         // Adds menus to menubar
         menuBar.add(fileMenu);
@@ -127,7 +122,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         menuBar.add(removeMenu);
         menuBar.add(renameMenu);
         menuBar.add(typeMenu);
-        menuBar.add(themeMenu);
 
         // Creates JMenu submenus
         load = new GUIMenuItem("Open", Action.LOAD);
@@ -163,10 +157,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         changeParameterType= new GUIMenuItem("Parameter", Action.CHANGE_PARAMETER_TYPE);
         changeRelatoinshipType = new GUIMenuItem("Relationship", Action.CHANGE_RELATIONSHIP_TYPE);
 
-        // THEME
-        lightMode = new GUIMenuItem("Light Mode", Action.LIGHT_MODE);
-        darkMode = new GUIMenuItem("Dark Mode", Action.DARK_MODE);
-
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
         save.addActionListener(this);
@@ -196,9 +186,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         changeMethodType.addActionListener(this);
         changeParameterType.addActionListener(this);
         changeRelatoinshipType.addActionListener(this);
-
-        lightMode.addActionListener(this);
-        darkMode.addActionListener(this);
 
         // Allows the press of a key to do the function of clicking the menu item WHILE in the menu
         undo.setMnemonic(KeyEvent.VK_U); // Z for undo
@@ -233,9 +220,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         typeMenu.add(changeMethodType);
         typeMenu.add(changeParameterType);
         typeMenu.add(changeRelatoinshipType);
-
-        themeMenu.add(lightMode);
-        themeMenu.add(darkMode);
         
         // all panel
         theAllPanel = new JPanel();
@@ -346,7 +330,11 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         return scrollPane;
     }
 
-
+    /**
+     * Creates the submit and cancel buttons for each command
+     * @param a the action the submit button will send to the handleSubmitAction method
+     * @param offset offset of how many different boxes come before it for positioning in GUI
+     */
     private void createButtons(Action a, int offset) {
         submitButton = new JButton("Submit");
         cancelButton = new JButton("Cancel");
@@ -397,6 +385,10 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         repaint(); // Refresh UI
     }
 
+    /**
+     * Concatenates text inputed by user + text from select boxes and parses them into commands to be sent to the Controller
+     * @param action action to be performed that is sent to the Controller
+     */
     private void handleSubmitAction(Action action) {
         // Concatenate the text from text fields and combo boxes just like pressing Enter
         topPanel.remove(submitButton);
@@ -493,7 +485,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                     }
                 }
                 
-
                 // Ensure type-name pairing is valid 
                 if (types != null && types.length == names.length) { 
                     List <String> altered = new ArrayList<>();
@@ -551,7 +542,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      */
     public void makeComboBoxes(Action a, String[] placeholders) {
         comboBoxes.clear();
-        // Rectangle view = scrollPane.getViewport().getViewRect();
         JComboBox<String> classComboBox = null;
         JComboBox<String> methodComboBox = null;
         JComboBox<String> parameterComboBox = null;
@@ -607,7 +597,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             // Allows the text to wrap and sets the max amount of rows to be shown per box at a time
             box.setRenderer(new WrappingComboBoxRenderer());
             box.setMaximumRowCount(8);
-            // styleComboBox(box, i, view);
             styleComboBox(box, i);
             comboBoxes.add(box);
             topPanel.add(box);
@@ -628,7 +617,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     /**
      * Creates comboboxes for either the fields or methods based on methodType
      * @param classComboBox combobox consisting of all currect classes that exist within the model
-     * @param methodType either "getFields" for fields or "getMethods" for methods
+     * @param methodType either "getFields" for fields, "getMethods" for methods, or "getDestinations" for destinations
      * @return a combobox containing either all of the fields or methods that exist within a class
      */
     private JComboBox<String> createComboBoxForClassItems(JComboBox<String> classComboBox, String methodType) {
@@ -656,7 +645,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * Updates a combobox to fill it with new updated data
      * @param box combobox to be updated
      * @param classComboBox combobox consisting of all currect classes that exist within the model
-     * @param methodType either "getFields" for fields or "getMethods" for methods
+     * @param methodType either "getFields" for fields, "getMethods" for methods, or "getDestinations" for destinations
      */
     private void updateComboBox(JComboBox<String> box, JComboBox<String> classComboBox, String methodType) {
         String selectedClass = (String) classComboBox.getSelectedItem();
@@ -723,7 +712,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * Adds a listener for a combobox that will update based on what methodType is provided
      * @param classComboBox combobox consisting of all currect classes that exist within the model
      * @param box box to be given a listener and filled with updated data from the model
-     * @param methodType either "getFields" for fields or "getMethods" for methods
+     * @param methodType either "getFields" for fields, "getMethods" for methods, or "getDestinations" for destinations
      */
     private void addComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> box, String methodType) {
         classComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{box}) {
@@ -742,10 +731,10 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     }
     
     /**
-     * Returns list of either fields or methods based on methodType provided
+     * Returns list of either fields, methods, or destinations based on methodType provided
      * @param selectedClass classname that was selected within the classComboBox
-     * @param methodType either "getFields" for fields or "getMethods" for methods
-     * @return list of either all fields or all methods that exist within a certain class
+     * @param methodType either "getFields" for fields, "getMethods" for methods, or "getDestinations" for destinations
+     * @return list of either all fields, all methods, or all destinations that exist within a certain class
      */
     private String[] getClassItems(String selectedClass, String methodType) {
         return switch (methodType) {
@@ -769,13 +758,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private void styleComboBox(JComboBox<String> box, int index) {
         box.setBounds(index * 130 + 20, 20, 125, 30);
         box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-    }
-
-    // private void styleComboBox(JComboBox<String> box, int index, Rectangle view) {
-    //     box.setBounds(view.x + index * 130 + 20, 20, 125, 30);
-    //     box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-    // }
-    
+    } 
 
     /**
      * Creates textboxes
@@ -973,16 +956,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         		System.exit(0);
         	}
         }
-        else if (e.getSource() == lightMode)
-        {
-            // for Tristan
-        	//controller.runHelper(a, new String[] {});
-        }
-        else if (e.getSource() == darkMode)
-        {
-            // for Tristan
-        	//controller.runHelper(a, new String[] {});
-        }
     }
 
     /**
@@ -998,19 +971,15 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 break;
             case REMOVE_CLASS:
                 removeUMLClass(args[0]);
-                // updateArrows();
                 break;
             case RENAME_CLASS:
                 renameUMLClass(args[0], args[1]);
                 break;
             case ADD_RELATIONSHIP:
-                // updateArrows();
                 break;
             case REMOVE_RELATIONSHIP:
-                // updateArrows();
                 break;
             case CHANGE_RELATIONSHIP_TYPE:
-                // updateArrows();
                 break;
             case ADD_METHOD:
                 updateAttributes(args[0]);
@@ -1076,7 +1045,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     	}
     	canvas.setPreferredSize(new Dimension(maxX, maxY));
     	revalidate();
-
     	updateArrows();
     }
 
@@ -1202,6 +1170,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	public String promptForInput(String message) {
 		return JOptionPane.showInputDialog(message);
 	}
+
 	@Override
 	public List<String> promptForInput(List<String> messages) {
 		List<String> result = new ArrayList<String>();
@@ -1211,6 +1180,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         }
         return result;
 	}
+
 	@Override
 	public List<String> promptForInput(List<String> messages, List<InputCheck> checks) {
 		List<String> result = new ArrayList<String>();
@@ -1247,39 +1217,42 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         	return null;
         return fileChooser.getSelectedFile().getPath();
 	}
-	
+
 	@Override
 	public void notifySuccess() {
 		// DON'T IMPLEMENT THIS
 	}
+
 	@Override
 	public void notifySuccess(String message) {
 		// DO NOT IMPLEMENT PLS!
 	}
+
 	@Override
 	public void notifyFail(String message) {
-		JOptionPane.showMessageDialog(this, message);
-		
+		JOptionPane.showMessageDialog(this, message);	
 	}
+
 	@Override
 	public void display(String message) {
 		JOptionPane.showMessageDialog(this, message);
 	}
+
 	@Override
 	public void help() {
-		// TODO Auto-generated method stub
+		// Nothing
 		
 	}
+
 	@Override
 	public void help(String command) {
-		// TODO Auto-generated method stub
-		
+		// Nothing	
 	}
-	
+
 	@Override
 	public void run() 
 	{
-		// Nothing to be implemented here
+		// Nothing
 	}
 	
 	@Override
