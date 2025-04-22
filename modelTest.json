@@ -1,12 +1,36 @@
 {
   "classes": [
     {
-      "name": "Food",
-      "fields": [],
-      "methods": [],
+      "name": "Car",
+      "fields": [
+        {
+          "name": "Wheels",
+          "type": "Wheels"
+        },
+        {
+          "name": "V16Engine",
+          "type": "Engine"
+        }
+      ],
+      "methods": [
+        {
+          "name": "Drive",
+          "return_type": "void",
+          "params": [
+            {
+              "name": "ThrottleAmount",
+              "type": "Float"
+            },
+            {
+              "name": "gasAmount",
+              "type": "Float"
+            }
+          ]
+        }
+      ],
       "position": {
-        "x": 0,
-        "y": 0
+        "x": 1000,
+        "y": 500
       }
     },
     {
@@ -39,36 +63,12 @@
       }
     },
     {
-      "name": "Car",
-      "fields": [
-        {
-          "name": "Wheels",
-          "type": "Wheels"
-        },
-        {
-          "name": "V16Engine",
-          "type": "Engine"
-        }
-      ],
-      "methods": [
-        {
-          "name": "Drive",
-          "return_type": "void",
-          "params": [
-            {
-              "name": "ThrottleAmount",
-              "type": "Float"
-            },
-            {
-              "name": "gasAmount",
-              "type": "Float"
-            }
-          ]
-        }
-      ],
+      "name": "Food",
+      "fields": [],
+      "methods": [],
       "position": {
-        "x": 1000,
-        "y": 500
+        "x": 0,
+        "y": 0
       }
     }
   ],
