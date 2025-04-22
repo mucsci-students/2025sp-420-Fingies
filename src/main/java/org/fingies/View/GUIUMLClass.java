@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.ScrollPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Objects;
@@ -41,12 +42,16 @@ public class GUIUMLClass {
     private UMLClass umlclass;
     private UMLController controller;
     private GUIView guiView;
+    private final JScrollPane scrollPane;
+    private final JLayeredPane canvas;
 
     public GUIUMLClass(UMLClass umlclass, UMLController controller, GUIView guiView)
     {
         this.umlclass = umlclass;
         this.controller = controller;
         this.guiView = guiView;
+        this.scrollPane = guiView.getScrollPane();
+        this.canvas = guiView.getCanvas();
         setColor();
 
         classPanel = new JPanel();
@@ -64,14 +69,6 @@ public class GUIUMLClass {
         methodsPanel.setBounds(5, 115, DEFAULT_PANEL_WIDTH, DEFAULT_METHOD_PANEL_HEIGHT);
         methodsPanel.setLayout(null);  // Set layout to null
 
-        /* Here are the different layers in order for a JLayeredPane:
-                JLayeredPane.DEFAULT_LAYER
-                JLayeredPane.PALETTE_LAYER
-                JLayeredPane.MODAL_LAYER
-                JLayeredPane.POPUP_LAYER
-                JLayeredPane.DRAG_LAYER 
-        */
-
         // Create a JLayeredPane
         background = new JLayeredPane();
         background.setBounds(0, 0, 150, 250);
@@ -85,14 +82,13 @@ public class GUIUMLClass {
         background.add(fieldsPanel, JLayeredPane.PALETTE_LAYER);
         background.add(methodsPanel, JLayeredPane.PALETTE_LAYER);
         
-     // Creates new listener for the newly added JLayeredPane
+        // Creates new listener for the newly added JLayeredPane
         DragListener dragListener = new DragListener(background, guiView);
         background.addMouseListener(dragListener);
         background.addMouseMotionListener(dragListener);
 
-        initializePosition(background, guiView.getWidth() - background.getWidth() * 2, guiView.getHeight() - background.getHeight() * 2);
-
         update();
+        initializePosition(background, guiView.getWidth() - 20, guiView.getHeight() - 70); // subtract 20 and 70 to give a proper buffer
     }
 
     public Color getColor()
@@ -130,9 +126,11 @@ public class GUIUMLClass {
         Position pos = umlclass.getPosition();
         if (pos.getX() < 0 || pos.getY() < 75)
         {
+        	JViewport vp = scrollPane.getViewport();
+
         	// the position is invalid, so randomize it
-        	int randX = (int)(Math.random() * (maxWidth - pane.getWidth()));
-            int randY = (int)(Math.random() * (maxHeight - pane.getHeight() - 75)) + 75;
+        	int randX = (int)(Math.random() * Math.max(0, maxWidth - pane.getWidth())) + vp.getViewPosition().x;
+            int randY = (int)(Math.random() * Math.max(0, maxHeight - pane.getHeight() - 75)) + 75 + vp.getViewPosition().y;
             pos = new Position(randX, randY);
             umlclass.setPosition(randX, randY);
         }
@@ -275,16 +273,11 @@ public class GUIUMLClass {
     // Drag listener for JLayeredPane
     class DragListener extends MouseAdapter {
         private final JComponent component;
-        private final GUIView gui;
-        private final JLayeredPane canvas;
-        private final JScrollPane scrollPane;
         private Point initialClick;
 
         public DragListener(JComponent component, GUIView parentView) {
             this.component = component;
-            gui = parentView;
-            canvas = parentView.getCanvas();
-            scrollPane = parentView.getScrollPane();
+            guiView = parentView;
         }
 
         @Override
@@ -353,7 +346,7 @@ public class GUIUMLClass {
             }
     
             // Update arrows or any other visual components after moving the class
-            gui.updateArrows();  // This will update the arrows to reflect new positions
+            guiView.updateArrows();  // This will update the arrows to reflect new positions
             
             JViewport vp = scrollPane.getViewport();
             
@@ -363,7 +356,7 @@ public class GUIUMLClass {
             {
             	newVPX = requiredWidth - vp.getWidth();
             }
-            if (newX < vp.getViewPosition().x)
+            else if (newX < vp.getViewPosition().x)
             {
             	newVPX = newX;
             }
@@ -371,7 +364,7 @@ public class GUIUMLClass {
             {
             	newVPY = requiredHeight - vp.getHeight();
             }
-            if (newY < vp.getViewPosition().y)
+            else if (newY < vp.getViewPosition().y)
             {
             	newVPY = newY;
             }

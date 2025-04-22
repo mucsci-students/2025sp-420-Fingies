@@ -163,4 +163,10 @@ public class Method extends Attribute {
                 .orElse("");
         return return_type + " " + name + " (" + paramString + ")";
     }
+
+	public boolean clearParameters() {
+		if (params.size() == 0)
+			throw new IllegalArgumentException("Method " + getName() + " doesn't have any parameters.");
+		return params.removeAll(params);
+	}
 }
