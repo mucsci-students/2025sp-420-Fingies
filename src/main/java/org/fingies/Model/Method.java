@@ -10,14 +10,14 @@ import java.util.Objects;
 public class Method extends Attribute {
 
     private String name;
-    private String returnType;
+    private String return_type;
     private List<Parameter> params;
 
     public Method(String name, String returnType) {
         validateCharacters(name);
         validateCharacters(returnType);
         this.name = name;
-        this.returnType = returnType;
+        this.return_type = returnType;
         this.params = new ArrayList<>();
     }
 
@@ -37,7 +37,7 @@ public class Method extends Attribute {
      */
     public Method(Method method)
     {
-    	this(method.name, method.returnType);
+    	this(method.name, method.return_type);
         for (int i = 0; i < method.params.size(); i++) {
             addParameter(method.params.get(i).getName(), method.params.get(i).getType());
         }
@@ -55,12 +55,12 @@ public class Method extends Attribute {
     }
 
     public String getReturnType() {
-        return returnType;
+        return return_type;
     }
 
     public void setReturnType(String returnType) {
         validateCharacters(returnType);
-        this.returnType = returnType;
+        this.return_type = returnType;
     }
 
     public Parameter getParameter(String name) {
@@ -138,12 +138,12 @@ public class Method extends Attribute {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Method method = (Method) obj;
-        return name.equals(method.name) && returnType.equals(method.returnType) && params.equals(method.params);
+        return name.equals(method.name) && return_type.equals(method.return_type) && params.equals(method.params);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, returnType, params);
+        return Objects.hash(name, return_type, params);
     }
 
     public String toTypes()
@@ -161,7 +161,7 @@ public class Method extends Attribute {
                 .map(param -> param.getType() + " " + param.getName())
                 .reduce((a, b) -> a + ", " + b)
                 .orElse("");
-        return returnType + " " + name + " (" + paramString + ")";
+        return return_type + " " + name + " (" + paramString + ")";
     }
 
 	public boolean clearParameters() {
