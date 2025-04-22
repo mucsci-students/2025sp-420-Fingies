@@ -249,3 +249,8 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-
 See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure
 [04/14/25 14:18:05]: com.google.gson.JsonSyntaxException: java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 2 path $
 See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-structure
+[04/22/25 15:24:38]: javax.imageio.IIOException: Can't create an ImageOutputStream!
+[04/22/25 15:24:38]: java.lang.IllegalArgumentException: Invalid Argument: null, in exportImage
+[04/22/25 15:24:39]: java.util.NoSuchElementException: No line found
+[04/22/25 15:24:39]: Test Write to Error Log, Ignore this message.
+[04/22/25 15:24:39]: java.lang.NullPointerException
