@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
@@ -16,7 +15,6 @@ import java.util.Scanner;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,7 +39,7 @@ public class JModel {
     private String fullLogPath = programPath + LOG_PATH;
 
     // GSON is built to ignore fields with "final" modifier.
-    private Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL, Modifier.VOLATILE).create();
+    private Gson gson = new GsonBuilder().excludeFieldsWithModifiers(Modifier.FINAL, Modifier.VOLATILE).setPrettyPrinting().create();
 
     /**
      * Model class for saving and loading to standardized JSON format
@@ -276,7 +274,10 @@ public class JModel {
         try {
             // Read data from json using scanner
             Scanner in = new Scanner(new File(filepath));
-            String jsonData = in.nextLine();
+            String jsonData = "";
+            while (in.hasNextLine()) {
+                jsonData += in.nextLine();
+            }
             in.close();
             // Try to parse data from string. Throws exception if incorrect format
             UMLClassHandler.reset();

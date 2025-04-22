@@ -12,8 +12,8 @@ public class Position {
      * This is an invalid position, only the view can assign valid positions
      */
     public Position() {
-        x = -1;
-        y = -1;
+        x = 0;
+        y = 0;
     }
 
     /**
