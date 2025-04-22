@@ -91,9 +91,10 @@ public class UMLClass {
      * @return the method object specified by the method name and the method types
      */ 
     public Method getMethod(String methodName, List<String> types) {
-        return methods.stream()
+        Method method = methods.stream()
                 .filter(m -> m.getName().equals(methodName) && m.getParameterTypes().equals(types))
                 .findFirst().orElse(null);
+        return method;
     }
 
      /**
