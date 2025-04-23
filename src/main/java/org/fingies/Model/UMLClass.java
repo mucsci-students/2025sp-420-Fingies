@@ -120,7 +120,7 @@ public class UMLClass {
         if (name.equals(methodName))
             throw new IllegalArgumentException("A method must have a different name than its class");
         if (methodExists(methodName, types))
-            throw new IllegalArgumentException("A method with that name and types already exists");
+            throw new IllegalArgumentException(name + " already has a method called " + methodName + " with the parameter types " + types);
         return methods.add(new Method(methodName, returnType, parameters, types));
     }
 
@@ -132,7 +132,7 @@ public class UMLClass {
     public boolean removeField(String fieldName) {
         Field field = getField(fieldName);
         if (field == null)
-            throw new IllegalArgumentException("Field not found");
+            throw new IllegalArgumentException("Class " + getName() + " doesn't have a field named " + fieldName);
         return fields.remove(field);
     }
 
@@ -145,7 +145,7 @@ public class UMLClass {
     public boolean removeMethod(String methodName, List<String> types) {
         Method method = getMethod(methodName, types);
         if (method == null)
-            throw new IllegalArgumentException("Method not found");
+            throw new IllegalArgumentException("Class " + getName() + " doesn't have a method named " + methodName + " with the parameter types " + types);
         return methods.remove(method);
     }
 
@@ -158,9 +158,11 @@ public class UMLClass {
     public boolean renameField(String fieldName, String newName) {
         validateCharacters(newName);
         Field field = getField(fieldName);
-        if (field == null || fieldExists(newName) || name.equals(newName))
-            throw new IllegalArgumentException("Invalid rename operation");
-        getField(fieldName).renameAttribute(newName);
+        if (field == null)
+            throw new IllegalArgumentException("Class " + getName() + " doesn't have a field named " + fieldName);
+        if (fieldExists(newName))
+        	throw new IllegalArgumentException("Class " + getName() + " alread has a field named " + newName);
+        field.renameAttribute(newName);
         return true;
     }
 
@@ -174,9 +176,11 @@ public class UMLClass {
     public boolean renameMethod(String methodName, List<String> types, String newName) {
         validateCharacters(newName);
         Method method = getMethod(methodName, types);
-        if (method == null || methodExists(newName, types))
-            throw new IllegalArgumentException("Invalid rename operation");
-        getMethod(methodName, types).renameAttribute(newName);
+        if (method == null)
+            throw new IllegalArgumentException("Class " + getName() + " doesn't have a method named " + methodName + " with the parameter types " + types);
+        if (methodExists(newName, types))
+        	throw new IllegalArgumentException("Class " + getName() + " already has a method named " + newName + " with the parameter types " + types);
+        method.renameAttribute(newName);
         return true;
     }
 

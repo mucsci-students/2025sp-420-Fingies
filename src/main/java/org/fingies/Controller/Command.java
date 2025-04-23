@@ -154,7 +154,7 @@ public class Command {
 	
 	/**
 	 * Gets the Action enum that represents the command in the string. The string must start with the command.
-	 * Spaces at the beginning and end of the string are ignored.
+	 * Whitespace at the beginning and end of the string are ignored.
 	 * 
 	 * @param input The string to get the Action out of.
 	 * @return The Action enum that represents the command at the beginning of the string, or null if there is none.
@@ -172,9 +172,6 @@ public class Command {
 		for (int i = 0; i < COMMANDS_SHORTHAND.length && a == null; ++i)
 			if (input.startsWith(COMMANDS_SHORTHAND[i]))
 				a = Action.values()[i];
-		
-		if (a == null)
-			return null;
 		
 		return a;
 	}
@@ -196,6 +193,8 @@ public class Command {
 		input = input.trim();
 		
 		Action a = getActionOutOfString(input);
+		if (a == null)
+			return null;
 		
 		int cmdLen = 0;
 		if (input.startsWith(COMMANDS[a.ordinal()]))

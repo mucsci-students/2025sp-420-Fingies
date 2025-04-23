@@ -298,6 +298,16 @@ public class CommandTest {
 		Command c = Command.parseCommand(cmd);
 		assertEquals("The command " + cmd + " should produce the correct toString().\n", Action.REMOVE_CLASS + " [  -_- __- my beautiful class name -__ -_-  ]", c.toString());
 	}
+	
+	// --------------------- INVALID ACTION ---------------------
+	
+	@Test
+	public void invalidAction()
+	{
+		String cmd = "!@#$%^&*()1234567890";
+		Command c = Command.parseCommand(cmd);
+		assertEquals("Parsing the command /n" + cmd + "/n should return null.", null, c);
+	}
 
     
 	// --------------------- FROM CHATGPT ---------------------

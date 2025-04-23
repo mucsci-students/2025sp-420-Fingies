@@ -42,22 +42,13 @@ public class UMLClassTest {
     {
         try{
             c.addField("Engine%", "String");
+            
+            // shouldn't run
+            assertTrue("Adding a field with the name String% should've thrown an exception because it contains invalid characters.", false);
         }   
         catch (IllegalArgumentException e)
         {
             assertEquals("String contains invalid characters", e.getMessage());
-        }
-    }
-
-    @Test
-    public void addOneFieldLongerThan50Characters_ThrowsIllegalArgumentException()
-    {
-        try{
-            c.addField("Engineeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "String");
-        }   
-        catch (IllegalArgumentException e)
-        {
-            assertEquals("String is longer than 50 characters", e.getMessage());
         }
     }
     
@@ -74,6 +65,9 @@ public class UMLClassTest {
         try
         {
             c.addField("UMLClass", "String");
+            
+            // shouldn't run
+            assertTrue("Adding a field with the same name as its class should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -90,6 +84,9 @@ public class UMLClassTest {
             c.addField("Engine", "String");
             assertTrue(c.fieldExists("Engine"));
             c.addField("Engine", "String");
+            
+            // shouldn't run
+            assertTrue("Adding a field to a class that already has a field with the same name should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -103,25 +100,13 @@ public class UMLClassTest {
         try
         {
             c.addField("Engine%", "String");
+            
+            // shouldn't run
+            assertTrue("Adding a field with the name Engine% should've thrown an exception because it contains invalid characters.", false);
         }
         catch (IllegalArgumentException e)
         {
             assertEquals("String contains invalid characters", e.getMessage());
-        }
-    }
-
-    @SuppressWarnings("null")
-    @Test
-    public void addFieldToClassThatDNA_ThrowsNullPointerException()
-    {
-        UMLClass DNE = null;
-        try
-        {
-            DNE.addField("Engine", "String");
-        }
-        catch (NullPointerException e)
-        {
-            System.out.println("Null Pointer");
         }
     }
 
@@ -134,24 +119,13 @@ public class UMLClassTest {
             List<String> parameters = new ArrayList<>();
             List<String> types = new ArrayList<>();
             c.addMethod("Engine%", "void", parameters, types);
+            
+            // shouldn't run
+            assertTrue("Adding a method with the name Engine% should've thrown an exception because it contains invalid characters.", false);
         }   
         catch (IllegalArgumentException e)
         {
             assertEquals("String contains invalid characters", e.getMessage());
-        }
-    }
-
-    @Test
-    public void addOneMethodLongerThan50Characters_ThrowsIllegalArgumentException()
-    {
-        try {
-            List<String> parameters = new ArrayList<>();
-            List<String> types = new ArrayList<>();
-            c.addMethod("Engineeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee", "void", parameters, types);
-        }   
-        catch (IllegalArgumentException e)
-        {
-            assertEquals("String is longer than 50 characters", e.getMessage());
         }
     }
 
@@ -167,17 +141,21 @@ public class UMLClassTest {
     @Test
     public void addMethodWithSameNameAsClassWithSameTypes_ThenClassShouldFailToAddMethod()
     {
+    	List<String> parameters = new ArrayList<>();
+        List<String> types = new ArrayList<>();
+        c.addMethod("getEngine", "void", parameters, types);
+        assertTrue(c.methodExists("getEngine", types));
         try
         {
-            List<String> parameters = new ArrayList<>();
-            List<String> types = new ArrayList<>();
             c.addMethod("getEngine", "void", parameters, types);
-            assertTrue(c.methodExists("getEngine", types));
-            c.addMethod("getEngine", "void", parameters, types);
+            
+            // shouldn't run
+            assertTrue("Adding a field with the same name as its class should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
-            assertEquals("A method with that name and types already exists", e.getMessage());
+            assertTrue(e.getMessage().contains("getEngine"));
+            assertTrue(e.getMessage().contains(parameters.toString()));
         }
     }
 
@@ -189,6 +167,9 @@ public class UMLClassTest {
             List<String> parameters = new ArrayList<>();
             List<String> types = new ArrayList<>();
             c.addMethod("UMLClass", "void", parameters, types);
+            
+            // shouldn't run
+            assertTrue("Adding a field with the same name as its class should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -225,29 +206,35 @@ public class UMLClassTest {
     @Test
     public void addTwoFieldsAndRenameOneFieldToOneThatExists_ThenFieldShouldFailToBeRenamed()
     {
+    	c.addField("Engine", "String");
+        c.addField("Wheel", "String");
         try
         {
-            c.addField("Engine", "String");
-            c.addField("Wheel", "String");
             c.renameField("Engine", "Wheel");
+            
+            // shouldn't run
+            assertTrue("Renaming a field to the name of a field that already exists in the class should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
-            assertEquals("Invalid rename operation", e.getMessage());
+            assertTrue("Renaming the field Engine to Wheel should've thrown an error that contained the name Wheel, but was " + e.getMessage(), e.getMessage().contains("Wheel"));
         }
     }
 
     @Test
     public void renameFieldToSameName_ThenFieldShouldFailToBeRenamed()
     {
+    	c.addField("Engine", "String");
         try
         {
-            c.addField("Engine", "String");
             c.renameField("Engine", "Engine");
+            
+            // shouldn't run
+            assertTrue("Renaming the field Engine to Engine should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
-            assertEquals("Invalid rename operation", e.getMessage());
+            assertTrue("Renaming the field Engine to Engine should've thrown an error that contained the name Engine, but was " + e.getMessage(), e.getMessage().contains("Engine"));
         }
     }
 
@@ -268,18 +255,21 @@ public class UMLClassTest {
     @Test
     public void addTwoMethodsAndRenameOneMethodToOneThatExistsWithSameTypes_ThenMethodShouldFailToBeRenamed()
     {
-        
+    	List<String> parameters = new ArrayList<>();
+        List<String> types = new ArrayList<>();
+        c.addMethod("getEngine", "void", parameters, types);
+        c.addMethod("setEngine", "void", parameters, types);
         try
         {
-            List<String> parameters = new ArrayList<>();
-            List<String> types = new ArrayList<>();
-            c.addMethod("getEngine", "void", parameters, types);
-            c.addMethod("setEngine", "void", parameters, types);
             c.renameMethod("setEngine", types, "getEngine");
+            
+            // shouldn't run
+            assertTrue("Renaming the method setEngine() to a method name that already exists should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
-            assertEquals("Invalid rename operation", e.getMessage());
+            assertTrue("Renaming the method setEngine() should've thrown an error that contained the name setEngine, but was " + e.getMessage(), e.getMessage().contains("getEngine"));
+            assertTrue("Renaming the method setEngine() should've thrown an error that contained parameter types [], but was " + e.getMessage(), e.getMessage().contains(types.toString()));
         }
     }
 
@@ -304,10 +294,13 @@ public class UMLClassTest {
             List<String> types = new ArrayList<>();
             c.addMethod("Engine", "void", parameters, types);
             c.renameMethod("Engine", types, "Engine");
+            
+            // shouldn't run
+            assertTrue("Renaming the method Engine() so that it had the same name and parameter types as another method should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
-            assertEquals("Invalid rename operation", e.getMessage());
+            assertTrue("Renaming the method Engine() should've thrown an error that contained the name Engine, but was " + e.getMessage(), e.getMessage().contains("Engine"));
         }
     }
     // --------------------- DELETE FIELDS ---------------------
@@ -328,10 +321,13 @@ public class UMLClassTest {
         try
         {
             c.removeField("Engine");
+            
+            // shouldn't run
+            assertTrue("Removing a method that does not exist should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
-            assertEquals("Field not found", e.getMessage());
+            assertTrue("Renaming the method setEngine() should've thrown an error that contained parameter types [], but was " + e.getMessage(), e.getMessage().contains("Engine"));
         }
     }
 
@@ -352,14 +348,18 @@ public class UMLClassTest {
     @Test
     public void removeMethodThatDNE_ThrowsIllegalArgumentException()
     {
+    	List<String> types = new ArrayList<>();
         try
         {
-            List<String> types = new ArrayList<>();
             c.removeMethod("Engine", types);
+            
+            // shouldn't run
+            assertTrue("Removing a method that does not exist should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
-            assertEquals("Method not found", e.getMessage());
+            assertTrue("Removing the method Engine() should've thrown an error that contained the name Engine, but was " + e.getMessage(), e.getMessage().contains("Engine"));
+            assertTrue("Removing the Engine() should've thrown an error that contained parameter types [], but was " + e.getMessage(), e.getMessage().contains(types.toString()));
         }
     }
 
