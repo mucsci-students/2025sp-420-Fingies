@@ -237,6 +237,22 @@ public class UMLClassTest {
             assertTrue("Renaming the field Engine to Engine should've thrown an error that contained the name Engine, but was " + e.getMessage(), e.getMessage().contains("Engine"));
         }
     }
+    
+    @Test
+    public void renameFieldThatDNE_ThenFieldShouldFailToBeRenamed()
+    {
+        try
+        {
+            c.renameField("Engine", "Wheel");
+            
+            // shouldn't run
+            assertTrue("Renaming a field that doesn't exist should've thrown an exception.", false);
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertTrue("Renaming a field that doesn't exist should've thrown an error that contained the name Engine, but was " + e.getMessage(), e.getMessage().contains("Engine"));
+        }
+    }
 
     // --------------------- RENAME METHODS ---------------------
 
@@ -288,11 +304,11 @@ public class UMLClassTest {
     @Test
     public void renameMethodToSameNameWithSameTypes_ThenMethodShouldFailToBeRenamed()
     {
+    	List<String> parameters = new ArrayList<>();
+        List<String> types = new ArrayList<>();
+        c.addMethod("Engine", "void", parameters, types);
         try
         {
-            List<String> parameters = new ArrayList<>();
-            List<String> types = new ArrayList<>();
-            c.addMethod("Engine", "void", parameters, types);
             c.renameMethod("Engine", types, "Engine");
             
             // shouldn't run
@@ -303,6 +319,25 @@ public class UMLClassTest {
             assertTrue("Renaming the method Engine() should've thrown an error that contained the name Engine, but was " + e.getMessage(), e.getMessage().contains("Engine"));
         }
     }
+    
+    @Test
+    public void renameMethodThatDNE_ThenMethodShouldFailToBeRenamed()
+    {
+        try
+        {
+            List<String> types = new ArrayList<>();
+            c.renameMethod("Engine", types, "Wheel");
+            
+            // shouldn't run
+            assertTrue("Renaming a method that doesn't exist should've thrown an exception.", false);
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertTrue("Renaming a method that doesn't exist should've thrown an error that contained the name Engine, but was " + e.getMessage(), e.getMessage().contains("Engine"));
+        }
+    }
+    
+    
     // --------------------- DELETE FIELDS ---------------------
 
     @Test
