@@ -85,8 +85,6 @@ public class Command {
 			"", //redo
 			"[ FILEPATH ]", //export
 			"CLASS_NAME NEW_X NEW_Y", //move
-			"", //light mode
-			"" //dark mode
 		};
 	
 	/**

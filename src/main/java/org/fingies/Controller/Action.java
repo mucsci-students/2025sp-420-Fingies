@@ -131,13 +131,5 @@ public enum Action {
     /*
      * Moves a class to a new x, y coordinate.
      */
-    MOVE,
-    /*
-     * Light Mode
-     */
-    LIGHT_MODE,
-    /*
-     * Dark Mode
-     */
-    DARK_MODE;
+    MOVE;
 }
