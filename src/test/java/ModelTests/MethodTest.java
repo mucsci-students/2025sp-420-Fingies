@@ -296,7 +296,7 @@ public class MethodTest {
         }
         catch (IllegalArgumentException e)
         {
-            assertEquals(e.getMessage(), "Method " + m.getName() + " doesn't have any parameters.");
+            assertEquals(e.getMessage(), "Method " + m.getName() + " doesn't have any parameters");
         }
     }
 

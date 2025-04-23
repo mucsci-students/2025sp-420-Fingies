@@ -166,7 +166,7 @@ public class Method extends Attribute {
 
 	public boolean clearParameters() {
 		if (params.size() == 0)
-			throw new IllegalArgumentException("Method " + getName() + " doesn't have any parameters.");
+			throw new IllegalArgumentException("Method " + getName() + " doesn't have any parameters");
 		return params.removeAll(params);
 	}
 }
