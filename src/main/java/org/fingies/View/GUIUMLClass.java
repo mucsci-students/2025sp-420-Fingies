@@ -91,40 +91,64 @@ public class GUIUMLClass {
         initializePosition(background, guiView.getWidth() - 20, guiView.getHeight() - 70); // subtract 20 and 70 to give a proper buffer
     }
 
+    /**
+     * Gets the color of the class
+     */
     public Color getColor()
     {
         return color;
     }
 
+    /**
+     * Sets the color of the class
+     */
     public void setColor()
     {
         color = ColorUtil.colorOfString(umlclass.getName());
     }
 
+    /**
+     * Gets the UMLClass that the GUIUMLClass is based on
+     */
     public UMLClass getUMLClass()
     {
         return umlclass;
     }
 
+    /**
+     * Gets the JLayeredPane that holds all other JPanels
+     */
     public JLayeredPane getJLayeredPane()
     {
         return background;
     }
     
+    /**
+     * Gets the width of JLayeredPane that holds all other JPanels
+     */
     public int getWidth()
     {
     	return background.getWidth();
     }
     
+    /**
+     * Gets the height of the JLayeredPane that holds all other JPanels
+     */
     public int getHeight()
     {
     	return background.getHeight();
     }
 
+    /**
+     * Initializes the x and y positions of the GUIUMLClass within the GUI
+     * @param pane the JLayeredPane that holds all UMLClasses
+     * @param maxWidth the maxWidth of the pane
+     * @param maxHeight the maxHight of the pane
+     */
     public void initializePosition (JLayeredPane pane, int maxWidth, int maxHeight)
     {
         Position pos = umlclass.getPosition();
-        if (pos.getX() < 0 || pos.getY() < 75)
+        if (pos.getX() < 0 || pos.getY() < 0)
         {
         	JViewport vp = scrollPane.getViewport();
 
@@ -137,6 +161,9 @@ public class GUIUMLClass {
         pane.setBounds(pos.getX(), pos.getY(), pane.getWidth(), pane.getHeight());
     }
 
+    /**
+     * Updates all of the content (className, fields, and methods) within a GUIUMLClass upon an action made in the GUI
+     */
     public void update ()
     {
         updateFields();
@@ -164,6 +191,9 @@ public class GUIUMLClass {
         background.repaint();
     }
 
+    /**
+     * Updates the name of the class based on updated information from UMLClass
+     */
     public void updateClassName()
     {
         classPanel.removeAll(); // Clear panel before updating
@@ -182,6 +212,9 @@ public class GUIUMLClass {
         classPanel.repaint();
     }
 
+    /**
+     * Updates the fields of the class based on updated information from UMLClass
+     */
     public void updateFields ()
     {
         fieldsPanel.removeAll(); // Clear panel before updating
@@ -219,6 +252,9 @@ public class GUIUMLClass {
         fieldsPanel.repaint();
     }
 
+    /**
+     * Updates the methods and parameters of the class based on updated information from UMLClass
+     */
     public void updateMethods ()
     {
         methodsPanel.removeAll(); // Clear panel before updating
@@ -308,7 +344,7 @@ public class GUIUMLClass {
             // Prevent component from going outside the visible area
             if (newX < 0) newX = 0; // Constrain to the left edge
             if (newX > maxX) newX = maxX; // Constrain to the right edge
-            if (newY < 75) newY = 75; // Prevent going above a minimum threshold
+            if (newY < 0) newY = 0; // Prevent going above a minimum threshold
             if (newY > maxY) newY = maxY; // Constrain to the bottom edge
             
             // Move the component to the new constrained position

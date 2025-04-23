@@ -2,13 +2,19 @@ package org.fingies.View;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -17,10 +23,14 @@ import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JMenu;
 import javax.swing.JTextField;
+import javax.swing.KeyStroke;
+import javax.swing.OverlayLayout;
 import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 import org.fingies.Controller.*;
 import org.fingies.Model.*;
@@ -42,7 +52,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private JMenu removeMenu;
     private JMenu renameMenu;
     private JMenu typeMenu;
-    private JMenu themeMenu;
 
     private GUIMenuItem load;
     private GUIMenuItem save;
@@ -73,9 +82,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private GUIMenuItem changeParameterType;
     private GUIMenuItem changeRelatoinshipType;
 
-    private GUIMenuItem lightMode;
-    private GUIMenuItem darkMode;
-
     private ArrayList<JTextField> textBoxes;
     private ArrayList<JComboBox<String>> comboBoxes;
 
@@ -85,6 +91,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private UMLController controller;
     private JLayeredPane canvas;
     private JScrollPane scrollPane;
+    private JPanel topPanel;
+    private JPanel theAllPanel;
     final JFileChooser fileChooser = new JFileChooser();
 
     // HashMap with key as name of class and value as GUIUMLClass associated with the name
@@ -107,7 +115,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         removeMenu = new JMenu("Remove");
         renameMenu = new JMenu("Rename");
         typeMenu = new JMenu("ChangeType");
-        themeMenu = new JMenu("Theme");
 
         // Adds menus to menubar
         menuBar.add(fileMenu);
@@ -115,7 +122,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         menuBar.add(removeMenu);
         menuBar.add(renameMenu);
         menuBar.add(typeMenu);
-        menuBar.add(themeMenu);
 
         // Creates JMenu submenus
         load = new GUIMenuItem("Open", Action.LOAD);
@@ -151,10 +157,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         changeParameterType= new GUIMenuItem("Parameter", Action.CHANGE_PARAMETER_TYPE);
         changeRelatoinshipType = new GUIMenuItem("Relationship", Action.CHANGE_RELATIONSHIP_TYPE);
 
-        // THEME
-        lightMode = new GUIMenuItem("Light Mode", Action.LIGHT_MODE);
-        darkMode = new GUIMenuItem("Dark Mode", Action.DARK_MODE);
-
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
         save.addActionListener(this);
@@ -184,9 +186,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         changeMethodType.addActionListener(this);
         changeParameterType.addActionListener(this);
         changeRelatoinshipType.addActionListener(this);
-
-        lightMode.addActionListener(this);
-        darkMode.addActionListener(this);
 
         // Allows the press of a key to do the function of clicking the menu item WHILE in the menu
         undo.setMnemonic(KeyEvent.VK_U); // Z for undo
@@ -221,22 +220,79 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         typeMenu.add(changeMethodType);
         typeMenu.add(changeParameterType);
         typeMenu.add(changeRelatoinshipType);
-
-        themeMenu.add(lightMode);
-        themeMenu.add(darkMode);
+        
+        // all panel
+        theAllPanel = new JPanel();
+        theAllPanel.setLayout(new OverlayLayout(theAllPanel));
+        this.setContentPane(theAllPanel);
 
         // Create the canvas (JLayeredPane)
         canvas = new JLayeredPane();
         canvas.setLayout(null);  // Absolute positioning
         canvas.setPreferredSize(new Dimension(1500, 1500));  // Bigger than the frame
 
-        // Create the scroll pane to hold the canvas
+        // Scroll pane to hold the canvas
         scrollPane = new JScrollPane(canvas);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-        // Set scrollPane as content pane
-        this.setContentPane(scrollPane);
+        // Make scrollPane fill the container
+        scrollPane.setAlignmentX(0f);
+        scrollPane.setAlignmentY(0f);
+        
+        // ensure sure the topPanel is painted on top of the scrollPane whenever the scrollPane gets painted
+        scrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
+            theAllPanel.repaint();
+        });
+
+        scrollPane.getHorizontalScrollBar().addAdjustmentListener(e -> {
+            theAllPanel.repaint();
+        });
+
+        // Top panel to hold the command text boxes, combo boxes, submit & cancel buttons
+        topPanel = new JPanel() {
+        	
+        	// from ChatGPT:
+        	// overriding this gives the panel a semi-transparent gradient, which looks nice
+        	// apparently this is the standard way to do it in Java Swing
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2d = (Graphics2D) g.create();
+
+                int width = getWidth();
+                int height = getHeight();
+
+                // Draw row by row with a custom alpha gradient
+                for (int y = 0; y < height; y++) {
+                    // Map y to angle in radians from 0 to π
+                    double t = (double) y / height;
+                    double angle = Math.PI * t;
+                    // cos(x) + 1 goes from 2 → 0, divide by 2 to get 1 → 0
+                    float alpha = (float) ((Math.cos(angle) + 1.0) / 2.0);
+
+                    // Clamp alpha and scale to 0–255
+                    int a = Math.min(255, Math.max(0, (int)(alpha * 50))); // 200 is max alpha
+
+                    g2d.setColor(new Color(0, 0, 50, a));
+                    g2d.drawLine(0, y, width, y);
+                }
+
+                g2d.dispose();
+            }
+        };
+        topPanel.setOpaque(false);
+        topPanel.setPreferredSize(new Dimension(1000, 65)); // Width is ignored by layout
+        topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 65));
+        topPanel.setLayout(null);
+        topPanel.setAlignmentX(0f);
+        topPanel.setAlignmentY(0f);
+        topPanel.setVisible(false); // topPanel will be invisible until textboxes & comboboxes are added to it
+
+        // Add topPanel and scrollPane in order so topPanel is on top
+        theAllPanel.add(topPanel);
+        theAllPanel.add(scrollPane);
+        
         this.setSize(1000, 1000);
 
         // Set JFrame attributes
@@ -274,16 +330,24 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         return scrollPane;
     }
 
-
+    /**
+     * Creates the submit and cancel buttons for each command
+     * @param a the action the submit button will send to the handleSubmitAction method
+     * @param offset offset of how many different boxes come before it for positioning in GUI
+     */
     private void createButtons(Action a, int offset) {
         submitButton = new JButton("Submit");
         cancelButton = new JButton("Cancel");
 
-        Rectangle view = scrollPane.getViewport().getViewRect();
-        submitButton.setBounds(view.x + offset * 130 + 20, 20, 125, 30); // Position and size for submit button
+        submitButton.setBounds(offset * 130 + 20, 20, 125, 30); // Position and size for submit button
         submitButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        cancelButton.setBounds(view.x + (offset + 1) * 130 + 20, 20, 125, 30); // Position and size for cancel button
+        submitButton.setBackground(Color.WHITE);
+        submitButton.setOpaque(true);
+
+        cancelButton.setBounds((offset + 1) * 130 + 20, 20, 125, 30); // Position and size for cancel button
         cancelButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+        cancelButton.setBackground(Color.WHITE);
+        cancelButton.setOpaque(true);
     
         // Add ActionListener for Submit button
         submitButton.addActionListener(new ActionListener() {
@@ -302,15 +366,33 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         });
     
         // Add the buttons to the GUI
-        canvas.add(submitButton);
-        canvas.add(cancelButton);
+        topPanel.add(submitButton);
+        topPanel.add(cancelButton);
+        topPanel.setVisible(true); // make the topPanel visible until the command is submitted or cancelled
+
+        // Make Enter key trigger Submit
+        getRootPane().setDefaultButton(submitButton);
+
+        // Make Escape key trigger Cancel
+        topPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "cancel");
+        topPanel.getActionMap().put("cancel", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                handleCancelAction();
+            }
+        });
+
         repaint(); // Refresh UI
     }
 
+    /**
+     * Concatenates text inputed by user + text from select boxes and parses them into commands to be sent to the Controller
+     * @param action action to be performed that is sent to the Controller
+     */
     private void handleSubmitAction(Action action) {
         // Concatenate the text from text fields and combo boxes just like pressing Enter
-        canvas.remove(submitButton);
-        canvas.remove(cancelButton);
+        topPanel.remove(submitButton);
+        topPanel.remove(cancelButton);
 
         String[] textInputs = textBoxes.stream()
                 .map(JTextField::getText)
@@ -326,10 +408,11 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 .toArray(String[]::new);
     
         // Remove all text fields and combo boxes
-        textBoxes.forEach(canvas::remove);
+        textBoxes.forEach(topPanel::remove);
         textBoxes.clear();
-        comboBoxes.forEach(canvas::remove);
+        comboBoxes.forEach(topPanel::remove);
         comboBoxes.clear();
+        topPanel.setVisible(false); // hide topPanel until next command
         repaint(); // Refresh UI
 
         // Special handling for actions that require parameter formatting 
@@ -405,7 +488,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                     }
                 }
                 
-
                 // Ensure type-name pairing is valid 
                 if (types != null && types.length == names.length) { 
                     List <String> altered = new ArrayList<>();
@@ -435,7 +517,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 // Now finalInputsList will contain the elements in the desired format
                 allInputs = finalInputsList.toArray(new String[0]);
             } 
-        }    
+        }
+        
         // Call controller helper with the concatenated arguments
         if (controller.runHelper(action, allInputs)) {
             actionHelper(action, allInputs);
@@ -445,12 +528,13 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
     // Removes Submit and Cancel buttons when the Cancel button is clicked
     private void handleCancelAction() {
-        canvas.remove(submitButton);
-        canvas.remove(cancelButton);
-        textBoxes.forEach(canvas::remove);
+        topPanel.remove(submitButton);
+        topPanel.remove(cancelButton);
+        textBoxes.forEach(topPanel::remove);
         textBoxes.clear();
-        comboBoxes.forEach(canvas::remove);
+        comboBoxes.forEach(topPanel::remove);
         comboBoxes.clear();
+        topPanel.setVisible(false); // hide topPanel until next command
         repaint(); // Refresh UI
     }
     
@@ -461,7 +545,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      */
     public void makeComboBoxes(Action a, String[] placeholders) {
         comboBoxes.clear();
-        Rectangle view = scrollPane.getViewport().getViewRect();
         JComboBox<String> classComboBox = null;
         JComboBox<String> methodComboBox = null;
         JComboBox<String> parameterComboBox = null;
@@ -518,9 +601,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             // Allows the text to wrap and sets the max amount of rows to be shown per box at a time
             box.setRenderer(new WrappingComboBoxRenderer());
             box.setMaximumRowCount(8);
-            styleComboBox(box, i, view);
+            styleComboBox(box, i);
             comboBoxes.add(box);
-            canvas.add(box);
+            topPanel.add(box);
         }
         reload();
     }
@@ -538,7 +621,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     /**
      * Creates comboboxes for either the fields or methods based on methodType
      * @param classComboBox combobox consisting of all currect classes that exist within the model
-     * @param methodType either "getFields" for fields or "getMethods" for methods
+     * @param methodType either "getFields" for fields, "getMethods" for methods, or "getDestinations" for destinations
      * @return a combobox containing either all of the fields or methods that exist within a class
      */
     private JComboBox<String> createComboBoxForClassItems(JComboBox<String> classComboBox, String methodType) {
@@ -566,7 +649,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * Updates a combobox to fill it with new updated data
      * @param box combobox to be updated
      * @param classComboBox combobox consisting of all currect classes that exist within the model
-     * @param methodType either "getFields" for fields or "getMethods" for methods
+     * @param methodType either "getFields" for fields, "getMethods" for methods, or "getDestinations" for destinations
      */
     private void updateComboBox(JComboBox<String> box, JComboBox<String> classComboBox, String methodType) {
         String selectedClass = (String) classComboBox.getSelectedItem();
@@ -635,7 +718,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * Adds a listener for a combobox that will update based on what methodType is provided
      * @param classComboBox combobox consisting of all currect classes that exist within the model
      * @param box box to be given a listener and filled with updated data from the model
-     * @param methodType either "getFields" for fields or "getMethods" for methods
+     * @param methodType either "getFields" for fields, "getMethods" for methods, or "getDestinations" for destinations
      */
     private void addComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> box, String methodType) {
         classComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{box}) {
@@ -654,10 +737,10 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     }
     
     /**
-     * Returns list of either fields or methods based on methodType provided
+     * Returns list of either fields, methods, or destinations based on methodType provided
      * @param selectedClass classname that was selected within the classComboBox
-     * @param methodType either "getFields" for fields or "getMethods" for methods
-     * @return list of either all fields or all methods that exist within a certain class
+     * @param methodType either "getFields" for fields, "getMethods" for methods, or "getDestinations" for destinations
+     * @return list of either all fields, all methods, or all destinations that exist within a certain class
      */
     private String[] getClassItems(String selectedClass, String methodType) {
         return switch (methodType) {
@@ -678,11 +761,10 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param box box to be styled
      * @param index determines the offset horizontally, so the boxes don't overlap
      */
-    private void styleComboBox(JComboBox<String> box, int index, Rectangle view) {
-        box.setBounds(view.x + index * 130 + 20, 20, 125, 30);
+    private void styleComboBox(JComboBox<String> box, int index) {
+        box.setBounds(index * 130 + 20, 20, 125, 30);
         box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-    }
-    
+    } 
 
     /**
      * Creates textboxes
@@ -692,7 +774,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      */
     public void makeTextBoxes(Action a, String [] placeholders, int offset)
     {
-        Rectangle view = scrollPane.getViewport().getViewRect();
+        // Rectangle view = scrollPane.getViewport().getViewRect();
         textBoxes.clear();
         for (int i = 0; i < placeholders.length; i++)
         {
@@ -700,17 +782,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
             // text.setBounds(offset * 130 + 20, 20, 125, 30); // Set position and size
 
-            int xPosition = view.x + (offset * 130) + 20; // x relative to the visible area
+            // int xPosition = view.x + (offset * 130) + 20; // x relative to the visible area
+            int xPosition = offset * 130 + 20; // x relative to the visible area
             int yPosition = 20; // y relative to the visible area
-
-            // Ensure that the text box stays within the bounds of the visible area
-            // if (xPosition + text.getWidth() > view.x + view.width) {
-            //     xPosition = view.x + view.width - text.getWidth(); // Keep it within the visible width
-            // }
-
-            // if (yPosition + text.getHeight() > view.y + view.height) {
-            //     yPosition = view.y + view.height - text.getHeight(); // Keep it within the visible height
-            // }
 
             text.setBounds(xPosition, yPosition, 125, 30); // Set position and size
 
@@ -735,7 +809,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
             offset++;
             textBoxes.add(text);
-            canvas.add(text);
+            topPanel.add(text);
             repaint(); // Refresh UI
         }
         reload();
@@ -888,16 +962,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         		System.exit(0);
         	}
         }
-        else if (e.getSource() == lightMode)
-        {
-            // for Tristan
-        	//controller.runHelper(a, new String[] {});
-        }
-        else if (e.getSource() == darkMode)
-        {
-            // for Tristan
-        	//controller.runHelper(a, new String[] {});
-        }
     }
 
     /**
@@ -913,19 +977,15 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 break;
             case REMOVE_CLASS:
                 removeUMLClass(args[0]);
-                // updateArrows();
                 break;
             case RENAME_CLASS:
                 renameUMLClass(args[0], args[1]);
                 break;
             case ADD_RELATIONSHIP:
-                // updateArrows();
                 break;
             case REMOVE_RELATIONSHIP:
-                // updateArrows();
                 break;
             case CHANGE_RELATIONSHIP_TYPE:
-                // updateArrows();
                 break;
             case ADD_METHOD:
                 updateAttributes(args[0]);
@@ -991,7 +1051,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     	}
     	canvas.setPreferredSize(new Dimension(maxX, maxY));
     	revalidate();
-
     	updateArrows();
     }
 
@@ -1042,8 +1101,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     public void reload()
     {
         // Force the GUI to refresh and update
-        canvas.revalidate(); // Recalculate layout
-        canvas.repaint();    // Repaint to reflect changes
+        theAllPanel.revalidate(); // Recalculate layout
+        theAllPanel.repaint();    // Repaint to reflect changes
     }
 
     /**
@@ -1118,7 +1177,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	public String promptForInput(String message) {
 		return JOptionPane.showInputDialog(message);
 	}
-	
+
 	@Override
 	public List<String> promptForInput(List<String> messages) {
 		List<String> result = new ArrayList<String>();
@@ -1128,7 +1187,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         }
         return result;
 	}
-	
+
 	@Override
 	public List<String> promptForInput(List<String> messages, List<InputCheck> checks) {
 		List<String> result = new ArrayList<String>();
@@ -1165,39 +1224,42 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         	return "";
         return fileChooser.getSelectedFile().getPath();
 	}
-	
+
 	@Override
 	public void notifySuccess() {
 		// DON'T IMPLEMENT THIS
 	}
+
 	@Override
 	public void notifySuccess(String message) {
 		// DO NOT IMPLEMENT PLS!
 	}
+
 	@Override
 	public void notifyFail(String message) {
-		JOptionPane.showMessageDialog(this, message);
-		
+		JOptionPane.showMessageDialog(this, message);	
 	}
+
 	@Override
 	public void display(String message) {
 		JOptionPane.showMessageDialog(this, message);
 	}
+
 	@Override
 	public void help() {
-		// TODO Auto-generated method stub
+		// Nothing
 		
 	}
+
 	@Override
 	public void help(String command) {
-		// TODO Auto-generated method stub
-		
+		// Nothing	
 	}
-	
+
 	@Override
 	public void run() 
 	{
-		// Nothing to be implemented here
+		// Nothing
 	}
 	
 	@Override
