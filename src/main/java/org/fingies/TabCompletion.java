@@ -1,6 +1,8 @@
 package org.fingies;
 
+import org.fingies.Controller.Action;
 import org.fingies.Controller.Command;
+import org.fingies.Model.UMLClass;
 import org.fingies.Model.UMLClassHandler;
 import org.jline.reader.*;
 
@@ -11,6 +13,7 @@ public class TabCompletion {
 
     private static final Map<String, Set<String>> commandSubcommands = new HashMap<>();
     private static final Set<String> shorthandCommands = new HashSet<>();
+
 
     static {
         // Build commandSubcommands from full commands
@@ -31,13 +34,29 @@ public class TabCompletion {
         shorthandCommands.addAll(Arrays.asList(Command.COMMANDS_SHORTHAND));
     }
 
+    public Action getActionOutOfWords(List<String> words) {
+        int maxLength = Math.min(3, words.size());
+
+        for (int i = 1; i <= maxLength; ++i) {
+            String command = words.get(0);
+            for (int j = 1; j < i; ++j) {
+                command += " " + words.get(j);
+            }
+            
+            Action a = Command.getPerfectActionOutOfString(command);
+            if (a != null) {
+                return a;
+            }
+        }
+        return null;
+    }
+
     public Completer getCompleter() {
         return new Completer() {
             @Override
             public void complete(LineReader reader, ParsedLine line, List<Candidate> candidates) {
                 List<String> words = line.words();
                 int wordIndex = line.wordIndex();
-                //Action a = Command.LINCOLNSPARSER(words);
 
                 if (words.isEmpty()) return;
 
@@ -67,21 +86,36 @@ public class TabCompletion {
                         }
                     }
                 }
+                Action action = getActionOutOfWords(words);
+                if (action == null) {
+                    return;
+                }
+                else if (action != null) {
+                    switch (action) {
+                        case REMOVE_CLASS:
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            break;
+                        case RENAME_CLASS:
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            break;
+                        case ADD_RELATIONSHIP:
+                            if (wordIndex == 2 || wordIndex == 3) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            break;
+                    }
+                }
                 // else if (a != null) {
-                //     swtich statement:
-                //     case(a == ADD_CLASS) {
-                //         //cannot complete new name
-                //     }
-                //     case(a == remove class) {
-                //         if (wordIndex == 2) {
-                //             candidates.add(UMLClassHandler.getAllClasses());
-                //         }
-                //     }
-                //     case(a == rename class) {
-                //         if (wordIndex == 2) {
-                //             candidates.add(UMLClassHandler.getAllClasses());
-                //         }
-                //     }
                 //     case(a == add relationship) {
                 //         if (wordIndex == 2) {
                 //             candidates.add(UMLClassHandler.getAllClasses());

@@ -152,6 +152,25 @@ public class Command {
 	}
 	
 	/**
+	 * Gets the Action enum that represents the command in the string. The string must match the command exactly.
+	 * Spaces at the beginning and end of the string are ignored.
+	 * 
+	 * @param input The string to get the Action out of.
+	 * @return The Action enum that represents the command, or null if there is none.
+	 */
+	public static Action getPerfectActionOutOfString(String input) {
+		input = input.trim();
+
+		for (int i = 0; i < COMMANDS.length; ++i) {
+			if (input.equals(COMMANDS[i])) {
+				return Action.values()[i];
+			}
+		}
+
+		return null;
+	}
+
+	/**
 	 * Gets the Action enum that represents the command in the string. The string must start with the command.
 	 * Spaces at the beginning and end of the string are ignored.
 	 * 
