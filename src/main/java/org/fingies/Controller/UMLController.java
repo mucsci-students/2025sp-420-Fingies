@@ -1372,6 +1372,7 @@ public class UMLController {
                 {
                 	int idx = Action.HELP.ordinal();
                 	view.notifyFail(Command.COMMANDS[idx] + " should have either 0 or 1 arguments \n"
+                			+ "Arguments with spaces require quotes \n"
                 			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }

@@ -104,7 +104,8 @@ public class Command {
 			"Prints all of the attributes in a class.",
 			"Lists all of the relationships between classes in the diagram.",
 			"Prints a list of commands and their shorthand versions. \n"
-			+ "If the name of a command is supplied as an argument, prints a description of a single command.",
+			+ "If the name of a command is supplied as an argument, prints a description of a single command. \n"
+			+ "Command names with spaces in them should be surrounded by quotes (e.g. help \"add class\").",
 			"Exits the program.",
 			"Adds a method to a class. \n"
 			+ "Two methods in a class can have the same name, as long as they have a different arity.",
