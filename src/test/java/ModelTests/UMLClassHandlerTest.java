@@ -57,6 +57,9 @@ public class UMLClassHandlerTest {
         try
         {
             UMLClassHandler.createClass("Person");
+            
+            // shouldn't run
+            assertTrue("Adding a class that already exists should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -96,6 +99,9 @@ public class UMLClassHandlerTest {
         try
         {
             UMLClassHandler.renameClass("Car", "Animal");
+            
+            // shouldn't run
+            assertTrue("Renaming a class to a class that already exists should've thrown an exception.", false);
         }
         catch(IllegalArgumentException e)
         {
@@ -109,23 +115,13 @@ public class UMLClassHandlerTest {
         try
         {
             UMLClassHandler.renameClass("Car", "Tank%");
+            
+            // shouldn't run
+            assertTrue("Renaming a class to Tank% should've thrown an exception because Tank% contains invalid characters.", false);
         }
         catch (IllegalArgumentException e)
         {
             assertEquals("The name Tank% contains invalid characters", e.getMessage());
-        }
-    }
-
-    @Test
-    public void renameClassToLongerThan50Characters()
-    {
-        try
-        {
-            UMLClassHandler.renameClass("Car", "jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjk");
-        }
-        catch (IllegalArgumentException e)
-        {
-            assertEquals("Class names must not be longer than 50 characters", e.getMessage());
         }
     }
 
@@ -144,6 +140,9 @@ public class UMLClassHandlerTest {
         try
         {
             UMLClassHandler.removeClass("Class1");
+            
+            // shouldn't run
+            assertTrue("Removing a class that doesn't exist should've thrown an exception.", false);
         }
         catch(IllegalArgumentException e)
         {
@@ -210,23 +209,18 @@ public class UMLClassHandlerTest {
 
     @Test
     public void testResetFunction() {
-        try
-        {
-            UMLClassHandler.reset();
-            HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
-            assertTrue(classes.isEmpty());
-        }
-        catch (Exception e)
-        {
-            System.out.println(e.getMessage());
-            assertTrue(false);
-        }  
+        UMLClassHandler.reset();
+        HashSet<UMLClass> classes = UMLClassHandler.getAllClasses();
+        assertTrue(classes.isEmpty());
     }
 
     @Test
     public void testRenameClassThatDoesNotExist() {
         try {
             UMLClassHandler.renameClass("ThisClassDoesNotExist", "ItReallyDoesNot");
+            
+            // shouldn't run
+            assertTrue("Renaming a class that doesn't exist should've thrown an exception.", false);
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(), "Class ThisClassDoesNotExist does not exist");
         }

@@ -573,8 +573,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     
                 case "Parameter":
                     parameterComboBox = new JComboBox<>();
-                    updateParameterComboBox(parameterComboBox, classComboBox, methodComboBox); // Initial population
-                    addMethodComboBoxListener(classComboBox, methodComboBox, parameterComboBox);
+                    boolean includeAllParametersOption = a == Action.REMOVE_PARAMETERS; // an option for 'All Parameters' should be available when removing parameters
+                    updateParameterComboBox(parameterComboBox, classComboBox, methodComboBox, includeAllParametersOption); // Initial population
+                    addMethodComboBoxListener(classComboBox, methodComboBox, parameterComboBox, includeAllParametersOption);
                     box = parameterComboBox;
                     break;
 
@@ -635,11 +636,11 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param methodComboBox combobox consisting of all currect methods that exist within a certain class
      * @param paramBox combobox consisting of all currect parameters that exist within a method
      */
-    private void addMethodComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> methodComboBox, JComboBox<String> paramBox) {
+    private void addMethodComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> methodComboBox, JComboBox<String> paramBox, boolean includeAllParametersOption) {
         methodComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{paramBox}) {
             @Override
             protected void updateComboBox(JComboBox<String> box) {
-                updateParameterComboBox((JComboBox<String>) box, classComboBox, methodComboBox);
+                updateParameterComboBox((JComboBox<String>) box, classComboBox, methodComboBox, includeAllParametersOption);
             }
         });
     }
@@ -667,7 +668,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param classComboBox combobox consisting of all currect classes that exist within the model
      * @param methodComboBox combobox consisting of all currect methods that exist within a certain class
      */
-    private void updateParameterComboBox(JComboBox<String> paramBox, JComboBox<String> classComboBox, JComboBox<String> methodComboBox) {
+    private void updateParameterComboBox(JComboBox<String> paramBox, JComboBox<String> classComboBox, JComboBox<String> methodComboBox, boolean includeAllParametersOption) {
         String selectedClass = (String) classComboBox.getSelectedItem();
         String selectedMethodSignature = (String) methodComboBox.getSelectedItem();
         
@@ -680,7 +681,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             for (String param : parameters) {
                 paramBox.addItem(param);
             }
-            paramBox.addItem("All Parameters");
+            if (includeAllParametersOption)
+            	paramBox.addItem("All Parameters");
         }
     }
     
@@ -1210,7 +1212,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showSaveDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
-        	return null;
+        	return "";
         return fileChooser.getSelectedFile().getPath();
     }
 	
@@ -1219,7 +1221,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showOpenDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
-        	return null;
+        	return "";
         return fileChooser.getSelectedFile().getPath();
 	}
 

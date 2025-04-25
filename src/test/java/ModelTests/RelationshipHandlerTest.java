@@ -62,10 +62,13 @@ public class RelationshipHandlerTest {
     @Test
     public void addOneRelationshipThatExists_ThenIllegalArgumentExceptionThrown()
     {
+    	RelationshipHandler.addRelationship("A", "B", RelationshipType.Aggregation);
         try
         {
             RelationshipHandler.addRelationship("A", "B", RelationshipType.Aggregation);
-            RelationshipHandler.addRelationship("A", "B", RelationshipType.Aggregation);
+            
+            // shouldn't run
+            assertTrue("Adding a relationship that already exists should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -88,6 +91,9 @@ public class RelationshipHandlerTest {
         try
         {
             RelationshipHandler.removeRelationship("A", "B");
+            
+            // shouldn't run
+            assertTrue("Removing a relationship that doesn't exist should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -110,6 +116,9 @@ public class RelationshipHandlerTest {
         try
         {
             RelationshipHandler.changeRelationshipType("A", "B", RelationshipType.Aggregation);
+            
+            // shouldn't run
+            assertTrue("Changing the type of a relationship that doesn't exist should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -199,6 +208,9 @@ public class RelationshipHandlerTest {
         //We are testing the indexOf method for null objects by calling other classes
         try {
             RelationshipHandler.removeRelationship("A", "x");
+            
+            // shouldn't run
+            assertTrue("Removing a relationship between any classes that don't exist should've thrown an exception.", false);
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(), "Class x does not exist");
         }
