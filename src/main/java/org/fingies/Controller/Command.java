@@ -152,8 +152,8 @@ public class Command {
 	}
 	
 	/**
-	 * Gets the Action enum that represents the command in the string. The string must match the command exactly.
-	 * Spaces at the beginning and end of the string are ignored.
+	 * Gets the Action enum that represents the command in the string. The string must match the
+	 * command exactly. Spaces at the beginning and end of the string are ignored.
 	 * 
 	 * @param input The string to get the Action out of.
 	 * @return The Action enum that represents the command, or null if there is none.

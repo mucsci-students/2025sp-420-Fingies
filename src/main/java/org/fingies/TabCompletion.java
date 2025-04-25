@@ -2,6 +2,12 @@ package org.fingies;
 
 import org.fingies.Controller.Action;
 import org.fingies.Controller.Command;
+import org.fingies.Controller.UMLController;
+import org.fingies.Model.Relationship;
+import org.fingies.Model.RelationshipHandler;
+import org.fingies.Model.RelationshipType;
+import org.fingies.Model.Method;
+import org.fingies.Model.Field;
 import org.fingies.Model.UMLClass;
 import org.fingies.Model.UMLClassHandler;
 import org.jline.reader.*;
@@ -34,6 +40,13 @@ public class TabCompletion {
         shorthandCommands.addAll(Arrays.asList(Command.COMMANDS_SHORTHAND));
     }
 
+    /**
+     * Gets an action out of a list of parsed strings. Assumes the maximum
+     * amount of words in an action is three. Requires perfect matching.
+     * 
+     * @param words the strings to acquire an action from
+     * @return action enum representing a command or null if no action is found.
+     */
     public Action getActionOutOfWords(List<String> words) {
         int maxLength = Math.min(3, words.size());
 
@@ -112,9 +125,200 @@ public class TabCompletion {
                                     candidates.add(new Candidate(validClass.getName()));
                                 }
                             }
+                            if (wordIndex == 4) {
+                                for (RelationshipType type : Arrays.asList(RelationshipType.values())) {
+                                    candidates.add(new Candidate(type.getName()));
+                                }
+                            }
                             break;
+                        case REMOVE_RELATIONSHIP:
+                            if (wordIndex == 2) {
+                                for (Relationship relationship : RelationshipHandler.getRelationObjects()) {
+                                    candidates.add(new Candidate(relationship.getSrc().getName()));
+                                }
+                            }
+                            if (wordIndex == 3) {
+                                String srcClass = words.get(2);
+                                for (Relationship validRelationship : RelationshipHandler.getAllRelationshipsForClassname(srcClass)) {
+                                    if (validRelationship.getSrc().getName().equals(srcClass)) {
+                                        candidates.add(new Candidate(validRelationship.getDest().getName()));
+                                    }
+                                }
+                            }
+                            break;
+                        case LIST_CLASS:
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            break;
+                        case HELP:
+                            if (wordIndex == 1) {
+                                // Suggest full command verbs
+                                for (String verb : commandSubcommands.keySet()) {
+                                    if (verb.startsWith(line.word())) {
+                                        candidates.add(new Candidate(verb));
+                                    }
+                                }
+                            }
+                            else if (wordIndex == 2) {
+                                String firstWord = words.get(1);
+                                String current = line.word();
+            
+                                Set<String> subcommands = commandSubcommands.get(firstWord);
+                                if (subcommands != null) {
+                                    for (String sub : subcommands) {
+                                        if (sub.startsWith(current)) {
+                                            candidates.add(new Candidate(sub));
+                                        }
+                                    }
+                                }
+                            }
+                        case ADD_METHOD:
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            break;
+                        case REMOVE_METHOD:
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            if (wordIndex == 3) {
+                                String className = words.get(2);
+                                for (Method method : UMLClassHandler.getClass(className).getMethods()) {
+                                    candidates.add(new Candidate(method.getName()));
+                                }
+                            }
+                            if (wordIndex >= 4) {
+                                String className = words.get(2);
+                                String methodName = words.get(3);
+                                boolean isCorrectParams = true;
+                                for (Method method : UMLClassHandler.getClass(className).getMethods()) {
+                                    if (method.getName().equals(methodName)) {
+                                        if (method.getParameterTypes().size() >= wordIndex - 3) {
+                                            for (int i = 0; i < wordIndex - 4; ++i) {
+                                                if (method.getParameterTypes().get(i).toString().equals(words.get(i + 4))) {
+                                                    isCorrectParams = true;
+                                                }
+                                                else{isCorrectParams = false; break;}
+                                            }
+                                            if (isCorrectParams) {
+                                                candidates.add(new Candidate(method.getParameterTypes().get(wordIndex - 4)));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case RENAME_METHOD:
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            if (wordIndex == 3) {
+                                String className = words.get(2);
+                                for (Method method : UMLClassHandler.getClass(className).getMethods()) {
+                                    candidates.add(new Candidate(method.getName()));
+                                }
+                            }
+                            if (wordIndex >= 4) {
+                                String className = words.get(2);
+                                String methodName = words.get(3);
+                                boolean isCorrectParams = true;
+                                for (Method method : UMLClassHandler.getClass(className).getMethods()) {
+                                    if (method.getName().equals(methodName)) {
+                                        if (method.getParameterTypes().size() >= wordIndex - 3) {
+                                            for (int i = 0; i < wordIndex - 4; ++i) {
+                                                if (method.getParameterTypes().get(i).toString().equals(words.get(i + 4))) {
+                                                    isCorrectParams = true;
+                                                }
+                                                else{isCorrectParams = false; break;}
+                                            }
+                                            if (isCorrectParams) {
+                                                candidates.add(new Candidate(method.getParameterTypes().get(wordIndex - 4)));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+                        case ADD_FIELD:
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            break;
+                        case REMOVE_FIELD:
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            if (wordIndex == 3) {
+                                String className = words.get(2);
+                                for (Field field : UMLClassHandler.getClass(className).getFields()) {
+                                    candidates.add(new Candidate(field.getName()));
+                                }
+                            }
+                            break;
+                        case RENAME_FIELD:
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            if (wordIndex == 3) {
+                                String className = words.get(2);
+                                for (Field field : UMLClassHandler.getClass(className).getFields()) {
+                                    candidates.add(new Candidate(field.getName()));
+                                }
+                            }
+                            break;
+                        case ADD_PARAMETERS:
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            if (wordIndex == 3) {
+                                String className = words.get(2);
+                                for (Method method : UMLClassHandler.getClass(className).getMethods()) {
+                                    candidates.add(new Candidate(method.getName()));
+                                }
+                            }
+                            if (wordIndex >= 4) {
+                                String className = words.get(2);
+                                String methodName = words.get(3);
+                                boolean isCorrectParams = true;
+                                for (Method method : UMLClassHandler.getClass(className).getMethods()) {
+                                    if (method.getName().equals(methodName)) {
+                                        if (method.getParameterTypes().size() >= wordIndex - 4) {
+                                            for (int i = 0; i < wordIndex - 4; ++i) {
+                                                if (method.getParameterTypes().get(i).toString().equals(words.get(i + 4))) {
+                                                    isCorrectParams = true;
+                                                }
+                                                else{isCorrectParams = false; break;}
+                                            }
+                                            if (isCorrectParams) {
+                                                if (method.getParameterTypes().size() == wordIndex -4) {
+                                                    candidates.add(new Candidate(";"));
+                                                }
+                                                else{candidates.add(new Candidate(method.getParameterTypes().get(wordIndex - 4)));}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            break;
+
                     }
-                }
                 // else if (a != null) {
                 //     case(a == add relationship) {
                 //         if (wordIndex == 2) {
@@ -240,6 +444,7 @@ public class TabCompletion {
                 //         }
                 //     } 
                 // }
+                }
             }
         };
     }
