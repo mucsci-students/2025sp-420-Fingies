@@ -317,6 +317,95 @@ public class TabCompletion {
                                 }
                             }
                             break;
+                        case REMOVE_PARAMETERS:
+                            int semicolonIndex = words.indexOf(";");
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            if (wordIndex == 3) {
+                                String className = words.get(2);
+                                for (Method method : UMLClassHandler.getClass(className).getMethods()) {
+                                    candidates.add(new Candidate(method.getName()));
+                                }
+                            }
+                            if (wordIndex >= 4) {
+                                String className = words.get(2);
+                                String methodName = words.get(3);
+                                boolean isCorrectParams = true;
+                                for (Method method : UMLClassHandler.getClass(className).getMethods()) {
+                                    if (method.getName().equals(methodName)) {
+                                        if (method.getParameterTypes().size() >= wordIndex - 4) {
+                                            for (int i = 0; i < wordIndex - 4; ++i) {
+                                                if (method.getParameterTypes().get(i).toString().equals(words.get(i + 4))) {
+                                                    isCorrectParams = true;
+                                                }
+                                                else{isCorrectParams = false; break;}
+                                            }
+                                            if (isCorrectParams) {
+                                                if (method.getParameterTypes().size() == wordIndex -4) {
+                                                    candidates.add(new Candidate(";"));
+                                                }
+                                                else{candidates.add(new Candidate(method.getParameterTypes().get(wordIndex - 4)));}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (semicolonIndex != -1) {
+                                String className = words.get(2);
+                                String methodName = words.get(3);
+                                ArrayList<String> methodParamTypes = new ArrayList<>();
+                                for (int i = 4; i < semicolonIndex; ++i) {
+                                    methodParamTypes.add(words.get(i));
+                                }
+                                for (String deleteCandidate : UMLClassHandler.getClass(className).getMethod(methodName, methodParamTypes).getParameterNames()) {
+                                    if (!(words.indexOf(deleteCandidate) > semicolonIndex)) {
+                                        candidates.add(new Candidate(deleteCandidate));
+                                    }
+                                }
+                            }
+                            break;
+                        case RENAME_PARAMETER:
+                            if (wordIndex == 2) {
+                                for (UMLClass validClass : UMLClassHandler.getAllClasses()) {
+                                    candidates.add(new Candidate(validClass.getName()));
+                                }
+                            }
+                            if (wordIndex == 3) {
+                                String className = words.get(2);
+                                for (Method method : UMLClassHandler.getClass(className).getMethods()) {
+                                    candidates.add(new Candidate(method.getName()));
+                                }
+                            }
+                            if (wordIndex >= 4) {
+                                String className = words.get(2);
+                                String methodName = words.get(3);
+                                boolean isCorrectParams = true;
+                                for (Method method : UMLClassHandler.getClass(className).getMethods()) {
+                                    if (method.getName().equals(methodName)) {
+                                        if (method.getParameterTypes().size() >= wordIndex - 4) {
+                                            for (int i = 0; i < wordIndex - 4; ++i) {
+                                                if (method.getParameterTypes().get(i).toString().equals(words.get(i + 4))) {
+                                                    isCorrectParams = true;
+                                                }
+                                                else{isCorrectParams = false; break;}
+                                            }
+                                            if (isCorrectParams) {
+                                                if (method.getParameterTypes().size() == wordIndex -4) {
+                                                    // candidates.add(new Candidate(";"));
+                                                    for (String paramName : method.getParameterNames()) {
+                                                        candidates.add(new Candidate(paramName));
+                                                    }
+                                                }
+                                                else{candidates.add(new Candidate(method.getParameterTypes().get(wordIndex - 4)));}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
 
                     }
                 // else if (a != null) {
