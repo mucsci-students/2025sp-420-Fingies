@@ -105,6 +105,10 @@ public class CLIView implements UMLView
                 .terminal(terminal)
                 .completer(completer)
                 .build();
+
+				lineReader.setVariable("COMPLETER_QUOTE_ESCAPING", false);
+				String wordChars = (String) lineReader.getVariable(LineReader.WORDCHARS);
+   				lineReader.setVariable(LineReader.WORDCHARS, wordChars + "\"");
 	}
 
     @Override
