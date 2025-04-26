@@ -393,6 +393,7 @@ public class TabCompletion {
                                     }
                                 }
                             }
+                            break;
                         case CHANGE_RELATIONSHIP_TYPE:
                             if (wordIndex == 3) {
                                 for (Relationship relationship : RelationshipHandler.getRelationObjects()) {
@@ -510,6 +511,7 @@ public class TabCompletion {
                                     candidates.add(new Candidate(validClass.getName()));
                                 }
                             }
+                            break;
                     }
                 }
             }
