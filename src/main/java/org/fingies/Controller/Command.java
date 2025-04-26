@@ -75,7 +75,7 @@ public class Command {
 			"CLASS_NAME FIELD_NAME", //remove field
 			"CLASS_NAME FIELD_NAME NEW_NAME", //rename field
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ NEW_PARAMETER_TYPE NEW_PARAMETER ... ]", //add parameters
-			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] ; [ OLD_PARAMETER ... ] ", //remove parameters
+			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] [ ; [ OLD_PARAMETER ... ] ] ", //remove parameters
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_NAME", //rename parameter
 			"SRC_CLASS DEST_CLASS NEW_RELATIONSHIP_TYPE", //change relationship type
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ] PARAMETER_NAME NEW_TYPE", //change parameter type
@@ -85,8 +85,6 @@ public class Command {
 			"", //redo
 			"[ FILEPATH ]", //export
 			"CLASS_NAME NEW_X NEW_Y", //move
-			"", //light mode
-			"" //dark mode
 		};
 	
 	/**
@@ -106,7 +104,8 @@ public class Command {
 			"Prints all of the attributes in a class.",
 			"Lists all of the relationships between classes in the diagram.",
 			"Prints a list of commands and their shorthand versions. \n"
-			+ "If the name of a command is supplied as an argument, prints a description of a single command.",
+			+ "If the name of a command is supplied as an argument, prints a description of a single command. \n"
+			+ "Command names with spaces in them should be surrounded by quotes (e.g. help \"add class\").",
 			"Exits the program.",
 			"Adds a method to a class. \n"
 			+ "Two methods in a class can have the same name, as long as they have a different arity.",
@@ -116,7 +115,8 @@ public class Command {
 			"Removes a field from a class.",
 			"Gives a field of a class a new name.",
 			"Adds a set of parameters to a method of a class.",
-			"Removes a set of parameters from a method of a class.",
+			"Removes a set of parameters from a method of a class.\n"
+			+ "If no parameters are supplied, all parameters are removed.",
 			"Gives a parameter of a method a new name.",
 			"Changes the type of a specified relationship.",
 			"Changes the data type of a parameter.",
@@ -172,7 +172,7 @@ public class Command {
 
 	/**
 	 * Gets the Action enum that represents the command in the string. The string must start with the command.
-	 * Spaces at the beginning and end of the string are ignored.
+	 * Whitespace at the beginning and end of the string are ignored.
 	 * 
 	 * @param input The string to get the Action out of.
 	 * @return The Action enum that represents the command at the beginning of the string, or null if there is none.
@@ -190,9 +190,6 @@ public class Command {
 		for (int i = 0; i < COMMANDS_SHORTHAND.length && a == null; ++i)
 			if (input.startsWith(COMMANDS_SHORTHAND[i]))
 				a = Action.values()[i];
-		
-		if (a == null)
-			return null;
 		
 		return a;
 	}
@@ -214,6 +211,8 @@ public class Command {
 		input = input.trim();
 		
 		Action a = getActionOutOfString(input);
+		if (a == null)
+			return null;
 		
 		int cmdLen = 0;
 		if (input.startsWith(COMMANDS[a.ordinal()]))

@@ -62,22 +62,13 @@ public class MethodTest {
     {
         try{
             m.addParameter("Param1%",  "String");
+            
+            // shouldn't run
+            assertTrue("Adding a parameter named Param1% should've thrown an exception because it contains invalid characters.", false);
         }   
         catch (IllegalArgumentException e)
         {
             assertEquals("String contains invalid characters", e.getMessage());
-        }
-    }
-
-    @Test
-    public void addOneParameterLongerThan50Characters_ThrowsIllegalArgumentException()
-    {
-        try{
-            m.addParameter("Parameeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeter1",  "String");
-        }   
-        catch (IllegalArgumentException e)
-        {
-            assertEquals("String is longer than 50 characters", e.getMessage());
         }
     }
 
@@ -123,6 +114,9 @@ public class MethodTest {
         {
             m.addParameter("Param1",  "String");
             m.addParameter("Param1",  "String");
+            
+            // shouldn't run
+            assertTrue("Adding a parameter to a method with a parameter of the same name should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -156,11 +150,14 @@ public class MethodTest {
     @Test
     public void addTwoParametersAndRenameOneParameterToOneThatExists_ThenParameterShouldFailToBeRenamed()
     {
+    	m.addParameter("Param1",  "String");
+        m.addParameter("Param2",  "String");
         try
         {
-            m.addParameter("Param1",  "String");
-            m.addParameter("Param2",  "String");
             m.renameParameter("Param1", "Param2");
+            
+            // shouldn't run
+            assertTrue("Renaming a parameter to have the same name as another parameter in the same a method should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -171,10 +168,13 @@ public class MethodTest {
     @Test
     public void addTwoParametersAndRenameOneParameterToOneThatDNE_ThenParameterShouldFailToBeRenamed()
     {
+    	m.addParameter("Param1", "String");
         try
         {
-            m.addParameter("Param1", "String");
             m.renameParameter("Param2", "Param3");
+            
+            // shouldn't run
+            assertTrue("Renaming a parameter that doesn't exist in a method should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -185,10 +185,13 @@ public class MethodTest {
     @Test
     public void renameParameterToSameName_ThenParameterShouldFailToBeRenamed()
     {
+    	 m.addParameter("Param1", "String");
         try
         {
-            m.addParameter("Param1", "String");
             m.renameParameter("Param1", "Param1");
+            
+            // shouldn't run
+            assertTrue("Renaming a parameter to be the same name should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -238,6 +241,9 @@ public class MethodTest {
         try
         {
             m.removeParameters(paramNames);
+            
+            // shouldn't run
+            assertTrue("Remvoing a parameter that doesn't exist in a method should've thrown an exception.", false);
         }
         catch (IllegalArgumentException e)
         {
@@ -249,6 +255,49 @@ public class MethodTest {
     public void removeParameterThatDNE_ThrowsIllegalArgumentException()
     {
         assertFalse(m.removeParameter("Param1"));
+    }
+    
+    // --------------------- CLEAR PARAMETERS ---------------------
+
+    @Test
+    public void addOneParameterToMethodAndClear_ThenMethodShouldContainParameter()
+    {
+        m.addParameter("Param1",  "String");
+        assertTrue(m.parameterExists("Param1"));
+        m.clearParameters();
+        assertFalse(m.parameterExists("Param1"));
+    }
+
+    @Test
+    public void clearListOfParameters_ThenAllParametersShouldBeRemoved()
+    {
+        m.addParameter("Param1",  "String");
+        m.addParameter("Param2",  "int");
+        m.addParameter("Param3",  "boolean");
+
+        assertTrue(m.parameterExists("Param1"));
+        assertTrue(m.parameterExists("Param2"));
+        assertTrue(m.parameterExists("Param3"));
+
+        m.clearParameters();
+        
+        assertTrue(m.getParameters().isEmpty());
+    }
+
+    @Test
+    public void clearWithNonExistantParameters_ThenIllegalArgumentExceptionThrown()
+    {
+        try
+        {
+            m.clearParameters();
+            
+            // shouldn't run
+            assertTrue("Removing all of the parameters from a method that doesn't have any should've thrown an exception.", false);
+        }
+        catch (IllegalArgumentException e)
+        {
+            assertEquals(e.getMessage(), "Method " + m.getName() + " doesn't have any parameters");
+        }
     }
 
     // --------------------- CHANGE PARAMETER TYPES ---------------------
@@ -361,8 +410,9 @@ public class MethodTest {
         pTypes.add("void");
         try {
             new Method("Test", "Void", pNames, pTypes);
-            //Should have thrown an exception, so now we say it fails because it didn't.
-            assertTrue(false);
+            
+            // shouldn't run
+            assertTrue("Creating a method without a type for every parameter should've thrown an exception.", false);
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(), "Every parameter must have one type");
         }
@@ -377,8 +427,9 @@ public class MethodTest {
         pTypes.add("void");
         try {
             m.addParameters(pNames, pTypes);
-            //Should have thrown an exception, so now we say it fails because it didn't.
-            assertTrue(false);
+            
+         // shouldn't run
+            assertTrue("Adding parameters without a type for every parameter to a method should've thrown an exception.", false);
         } catch (IllegalArgumentException e) {
             assertEquals(e.getMessage(), "Every parameter must have one type");
         }

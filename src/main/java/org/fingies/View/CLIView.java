@@ -163,9 +163,13 @@ public class CLIView implements UMLView
             }
 			
 				action = command.action;
-				controller.runHelper(action, command.arguments);
-			
-    	} while (!action.equals(Action.EXIT));
+				boolean result = controller.runHelper(action, command.arguments);
+				
+	        	if (action == Action.EXIT && result) // result only matters if the user entered the exit command
+	        	{
+	        		break;
+	        	}
+    	} while (true);
     }
 
     @Override

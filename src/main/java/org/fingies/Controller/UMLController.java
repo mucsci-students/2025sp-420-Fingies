@@ -5,10 +5,13 @@ import java.util.Stack;
 
 import org.fingies.Change;
 import org.fingies.Model.JModel;
+import org.fingies.Model.Method;
+import org.fingies.Model.Parameter;
 import org.fingies.Model.RelationshipHandler;
 import org.fingies.Model.RelationshipType;
 import org.fingies.Model.UMLClass;
 import org.fingies.Model.UMLClassHandler;
+import org.fingies.Model.Field;
 import org.fingies.View.UMLView;
 
 import java.util.ArrayList;
@@ -112,7 +115,7 @@ public class UMLController {
         {
         	RelationshipType rType = RelationshipType.fromString(type);
         	if (rType == null)
-        		throw new IllegalArgumentException(type + " is not a valid relationship type."); // exception is immediately caught
+        		throw new IllegalArgumentException(type + " is not a valid relationship type"); // exception is immediately caught
         	// We store a change to src class, but not dest class. Because only one is needed
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	boolean result = RelationshipHandler.addRelationship(srcClass, destClass, rType);
@@ -175,9 +178,10 @@ public class UMLController {
     {
         try
         {
-        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = UMLClassHandler.getClass(srcClass).addField(field, type);
-        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	UMLClass umlSrcClass = UMLClassHandler.getClass(srcClass);
+        	Change change = new Change (umlSrcClass, RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	boolean result = umlSrcClass.addField(field, type);
+        	change.setCurrClass(umlSrcClass);
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	redoStack.clear();
@@ -195,9 +199,10 @@ public class UMLController {
     {
         try
         {
-        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = UMLClassHandler.getClass(srcClass).addMethod(methodName, returnType, parameterNames, parameterTypes);
-        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+        	Change change = new Change (srcUMLClass, RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	boolean result = srcUMLClass.addMethod(methodName, returnType, parameterNames, parameterTypes);
+        	change.setCurrClass(srcUMLClass);
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	redoStack.clear();
@@ -215,9 +220,10 @@ public class UMLController {
     {
         try
         {
-        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = UMLClassHandler.getClass(srcClass).removeField(field);
-        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	UMLClass umlSrcClass = UMLClassHandler.getClass(srcClass);
+        	Change change = new Change (umlSrcClass, RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	boolean result = umlSrcClass.removeField(field);
+        	change.setCurrClass(umlSrcClass);
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	redoStack.clear();
@@ -235,9 +241,13 @@ public class UMLController {
     {
         try 
         {
-        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	UMLClassHandler.getClass(srcClass).getField(field).setType(newType);
-        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	UMLClass umlSrcClass = UMLClassHandler.getClass(srcClass);
+        	Change change = new Change (umlSrcClass, RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	Field umlField = umlSrcClass.getField(field);
+        	if (umlField == null)
+        		throw new IllegalArgumentException("Class " + srcClass + " doesn't have a field named " + field);
+        	umlField.setType(newType);
+        	change.setCurrClass(umlSrcClass);
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	redoStack.clear();
@@ -258,14 +268,24 @@ public class UMLController {
             ArrayList <String> empty = new ArrayList<>();
             Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-            	UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).setReturnType(newType);
-            }
+            	method = srcUMLClass.getMethod(methodName, empty);
+            } 
             else
             {
-            	UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).setReturnType(newType); 
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
             }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            method.setReturnType(newType);
+            
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
             change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
@@ -284,18 +304,19 @@ public class UMLController {
     {
         try
         {
-            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	UMLClass umlSrcClass = UMLClassHandler.getClass(srcClass);
+            Change change = new Change (umlSrcClass, RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             ArrayList <String> empty = new ArrayList<>();
             boolean result;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                result = UMLClassHandler.getClass(srcClass).removeMethod(methodName, empty);
+                result = umlSrcClass.removeMethod(methodName, empty);
             }
             else
             {
-                result = UMLClassHandler.getClass(srcClass).removeMethod(methodName, parameterTypes);
+                result = umlSrcClass.removeMethod(methodName, parameterTypes);
             }
-        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrClass(umlSrcClass);
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	redoStack.clear();
@@ -313,9 +334,10 @@ public class UMLController {
     {
         try
         {
-        	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
-        	boolean result = UMLClassHandler.getClass(srcClass).renameField(oldField, newField);
-        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	UMLClass umlSrcClass = UMLClassHandler.getClass(srcClass);
+        	Change change = new Change (umlSrcClass, RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	boolean result = umlSrcClass.renameField(oldField, newField);
+        	change.setCurrClass(umlSrcClass);
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	redoStack.clear();
@@ -333,18 +355,19 @@ public class UMLController {
     {
         try
         {
-            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	UMLClass umlSrcClass = UMLClassHandler.getClass(srcClass);
+            Change change = new Change (umlSrcClass, RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             ArrayList <String> empty = new ArrayList<>();
             boolean result;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                return UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, empty, newMethodName);
+                return umlSrcClass.renameMethod(oldMethodName, empty, newMethodName);
             } 
             else
             {
-                result = UMLClassHandler.getClass(srcClass).renameMethod(oldMethodName, parameterTypes, newMethodName);
+                result = umlSrcClass.renameMethod(oldMethodName, parameterTypes, newMethodName);
             }
-        	change.setCurrClass(UMLClassHandler.getClass(srcClass));
+        	change.setCurrClass(umlSrcClass);
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
         	redoStack.clear();
@@ -366,14 +389,24 @@ public class UMLController {
             Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             boolean result;
             ArrayList <String> empty = new ArrayList<>();
+            
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).addParameters(newParameterNames, newParameterTypes);
-            }   
+            	method = srcUMLClass.getMethod(methodName, empty);
+            } 
             else
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).addParameters(newParameterNames, newParameterTypes);
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
             }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            result = method.addParameters(newParameterNames, newParameterTypes);
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
@@ -395,14 +428,66 @@ public class UMLController {
             Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             boolean result;
             ArrayList <String> empty = new ArrayList<>();
+            
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).removeParameters(parameterNamesToRemove);
+            	method = srcUMLClass.getMethod(methodName, empty);
             } 
             else
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).removeParameters(parameterNamesToRemove);
-            }  
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
+            }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            result = method.removeParameters(parameterNamesToRemove);
+    		
+            change.setCurrClass(UMLClassHandler.getClass(srcClass));
+            change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+        	undoStack.push(change);
+        	redoStack.clear();
+        	return result;
+        }
+        catch (Exception e)
+        {
+            model.writeToLog(e.getMessage());
+            view.notifyFail(e.getMessage());
+            return false;
+        }
+    }
+    
+    // overloaded variant for removing all parameters
+    public boolean doRemoveParameters(String srcClass, String methodName, List<String> parameterTypes)
+    {
+        try
+        {
+            Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
+            boolean result;
+            ArrayList <String> empty = new ArrayList<>();
+            
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
+            if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
+            {
+            	method = srcUMLClass.getMethod(methodName, empty);
+            } 
+            else
+            {
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
+            }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            result = method.clearParameters();
+    		
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
             change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
@@ -424,14 +509,25 @@ public class UMLController {
             Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             boolean result;
             ArrayList <String> empty = new ArrayList<>();
+            
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).renameParameter(oldParam, newParam);
-            }   
+            	method = srcUMLClass.getMethod(methodName, empty);
+            } 
             else
             {
-                result = UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).renameParameter(oldParam, newParam);
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
             }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            result = method.renameParameter(oldParam, newParam);
+            
             change.setCurrClass(UMLClassHandler.getClass(srcClass));
             change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
@@ -451,14 +547,32 @@ public class UMLController {
         {
         	Change change = new Change (UMLClassHandler.getClass(srcClass), RelationshipHandler.getAllRelationshipsForClassname(srcClass));
             ArrayList <String> empty = new ArrayList<>();
+            
+            UMLClass srcUMLClass = UMLClassHandler.getClass(srcClass);
+            Method method;
             if (!parameterTypes.isEmpty() && parameterTypes.get(0).equals("")) // without this, parameterTypes ends up with 1 item of an empty String
             {
-                UMLClassHandler.getClass(srcClass).getMethod(methodName, empty).getParameter(param).setType(newType);
-            }   
+            	method = srcUMLClass.getMethod(methodName, empty);
+            } 
             else
             {
-                UMLClassHandler.getClass(srcClass).getMethod(methodName, parameterTypes).getParameter(param).setType(newType);
+            	method = srcUMLClass.getMethod(methodName, parameterTypes);
             }
+            
+            if (method == null) // immediately enter the catch{} if the method doesn't exist
+            {
+            	throw new IllegalArgumentException(srcClass + " doesn't have a method named " + methodName + " with the parameter types " + parameterTypes);
+            }
+            
+            Parameter parameter = method.getParameter(param);
+            
+            if (parameter == null)
+            {
+            	throw new IllegalArgumentException("The method " + methodName + " with the parameter types " + parameterTypes + " does not have a parameter named " + param);
+            }
+            
+            parameter.setType(newType);
+            
         	change.setCurrClass(UMLClassHandler.getClass(srcClass));
         	change.setCurrRelationships(RelationshipHandler.getAllRelationshipsForClassname(srcClass));
         	undoStack.push(change);
@@ -540,7 +654,7 @@ public class UMLController {
     		UMLClassHandler.replace(change.getOldClass(), newClass);
     		RelationshipHandler.replace(change.getOldClass(), newClass);
     		if (newClass != null)
-    			RelationshipHandler.replaceAllRelationshipsForClassname(change.getCurrClass().getName(), change.getCurrRelationshipsUsingLink(newClass));
+    			RelationshipHandler.replaceAllRelationshipsForClassname(newClass.getName(), change.getCurrRelationshipsUsingLink(newClass));
     		return true;
     	}
     }
@@ -620,36 +734,29 @@ public class UMLController {
     //////////////////////////////////////////// OTHER METHODS ////////////////////////////////////////////
 
     /**
-     * Prompts the user to save their diagram, and saves their changes once they provide a valid filepath.
+     * Calls doSave() and prints the appropriate message
+     * 
+     * @param filepath The file to save to.
+     * @return True if the file was successfully saved, false otherwise.
      */
-    public boolean saveLoop()
+    public boolean saveCheck(String filepath)
     {
-        while (true)
+        if (doSave(filepath))
         {
-            String input = view.promptForSaveInput("Enter a valid filepath to save to or type EXIT to quit the program.");
-            if(input == null)
-            {
-            	return false;
-            }
-            if (input.toUpperCase().equals("EXIT"))
-                return false;;
-            if (doSave(input))
-            {
-                madeChange = false;
-                hasSaved = true;
-                view.notifySuccess("Successfully loaded your file.");
-                return true;
-            }
-            else
-            {
-                view.notifyFail("Invalid filepath. Filepath should look something like this:");
-                view.notifySuccess("(C:\\Users\\Zoppetti\\Demos\\Test.txt)");
-            }
+            madeChange = false;
+            hasSaved = true;
+            view.notifySuccess("Successfully loaded " + filepath);
+            return true;
+        }
+        else
+        {
+            view.notifyFail("Invalid filepath provided");
+            return false;
         }
     }
 
     /**
-     * Checks whether the provided file path is valid or not, and if it is, calls doLoad()
+     * Calls doLoad() and prints the appropriate message
      * 
      * @param filepath The file to load.
      * @return True if the file was successfully loaded, false otherwise.
@@ -667,38 +774,10 @@ public class UMLController {
         }
         else
         {
-            view.notifyFail("Invalid filepath provided. Filepath should look something like this:\n(C:\\\\Users\\\\Zoppetti\\\\Demos\\\\Test.txt)");
+            view.notifyFail("Invalid filepath provided");
             return false;
         }
     }
-
-    /**
-     * Prompts the user to either load in an existing JSON file with data or create a new one.
-     * If the user provides a filepath, loads that filepath.
-     */
-    public boolean getData()
-    {
-        String result = view.promptForInput("Do you want to load a JSON file for storing your UML diagram? Type Y for yes or any other key to make a new JSON file instead");
-        if (result.equals("Y") || result.equals("y"))
-        {
-            while (true)
-            {
-                String filepath = view.promptForInput("Enter a valid filepath");
-                if (loadCheck(filepath))
-                {
-                    return true; 
-                }
-                String again = view.promptForInput("Type T to try again, E to exit, or any other key to make a new JSON file instead");
-                if (again.equals("E") && !again.equals("e"))
-                    return false;
-                else if (!again.equals("T") && !again.equals("t"))
-                    break;
-            }
-        }
-        return true;
-        
-    }
-    
     
     //////////////////////////////////////////// RUN HELPER ////////////////////////////////////////////
 
@@ -730,7 +809,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.ADD_CLASS.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have exactly 1 argument \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case REMOVE_CLASS:
@@ -750,7 +830,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.REMOVE_CLASS.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have exactly 1 argument \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case RENAME_CLASS:
@@ -770,7 +851,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.RENAME_CLASS.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have exactly 2 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case ADD_RELATIONSHIP:
@@ -792,7 +874,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.ADD_RELATIONSHIP.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have exactly 3 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case REMOVE_RELATIONSHIP:
@@ -812,7 +895,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.REMOVE_RELATIONSHIP.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have exactly 2 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case ADD_METHOD:
@@ -823,13 +907,15 @@ public class UMLController {
                     	List<String> parameterTypes = new ArrayList<String>();
                     	boolean result = getTwoListsFromArray(args, 3, args.length, parameterNames, parameterTypes);
                     	if (!result)
-                    	{
-                    		view.notifyFail("Add Method should have exactly 1 type for every parameter name.");
+                        {
+                        	int idx = Action.ADD_PARAMETERS.ordinal();
+                    		view.notifyFail("Every parameter name should have 1 type \n"
+                    				+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     		return false;
-                    	}
+                        }
                         if (doAddMethod(args[0], args[1], args[2], parameterNames, parameterTypes))
                         {
-                            view.notifySuccess("Successfully added method " + args[1] + " with argument(s) " + getPartialListFromArray(args, 3, args.length) + " to class " + args[0]);
+                            view.notifySuccess("Successfully added method " + UMLClassHandler.getClass(args[0]).getMethod(args[1], parameterTypes) + " to class " + args[0]);
                             madeChange = true;
                             return true;
                         }
@@ -845,7 +931,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.ADD_METHOD.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have at least 3 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case REMOVE_METHOD:
@@ -854,7 +941,7 @@ public class UMLController {
                     List<String> paramTypes = getPartialListFromArray(args, 2, args.length);
                     if (doRemoveMethod(args[0], args[1], paramTypes))
                     {
-                        view.notifySuccess("Successfully removed method " + args[1] + " from class " + args[0]);
+                        view.notifySuccess("Successfully removed method " + undoStack.peek().getOldClass().getMethod(args[1], paramTypes) + " from class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -865,16 +952,17 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.REMOVE_METHOD.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have at least 2 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case RENAME_METHOD:
-                if (args.length >= 4)
+                if (args.length >= 3)
                 {
                 	List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 1);
                     if (doRenameMethod(args[0], args[1], paramTypes, args[args.length - 1]))
                     {
-                        view.notifySuccess("Successfully renamed method " + args[1] + " to " + args[args.length - 1] + " in class " + args[0]);
+                        view.notifySuccess("Successfully renamed method " + undoStack.peek().getOldClass().getMethod(args[1], paramTypes) + " to " + args[args.length - 1] + " in class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -886,7 +974,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.RENAME_METHOD.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have at least 3 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case ADD_FIELD:
@@ -906,7 +995,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.ADD_FIELD.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have exactly 3 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case REMOVE_FIELD:
@@ -925,7 +1015,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.REMOVE_FIELD.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have exactly 2 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case RENAME_FIELD:
@@ -945,7 +1036,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.RENAME_FIELD.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have exactly 3 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case CHANGE_FIELD_TYPE: 
@@ -953,7 +1045,7 @@ public class UMLController {
                 {
                     if (doChangeFieldDataType(args[0], args[1], args[2]))
                     {
-                        view.notifySuccess("Successfully changed field " + args[1] + "'s data type to " + args[2] + " in class " + args[0]);
+                        view.notifySuccess("Successfully changed the data type of field " + args[1] + " to " + args[2] + " in class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -964,29 +1056,35 @@ public class UMLController {
                 }
                 else {
                 	int idx = Action.CHANGE_FIELD_TYPE.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have exactly 3 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case ADD_PARAMETERS:
                 if (args.length >= 5) {
                     try {
-                        int idx = indexOfSymbol(args, ";");
-                        if (idx == -1)
+                        int index = indexOfSymbol(args, ";");
+                        if (index == -1)
                         {
-                        	view.notifyFail("Add Parameters should have a semicolon as an argument in between the method's signature and the new parameters\n"
-                        			+ "ex. addp class_name method_name param_type1 param_type2 ; new_param_type new_param_name");
+                        	int idx = Action.ADD_PARAMETERS.ordinal();
+                        	view.notifyFail(Command.COMMANDS[idx] + " should have a semicolon as an argument in between the method's signature and the new parameters \n"
+                        			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                         	return false;
                         }
-                        List<String> oldParamTypes = getPartialListFromArray(args, 2, idx);
-                        if (idx == 3) {
-                            oldParamTypes = new ArrayList<String>();
-                        }
+                        List<String> oldParamTypes = getPartialListFromArray(args, 2, index);
                         List<String> newParamNames = new ArrayList<String>();
                         List<String> newParamTypes = new ArrayList<String>();
-                        getTwoListsFromArray(args, idx + 1, args.length, newParamNames, newParamTypes);
+                        boolean result = getTwoListsFromArray(args, index + 1, args.length, newParamNames, newParamTypes);
+                        if (!result)
+                        {
+                        	int idx = Action.ADD_PARAMETERS.ordinal();
+                    		view.notifyFail("Every parameter name should have 1 type \n"
+                    				+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                    		return false;
+                        }
                         if (doAddParameters(args[0], args[1], oldParamTypes, newParamNames, newParamTypes))
                         {
-                            view.notifySuccess("Succesfully added parameter(s): " + newParamNames + " to method " + args[1] + " from class " + args[0]);
+                            view.notifySuccess("Succesfully added parameter" + (newParamNames.size() > 1 ? "s: " + newParamNames : " " + newParamNames.get(0)) + " to method " + undoStack.peek().getOldClass().getMethod(args[1], oldParamTypes) + " from class " + args[0]);
                             madeChange = true;
                             return true;
                         }
@@ -1002,34 +1100,46 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.ADD_PARAMETERS.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have 5 or more arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case REMOVE_PARAMETERS:
-                if (args.length >= 5) {
-                    int idx = indexOfSymbol(args, ";");
-                    if (idx == -1)
+                if (args.length >= 2) {
+                    int index = indexOfSymbol(args, ";");
+                    if (index == -1)
                     {
-                    	view.notifyFail("Remove Parameters should have a semicolon as an argument in between the method's signature and the parameters to remove\n"
-                    			+ "ex. rmp class_name method_name param_type1 param_type2 ; param_type param_name");
-                    	return false;
+                    	List<String> paramTypes = getPartialListFromArray(args, 2, args.length);
+                    	if (doRemoveParameters(args[0], args[1], paramTypes))
+                        {
+                            view.notifySuccess("Succesfully removed all parameters from method " + undoStack.peek().getOldClass().getMethod(args[1], paramTypes) + " from class " + args[0]);
+                            madeChange = true;
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
                     }
-                    List<String> paramTypes = getPartialListFromArray(args, 2, idx);
-                    List<String> paramNames = getPartialListFromArray(args, idx + 1, args.length);
-                    if (doRemoveParameters(args[0], args[1], paramTypes, paramNames))
+                    else
                     {
-                        view.notifySuccess("Succesfully removed parameter(s): " + paramNames + " from method " + args[1] + " from class " + args[0]);
-                        madeChange = true;
-                        return true;
-                    }
-                    else {
-                        return false;
+                    	List<String> paramTypes = getPartialListFromArray(args, 2, index);
+                        List<String> paramNames = getPartialListFromArray(args, index + 1, args.length);
+                        if (doRemoveParameters(args[0], args[1], paramTypes, paramNames))
+                        {
+                            view.notifySuccess("Succesfully removed parameter" + (paramNames.size() > 1 ? "s: " + paramNames : " " + paramNames.get(0)) + " to method " + undoStack.peek().getOldClass().getMethod(args[1], paramTypes) + " from class " + args[0]);
+                            madeChange = true;
+                            return true;
+                        }
+                        else {
+                            return false;
+                        }
                     }
                 }
                 else
                 {
                 	int idx = Action.REMOVE_PARAMETERS.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have at least 2 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case RENAME_PARAMETER:
@@ -1037,7 +1147,7 @@ public class UMLController {
                 	List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 2); 
                     if (doRenameParameter(args[0], args[1], paramTypes, args[args.length - 2], args[args.length - 1]))
                     {
-                        view.notifySuccess("Successfully renamed parameter " + args[args.length - 2] + " of method " + args[1] + " of class " + args[0] + " to " + args[args.length - 1]);
+                        view.notifySuccess("Successfully renamed parameter " + args[args.length - 2] + " of method " + undoStack.peek().getOldClass().getMethod(args[1], paramTypes) + " to " + args[args.length - 1] + " in class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -1049,7 +1159,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.RENAME_PARAMETER.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have at least 5 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case CHANGE_PARAMETER_TYPE:
@@ -1058,7 +1169,7 @@ public class UMLController {
                 	List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 2); 
                     if (doChangeParameterDataType(args[0], args[1], paramTypes, args[args.length - 2], args[args.length - 1]))
                     {
-                        view.notifySuccess("Successfully changed parameter " + args[args.length - 2] + "'s data type to " + args[args.length - 1] + " of method " + args[1] + " of class " + args[0]);
+                        view.notifySuccess("Successfully changed the data type of parameter " + args[args.length - 2] + " of method " + undoStack.peek().getOldClass().getMethod(args[1], paramTypes) + " to " + args[args.length - 1] + " in class " + args[0]);
                         madeChange = true;
                         return true;
                     }
@@ -1070,7 +1181,8 @@ public class UMLController {
                 else 
                 {
                 	int idx = Action.CHANGE_PARAMETER_TYPE.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have at least 5 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case CHANGE_METHOD_RETURN_TYPE:
@@ -1080,7 +1192,7 @@ public class UMLController {
                     List<String> paramTypes = getPartialListFromArray(args, 2, args.length - 1);
                     if (doChangeMethodReturnType(args[0], args[1], paramTypes, args[args.length - 1]))
                     {
-                        view.notifySuccess("Successfully changed method " + args[1] + "'s return type to " + args[args.length - 1] + " in class " + args[0]);
+                        view.notifySuccess("Successfully changed the return type of method " + UMLClassHandler.getClass(args[0]).getMethod(args[1], paramTypes) + " to " + args[args.length - 1] + " in class " + args[0]);
                         madeChange = true;
                         return true;
                     }  
@@ -1092,7 +1204,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.CHANGE_METHOD_RETURN_TYPE.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have at least 3 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case CHANGE_RELATIONSHIP_TYPE:
@@ -1101,7 +1214,7 @@ public class UMLController {
                     if (doChangeRelationshipType(args[0], args[1], args[2]))
                     {   
                         RelationshipType r = RelationshipType.fromString(args[2]);
-                        view.notifySuccess("Successfully changed relationship type to " + args[0] + " " + r + " " + args[1] + " (" + r.getName() + ")");
+                        view.notifySuccess("Successfully changed the type of relationship between " + args[0] + " and " + args[1] + "to " + r.getName());
                         madeChange = true;
                         return true;
                     }
@@ -1113,7 +1226,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.CHANGE_RELATIONSHIP_TYPE.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have exactly 3 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case SAVE:
@@ -1123,62 +1237,39 @@ public class UMLController {
                     {
                         doSave();
                         madeChange = false;
-                        view.notifySuccess("Successfully saved your file");
+                        view.notifySuccess("Successfully saved to " + model.getFilepath());
                         return true;
                     }
                     else
                     {
-                        args = new String[] {view.promptForSaveInput("Please designate a filepath to save to")};
-                        if (args[0] == null)
-                        	return false;
-                        if (doSave(args[0]))
-                        {
-                            hasSaved = true;
-                            madeChange = false;
-                            view.notifySuccess("Successfully saved your file");
-                            return true;
-                        }
-                        else
-                        {
-                    	    view.notifyFail("Invalid filepath provided.");
-                            return false;
-                        }
+                    	return saveCheck(view.promptForSaveInput("Please designate a filepath to save to"));
                     }
                 }
                 else if (args.length == 1)
                 {
-                    if (doSave(args[0]))
-                    {
-                        hasSaved = true;
-                        madeChange = false;
-                        view.notifySuccess("Successfully saved your file");
-                        return true;
-                    }
-                    else
-                    {
-                	    view.notifyFail("Invalid filepath provided.");
-                        return false;
-                    }
+                	return saveCheck(args[0]);
                 }
                 else
                 {
                 	int idx = Action.SAVE.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have either 0 or 1 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case LOAD:     
                 if (args.length == 0)
                 {
                 	String path = view.promptForOpenInput("Please designate a filepath to open");
-                	args = new String[] {path};
+                	args = new String[] { path };
+                	if (args[0].equals(""))
+                	{
+                		view.notifyFail("Invalid filepath");
+                        return false;
+                	}
                 }
                 
                 if (args.length == 1)
                 {
-                	if(args[0] == null)
-                	{
-                		return false;
-                	}
                     if (madeChange)
                     {
                         int result = view.promptForYesNoInput("Would you like to save before loading a file?", "Warning");
@@ -1188,7 +1279,7 @@ public class UMLController {
                         }
                         else if(result == 0)
                         {
-                            boolean saveResult = saveLoop();
+                            boolean saveResult = saveCheck(view.promptForSaveInput("Please designate a filepath to save to"));
                             if(saveResult)
                             {
                             	return loadCheck(args[0]);
@@ -1209,12 +1300,12 @@ public class UMLController {
                         {
                             doLoad(args[0]);
                             hasSaved = true;
-                            view.notifySuccess("Successfully loaded your file.");
+                            view.notifySuccess("Successfully loaded " + args[0]);
                             return true;
                         }
                         else
                         {
-                            view.notifyFail("Invalid filepath.");
+                            view.notifyFail("Invalid filepath");
                             return false;
                         }
                     }
@@ -1222,7 +1313,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.LOAD.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have either 0 or 1 arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
                 
@@ -1235,7 +1327,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.LIST_CLASSES.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " shouldn't have any arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case LIST_CLASS:
@@ -1247,7 +1340,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.LIST_CLASS.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have exactly 1 argument \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case LIST_RELATIONSHIPS:
@@ -1259,7 +1353,8 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.LIST_RELATIONSHIPS.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " shouldn't have any arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case HELP:
@@ -1276,13 +1371,16 @@ public class UMLController {
                 else
                 {
                 	int idx = Action.HELP.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " should have either 0 or 1 arguments \n"
+                			+ "Arguments with spaces require quotes \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
             case EXIT:
                 if (args.length != 0) {
                 	int idx = Action.EXIT.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " shouldn't have any arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
                 }
                 else if (madeChange)
@@ -1292,10 +1390,9 @@ public class UMLController {
                     	return false;
                     if (result == 0)
                     {
-                        //needs to be changed for overload with 0 arguments ... could prompt for a new path
                         if (!hasSaved)
                         {
-                            boolean saveResult = saveLoop();
+                            boolean saveResult = saveCheck(view.promptForSaveInput("Please designate a filepath to save to"));
                             return saveResult;
                         }
                         else
@@ -1311,30 +1408,48 @@ public class UMLController {
             	if (args.length != 0)
             	{
             		int idx = Action.UNDO.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " shouldn't have any arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
             	}
             	else
             	{
-            		return doUndo();
+            		if (doUndo())
+            		{
+            			madeChange = true;
+            			return true;
+            		}
+            		else
+            		{
+            			return false;
+            		}
             	}
             case REDO:
             	if (args.length != 0)
             	{
             		int idx = Action.UNDO.ordinal();
-                	view.notifyFail(Command.COMMANDS[idx] + " should follow this format: \n" + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail(Command.COMMANDS[idx] + " shouldn't have any arguments \n"
+                			+ "Usage: " + Command.COMMANDS[idx] + " " + Command.COMMAND_ARGS[idx]);
                     return false;
             	}
             	else
             	{
-            		return doRedo();
+            		if (doRedo())
+            		{
+            			madeChange = true;
+            			return true;
+            		}
+            		else
+            		{
+            			return false;
+            		}
             	}
             case EXPORT:
             	
             	if (args.length == 0)
             	{
             		String input = view.promptForSaveInput("Please designate a filepath to export to");
-                	args = new String[] {input};
+                	args = new String[] { input };
             	}
             	
             	if (args.length == 1)
@@ -1348,28 +1463,37 @@ public class UMLController {
                     }
                     else
                     {
-                	    view.notifyFail("Invalid filepath provided.");
+                	    view.notifyFail("Invalid filepath provided");
                         return false;
                     }
             	}
             	else
             	{
             		int idx = Action.EXPORT.ordinal();
-                	view.notifyFail("Export Image should follow this format: \n" + "Export Image " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail("export image should have either 0 or 1 arguments \n"
+                			+ "Usage: \n" + "Export Image " + Command.COMMAND_ARGS[idx]);
                     return false;
             	}
             case MOVE:
             	if (args.length != 3)
             	{
             		int idx = Action.MOVE.ordinal();
-                	view.notifyFail("Move should follow this format: \n" + "Move " + Command.COMMAND_ARGS[idx]);
+                	view.notifyFail("move should have exactly 3 arguments \n"
+                			+ "Usage: \n" + "Move " + Command.COMMAND_ARGS[idx]);
                     return false;
             	}
             	else
             	{
-            		return doMove(args[0], args[1], args[2]);
+            		if (doMove(args[0], args[1], args[2]))
+            		{
+            			madeChange = true;
+            			return true;
+            		}
+            		else
+            		{
+            			return false;
+            		}
             	}
-            	// TODO: add case for light & dark mode
         }
         return false;
     }

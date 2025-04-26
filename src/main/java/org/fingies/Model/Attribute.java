@@ -12,10 +12,6 @@ public abstract class Attribute {
      */
     public void validateCharacters(String name)
     {
-        if (name.length() > 50)
-        {
-            throw new IllegalArgumentException("String is longer than 50 characters");
-        }
         for (char c : name.toCharArray())
         {
             if (allowedCharacters.indexOf(c) == -1)

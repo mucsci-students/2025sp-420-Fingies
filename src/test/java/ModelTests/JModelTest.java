@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import javax.swing.BoxLayout;
-import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
@@ -67,8 +66,7 @@ public class JModelTest {
 
     @After
     public void resetTest() {
-        RelationshipHandler.removeRelationship("Car", "Animal");
-        RelationshipHandler.removeRelationship("Food", "Animal");
+        RelationshipHandler.reset();
         model.setFilepath(path);
     }
 
