@@ -80,12 +80,6 @@ public class TabCompletion {
                             candidates.add(new Candidate(verb));
                         }
                     }
-                    // Suggest shorthand commands
-                    for (String shorthand : shorthandCommands) {
-                        if (shorthand.startsWith(line.word())) {
-                            candidates.add(new Candidate(shorthand));
-                        }
-                    }
                 } else if (wordIndex == 1) {
                     String firstWord = words.get(0);
                     String current = line.word();
@@ -154,10 +148,13 @@ public class TabCompletion {
                             }
                             break;
                         case HELP:
+                            String buffer = reader.getBuffer().toString();
+                            int quoteCount = buffer.length() - buffer.replace("\"", "").length();
                             for (String command : Arrays.asList(Command.COMMANDS)) {
-                                if (!reader.getBuffer().toString().contains("\"")) {
+                                if (quoteCount == 0) {
                                     candidates.add(new Candidate("\"" + command + "\""));
-                                } else {
+                                } 
+                                else if (quoteCount == 1){
                                     candidates.add(new Candidate(command + "\""));
                                 }
                             }
