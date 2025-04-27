@@ -151,7 +151,7 @@ public class TabCompletion {
                             String buffer = reader.getBuffer().toString();
                             int quoteCount = buffer.length() - buffer.replace("\"", "").length();
                             for (String command : Arrays.asList(Command.COMMANDS)) {
-                                if (quoteCount == 0) {
+                                if (quoteCount == 0 && words.get(1).isEmpty()) {
                                     candidates.add(new Candidate("\"" + command + "\""));
                                 } 
                                 else if (quoteCount == 1){

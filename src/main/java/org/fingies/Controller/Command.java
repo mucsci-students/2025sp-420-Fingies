@@ -66,7 +66,7 @@ public class Command {
 			"", //list classes
 			"CLASS_NAME", //list class
 			"", //list relationships
-			"[ COMMAND ]", //help
+			"\"COMMAND\"", //help
 			"", //exit
 			"CLASS_NAME METHOD_NAME RETURN_TYPE [ PARAMETER_TYPE PARAMETER ... ]", //add method
 			"CLASS_NAME METHOD_NAME [ PARAMETER_TYPE ... ]", //remove method
@@ -105,7 +105,7 @@ public class Command {
 			"Lists all of the relationships between classes in the diagram.",
 			"Prints a list of commands and their shorthand versions. \n"
 			+ "If the name of a command is supplied as an argument, prints a description of a single command. \n"
-			+ "Command names with spaces in them should be surrounded by quotes (e.g. help \"add class\").",
+			+ "Command names should be surrounded by quotes (e.g. help \"add class\").",
 			"Exits the program.",
 			"Adds a method to a class. \n"
 			+ "Two methods in a class can have the same name, as long as they have a different arity.",
