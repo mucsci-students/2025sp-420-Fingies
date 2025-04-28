@@ -1,31 +1,37 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
-import java.util.Stack;
 
-import org.junit.Assert;
+import javax.swing.JComponent;
+
 import org.junit.Test;
-import org.fingies.*;
+import org.fingies.Controller.Action;
+import org.fingies.Controller.UMLController;
+import org.fingies.Model.JModel;
+import org.fingies.Model.Method;
+import org.fingies.Model.Position;
+import org.fingies.Model.Relationship;
+import org.fingies.Model.RelationshipHandler;
+import org.fingies.Model.RelationshipType;
+import org.fingies.Model.UMLClass;
+import org.fingies.Model.UMLClassHandler;
+import org.fingies.View.InputCheck;
+import org.fingies.View.UMLView;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Test;
 
 public class RedoTest { // TODO: test what happens if we redo after making a change after undoing, or undo after redoing
 	
-	Controller controller;
+	UMLController controller;
 	
 	@Before
 	public void setUp()
 	{
 		// dummy view
-		View view = new View() {
+		UMLView view = new UMLView() {
 		    @Override public void run() {}
 		    @Override public String promptForSaveInput(String message) { return null; }
 		    @Override public String promptForOpenInput(String message) { return null; }
@@ -38,10 +44,12 @@ public class RedoTest { // TODO: test what happens if we redo after making a cha
 		    @Override public void display(String message) {}
 		    @Override public void help() {}
 		    @Override public void help(String command) {}
-		    @Override public void setController(Controller c) {}
+		    @Override public void setController(UMLController c) {}
+		    @Override public int promptForYesNoInput(String message, String title) { return 2; }
+		    @Override public JComponent getJComponentRepresentation() { return null; }
 		};
 
-        controller = new Controller(view, new JModel());
+        controller = new UMLController(view, new JModel());
 	    view.setController(controller);
 	    
 	}
