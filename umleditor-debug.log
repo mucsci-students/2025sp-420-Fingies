@@ -262,3 +262,8 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-
 [04/22/25 17:16:26]: java.lang.NullPointerException: Cannot invoke "org.fingies.Model.JModel$UMLModel.reloadClasses()" because "data" is null
 [04/22/25 17:16:26]: Test Write to Error Log, Ignore this message.
 [04/22/25 17:16:26]: java.lang.NullPointerException
+[04/28/25 02:10:53]: javax.imageio.IIOException: Can't create an ImageOutputStream!
+[04/28/25 02:10:53]: java.lang.IllegalArgumentException: Invalid Argument: null, in exportImage
+[04/28/25 02:10:53]: java.lang.NullPointerException: Cannot invoke "org.fingies.Model.JModel$UMLModel.reloadClasses()" because "data" is null
+[04/28/25 02:10:53]: Test Write to Error Log, Ignore this message.
+[04/28/25 02:10:53]: java.lang.NullPointerException
