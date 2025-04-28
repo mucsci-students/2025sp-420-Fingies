@@ -2,7 +2,6 @@ package org.fingies;
 
 import org.fingies.Controller.Action;
 import org.fingies.Controller.Command;
-import org.fingies.Controller.UMLController;
 import org.fingies.Model.Relationship;
 import org.fingies.Model.RelationshipHandler;
 import org.fingies.Model.RelationshipType;
@@ -12,9 +11,14 @@ import org.fingies.Model.UMLClass;
 import org.fingies.Model.UMLClassHandler;
 import org.jline.reader.*;
 
-import java.lang.reflect.Type;
 import java.util.*;
 
+
+/**
+ * Tab Completion class to handle tab completion in CLI
+ * 
+ * @author Tim King and William Wickenheiser
+ */
 public class TabCompletion {
 
     private static final Map<String, Set<String>> commandSubcommands = new HashMap<>();
@@ -64,6 +68,12 @@ public class TabCompletion {
         return null;
     }
 
+    /**
+     * Creates a completer with overriden complete tailored towards the commands in our cli.
+     * Completes a command and matches to the corresponding enum value to complete arguements.
+     * 
+     * @return Completer with updated complete logic
+     */
     public Completer getCompleter() {
         return new Completer() {
             @Override
@@ -154,7 +164,7 @@ public class TabCompletion {
                                 if (quoteCount == 0 && words.get(1).isEmpty()) {
                                     candidates.add(new Candidate("\"" + command + "\""));
                                 } 
-                                else if (quoteCount == 1){
+                                else if (quoteCount == 1 && buffer.startsWith("help \"")){
                                     candidates.add(new Candidate(command + "\""));
                                 }
                             }
