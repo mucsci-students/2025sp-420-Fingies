@@ -23,13 +23,15 @@ Clone the project and use ``java`` to run ``Main``.
 - Run tests: ``mvn test``.
 
 ### How to use the CLI:
-1. Type a command with a list of space separated aguments and press ENTER.
+1. Type a command with a list of space separated arguments.
+2. Press tab to tab through the different commands and suggested arguments.
+3. Press ENTER to execute the command.
 
 Type ``help`` for a list of commands and their arguments, or ``help command_name`` for help using a specific command.
  
 ### How to use the GUI:
 1. Select a command you want to execute from the menu bar.
-2. After filling the textboxes with arguments, press ENTER to execute the command.
+2. After filling the boxes with arguments, press ENTER to execute the command.
 3. If you want to cancel the current command, press ESC while in one of the text boxes.
 
 ### Design Patterns:
