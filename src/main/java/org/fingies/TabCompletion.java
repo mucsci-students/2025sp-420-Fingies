@@ -130,7 +130,7 @@ public class TabCompletion {
                                 }
                             }
                             if (wordIndex == 4) {
-                                for (RelationshipType type : Arrays.asList(RelationshipType.values())) {
+                                for (RelationshipType type : List.of(RelationshipType.Aggregation, RelationshipType.Composition, RelationshipType.Inheritance, RelationshipType.Realization)) {
                                     candidates.add(new Candidate(type.getName()));
                                 }
                             }
@@ -418,7 +418,7 @@ public class TabCompletion {
                             if (wordIndex == 5) {
                                 String srcName = words.get(3);
                                 String destName = words.get(4);
-                                ArrayList<RelationshipType> validRelationships = new ArrayList<RelationshipType>(Arrays.asList(RelationshipType.values()));
+                                ArrayList<RelationshipType> validRelationships = new ArrayList<RelationshipType>(List.of(RelationshipType.Aggregation, RelationshipType.Composition, RelationshipType.Inheritance, RelationshipType.Realization));
                                 for (Relationship relationship : RelationshipHandler.getAllRelationshipsForClassname(srcName)) {
                                     if (relationship.getDest().getName().equals(destName)) {
                                         validRelationships.remove(relationship.getType());
