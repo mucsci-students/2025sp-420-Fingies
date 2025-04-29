@@ -4,10 +4,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.ScrollPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Objects;
+import java.util.Random;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -17,7 +17,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 import org.fingies.Controller.Action;
 import org.fingies.Controller.UMLController;
@@ -104,7 +103,15 @@ public class GUIUMLClass {
      */
     public void setColor()
     {
-        color = ColorUtil.colorOfString(umlclass.getName());
+        int hash = Objects.hash(umlclass.getName());
+        Random random = new Random(hash);
+
+        // Clamp to 15–240 range
+        int r = random.nextInt(226) + 15;
+        int g = random.nextInt(226) + 15;
+        int b = random.nextInt(226) + 15;
+
+        color = new Color(r, g, b);
     }
 
     /**

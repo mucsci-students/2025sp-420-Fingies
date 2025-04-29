@@ -18,8 +18,10 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -88,6 +90,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private JButton submitButton;
     private JButton cancelButton;
 
+    private JDialog dialog;
+    private boolean isDialogOpen;
+
     private UMLController controller;
     private JLayeredPane canvas;
     private JScrollPane scrollPane;
@@ -107,6 +112,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         arrows = new ArrayList<ArrowComponent>();
         textBoxes = new ArrayList<JTextField>();
         comboBoxes = new ArrayList<JComboBox<String>>();
+        isDialogOpen = false;
 
         // Creates a JMenuBar and menus
         menuBar = new JMenuBar();
@@ -330,59 +336,55 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         return scrollPane;
     }
 
-    /**
-     * Creates the submit and cancel buttons for each command
-     * @param a the action the submit button will send to the handleSubmitAction method
-     * @param offset offset of how many different boxes come before it for positioning in GUI
-     */
-    private void createButtons(Action a, int offset) {
+    private void createAndShowDialog(JFrame owner, String command, int numBoxes, Action a) {
+        dialog = new JDialog(owner, command, true); // true for modal
+        dialog.setSize(225 * (numBoxes + 1), 150);
+        dialog.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 25));
+        isDialogOpen = true;
+
         submitButton = new JButton("Submit");
         cancelButton = new JButton("Cancel");
 
-        submitButton.setBounds(offset * 130 + 20, 20, 125, 30); // Position and size for submit button
-        submitButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        submitButton.setBackground(Color.WHITE);
-        submitButton.setOpaque(true);
-
-        cancelButton.setBounds((offset + 1) * 130 + 20, 20, 125, 30); // Position and size for cancel button
-        cancelButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        cancelButton.setBackground(Color.WHITE);
-        cancelButton.setOpaque(true);
-    
-        // Add ActionListener for Submit button
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Handle Submit button action 
                 handleSubmitAction(a);
+                isDialogOpen = false;
+                dialog.dispose(); // Close the dialog
             }
         });
-    
-        // Add ActionListener for Cancel button
+
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Handle Cancel button action
                 handleCancelAction();
+                isDialogOpen = false;
+                dialog.dispose(); // Close the dialog
             }
         });
-    
-        // Add the buttons to the GUI
-        topPanel.add(submitButton);
-        topPanel.add(cancelButton);
-        topPanel.setVisible(true); // make the topPanel visible until the command is submitted or cancelled
 
         // Make Enter key trigger Submit
-        getRootPane().setDefaultButton(submitButton);
+        dialog.getRootPane().setDefaultButton(submitButton);
 
         // Make Escape key trigger Cancel
-        topPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ESCAPE"), "cancel");
-        topPanel.getActionMap().put("cancel", new AbstractAction() {
+        dialog.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "cancel");
+        dialog.getRootPane().getActionMap().put("cancel", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 handleCancelAction();
+                isDialogOpen = false;
+                dialog.dispose(); // Also dispose the dialog on Escape
             }
         });
 
-        repaint(); // Refresh UI
+        comboBoxes.forEach(dialog::add);
+        textBoxes.forEach(dialog::add);
+        dialog.add(submitButton);
+        dialog.add(cancelButton);
+        dialog.setLocationRelativeTo(owner); // Center relative to the owner frame
+        dialog.setVisible(true);
     }
 
     /**
@@ -391,9 +393,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      */
     private void handleSubmitAction(Action action) {
         // Concatenate the text from text fields and combo boxes just like pressing Enter
-        topPanel.remove(submitButton);
-        topPanel.remove(cancelButton);
-
         String[] textInputs = textBoxes.stream()
                 .map(JTextField::getText)
                 .toArray(String[]::new);
@@ -408,11 +407,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 .toArray(String[]::new);
     
         // Remove all text fields and combo boxes
-        textBoxes.forEach(topPanel::remove);
         textBoxes.clear();
-        comboBoxes.forEach(topPanel::remove);
         comboBoxes.clear();
-        topPanel.setVisible(false); // hide topPanel until next command
         repaint(); // Refresh UI
 
         // Special handling for actions that require parameter formatting 
@@ -528,11 +524,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
     // Removes Submit and Cancel buttons when the Cancel button is clicked
     private void handleCancelAction() {
-        topPanel.remove(submitButton);
-        topPanel.remove(cancelButton);
-        textBoxes.forEach(topPanel::remove);
         textBoxes.clear();
-        comboBoxes.forEach(topPanel::remove);
         comboBoxes.clear();
         topPanel.setVisible(false); // hide topPanel until next command
         repaint(); // Refresh UI
@@ -601,9 +593,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             // Allows the text to wrap and sets the max amount of rows to be shown per box at a time
             box.setRenderer(new WrappingComboBoxRenderer());
             box.setMaximumRowCount(8);
-            styleComboBox(box, i);
+            styleComboBox(box);
             comboBoxes.add(box);
-            topPanel.add(box);
         }
         reload();
     }
@@ -757,13 +748,11 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     }
     
     /**
-     * Styles a combobox in order to make it look a little nicer for the user
+     * Styles a combobox in order to change its size
      * @param box box to be styled
-     * @param index determines the offset horizontally, so the boxes don't overlap
      */
-    private void styleComboBox(JComboBox<String> box, int index) {
-        box.setBounds(index * 130 + 20, 20, 125, 30);
-        box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+    private void styleComboBox(JComboBox<String> box) {
+        box.setPreferredSize(new Dimension(100, 25));
     } 
 
     /**
@@ -772,25 +761,15 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param placeholders values to be filled in for the textbox
      * @param offset how many parameters come before this, so these don't overlap with combo boxes
      */
-    public void makeTextBoxes(Action a, String [] placeholders, int offset)
+    public void makeTextBoxes(Action a, String [] placeholders)
     {
-        // Rectangle view = scrollPane.getViewport().getViewRect();
         textBoxes.clear();
         for (int i = 0; i < placeholders.length; i++)
         {
             JTextField text = new JTextField(20);
-
-            // text.setBounds(offset * 130 + 20, 20, 125, 30); // Set position and size
-
-            // int xPosition = view.x + (offset * 130) + 20; // x relative to the visible area
-            int xPosition = offset * 130 + 20; // x relative to the visible area
-            int yPosition = 20; // y relative to the visible area
-
-            text.setBounds(xPosition, yPosition, 125, 30); // Set position and size
-
+            text.setPreferredSize(new Dimension(100, 25));
             String placeholder = placeholders[i];
             text.setText(placeholder);
-            text.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Red border with thickness of 5
             text.setHorizontalAlignment(SwingConstants.CENTER);
 
             text.addFocusListener(new java.awt.event.FocusListener() {
@@ -807,9 +786,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 }
             });
 
-            offset++;
             textBoxes.add(text);
-            topPanel.add(text);
             repaint(); // Refresh UI
         }
         reload();
@@ -820,107 +797,107 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     public void actionPerformed(ActionEvent e) {
     	Action a = ((GUIMenuItem) e.getSource()).action;
 
-        if (textBoxes.isEmpty() && comboBoxes.isEmpty())
+        if (!isDialogOpen)
         {
             if (e.getSource() == addClass)
             {
-                makeTextBoxes(a, new String [] {"Class Name"}, 0);
-                createButtons(a, 1);
+                makeTextBoxes(a, new String [] {"Class Name"});
+                createAndShowDialog(this, "Add Class", 1, a);
             }
             else if (e.getSource() == addField)
             {
                 makeComboBoxes(a, new String [] {"Class"});
-                makeTextBoxes(a, new String [] {"Field Name", "Type: int String"}, 1);
-                createButtons(a, 3);
+                makeTextBoxes(a, new String [] {"Field Name", "Type: int String"});
+                createAndShowDialog(this, "Add Field", 3, a);
             }
             else if (e.getSource() == addMethod)
             {
                 makeComboBoxes(a, new String [] {"Class"});
-                makeTextBoxes(a, new String [] {"Method Name", "Return Type", "Types: int String", "Parameters: a b c"}, 1);
-                createButtons(a, 5);
+                makeTextBoxes(a, new String [] {"Method Name", "Return Type", "Types: int String", "Parameters: a b c"});
+                createAndShowDialog(this, "Add Method", 5, a);
             }
             else if (e.getSource() == addParameter)
             {
                 makeComboBoxes(a, new String [] {"Class", "Method"});
-                makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"}, 2);
-                createButtons(a, 4);
+                makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"});
+                createAndShowDialog(this, "Add Parameter", 4, a);
             }
             else if (e.getSource() == addRelationship)
             {
                 makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
-                createButtons(a, 3);
+                createAndShowDialog(this, "Add Relationship", 3, a);
             }
             else if (e.getSource() == removeClass)
             {
                 makeComboBoxes(a, new String [] {"Class"});
-                createButtons(a, 1);
+                createAndShowDialog(this, "Remove Class", 1, a);
             }
             else if (e.getSource() == removeField)
             {
                 makeComboBoxes(a, new String [] {"Class", "Field"});
-                createButtons(a, 2);
+                createAndShowDialog(this, "Remove Field", 2, a);
             }
             else if (e.getSource() == removeMethod)
             {
                 makeComboBoxes(a, new String [] {"Class", "Method"});
-                createButtons(a, 2);
+                createAndShowDialog(this, "Remove Method", 2, a);
             }
             else if (e.getSource() == removeParameter)
             {
                 makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-                createButtons(a, 3);
+                createAndShowDialog(this, "Remove Parameter", 3, a);
             }
             else if (e.getSource() == removeRelationship)
             {
                 makeComboBoxes(a, new String [] {"Class", "Desination"});
-                createButtons(a, 2);
+                createAndShowDialog(this, "Remove Relationship", 2, a);
             }
             else if (e.getSource() == renameClass)
             {
                 makeComboBoxes(a, new String [] {"Class"});
-                makeTextBoxes(a, new String [] {"New Class Name"}, 1);
-                createButtons(a, 2);
+                makeTextBoxes(a, new String [] {"New Class Name"});
+                createAndShowDialog(this, "Rename Class", 2, a);
             }
             else if (e.getSource() == renameField)
             {
                 makeComboBoxes(a, new String [] {"Class", "Field"});
-                makeTextBoxes(a, new String [] {"New Field Name"}, 2);
-                createButtons(a, 3);
+                makeTextBoxes(a, new String [] {"New Field Name"});
+                createAndShowDialog(this, "Rename Field", 3, a);
             }
             else if (e.getSource() == renameMethod)
             {
                 makeComboBoxes(a, new String [] {"Class", "Method"});
-                makeTextBoxes(a, new String [] {"New Method Name"}, 2);
-                createButtons(a, 3);
+                makeTextBoxes(a, new String [] {"New Method Name"});
+                createAndShowDialog(this, "Rename Method", 3, a);
             }
             else if (e.getSource() == renameParameter)
             {
                 makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-                makeTextBoxes(a, new String [] {"New Parameter"}, 3);
-                createButtons(a, 4);
+                makeTextBoxes(a, new String [] {"New Parameter"});
+                createAndShowDialog(this, "Rename Parameter", 4, a);
             }
             else if (e.getSource() == changeFieldType)
             {
                 makeComboBoxes(a, new String [] {"Class", "Field"});
-                makeTextBoxes(a, new String [] {"New Type"}, 2);
-                createButtons(a, 3);
+                makeTextBoxes(a, new String [] {"New Type"});
+                createAndShowDialog(this, "Change Field Type", 3, a);
             }
             else if (e.getSource() == changeMethodType)
             {
                 makeComboBoxes(a, new String [] {"Class", "Method"});
-                makeTextBoxes(a, new String [] {"New Type"}, 2);
-                createButtons(a, 3);
+                makeTextBoxes(a, new String [] {"New Type"});
+                createAndShowDialog(this, "Change Method Type", 3, a);
             }
             else if (e.getSource() == changeParameterType)
             {
                 makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-                makeTextBoxes(a, new String [] {"New Type"}, 3);
-                createButtons(a, 4);
+                makeTextBoxes(a, new String [] {"New Type"});
+                createAndShowDialog(this, "Change Parameter Type", 4, a);
             }
             else if (e.getSource() == changeRelatoinshipType)
             {
                 makeComboBoxes(a, new String [] {"Class", "Desination", "Relationship"});
-                createButtons(a, 3);
+                createAndShowDialog(this, "Change Relationship Type", 3, a);
             }
             
         }

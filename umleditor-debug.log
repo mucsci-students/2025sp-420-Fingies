@@ -262,3 +262,7 @@ See https://github.com/google/gson/blob/main/Troubleshooting.md#unexpected-json-
 [04/22/25 17:16:26]: java.lang.NullPointerException: Cannot invoke "org.fingies.Model.JModel$UMLModel.reloadClasses()" because "data" is null
 [04/22/25 17:16:26]: Test Write to Error Log, Ignore this message.
 [04/22/25 17:16:26]: java.lang.NullPointerException
+[04/29/25 17:54:51]: The name Class Name contains invalid characters
+[04/29/25 17:56:30]: Class Method Name does not exist
+[04/29/25 17:59:06]: The name Class Name contains invalid characters
+[04/29/25 18:05:17]: String contains invalid characters
