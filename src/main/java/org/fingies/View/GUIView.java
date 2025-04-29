@@ -235,7 +235,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         // Create the canvas (JLayeredPane)
         canvas = new JLayeredPane();
         canvas.setLayout(null);  // Absolute positioning
-        canvas.setPreferredSize(new Dimension(1500, 1500));  // Bigger than the frame
+        canvas.setPreferredSize(new Dimension(900, 900));  // Bigger than the frame
 
         // Scroll pane to hold the canvas
         scrollPane = new JScrollPane(canvas);
@@ -526,7 +526,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private void handleCancelAction() {
         textBoxes.clear();
         comboBoxes.clear();
-        topPanel.setVisible(false); // hide topPanel until next command
         repaint(); // Refresh UI
     }
     
