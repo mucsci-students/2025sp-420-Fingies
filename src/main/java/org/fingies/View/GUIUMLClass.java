@@ -175,16 +175,17 @@ public class GUIUMLClass {
     {
         updateFields();
         updateMethods();
+        updateClassName();
 
         // Calculate new total height
         int newHeight = classPanel.getHeight() + fieldsPanel.getHeight() + methodsPanel.getHeight() + 20;
-        int newWidth = Math.max(DEFAULT_PANEL_WIDTH, Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
+        // int newWidth = Math.max(DEFAULT_PANEL_WIDTH, Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
+        int newWidth = Math.max(classPanel.getWidth(), Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
         
         background.setBounds(background.getX(), background.getY(), newWidth + 10, newHeight);
         
         // Must be called down here because it relies on new size of background
-        updateClassName();
-
+        
         
         classPanel.setSize(newWidth, classPanel.getHeight());
         fieldsPanel.setSize(newWidth, fieldsPanel.getHeight());
@@ -203,18 +204,17 @@ public class GUIUMLClass {
      */
     public void updateClassName()
     {
-        classPanel.removeAll(); // Clear panel before updating
+        classPanel.removeAll(); // Clear existing contents
+        int labelWidth = umlclass.getName().length() * PIXELS_PER_CHARACTER;
+        int panelWidth = Math.max(140, labelWidth);
 
         JLabel classLabel = new JLabel(umlclass.getName());
-        int labelWidth = umlclass.getName().length() * PIXELS_PER_CHARACTER;
         classLabel.setForeground(Color.BLACK);
         classLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        classLabel.setBounds(0, 2, panelWidth, DEFAULT_CLASS_PANEL_HEIGHT);
 
-        classLabel.setBounds((background.getWidth() - labelWidth) / 2 - 5, 2, labelWidth, DEFAULT_CLASS_PANEL_HEIGHT);  // Set bounds for the class name label
+        classPanel.setBounds(5, 5, panelWidth, DEFAULT_CLASS_PANEL_HEIGHT); // Resize panel to match label
         classPanel.add(classLabel);
-
-        int panelWidth = Math.max(140, labelWidth + 20); // Ensure minimum width
-        classPanel.setBounds(5, 5, panelWidth, DEFAULT_CLASS_PANEL_HEIGHT); // Resize panel
         classPanel.revalidate();
         classPanel.repaint();
     }

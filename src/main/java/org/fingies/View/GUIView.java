@@ -337,7 +337,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     }
 
     private void createAndShowDialog(JFrame owner, String command, int numBoxes, Action a) {
-        dialog = new JDialog(owner, command, true); // true for modal
+        dialog = new JDialog(owner, command, false); // true for modal
         dialog.setSize(225 * (numBoxes + 1), 150);
         dialog.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 25));
         isDialogOpen = true;
