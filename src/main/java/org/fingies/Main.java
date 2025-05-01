@@ -2,6 +2,7 @@ package org.fingies;
 
 import java.util.ArrayList;
 
+import org.fingies.Controller.Action;
 import org.fingies.Controller.UMLController;
 import org.fingies.Model.JModel;
 import org.fingies.Model.RelationshipHandler;
@@ -29,8 +30,17 @@ public class Main {
             UMLController controller = new UMLController(view, new JModel());
             view.setController(controller);
 
-           view.updateArrows();  // Call this to refresh and redraw arrows
-           view.run();     
+            UMLClassHandler.createClass("creeper");
+            UMLClassHandler.createClass("Skeleton");
+
+            view.addUMLClass("creeper");
+            view.addUMLClass("Skeleton");
+
+
+            RelationshipHandler.addRelationship("creeper", "Skeleton", RelationshipType.Inheritance);
+            RelationshipHandler.addRelationship("Skeleton", "creeper", RelationshipType.Aggregation);
+            view.updateArrows();  // Call this to refresh and redraw arrows
+            view.run();     
         }   
 	}
 

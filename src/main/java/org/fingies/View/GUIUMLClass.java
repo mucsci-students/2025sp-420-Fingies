@@ -184,9 +184,6 @@ public class GUIUMLClass {
         
         background.setBounds(background.getX(), background.getY(), newWidth + 10, newHeight);
         
-        // Must be called down here because it relies on new size of background
-        
-        
         classPanel.setSize(newWidth, classPanel.getHeight());
         fieldsPanel.setSize(newWidth, fieldsPanel.getHeight());
         methodsPanel.setSize(newWidth, methodsPanel.getHeight());
