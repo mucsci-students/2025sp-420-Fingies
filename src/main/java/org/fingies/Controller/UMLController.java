@@ -1454,6 +1454,8 @@ public class UMLController {
             	{
             		String input = view.promptForSaveInput("Please designate a filepath to export to");
                 	args = new String[] { input };
+                	if (args[0] == null)
+                		return false;
             	}
             	
             	if (args.length == 1)

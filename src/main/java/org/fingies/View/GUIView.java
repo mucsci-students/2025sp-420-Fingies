@@ -252,9 +252,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         // Top panel to hold the command text boxes, combo boxes, submit & cancel buttons
         topPanel = new JPanel() {
         	
-        	// from ChatGPT:
         	// overriding this gives the panel a semi-transparent gradient, which looks nice
         	// apparently this is the standard way to do it in Java Swing
+        	// from ChatGPT:
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -265,14 +265,10 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
                 // Draw row by row with a custom alpha gradient
                 for (int y = 0; y < height; y++) {
-                    // Map y to angle in radians from 0 to π
                     double t = (double) y / height;
                     double angle = Math.PI * t;
-                    // cos(x) + 1 goes from 2 → 0, divide by 2 to get 1 → 0
                     float alpha = (float) ((Math.cos(angle) + 1.0) / 2.0);
-
-                    // Clamp alpha and scale to 0–255
-                    int a = Math.min(255, Math.max(0, (int)(alpha * 50))); // 200 is max alpha
+                    int a = Math.min(255, Math.max(0, (int)(alpha * 50)));
 
                     g2d.setColor(new Color(0, 0, 50, a));
                     g2d.drawLine(0, y, width, y);
@@ -390,10 +386,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param action action to be performed that is sent to the Controller
      */
     private void handleSubmitAction(Action action) {
+    	
         // Concatenate the text from text fields and combo boxes just like pressing Enter
-        topPanel.remove(submitButton);
-        topPanel.remove(cancelButton);
-
         String[] textInputs = textBoxes.stream()
                 .map(JTextField::getText)
                 .toArray(String[]::new);
@@ -406,14 +400,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         String[] allInputs = Stream.concat(Arrays.stream(comboBoxInputs), Arrays.stream(textInputs))
                 .filter(input -> input != null && !input.trim().isEmpty())  // Remove null or empty values
                 .toArray(String[]::new);
-    
-        // Remove all text fields and combo boxes
-        textBoxes.forEach(topPanel::remove);
-        textBoxes.clear();
-        comboBoxes.forEach(topPanel::remove);
-        comboBoxes.clear();
-        topPanel.setVisible(false); // hide topPanel until next command
-        repaint(); // Refresh UI
 
         // Special handling for actions that require parameter formatting 
         // Turns method1 (String int String) into method1 without the type list
@@ -819,112 +805,111 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     @Override
     public void actionPerformed(ActionEvent e) {
     	Action a = ((GUIMenuItem) e.getSource()).action;
-
-        if (textBoxes.isEmpty() && comboBoxes.isEmpty())
+    	
+    	if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+    		handleCancelAction();
+    		
+        if (e.getSource() == addClass)
         {
-            if (e.getSource() == addClass)
-            {
-                makeTextBoxes(a, new String [] {"Class Name"}, 0);
-                createButtons(a, 1);
-            }
-            else if (e.getSource() == addField)
-            {
-                makeComboBoxes(a, new String [] {"Class"});
-                makeTextBoxes(a, new String [] {"Field Name", "Type: int String"}, 1);
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == addMethod)
-            {
-                makeComboBoxes(a, new String [] {"Class"});
-                makeTextBoxes(a, new String [] {"Method Name", "Return Type", "Types: int String", "Parameters: a b c"}, 1);
-                createButtons(a, 5);
-            }
-            else if (e.getSource() == addParameter)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method"});
-                makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"}, 2);
-                createButtons(a, 4);
-            }
-            else if (e.getSource() == addRelationship)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == removeClass)
-            {
-                makeComboBoxes(a, new String [] {"Class"});
-                createButtons(a, 1);
-            }
-            else if (e.getSource() == removeField)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Field"});
-                createButtons(a, 2);
-            }
-            else if (e.getSource() == removeMethod)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method"});
-                createButtons(a, 2);
-            }
-            else if (e.getSource() == removeParameter)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == removeRelationship)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Desination"});
-                createButtons(a, 2);
-            }
-            else if (e.getSource() == renameClass)
-            {
-                makeComboBoxes(a, new String [] {"Class"});
-                makeTextBoxes(a, new String [] {"New Class Name"}, 1);
-                createButtons(a, 2);
-            }
-            else if (e.getSource() == renameField)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Field"});
-                makeTextBoxes(a, new String [] {"New Field Name"}, 2);
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == renameMethod)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method"});
-                makeTextBoxes(a, new String [] {"New Method Name"}, 2);
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == renameParameter)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-                makeTextBoxes(a, new String [] {"New Parameter"}, 3);
-                createButtons(a, 4);
-            }
-            else if (e.getSource() == changeFieldType)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Field"});
-                makeTextBoxes(a, new String [] {"New Type"}, 2);
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == changeMethodType)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method"});
-                makeTextBoxes(a, new String [] {"New Type"}, 2);
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == changeParameterType)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-                makeTextBoxes(a, new String [] {"New Type"}, 3);
-                createButtons(a, 4);
-            }
-            else if (e.getSource() == changeRelatoinshipType)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Desination", "Relationship"});
-                createButtons(a, 3);
-            }
-            
+            makeTextBoxes(a, new String [] {"Class Name"}, 0);
+            createButtons(a, 1);
         }
-        if (e.getSource() == load)
+        else if (e.getSource() == addField)
+        {
+            makeComboBoxes(a, new String [] {"Class"});
+            makeTextBoxes(a, new String [] {"Field Name", "Type: int String"}, 1);
+            createButtons(a, 3);
+        }
+        else if (e.getSource() == addMethod)
+        {
+            makeComboBoxes(a, new String [] {"Class"});
+            makeTextBoxes(a, new String [] {"Method Name", "Return Type", "Types: int String", "Parameters: a b c"}, 1);
+            createButtons(a, 5);
+        }
+        else if (e.getSource() == addParameter)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Method"});
+            makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"}, 2);
+            createButtons(a, 4);
+        }
+        else if (e.getSource() == addRelationship)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
+            createButtons(a, 3);
+        }
+        else if (e.getSource() == removeClass)
+        {
+            makeComboBoxes(a, new String [] {"Class"});
+            createButtons(a, 1);
+        }
+        else if (e.getSource() == removeField)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Field"});
+            createButtons(a, 2);
+        }
+        else if (e.getSource() == removeMethod)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Method"});
+            createButtons(a, 2);
+        }
+        else if (e.getSource() == removeParameter)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+            createButtons(a, 3);
+        }
+        else if (e.getSource() == removeRelationship)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Desination"});
+            createButtons(a, 2);
+        }
+        else if (e.getSource() == renameClass)
+        {
+            makeComboBoxes(a, new String [] {"Class"});
+            makeTextBoxes(a, new String [] {"New Class Name"}, 1);
+            createButtons(a, 2);
+        }
+        else if (e.getSource() == renameField)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Field"});
+            makeTextBoxes(a, new String [] {"New Field Name"}, 2);
+            createButtons(a, 3);
+        }
+        else if (e.getSource() == renameMethod)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Method"});
+            makeTextBoxes(a, new String [] {"New Method Name"}, 2);
+            createButtons(a, 3);
+        }
+        else if (e.getSource() == renameParameter)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+            makeTextBoxes(a, new String [] {"New Parameter"}, 3);
+            createButtons(a, 4);
+        }
+        else if (e.getSource() == changeFieldType)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Field"});
+            makeTextBoxes(a, new String [] {"New Type"}, 2);
+            createButtons(a, 3);
+        }
+        else if (e.getSource() == changeMethodType)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Method"});
+            makeTextBoxes(a, new String [] {"New Type"}, 2);
+            createButtons(a, 3);
+        }
+        else if (e.getSource() == changeParameterType)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+            makeTextBoxes(a, new String [] {"New Type"}, 3);
+            createButtons(a, 4);
+        }
+        else if (e.getSource() == changeRelatoinshipType)
+        {
+            makeComboBoxes(a, new String [] {"Class", "Desination", "Relationship"});
+            createButtons(a, 3);
+        }   
+        else if (e.getSource() == load)
             {
                 boolean result = controller.runHelper(a, new String[] {});
                 if (result)
