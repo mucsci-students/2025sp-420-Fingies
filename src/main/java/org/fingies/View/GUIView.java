@@ -2,19 +2,15 @@ package org.fingies.View;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -30,7 +26,6 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.OverlayLayout;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 
 import org.fingies.Controller.*;
 import org.fingies.Model.*;
@@ -268,9 +263,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                     double t = (double) y / height;
                     double angle = Math.PI * t;
                     float alpha = (float) ((Math.cos(angle) + 1.0) / 2.0);
-                    int a = Math.min(255, Math.max(0, (int)(alpha * 50)));
+                    int a = Math.min(255, Math.max(0, (int)(alpha * 55)));
 
-                    g2d.setColor(new Color(0, 0, 50, a));
+                    g2d.setColor(new Color(0, 0, 25, a));
                     g2d.drawLine(0, y, width, y);
                 }
 
@@ -278,8 +273,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             }
         };
         topPanel.setOpaque(false);
-        topPanel.setPreferredSize(new Dimension(1000, 65)); // Width is ignored by layout
-        topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 65));
+        topPanel.setPreferredSize(new Dimension(1000, 90)); // Width is ignored by layout
+        topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
         topPanel.setLayout(null);
         topPanel.setAlignmentX(0f);
         topPanel.setAlignmentY(0f);
@@ -314,6 +309,84 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 }
             }
         });
+        
+        // Add shortcuts for a bunch of actions
+        int menuShortcutKeyMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+        theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuShortcutKeyMask), "undo");
+        theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuShortcutKeyMask | KeyEvent.SHIFT_DOWN_MASK), "redo");
+        theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuShortcutKeyMask), "save");
+        theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuShortcutKeyMask), "load");
+        theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuShortcutKeyMask), "exit");
+        theAllPanel.getActionMap().put("undo", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	if (controller.runHelper(Action.UNDO, new String[] {}))
+                {
+                    actionHelper(Action.UNDO, new String[] {});
+                }
+            }
+        });
+        theAllPanel.getActionMap().put("redo", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	if (controller.runHelper(Action.REDO, new String[] {}))
+                {
+                    actionHelper(Action.REDO, new String[] {});
+                }
+            }
+        });
+        theAllPanel.getActionMap().put("save", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	controller.runHelper(Action.SAVE, new String[] {});
+            }
+        });
+        theAllPanel.getActionMap().put("load", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	if (controller.runHelper(Action.LOAD, new String[] {}))
+                {
+                    loadGUIObjects();
+                }
+            }
+        });
+        theAllPanel.getActionMap().put("exit", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	if (controller.runHelper(Action.EXIT, new String[] {}))
+	        	{
+	        		System.exit(0);
+	        	}
+            }
+        });
+        
+
+        /*
+         * case SAVE:
+				controller.runHelper(a, new String[] {});
+	            break;
+			case EXPORT:
+				controller.runHelper(a, new String[] {});
+	            break;
+			case UNDO:
+				if (controller.runHelper(a, new String[] {}))
+	            {
+	                actionHelper(a, new String[] {});
+	            }
+	            break;
+			case REDO:
+				if (controller.runHelper(a, new String[] {}))
+	            {
+	                actionHelper(a, new String[] {});
+	            }
+	            break;
+			case EXIT:
+	        	if (controller.runHelper(a, new String[] {}))
+	        	{
+	        		System.exit(0);
+	        	}
+	            break;
+         */
     }
 
     public JLayeredPane getCanvas()
@@ -336,14 +409,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         cancelButton = new JButton("Cancel");
 
         submitButton.setBounds(offset * 130 + 20, 20, 125, 30); // Position and size for submit button
-        submitButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        submitButton.setBackground(Color.WHITE);
-        submitButton.setOpaque(true);
 
         cancelButton.setBounds((offset + 1) * 130 + 20, 20, 125, 30); // Position and size for cancel button
-        cancelButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        cancelButton.setBackground(Color.WHITE);
-        cancelButton.setOpaque(true);
     
         // Add ActionListener for Submit button
         submitButton.addActionListener(new ActionListener() {
@@ -364,7 +431,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         // Add the buttons to the GUI
         topPanel.add(submitButton);
         topPanel.add(cancelButton);
-        topPanel.setVisible(true); // make the topPanel visible until the command is submitted or cancelled
 
         // Make Enter key trigger Submit
         getRootPane().setDefaultButton(submitButton);
@@ -510,6 +576,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             actionHelper(action, allInputs);
             repaint();
         }
+        
+        showCommandBar(action);
     }
 
     // Removes Submit and Cancel buttons when the Cancel button is clicked
@@ -520,7 +588,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         textBoxes.clear();
         comboBoxes.forEach(topPanel::remove);
         comboBoxes.clear();
-        topPanel.setVisible(false); // hide topPanel until next command
+        topPanel.setVisible(false);
         repaint(); // Refresh UI
     }
     
@@ -623,7 +691,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param paramBox combobox consisting of all currect parameters that exist within a method
      */
     private void addMethodComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> methodComboBox, JComboBox<String> paramBox, boolean includeAllParametersOption) {
-        methodComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{paramBox}) {
+        methodComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{ paramBox }) {
             @Override
             protected void updateComboBox(JComboBox<String> box) {
                 updateParameterComboBox((JComboBox<String>) box, classComboBox, methodComboBox, includeAllParametersOption);
@@ -749,7 +817,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      */
     private void styleComboBox(JComboBox<String> box, int index) {
         box.setBounds(index * 130 + 20, 20, 125, 30);
-        box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
     } 
 
     /**
@@ -776,7 +843,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
             String placeholder = placeholders[i];
             text.setText(placeholder);
-            text.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Red border with thickness of 5
             text.setHorizontalAlignment(SwingConstants.CENTER);
 
             text.addFocusListener(new java.awt.event.FocusListener() {
@@ -806,147 +872,187 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     public void actionPerformed(ActionEvent e) {
     	Action a = ((GUIMenuItem) e.getSource()).action;
     	
-    	if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
-    		handleCancelAction();
-    		
-        if (e.getSource() == addClass)
-        {
-            makeTextBoxes(a, new String [] {"Class Name"}, 0);
-            createButtons(a, 1);
-        }
-        else if (e.getSource() == addField)
-        {
-            makeComboBoxes(a, new String [] {"Class"});
-            makeTextBoxes(a, new String [] {"Field Name", "Type: int String"}, 1);
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == addMethod)
-        {
-            makeComboBoxes(a, new String [] {"Class"});
-            makeTextBoxes(a, new String [] {"Method Name", "Return Type", "Types: int String", "Parameters: a b c"}, 1);
-            createButtons(a, 5);
-        }
-        else if (e.getSource() == addParameter)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method"});
-            makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"}, 2);
-            createButtons(a, 4);
-        }
-        else if (e.getSource() == addRelationship)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == removeClass)
-        {
-            makeComboBoxes(a, new String [] {"Class"});
-            createButtons(a, 1);
-        }
-        else if (e.getSource() == removeField)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Field"});
-            createButtons(a, 2);
-        }
-        else if (e.getSource() == removeMethod)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method"});
-            createButtons(a, 2);
-        }
-        else if (e.getSource() == removeParameter)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == removeRelationship)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Desination"});
-            createButtons(a, 2);
-        }
-        else if (e.getSource() == renameClass)
-        {
-            makeComboBoxes(a, new String [] {"Class"});
-            makeTextBoxes(a, new String [] {"New Class Name"}, 1);
-            createButtons(a, 2);
-        }
-        else if (e.getSource() == renameField)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Field"});
-            makeTextBoxes(a, new String [] {"New Field Name"}, 2);
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == renameMethod)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method"});
-            makeTextBoxes(a, new String [] {"New Method Name"}, 2);
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == renameParameter)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-            makeTextBoxes(a, new String [] {"New Parameter"}, 3);
-            createButtons(a, 4);
-        }
-        else if (e.getSource() == changeFieldType)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Field"});
-            makeTextBoxes(a, new String [] {"New Type"}, 2);
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == changeMethodType)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method"});
-            makeTextBoxes(a, new String [] {"New Type"}, 2);
-            createButtons(a, 3);
-        }
-        else if (e.getSource() == changeParameterType)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-            makeTextBoxes(a, new String [] {"New Type"}, 3);
-            createButtons(a, 4);
-        }
-        else if (e.getSource() == changeRelatoinshipType)
-        {
-            makeComboBoxes(a, new String [] {"Class", "Desination", "Relationship"});
-            createButtons(a, 3);
-        }   
-        else if (e.getSource() == load)
-            {
-                boolean result = controller.runHelper(a, new String[] {});
-                if (result)
+    	showCommandBar(a);
+    }
+    
+    /**
+     * Show the command bar with inputs for the specified action.
+     * 
+     * @param a The action to allow the user to perform in the command bar.
+     */
+    private void showCommandBar(Action a)
+    {	
+    	switch (a)
+    	{
+			case ADD_CLASS:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeTextBoxes(a, new String [] {"Class Name"}, 0);
+		        createButtons(a, 1);
+		        topPanel.setVisible(true);
+		        break;
+			case ADD_FIELD:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class"});
+	            makeTextBoxes(a, new String [] {"Field Name", "Type: int String"}, 1);
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case ADD_METHOD:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class"});
+	            makeTextBoxes(a, new String [] {"Method Name", "Return Type", "Types: int String", "Parameters: a b c"}, 1);
+	            createButtons(a, 5);
+	            topPanel.setVisible(true);
+	            break;
+			case ADD_PARAMETERS:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method"});
+	            makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"}, 2);
+	            createButtons(a, 4);
+	            topPanel.setVisible(true);
+	            break;
+			case ADD_RELATIONSHIP:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case REMOVE_CLASS:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class"});
+	            createButtons(a, 1);
+	            topPanel.setVisible(true);
+	            break;
+			case REMOVE_FIELD:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Field"});
+	            createButtons(a, 2);
+	            topPanel.setVisible(true);
+	            break;
+			case REMOVE_METHOD:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method"});
+	            createButtons(a, 2);
+	            topPanel.setVisible(true);
+	            break;
+			case REMOVE_PARAMETERS:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case REMOVE_RELATIONSHIP:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Desination"});
+	            createButtons(a, 2);
+	            topPanel.setVisible(true);
+	            break;
+			case RENAME_CLASS:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class"});
+	            makeTextBoxes(a, new String [] {"New Class Name"}, 1);
+	            createButtons(a, 2);
+	            topPanel.setVisible(true);
+	            break;
+			case RENAME_FIELD:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Field"});
+	            makeTextBoxes(a, new String [] {"New Field Name"}, 2);
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case RENAME_METHOD:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method"});
+	            makeTextBoxes(a, new String [] {"New Method Name"}, 2);
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case RENAME_PARAMETER:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+	            makeTextBoxes(a, new String [] {"New Parameter"}, 3);
+	            createButtons(a, 4);
+	            topPanel.setVisible(true);
+	            break;
+			case CHANGE_FIELD_TYPE:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Field"});
+	            makeTextBoxes(a, new String [] {"New Type"}, 2);
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case CHANGE_METHOD_RETURN_TYPE:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method"});
+	            makeTextBoxes(a, new String [] {"New Type"}, 2);
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case CHANGE_PARAMETER_TYPE:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+	            makeTextBoxes(a, new String [] {"New Type"}, 3);
+	            createButtons(a, 4);
+	            topPanel.setVisible(true);
+	            break;
+			case CHANGE_RELATIONSHIP_TYPE:
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Desination", "Relationship"});
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case LOAD:
+                if (controller.runHelper(a, new String[] {}))
                 {
                     loadGUIObjects();
                 }
-            }
-        else if (e.getSource() == save)
-        {
-        	controller.runHelper(a, new String[] {});
-        }
-        else if (e.getSource() == export)
-        {
-        	controller.runHelper(a, new String[] {});
-        }
-        else if (e.getSource() == undo)
-        {
-            if (controller.runHelper(a, new String[] {}))
-            {
-                actionHelper(a, new String[] {});
-            }
-        }
-        else if (e.getSource() == redo)
-        {
-            if (controller.runHelper(a, new String[] {}))
-            {
-                actionHelper(a, new String[] {});
-            }
-        }
-        else if (e.getSource() == exit)
-        {
-        	boolean result = controller.runHelper(a, new String[] {});
-        	if (result)
-        	{
-        		System.exit(0);
-        	}
-        }
+	            break;
+			case SAVE:
+				controller.runHelper(a, new String[] {});
+	            break;
+			case EXPORT:
+				controller.runHelper(a, new String[] {});
+	            break;
+			case UNDO:
+				if (controller.runHelper(a, new String[] {}))
+	            {
+	                actionHelper(a, new String[] {});
+	            }
+	            break;
+			case REDO:
+				if (controller.runHelper(a, new String[] {}))
+	            {
+	                actionHelper(a, new String[] {});
+	            }
+	            break;
+			case EXIT:
+	        	if (controller.runHelper(a, new String[] {}))
+	        	{
+	        		System.exit(0);
+	        	}
+	            break;
+		default:
+			break;
+    	}
     }
 
     /**
@@ -967,9 +1073,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 renameUMLClass(args[0], args[1]);
                 break;
             case ADD_RELATIONSHIP:
-                break;
             case REMOVE_RELATIONSHIP:
-                break;
             case CHANGE_RELATIONSHIP_TYPE:
                 break;
             case ADD_METHOD:
