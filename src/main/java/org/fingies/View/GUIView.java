@@ -1194,7 +1194,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         for(int i = 0; i < messages.size(); ++i)
         {
             String ans = promptForInput(messages.get(i));
-            String checkMsg = checks.get(i).check(ans); // This will either be "" or "message"
+            String checkMsg = checks.get(i).check(ans); // This will either be "" or an error message
             while(!checkMsg.equals("")) // This loop will keep prompting the user until they input something that satisfies the check
             {
             	notifyFail(checkMsg);
@@ -1212,7 +1212,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showSaveDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
-        	return "";
+        	return null;
         return fileChooser.getSelectedFile().getPath();
     }
 	
@@ -1221,7 +1221,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showOpenDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
-        	return "";
+        	return null;
         return fileChooser.getSelectedFile().getPath();
 	}
 

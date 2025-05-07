@@ -1242,7 +1242,12 @@ public class UMLController {
                     }
                     else
                     {
-                    	return saveCheck(view.promptForSaveInput("Please designate a filepath to save to"));
+                    	String path = view.promptForSaveInput("Please designate a filepath to save to");
+                    	args = new String[] { path };
+                    	if (args[0] == null)
+                    	{
+                    		return false; // canceled saving
+                    	}
                     }
                 }
                 else if (args.length == 1)
@@ -1261,10 +1266,9 @@ public class UMLController {
                 {
                 	String path = view.promptForOpenInput("Please designate a filepath to open");
                 	args = new String[] { path };
-                	if (args[0].equals(""))
+                	if (args[0] == null)
                 	{
-                		view.notifyFail("Invalid filepath");
-                        return false;
+                        return false; // canceled loading
                 	}
                 }
                 

@@ -25,7 +25,7 @@ public interface UMLView {
 	 * Displays a message to the user asking for a filepath to save to.
 	 * 
 	 * @param message The message to display to the user, prompting them for a filepath to save to.
-	 * @return The filepath provided by the user, or an empty string if none was provided.
+	 * @return The filepath provided by the user, or null if none was provided.
 	 */
 	String promptForSaveInput(String message);
 	
@@ -34,7 +34,7 @@ public interface UMLView {
 	 * Displays a message to the user asking for a filepath to open.
 	 * 
 	 * @param message The message to display to the user, prompting them for a filepath to open.
-	 * @return The filepath provided by the user, or an empty string if none was provided.
+	 * @return The filepath provided by the user, or null if none was provided.
 	 */
 	String promptForOpenInput(String message);
 	
