@@ -1226,16 +1226,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	}
 
 	@Override
-	public void notifySuccess() {
-		// DON'T IMPLEMENT THIS
-	}
-
-	@Override
-	public void notifySuccess(String message) {
-		// DO NOT IMPLEMENT PLS!
-	}
-
-	@Override
 	public void notifyFail(String message) {
 		JOptionPane.showMessageDialog(this, message);	
 	}
@@ -1243,23 +1233,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	@Override
 	public void display(String message) {
 		JOptionPane.showMessageDialog(this, message);
-	}
-
-	@Override
-	public void help() {
-		// Nothing
-		
-	}
-
-	@Override
-	public void help(String command) {
-		// Nothing	
-	}
-
-	@Override
-	public void run() 
-	{
-		// Nothing
 	}
 	
 	@Override

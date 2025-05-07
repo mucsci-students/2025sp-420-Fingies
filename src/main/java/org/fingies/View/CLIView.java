@@ -202,50 +202,6 @@ public class CLIView implements UMLView
     }
 
     @Override
-    public List<String> promptForInput(List<String> messages) 
-    {
-        List<String> result = new ArrayList<String>();
-        for(String m : messages)
-        {
-        	String ans = promptForInput(m);
-        	if (ans == null)
-        		return null;
-            result.add(ans);
-        }
-        return result;
-    }
-
-   
-    @Override
-    public List<String> promptForInput(List<String> messages, List<InputCheck> checks) 
-    {
-        List<String> result = new ArrayList<String>();
-        for(int i = 0; i < messages.size(); ++i)
-        {
-            String ans = promptForInput(messages.get(i));
-            if (ans == null)
-            	return null;
-            String checkMsg = checks.get(i).check(ans); // This will either be "" or an error message
-            while(!checkMsg.equals("")) // This loop will keep prompting the user until they input something that satisfies the check
-            {
-            	notifyFail(checkMsg);
-                ans = promptForInput(messages.get(i));
-                if (ans == null)
-                	return null;
-                checkMsg = checks.get(i).check(ans);
-            }
-            result.add(ans);
-        }
-        return result;
-    }
-
-    @Override
-    public void notifySuccess() 
-    {
-        // System.out.println("Successful command"); // don't print anything
-    }
-
-    @Override
     public void notifySuccess(String message) 
     {
         System.out.println(successStyle + message + stopStyle);
@@ -368,38 +324,6 @@ public class CLIView implements UMLView
 	public void setController(UMLController c)
 	{
 		controller = c;
-	}
-	
-	@Override
-	public String promptForSaveInput(String message) 
-	{
-		String filepath = promptForInput(message);
-		return filepath;
-	}
-
-	@Override
-	public String promptForOpenInput(String message) {
-		String filepath = promptForInput(message);
-		return filepath;
-	}
-
-	@Override
-	public int promptForYesNoInput(String message, String title) {
-		List<String> result = promptForInput(List.of(message), List.of(new InputCheck() {
-
-			@Override
-			public String check(String t) {
-				if (t.equalsIgnoreCase("Y") || t.equalsIgnoreCase("Yes") || t.equalsIgnoreCase("N") || t.equalsIgnoreCase("No"))
-					return "";
-				else
-					return "Please type either Y for Yes, or N for No.";
-			}}));
-		
-		if (result == null) // user canceled
-			return 2;
-		
-		String ans = result.get(0);
-		return ans.equalsIgnoreCase("Y") || ans.equalsIgnoreCase("Yes") ? 0 : 1;
 	}
 	
 	@Override
