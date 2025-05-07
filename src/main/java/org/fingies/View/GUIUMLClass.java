@@ -320,6 +320,7 @@ public class GUIUMLClass {
         public void mousePressed(MouseEvent e) {
             initialClick = e.getPoint(); // Store initial click position
             component.requestFocusInWindow();
+            guiView.setLastClassTouched(umlclass.getName());
             //((JComponent)e.getSource()).requestFocusInWindow();
         }
 

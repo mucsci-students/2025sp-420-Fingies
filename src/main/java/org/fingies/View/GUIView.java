@@ -95,6 +95,10 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
     // List of all current arrows representing relationships
     private List<ArrowComponent> arrows;
+    
+    // The name of the last class to be dragged by the user
+    private String lastClassTouched = null;
+    private String secondToLastClassTouched = null;
 
     public GUIView ()
     {
@@ -359,34 +363,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	        	}
             }
         });
-        
-
-        /*
-         * case SAVE:
-				controller.runHelper(a, new String[] {});
-	            break;
-			case EXPORT:
-				controller.runHelper(a, new String[] {});
-	            break;
-			case UNDO:
-				if (controller.runHelper(a, new String[] {}))
-	            {
-	                actionHelper(a, new String[] {});
-	            }
-	            break;
-			case REDO:
-				if (controller.runHelper(a, new String[] {}))
-	            {
-	                actionHelper(a, new String[] {});
-	            }
-	            break;
-			case EXIT:
-	        	if (controller.runHelper(a, new String[] {}))
-	        	{
-	        		System.exit(0);
-	        	}
-	            break;
-         */
     }
 
     public JLayeredPane getCanvas()
@@ -610,7 +586,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     
             switch (placeholder) {
                 case "Class":
-                    classComboBox = createClassComboBox();
+                    classComboBox = createClassComboBox(i);
                     box = classComboBox;
                     break;
     
@@ -666,9 +642,14 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * Creates a combobox consisting of all current classes that exist within the model
      * @return a new combobox with all currect classes that exist within the model
      */
-    private JComboBox<String> createClassComboBox() {
+    private JComboBox<String> createClassComboBox(int idx) {
         String[] classes = GUIUMLClasses.keySet().toArray(String[]::new);
         JComboBox<String> classComboBox = new JComboBox<>(classes);
+        if (idx == 0 && lastClassTouched != null)
+        	classComboBox.setSelectedItem(lastClassTouched);
+        else if (idx == 1 && secondToLastClassTouched != null)
+        	classComboBox.setSelectedItem(secondToLastClassTouched);
+        classComboBox.setName("Class");
         return classComboBox;
     }
     
@@ -1260,6 +1241,27 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     public void updateAttributes(String className)
     {
         GUIUMLClasses.get(className).update();
+    }
+    
+    public void setLastClassTouched(String className)
+    {
+    	secondToLastClassTouched = lastClassTouched;
+    	lastClassTouched = className;
+    	if (!comboBoxes.isEmpty())
+    	{
+    		if ("Class".equals(comboBoxes.get(0).getName()))
+    		{
+    			if (comboBoxes.size() > 1 && "Class".equals(comboBoxes.get(1).getName()))
+    			{
+    				comboBoxes.get(0).setSelectedItem(secondToLastClassTouched);
+    				comboBoxes.get(1).setSelectedItem(lastClassTouched);
+    			}
+    			else
+    			{
+    				comboBoxes.get(0).setSelectedItem(lastClassTouched);
+    			}
+    		}
+    	}
     }
 
 	@Override
