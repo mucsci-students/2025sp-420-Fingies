@@ -413,6 +413,7 @@ public class GUIUMLClass {
         {
         	Rectangle r = background.getBounds();
             controller.runHelper(Action.MOVE, new String[] {umlclass.getName(), "" + r.x, "" + r.y});
+            guiView.requestFocusForCommandBar();
         }
     }
 }

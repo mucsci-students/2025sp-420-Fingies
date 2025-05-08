@@ -1,13 +1,20 @@
 package org.fingies.View;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 
 import javax.swing.AbstractAction;
@@ -16,6 +23,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -32,6 +40,8 @@ import org.fingies.Model.*;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.font.GlyphVector;
+import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -82,6 +92,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
     private JButton submitButton;
     private JButton cancelButton;
+    
+    private Action currentAction;
+    private JLabel currentActionLabel;
 
     private UMLController controller;
     private JLayeredPane canvas;
@@ -250,32 +263,45 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
         // Top panel to hold the command text boxes, combo boxes, submit & cancel buttons
         topPanel = new JPanel() {
-        	
-        	// overriding this gives the panel a semi-transparent gradient, which looks nice
-        	// apparently this is the standard way to do it in Java Swing
-        	// from ChatGPT:
             @Override
             protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g.create();
 
+                // === STEP 1: Draw white outline underneath everything ===
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setFont(currentActionLabel.getFont());
+
+                String text = currentActionLabel.getText();
+                FontMetrics fm = g2d.getFontMetrics();
+                int x = 20;
+                int y = 27 + fm.getAscent();
+
+                GlyphVector gv = currentActionLabel.getFont().createGlyphVector(g2d.getFontRenderContext(), text);
+                Shape outline = gv.getOutline(x, y);
+
+                g2d.setColor(Color.WHITE);
+                g2d.setStroke(new BasicStroke(2f));
+                g2d.draw(outline);
+
+                // === STEP 2: Draw semi-transparent gradient ===
                 int width = getWidth();
                 int height = getHeight();
 
-                // Draw row by row with a custom alpha gradient
-                for (int y = 0; y < height; y++) {
-                    double t = (double) y / height;
+                for (int row = 0; row < height; row++) {
+                    double t = (double) row / height;
                     double angle = Math.PI * t;
                     float alpha = (float) ((Math.cos(angle) + 1.0) / 2.0);
                     int a = Math.min(255, Math.max(0, (int)(alpha * 55)));
 
                     g2d.setColor(new Color(0, 0, 25, a));
-                    g2d.drawLine(0, y, width, y);
+                    g2d.drawLine(0, row, width, row);
                 }
 
                 g2d.dispose();
+                super.paintComponent(g); // Let Swing paint children (label fill)
             }
         };
+
         topPanel.setOpaque(false);
         topPanel.setPreferredSize(new Dimension(1000, 90)); // Width is ignored by layout
         topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
@@ -283,6 +309,13 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         topPanel.setAlignmentX(0f);
         topPanel.setAlignmentY(0f);
         topPanel.setVisible(false); // topPanel will be invisible until textboxes & comboboxes are added to it
+        
+        currentActionLabel = new JLabel("Outlined Text");
+        currentActionLabel.setForeground(Color.BLACK);
+        currentActionLabel.setFont(currentActionLabel.getFont().deriveFont(Font.BOLD, 14f));
+        currentActionLabel.setBounds(20, 15, 200, 40);
+        topPanel.add(currentActionLabel);
+
 
         // Add topPanel and scrollPane in order so topPanel is on top
         theAllPanel.add(topPanel);
@@ -383,10 +416,12 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private void createButtons(Action a, int offset) {
         submitButton = new JButton("Submit");
         cancelButton = new JButton("Cancel");
+        
+        int currentActionLabelLen = currentActionLabel.getFontMetrics(currentActionLabel.getFont()).stringWidth(currentActionLabel.getText()) + 15;
 
-        submitButton.setBounds(offset * 130 + 20, 20, 125, 30); // Position and size for submit button
+        submitButton.setBounds(currentActionLabelLen + offset * 130 + 20, 20, 125, 30); // Position and size for submit button
 
-        cancelButton.setBounds((offset + 1) * 130 + 20, 20, 125, 30); // Position and size for cancel button
+        cancelButton.setBounds(currentActionLabelLen + (offset + 1) * 130 + 20, 20, 125, 30); // Position and size for cancel button
     
         // Add ActionListener for Submit button
         submitButton.addActionListener(new ActionListener() {
@@ -400,6 +435,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	currentAction = null;
                 handleCancelAction();
             }
         });
@@ -416,6 +452,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         topPanel.getActionMap().put("cancel", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	currentAction = null;
                 handleCancelAction();
             }
         });
@@ -558,6 +595,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
     // Removes Submit and Cancel buttons when the Cancel button is clicked
     private void handleCancelAction() {
+    	
         topPanel.remove(submitButton);
         topPanel.remove(cancelButton);
         textBoxes.forEach(topPanel::remove);
@@ -650,6 +688,13 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         else if (idx == 1 && secondToLastClassTouched != null)
         	classComboBox.setSelectedItem(secondToLastClassTouched);
         classComboBox.setName("Class");
+        classComboBox.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				secondToLastClassTouched = lastClassTouched;
+                lastClassTouched = (String) classComboBox.getSelectedItem();
+			}});
         return classComboBox;
     }
     
@@ -797,7 +842,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param index determines the offset horizontally, so the boxes don't overlap
      */
     private void styleComboBox(JComboBox<String> box, int index) {
-        box.setBounds(index * 130 + 20, 20, 125, 30);
+    	int currentActionLabelLen = currentActionLabel.getFontMetrics(currentActionLabel.getFont()).stringWidth(currentActionLabel.getText()) + 15;
+        box.setBounds(currentActionLabelLen + index * 130 + 20, 20, 125, 30);
     } 
 
     /**
@@ -814,10 +860,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         {
             JTextField text = new JTextField(20);
 
-            // text.setBounds(offset * 130 + 20, 20, 125, 30); // Set position and size
-
-            // int xPosition = view.x + (offset * 130) + 20; // x relative to the visible area
-            int xPosition = offset * 130 + 20; // x relative to the visible area
+            int currentActionLabelLen = currentActionLabel.getFontMetrics(currentActionLabel.getFont()).stringWidth(currentActionLabel.getText()) + 15;
+            
+            int xPosition = currentActionLabelLen + (offset + i) * 130 + 20; // x relative to the visible area
             int yPosition = 20; // y relative to the visible area
 
             text.setBounds(xPosition, yPosition, 125, 30); // Set position and size
@@ -840,10 +885,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 }
             });
 
-            offset++;
             textBoxes.add(text);
             topPanel.add(text);
-            repaint(); // Refresh UI
         }
         reload();
     }
@@ -862,7 +905,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param a The action to allow the user to perform in the command bar.
      */
     private void showCommandBar(Action a)
-    {	
+    {
+    	currentAction = a;
+    	currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
     	switch (a)
     	{
 			case ADD_CLASS:
@@ -966,7 +1011,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-	            makeTextBoxes(a, new String [] {"New Parameter"}, 3);
+	            makeTextBoxes(a, new String [] {"New Parameter Name"}, 3);
 	            createButtons(a, 4);
 	            topPanel.setVisible(true);
 	            break;
@@ -1034,7 +1079,55 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 		default:
 			break;
     	}
+    	requestFocusForCommandBar();
     }
+    
+    public boolean requestFocusForCommandBar()
+    {
+    	Action a = currentAction;
+    	switch (a)
+    	{
+    		case ADD_CLASS:
+    			return textBoxes.get(0).requestFocusInWindow(); // class name
+    		case REMOVE_CLASS:
+    			return comboBoxes.get(0).requestFocusInWindow(); // class name
+    		case RENAME_CLASS:
+    			return textBoxes.get(0).requestFocusInWindow(); // new class name // should be diff
+    		case ADD_RELATIONSHIP:
+    			return comboBoxes.get(2).requestFocusInWindow(); // relationship type // should be different second time
+    		case REMOVE_RELATIONSHIP:
+    			return comboBoxes.get(0).requestFocusInWindow(); // first class name
+    		case ADD_METHOD:
+    			return textBoxes.get(0).requestFocusInWindow(); // method name
+    		case REMOVE_METHOD:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		case RENAME_METHOD:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		case ADD_FIELD:
+    			return textBoxes.get(0).requestFocusInWindow(); // field name
+    		case REMOVE_FIELD:
+    			return comboBoxes.get(1).requestFocusInWindow(); // field name
+    		case RENAME_FIELD:
+    			return comboBoxes.get(1).requestFocusInWindow(); // field name
+    		case ADD_PARAMETERS:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		case REMOVE_PARAMETERS:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		case RENAME_PARAMETER:
+    			return comboBoxes.get(2).requestFocusInWindow(); // parameter name
+    		case CHANGE_RELATIONSHIP_TYPE:
+    			return comboBoxes.get(2).requestFocusInWindow(); // relationship type
+    		case CHANGE_PARAMETER_TYPE:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		case CHANGE_FIELD_TYPE:
+    			return comboBoxes.get(1).requestFocusInWindow(); // field name
+    		case CHANGE_METHOD_RETURN_TYPE:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		default:
+    			return false;
+    	}
+    }
+
 
     /**
      * Based on the action, perform actions within the GUIView to update it with new data from JModel
