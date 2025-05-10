@@ -4,10 +4,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.ScrollPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Objects;
 
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
@@ -17,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JViewport;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 
 import org.fingies.Controller.Action;
 import org.fingies.Controller.UMLController;
@@ -168,15 +165,13 @@ public class GUIUMLClass {
     {
         updateFields();
         updateMethods();
+        updateClassName();
 
         // Calculate new total height
         int newHeight = classPanel.getHeight() + fieldsPanel.getHeight() + methodsPanel.getHeight() + 20;
-        int newWidth = Math.max(DEFAULT_PANEL_WIDTH, Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
+        int newWidth = Math.max(classPanel.getWidth(), Math.max(fieldsPanel.getWidth(), methodsPanel.getWidth()));
         
         background.setBounds(background.getX(), background.getY(), newWidth + 10, newHeight);
-        
-        // Must be called down here because it relies on new size of background
-        updateClassName();
 
         
         classPanel.setSize(newWidth, classPanel.getHeight());
@@ -196,18 +191,18 @@ public class GUIUMLClass {
      */
     public void updateClassName()
     {
-        classPanel.removeAll(); // Clear panel before updating
+        classPanel.removeAll(); // Clear existing contents
+        int labelWidth = umlclass.getName().length() * PIXELS_PER_CHARACTER;
+        int panelWidth = Math.max(140, labelWidth);
 
         JLabel classLabel = new JLabel(umlclass.getName());
-        int labelWidth = umlclass.getName().length() * PIXELS_PER_CHARACTER;
         classLabel.setForeground(Color.BLACK);
         classLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
-        classLabel.setBounds((background.getWidth() - labelWidth) / 2 - 5, 2, labelWidth, DEFAULT_CLASS_PANEL_HEIGHT);  // Set bounds for the class name label
+        classLabel.setBounds(0, 2, panelWidth, DEFAULT_CLASS_PANEL_HEIGHT);
+        classPanel.setBounds(5, 5, panelWidth, DEFAULT_CLASS_PANEL_HEIGHT); // Resize panel to match label
         classPanel.add(classLabel);
 
-        int panelWidth = Math.max(140, labelWidth + 20); // Ensure minimum width
-        classPanel.setBounds(5, 5, panelWidth, DEFAULT_CLASS_PANEL_HEIGHT); // Resize panel
         classPanel.revalidate();
         classPanel.repaint();
     }
@@ -320,6 +315,7 @@ public class GUIUMLClass {
         public void mousePressed(MouseEvent e) {
             initialClick = e.getPoint(); // Store initial click position
             component.requestFocusInWindow();
+            guiView.setLastClassTouched(umlclass.getName());
             //((JComponent)e.getSource()).requestFocusInWindow();
         }
 
@@ -412,6 +408,7 @@ public class GUIUMLClass {
         {
         	Rectangle r = background.getBounds();
             controller.runHelper(Action.MOVE, new String[] {umlclass.getName(), "" + r.x, "" + r.y});
+            guiView.requestFocusForCommandBar();
         }
     }
 }

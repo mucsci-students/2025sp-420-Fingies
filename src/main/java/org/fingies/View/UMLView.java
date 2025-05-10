@@ -1,9 +1,11 @@
 package org.fingies.View;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
 
+import org.fingies.Controller.UMLController;
 import org.fingies.Controller.UMLController;
 
 /**
@@ -18,25 +20,31 @@ import org.fingies.Controller.UMLController;
  * @author Lincoln Craddock
  */
 public interface UMLView {
-	
-	void run();
+		
+	default void run() { }
 	
 	/**
 	 * Displays a message to the user asking for a filepath to save to.
 	 * 
 	 * @param message The message to display to the user, prompting them for a filepath to save to.
-	 * @return The filepath provided by the user, or an empty string if none was provided.
+	 * @return The filepath provided by the user, or null if none was provided.
 	 */
-	String promptForSaveInput(String message);
+	default String promptForSaveInput(String message)
+	{
+		return promptForInput(message);
+	}
 	
 	
 	/**
 	 * Displays a message to the user asking for a filepath to open.
 	 * 
 	 * @param message The message to display to the user, prompting them for a filepath to open.
-	 * @return The filepath provided by the user, or an empty string if none was provided.
+	 * @return The filepath provided by the user, or null if none was provided.
 	 */
-	String promptForOpenInput(String message);
+	default String promptForOpenInput(String message)
+	{
+		return promptForInput(message);
+	}
 	
 	/**
 	 * Displays a message to the user and stalls the program until they respond.
@@ -67,7 +75,18 @@ public interface UMLView {
 	 * @param messages The messages to display to the user, prompting them for input.
 	 * @return The user's answer to each question.
 	 */
-	List<String> promptForInput(List<String> messages);
+	default List<String> promptForInput(List<String> messages)
+	{
+		List<String> result = new ArrayList<String>();
+        for(String m : messages)
+        {
+        	String ans = promptForInput(m);
+        	if (ans == null)
+        		return null;
+            result.add(ans);
+        }
+        return result;
+	}
 	
 	/**
 	 * Displays multiple messages to the user one at a time, and stalls the program
@@ -86,7 +105,27 @@ public interface UMLView {
 	 * @param checks A list of checks representing the what sort of responses should be accepted.
 	 * @return The user's answer to each question.
 	 */
-	List<String> promptForInput(List<String> messages, List<InputCheck> checks); // this will probably remain unimplemented until we need it.
+	default List<String> promptForInput(List<String> messages, List<InputCheck> checks)
+	{
+		List<String> result = new ArrayList<String>();
+        for(int i = 0; i < messages.size(); ++i)
+        {
+            String ans = promptForInput(messages.get(i));
+            if (ans == null)
+            	return null;
+            String checkMsg = checks.get(i).check(ans); // This will either be "" or an error message
+            while(!checkMsg.equals("")) // This loop will keep prompting the user until they input something that satisfies the check
+            {
+            	notifyFail(checkMsg);
+                ans = promptForInput(messages.get(i));
+                if (ans == null)
+                	return null;
+                checkMsg = checks.get(i).check(ans);
+            }
+            result.add(ans);
+        }
+        return result;
+	}
 	
 	/**
 	 * Gives the user feedback to let them know that their most recent command was successful.
@@ -97,7 +136,7 @@ public interface UMLView {
 	 * manipulating the diagram (such as dragging an arrow from one class to another in order to
 	 * create a relationship).
 	 */
-	void notifySuccess();
+	default void notifySuccess() { }
 	
 	/**
 	 * Tells the user that their most recent command was successful.
@@ -110,7 +149,7 @@ public interface UMLView {
 	 * the diagram (such as dragging an arrow from one class to another in order to
 	 * create a relationship).
 	 */
-	void notifySuccess(String message);
+	default void notifySuccess(String message) { }
 	
 	/**
 	 * Tells the user that their most recent command failed.
@@ -143,12 +182,12 @@ public interface UMLView {
 	/**
 	 * Tells the user how to use the program.
 	 */
-	void help();
+	default void help() { }
 	
 	/**
 	 * Tells the user how to use a specific command.
 	 */
-	void help(String command);
+	default void help(String command) { }
 	
 	/**
 	 * Gives the View a Controller to send user input to.
@@ -171,7 +210,24 @@ public interface UMLView {
 	 * @param title The title of the pop up window
 	 * @return A int representing the choice of the user, 0 is yes, 1 is no, 2 is cancel
 	 */
-	int promptForYesNoInput(String message, String title);
+	default int promptForYesNoInput(String message, String title)
+	{
+		List<String> result = promptForInput(List.of(message), List.of(new InputCheck() {
+
+			@Override
+			public String check(String t) {
+				if (t.equalsIgnoreCase("Y") || t.equalsIgnoreCase("Yes") || t.equalsIgnoreCase("N") || t.equalsIgnoreCase("No"))
+					return "";
+				else
+					return "Please type either Y for Yes, or N for No.";
+			}}));
+		
+		if (result == null) // user canceled
+			return 2;
+		
+		String ans = result.get(0);
+		return ans.equalsIgnoreCase("Y") || ans.equalsIgnoreCase("Yes") ? 0 : 1;
+	}
 	
 	/**
 	 * Creates a representation of the diagram as a JComponent and returns it, or returns

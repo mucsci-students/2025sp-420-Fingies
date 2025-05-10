@@ -1,25 +1,32 @@
 package org.fingies.View;
 
+import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.GradientPaint;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.LayoutManager;
+import java.awt.FlowLayout;
 
 import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
@@ -30,13 +37,13 @@ import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.OverlayLayout;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 
 import org.fingies.Controller.*;
 import org.fingies.Model.*;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.font.GlyphVector;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -56,8 +63,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private GUIMenuItem load;
     private GUIMenuItem save;
     private GUIMenuItem export;
-    private GUIMenuItem undo;
-    private GUIMenuItem redo;
     private GUIMenuItem exit;
     
     private GUIMenuItem addClass;
@@ -81,12 +86,18 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private GUIMenuItem changeMethodType;
     private GUIMenuItem changeParameterType;
     private GUIMenuItem changeRelatoinshipType;
+    
+    private JButton undo;
+    private JButton redo;
 
     private ArrayList<JTextField> textBoxes;
     private ArrayList<JComboBox<String>> comboBoxes;
 
     private JButton submitButton;
     private JButton cancelButton;
+    
+    private Action currentAction;
+    private JLabel currentActionLabel;
 
     private UMLController controller;
     private JLayeredPane canvas;
@@ -100,6 +111,13 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
     // List of all current arrows representing relationships
     private List<ArrowComponent> arrows;
+    
+    // The name of the last class to be dragged by the user
+    private String lastClassTouched = null;
+    private String secondToLastClassTouched = null;
+    
+    private final int DEFAULT_WIDTH = 1000;
+    private final int DEFAULT_HEIGHT = 1000;
 
     public GUIView ()
     {
@@ -108,26 +126,36 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         textBoxes = new ArrayList<JTextField>();
         comboBoxes = new ArrayList<JComboBox<String>>();
 
-        // Creates a JMenuBar and menus
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.setLayout(new BorderLayout()); // Needed for proper alignment
+
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
         addMenu = new JMenu("Add");
         removeMenu = new JMenu("Remove");
         renameMenu = new JMenu("Rename");
         typeMenu = new JMenu("ChangeType");
+        undo = new JButton("Undo");
+        redo = new JButton("Redo");
 
-        // Adds menus to menubar
-        menuBar.add(fileMenu);
-        menuBar.add(addMenu);
-        menuBar.add(removeMenu);
-        menuBar.add(renameMenu);
-        menuBar.add(typeMenu);
+        // Right-side undo/redo buttons
+        JPanel rightMenuPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        rightMenuPanel.setOpaque(false);
+        rightMenuPanel.add(undo);
+        rightMenuPanel.add(redo);
+
+        // Add both panels to the menu bar
+        menuBar.add(fileMenu, BorderLayout.WEST);
+        menuBar.add(addMenu, BorderLayout.WEST);
+        menuBar.add(removeMenu, BorderLayout.WEST);
+        menuBar.add(renameMenu, BorderLayout.WEST);
+        menuBar.add(typeMenu, BorderLayout.WEST);
+        menuBar.add(rightMenuPanel, BorderLayout.EAST);
+
 
         // Creates JMenu submenus
         load = new GUIMenuItem("Open", Action.LOAD);
         save = new GUIMenuItem("Save", Action.SAVE);
-        undo = new GUIMenuItem("Undo", Action.UNDO);
-        redo = new GUIMenuItem("Redo", Action.REDO);
         export = new GUIMenuItem("Export", Action.EXPORT);
         exit = new GUIMenuItem("Exit", Action.EXIT);
         
@@ -160,8 +188,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
         save.addActionListener(this);
-        undo.addActionListener(this);
-        redo.addActionListener(this);
         export.addActionListener(this);
         exit.addActionListener(this);
 
@@ -186,16 +212,16 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         changeMethodType.addActionListener(this);
         changeParameterType.addActionListener(this);
         changeRelatoinshipType.addActionListener(this);
-
-        // Allows the press of a key to do the function of clicking the menu item WHILE in the menu
-        undo.setMnemonic(KeyEvent.VK_U); // Z for undo
-        redo.setMnemonic(KeyEvent.VK_R); // R for redo
+        
+        undo.addActionListener(this);
+        redo.addActionListener(this);
+        
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        save.setMnemonic(KeyEvent.VK_S);
 
         // Adds submenus to menu
         fileMenu.add(load);
         fileMenu.add(save);
-        fileMenu.add(undo);
-        fileMenu.add(redo);
         fileMenu.add(export);
         fileMenu.add(exit);
 
@@ -229,7 +255,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         // Create the canvas (JLayeredPane)
         canvas = new JLayeredPane();
         canvas.setLayout(null);  // Absolute positioning
-        canvas.setPreferredSize(new Dimension(1500, 1500));  // Bigger than the frame
+        canvas.setPreferredSize(new Dimension(DEFAULT_WIDTH - 20, DEFAULT_HEIGHT - 100));
 
         // Scroll pane to hold the canvas
         scrollPane = new JScrollPane(canvas);
@@ -251,49 +277,65 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 
         // Top panel to hold the command text boxes, combo boxes, submit & cancel buttons
         topPanel = new JPanel() {
-        	
-        	// from ChatGPT:
-        	// overriding this gives the panel a semi-transparent gradient, which looks nice
-        	// apparently this is the standard way to do it in Java Swing
             @Override
             protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g.create();
 
+                // === STEP 1: Draw white outline underneath everything ===
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.setFont(currentActionLabel.getFont());
+
+                String text = currentActionLabel.getText();
+                FontMetrics fm = g2d.getFontMetrics();
+                int x = 20;
+                int y = 27 + fm.getAscent();
+
+                GlyphVector gv = currentActionLabel.getFont().createGlyphVector(g2d.getFontRenderContext(), text);
+                Shape outline = gv.getOutline(x, y);
+
+                g2d.setColor(Color.WHITE);
+                g2d.setStroke(new BasicStroke(2f));
+                g2d.draw(outline);
+
+                // === STEP 2: Draw semi-transparent gradient ===
                 int width = getWidth();
                 int height = getHeight();
 
-                // Draw row by row with a custom alpha gradient
-                for (int y = 0; y < height; y++) {
-                    // Map y to angle in radians from 0 to π
-                    double t = (double) y / height;
+                for (int row = 0; row < height; row++) {
+                    double t = (double) row / height;
                     double angle = Math.PI * t;
-                    // cos(x) + 1 goes from 2 → 0, divide by 2 to get 1 → 0
                     float alpha = (float) ((Math.cos(angle) + 1.0) / 2.0);
+                    int a = Math.min(255, Math.max(0, (int)(alpha * 55)));
 
-                    // Clamp alpha and scale to 0–255
-                    int a = Math.min(255, Math.max(0, (int)(alpha * 50))); // 200 is max alpha
-
-                    g2d.setColor(new Color(0, 0, 50, a));
-                    g2d.drawLine(0, y, width, y);
+                    g2d.setColor(new Color(0, 0, 25, a));
+                    g2d.drawLine(0, row, width, row);
                 }
 
                 g2d.dispose();
+                super.paintComponent(g); // Let Swing paint children (label fill)
             }
         };
+
         topPanel.setOpaque(false);
-        topPanel.setPreferredSize(new Dimension(1000, 65)); // Width is ignored by layout
-        topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 65));
+        topPanel.setPreferredSize(new Dimension(1000, 90)); // Width is ignored by layout
+        topPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
         topPanel.setLayout(null);
         topPanel.setAlignmentX(0f);
         topPanel.setAlignmentY(0f);
         topPanel.setVisible(false); // topPanel will be invisible until textboxes & comboboxes are added to it
+        
+        currentActionLabel = new JLabel("Outlined Text");
+        currentActionLabel.setForeground(Color.BLACK);
+        currentActionLabel.setFont(currentActionLabel.getFont().deriveFont(Font.BOLD, 14f));
+        currentActionLabel.setBounds(20, 15, 200, 40);
+        topPanel.add(currentActionLabel);
+
 
         // Add topPanel and scrollPane in order so topPanel is on top
         theAllPanel.add(topPanel);
         theAllPanel.add(scrollPane);
         
-        this.setSize(1000, 1000);
+        this.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
         // Set JFrame attributes
         this.setTitle("UMLEditor");
@@ -318,6 +360,34 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 }
             }
         });
+        
+        
+        // Add shortcuts for undo, redo, save, load, and exit
+        int menuShortcutKeyMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
+        theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuShortcutKeyMask), "undo");
+        theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuShortcutKeyMask | KeyEvent.SHIFT_DOWN_MASK), "redo");
+        theAllPanel.getActionMap().put("undo", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	if (controller.runHelper(Action.UNDO, new String[] {}))
+                {
+                    actionHelper(Action.UNDO, new String[] {});
+                }
+            }
+        });
+        theAllPanel.getActionMap().put("redo", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	if (controller.runHelper(Action.REDO, new String[] {}))
+                {
+                    actionHelper(Action.REDO, new String[] {});
+                }
+            }
+        });
+        save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuShortcutKeyMask));
+        load.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuShortcutKeyMask));
+        exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuShortcutKeyMask));
+        export.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuShortcutKeyMask | KeyEvent.SHIFT_DOWN_MASK));
     }
 
     public JLayeredPane getCanvas()
@@ -338,16 +408,12 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private void createButtons(Action a, int offset) {
         submitButton = new JButton("Submit");
         cancelButton = new JButton("Cancel");
+        
+        int currentActionLabelLen = currentActionLabel.getFontMetrics(currentActionLabel.getFont()).stringWidth(currentActionLabel.getText()) + 15;
 
-        submitButton.setBounds(offset * 130 + 20, 20, 125, 30); // Position and size for submit button
-        submitButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        submitButton.setBackground(Color.WHITE);
-        submitButton.setOpaque(true);
+        submitButton.setBounds(currentActionLabelLen + offset * 130 + 20, 20, 125, 30); // Position and size for submit button
 
-        cancelButton.setBounds((offset + 1) * 130 + 20, 20, 125, 30); // Position and size for cancel button
-        cancelButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
-        cancelButton.setBackground(Color.WHITE);
-        cancelButton.setOpaque(true);
+        cancelButton.setBounds(currentActionLabelLen + (offset + 1) * 130 + 20, 20, 125, 30); // Position and size for cancel button
     
         // Add ActionListener for Submit button
         submitButton.addActionListener(new ActionListener() {
@@ -361,6 +427,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         cancelButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	currentAction = null;
                 handleCancelAction();
             }
         });
@@ -368,7 +435,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         // Add the buttons to the GUI
         topPanel.add(submitButton);
         topPanel.add(cancelButton);
-        topPanel.setVisible(true); // make the topPanel visible until the command is submitted or cancelled
 
         // Make Enter key trigger Submit
         getRootPane().setDefaultButton(submitButton);
@@ -378,6 +444,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         topPanel.getActionMap().put("cancel", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	currentAction = null;
                 handleCancelAction();
             }
         });
@@ -390,10 +457,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param action action to be performed that is sent to the Controller
      */
     private void handleSubmitAction(Action action) {
+    	
         // Concatenate the text from text fields and combo boxes just like pressing Enter
-        topPanel.remove(submitButton);
-        topPanel.remove(cancelButton);
-
         String[] textInputs = textBoxes.stream()
                 .map(JTextField::getText)
                 .toArray(String[]::new);
@@ -401,19 +466,28 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         String[] comboBoxInputs = comboBoxes.stream()
                 .map(comboBox -> (String) ((JComboBox<?>) comboBox).getSelectedItem())
                 .toArray(String[]::new);
+        
+        if (comboBoxes.size() > 0)
+        {
+        	if ("Class".equals(comboBoxes.get(0).getName()))
+        	{
+        		if (comboBoxes.size() > 1 && "Class".equals(comboBoxes.get(1).getName()))
+            	{
+            		secondToLastClassTouched = (String) comboBoxes.get(0).getSelectedItem();;
+                    lastClassTouched = (String) comboBoxes.get(1).getSelectedItem();
+            	}
+        		else
+        		{
+        			secondToLastClassTouched = lastClassTouched;
+                    lastClassTouched = (String) comboBoxes.get(0).getSelectedItem();
+        		}
+        	}
+        }
     
         // Concatenate both arrays
         String[] allInputs = Stream.concat(Arrays.stream(comboBoxInputs), Arrays.stream(textInputs))
                 .filter(input -> input != null && !input.trim().isEmpty())  // Remove null or empty values
                 .toArray(String[]::new);
-    
-        // Remove all text fields and combo boxes
-        textBoxes.forEach(topPanel::remove);
-        textBoxes.clear();
-        comboBoxes.forEach(topPanel::remove);
-        comboBoxes.clear();
-        topPanel.setVisible(false); // hide topPanel until next command
-        repaint(); // Refresh UI
 
         // Special handling for actions that require parameter formatting 
         // Turns method1 (String int String) into method1 without the type list
@@ -524,17 +598,20 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             actionHelper(action, allInputs);
             repaint();
         }
+        
+        showCommandBar(action);
     }
 
     // Removes Submit and Cancel buttons when the Cancel button is clicked
     private void handleCancelAction() {
+    	
         topPanel.remove(submitButton);
         topPanel.remove(cancelButton);
         textBoxes.forEach(topPanel::remove);
         textBoxes.clear();
         comboBoxes.forEach(topPanel::remove);
         comboBoxes.clear();
-        topPanel.setVisible(false); // hide topPanel until next command
+        topPanel.setVisible(false);
         repaint(); // Refresh UI
     }
     
@@ -556,7 +633,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     
             switch (placeholder) {
                 case "Class":
-                    classComboBox = createClassComboBox();
+                    classComboBox = createClassComboBox(i, a);
                     box = classComboBox;
                     break;
     
@@ -612,9 +689,22 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * Creates a combobox consisting of all current classes that exist within the model
      * @return a new combobox with all currect classes that exist within the model
      */
-    private JComboBox<String> createClassComboBox() {
+    private JComboBox<String> createClassComboBox(int idx, Action a) {
         String[] classes = GUIUMLClasses.keySet().toArray(String[]::new);
         JComboBox<String> classComboBox = new JComboBox<>(classes);
+        if (a == Action.ADD_RELATIONSHIP || a == Action.CHANGE_RELATIONSHIP_TYPE || a == Action.REMOVE_RELATIONSHIP)
+        {
+        	if (idx == 0 && secondToLastClassTouched != null)
+            	classComboBox.setSelectedItem(secondToLastClassTouched);
+            else if (idx == 1 && lastClassTouched != null)
+            	classComboBox.setSelectedItem(lastClassTouched);
+        }
+        else
+        {
+        	if (idx == 0 && lastClassTouched != null)
+            	classComboBox.setSelectedItem(lastClassTouched);
+        }
+        classComboBox.setName("Class");
         return classComboBox;
     }
     
@@ -637,7 +727,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param paramBox combobox consisting of all currect parameters that exist within a method
      */
     private void addMethodComboBoxListener(JComboBox<String> classComboBox, JComboBox<String> methodComboBox, JComboBox<String> paramBox, boolean includeAllParametersOption) {
-        methodComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{paramBox}) {
+        methodComboBox.addItemListener(new ComboBoxListener(new JComboBox[]{ paramBox }) {
             @Override
             protected void updateComboBox(JComboBox<String> box) {
                 updateParameterComboBox((JComboBox<String>) box, classComboBox, methodComboBox, includeAllParametersOption);
@@ -762,8 +852,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * @param index determines the offset horizontally, so the boxes don't overlap
      */
     private void styleComboBox(JComboBox<String> box, int index) {
-        box.setBounds(index * 130 + 20, 20, 125, 30);
-        box.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+    	int currentActionLabelLen = currentActionLabel.getFontMetrics(currentActionLabel.getFont()).stringWidth(currentActionLabel.getText()) + 15;
+        box.setBounds(currentActionLabelLen + index * 130 + 20, 20, 125, 30);
     } 
 
     /**
@@ -780,17 +870,15 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         {
             JTextField text = new JTextField(20);
 
-            // text.setBounds(offset * 130 + 20, 20, 125, 30); // Set position and size
-
-            // int xPosition = view.x + (offset * 130) + 20; // x relative to the visible area
-            int xPosition = offset * 130 + 20; // x relative to the visible area
+            int currentActionLabelLen = currentActionLabel.getFontMetrics(currentActionLabel.getFont()).stringWidth(currentActionLabel.getText()) + 15;
+            
+            int xPosition = currentActionLabelLen + (offset + i) * 130 + 20; // x relative to the visible area
             int yPosition = 20; // y relative to the visible area
 
             text.setBounds(xPosition, yPosition, 125, 30); // Set position and size
 
             String placeholder = placeholders[i];
             text.setText(placeholder);
-            text.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2)); // Red border with thickness of 5
             text.setHorizontalAlignment(SwingConstants.CENTER);
 
             text.addFocusListener(new java.awt.event.FocusListener() {
@@ -807,10 +895,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 }
             });
 
-            offset++;
             textBoxes.add(text);
             topPanel.add(text);
-            repaint(); // Refresh UI
         }
         reload();
     }
@@ -818,151 +904,269 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     // Based on the action sent in, make the correct number of textboxes and comboboxes along with the Submit and Cancel buttons
     @Override
     public void actionPerformed(ActionEvent e) {
-    	Action a = ((GUIMenuItem) e.getSource()).action;
-
-        if (textBoxes.isEmpty() && comboBoxes.isEmpty())
-        {
-            if (e.getSource() == addClass)
-            {
-                makeTextBoxes(a, new String [] {"Class Name"}, 0);
-                createButtons(a, 1);
-            }
-            else if (e.getSource() == addField)
-            {
-                makeComboBoxes(a, new String [] {"Class"});
-                makeTextBoxes(a, new String [] {"Field Name", "Type: int String"}, 1);
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == addMethod)
-            {
-                makeComboBoxes(a, new String [] {"Class"});
-                makeTextBoxes(a, new String [] {"Method Name", "Return Type", "Types: int String", "Parameters: a b c"}, 1);
-                createButtons(a, 5);
-            }
-            else if (e.getSource() == addParameter)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method"});
-                makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"}, 2);
-                createButtons(a, 4);
-            }
-            else if (e.getSource() == addRelationship)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == removeClass)
-            {
-                makeComboBoxes(a, new String [] {"Class"});
-                createButtons(a, 1);
-            }
-            else if (e.getSource() == removeField)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Field"});
-                createButtons(a, 2);
-            }
-            else if (e.getSource() == removeMethod)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method"});
-                createButtons(a, 2);
-            }
-            else if (e.getSource() == removeParameter)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == removeRelationship)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Desination"});
-                createButtons(a, 2);
-            }
-            else if (e.getSource() == renameClass)
-            {
-                makeComboBoxes(a, new String [] {"Class"});
-                makeTextBoxes(a, new String [] {"New Class Name"}, 1);
-                createButtons(a, 2);
-            }
-            else if (e.getSource() == renameField)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Field"});
-                makeTextBoxes(a, new String [] {"New Field Name"}, 2);
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == renameMethod)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method"});
-                makeTextBoxes(a, new String [] {"New Method Name"}, 2);
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == renameParameter)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-                makeTextBoxes(a, new String [] {"New Parameter"}, 3);
-                createButtons(a, 4);
-            }
-            else if (e.getSource() == changeFieldType)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Field"});
-                makeTextBoxes(a, new String [] {"New Type"}, 2);
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == changeMethodType)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method"});
-                makeTextBoxes(a, new String [] {"New Type"}, 2);
-                createButtons(a, 3);
-            }
-            else if (e.getSource() == changeParameterType)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
-                makeTextBoxes(a, new String [] {"New Type"}, 3);
-                createButtons(a, 4);
-            }
-            else if (e.getSource() == changeRelatoinshipType)
-            {
-                makeComboBoxes(a, new String [] {"Class", "Desination", "Relationship"});
-                createButtons(a, 3);
-            }
-            
-        }
-        if (e.getSource() == load)
-            {
-                boolean result = controller.runHelper(a, new String[] {});
-                if (result)
+    	Action a;
+    	if (e.getSource() instanceof GUIMenuItem)
+    	{
+    		a = ((GUIMenuItem) e.getSource()).action;
+    	}
+    	else
+    	{
+    		if (e.getSource() == undo)
+    			a = Action.UNDO;
+    		else
+    			a = Action.REDO;
+    	} 
+    	showCommandBar(a);
+    }
+    
+    /**
+     * Show the command bar with inputs for the specified action, or else calls runHelper() directly to perform the action.
+     * 
+     * @param a The action to allow the user to perform in the command bar.
+     */
+    private void showCommandBar(Action a)
+    {
+    	currentAction = a;
+    	switch (a)
+    	{
+			case ADD_CLASS:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeTextBoxes(a, new String [] {"Class Name"}, 0);
+		        createButtons(a, 1);
+		        topPanel.setVisible(true);
+		        break;
+			case ADD_FIELD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class"});
+	            makeTextBoxes(a, new String [] {"Field Name", "Type: int String"}, 1);
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case ADD_METHOD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class"});
+	            makeTextBoxes(a, new String [] {"Method Name", "Return Type", "Types: int String", "Parameters: a b c"}, 1);
+	            createButtons(a, 5);
+	            topPanel.setVisible(true);
+	            break;
+			case ADD_PARAMETERS:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method"});
+	            makeTextBoxes(a, new String [] {"Types: int String", "Parameters: a b c"}, 2);
+	            createButtons(a, 4);
+	            topPanel.setVisible(true);
+	            break;
+			case ADD_RELATIONSHIP:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case REMOVE_CLASS:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class"});
+	            createButtons(a, 1);
+	            topPanel.setVisible(true);
+	            break;
+			case REMOVE_FIELD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Field"});
+	            createButtons(a, 2);
+	            topPanel.setVisible(true);
+	            break;
+			case REMOVE_METHOD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method"});
+	            createButtons(a, 2);
+	            topPanel.setVisible(true);
+	            break;
+			case REMOVE_PARAMETERS:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case REMOVE_RELATIONSHIP:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Desination"});
+	            createButtons(a, 2);
+	            topPanel.setVisible(true);
+	            break;
+			case RENAME_CLASS:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class"});
+	            makeTextBoxes(a, new String [] {"New Class Name"}, 1);
+	            createButtons(a, 2);
+	            topPanel.setVisible(true);
+	            break;
+			case RENAME_FIELD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Field"});
+	            makeTextBoxes(a, new String [] {"New Field Name"}, 2);
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case RENAME_METHOD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method"});
+	            makeTextBoxes(a, new String [] {"New Method Name"}, 2);
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case RENAME_PARAMETER:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+	            makeTextBoxes(a, new String [] {"New Parameter Name"}, 3);
+	            createButtons(a, 4);
+	            topPanel.setVisible(true);
+	            break;
+			case CHANGE_FIELD_TYPE:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Field"});
+	            makeTextBoxes(a, new String [] {"New Type"}, 2);
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case CHANGE_METHOD_RETURN_TYPE:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method"});
+	            makeTextBoxes(a, new String [] {"New Type"}, 2);
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case CHANGE_PARAMETER_TYPE:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
+	            makeTextBoxes(a, new String [] {"New Type"}, 3);
+	            createButtons(a, 4);
+	            topPanel.setVisible(true);
+	            break;
+			case CHANGE_RELATIONSHIP_TYPE:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
+				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
+		    		handleCancelAction();
+				makeComboBoxes(a, new String [] {"Class", "Desination", "Relationship"});
+	            createButtons(a, 3);
+	            topPanel.setVisible(true);
+	            break;
+			case LOAD:
+                if (controller.runHelper(a, new String[] {}))
                 {
                     loadGUIObjects();
                 }
-            }
-        else if (e.getSource() == save)
-        {
-        	controller.runHelper(a, new String[] {});
-        }
-        else if (e.getSource() == export)
-        {
-        	controller.runHelper(a, new String[] {});
-        }
-        else if (e.getSource() == undo)
-        {
-            if (controller.runHelper(a, new String[] {}))
-            {
-                actionHelper(a, new String[] {});
-            }
-        }
-        else if (e.getSource() == redo)
-        {
-            if (controller.runHelper(a, new String[] {}))
-            {
-                actionHelper(a, new String[] {});
-            }
-        }
-        else if (e.getSource() == exit)
-        {
-        	boolean result = controller.runHelper(a, new String[] {});
-        	if (result)
-        	{
-        		System.exit(0);
-        	}
-        }
+	            break;
+			case SAVE:
+				controller.runHelper(a, new String[] {});
+	            break;
+			case EXPORT:
+				controller.runHelper(a, new String[] {});
+	            break;
+			case UNDO:
+				if (controller.runHelper(a, new String[] {}))
+	            {
+	                actionHelper(a, new String[] {});
+	            }
+	            break;
+			case REDO:
+				if (controller.runHelper(a, new String[] {}))
+	            {
+	                actionHelper(a, new String[] {});
+	            }
+	            break;
+			case EXIT:
+	        	if (controller.runHelper(a, new String[] {}))
+	        	{
+	        		System.exit(0);
+	        	}
+	            break;
+		default:
+			break;
+    	}
+    	requestFocusForCommandBar();
     }
+    
+    public boolean requestFocusForCommandBar()
+    {
+    	Action a = currentAction;
+    	if (a == null)
+    		return false;
+    	switch (a)
+    	{
+    		case ADD_CLASS:
+    			return textBoxes.get(0).requestFocusInWindow(); // class name
+    		case REMOVE_CLASS:
+    			return comboBoxes.get(0).requestFocusInWindow(); // class name
+    		case RENAME_CLASS:
+    			return textBoxes.get(0).requestFocusInWindow(); // new class name // should be diff
+    		case ADD_RELATIONSHIP:
+    			return comboBoxes.get(2).requestFocusInWindow(); // relationship type // should be different second time
+    		case REMOVE_RELATIONSHIP:
+    			return comboBoxes.get(0).requestFocusInWindow(); // first class name
+    		case ADD_METHOD:
+    			return textBoxes.get(0).requestFocusInWindow(); // method name
+    		case REMOVE_METHOD:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		case RENAME_METHOD:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		case ADD_FIELD:
+    			return textBoxes.get(0).requestFocusInWindow(); // field name
+    		case REMOVE_FIELD:
+    			return comboBoxes.get(1).requestFocusInWindow(); // field name
+    		case RENAME_FIELD:
+    			return comboBoxes.get(1).requestFocusInWindow(); // field name
+    		case ADD_PARAMETERS:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		case REMOVE_PARAMETERS:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		case RENAME_PARAMETER:
+    			return comboBoxes.get(2).requestFocusInWindow(); // parameter name
+    		case CHANGE_RELATIONSHIP_TYPE:
+    			return comboBoxes.get(2).requestFocusInWindow(); // relationship type
+    		case CHANGE_PARAMETER_TYPE:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		case CHANGE_FIELD_TYPE:
+    			return comboBoxes.get(1).requestFocusInWindow(); // field name
+    		case CHANGE_METHOD_RETURN_TYPE:
+    			return comboBoxes.get(1).requestFocusInWindow(); // method
+    		default:
+    			return false;
+    	}
+    }
+
 
     /**
      * Based on the action, perform actions within the GUIView to update it with new data from JModel
@@ -982,9 +1186,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 renameUMLClass(args[0], args[1]);
                 break;
             case ADD_RELATIONSHIP:
-                break;
             case REMOVE_RELATIONSHIP:
-                break;
             case CHANGE_RELATIONSHIP_TYPE:
                 break;
             case ADD_METHOD:
@@ -1172,6 +1374,27 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     {
         GUIUMLClasses.get(className).update();
     }
+    
+    public void setLastClassTouched(String className)
+    {
+    	secondToLastClassTouched = lastClassTouched;
+    	lastClassTouched = className;
+    	if (!comboBoxes.isEmpty())
+    	{
+    		if ("Class".equals(comboBoxes.get(0).getName()))
+    		{
+    			if (comboBoxes.size() > 1 && "Class".equals(comboBoxes.get(1).getName()))
+    			{
+    				comboBoxes.get(0).setSelectedItem(secondToLastClassTouched);
+    				comboBoxes.get(1).setSelectedItem(lastClassTouched);
+    			}
+    			else
+    			{
+    				comboBoxes.get(0).setSelectedItem(lastClassTouched);
+    			}
+    		}
+    	}
+    }
 
 	@Override
 	public String promptForInput(String message) {
@@ -1194,7 +1417,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         for(int i = 0; i < messages.size(); ++i)
         {
             String ans = promptForInput(messages.get(i));
-            String checkMsg = checks.get(i).check(ans); // This will either be "" or "message"
+            String checkMsg = checks.get(i).check(ans); // This will either be "" or an error message
             while(!checkMsg.equals("")) // This loop will keep prompting the user until they input something that satisfies the check
             {
             	notifyFail(checkMsg);
@@ -1212,7 +1435,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showSaveDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
-        	return "";
+        	return null;
         return fileChooser.getSelectedFile().getPath();
     }
 	
@@ -1221,18 +1444,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     	fileChooser.setDialogTitle(message);
         int returnValue = fileChooser.showOpenDialog(this);
         if(returnValue != JFileChooser.APPROVE_OPTION)
-        	return "";
+        	return null;
         return fileChooser.getSelectedFile().getPath();
-	}
-
-	@Override
-	public void notifySuccess() {
-		// DON'T IMPLEMENT THIS
-	}
-
-	@Override
-	public void notifySuccess(String message) {
-		// DO NOT IMPLEMENT PLS!
 	}
 
 	@Override
@@ -1243,23 +1456,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	@Override
 	public void display(String message) {
 		JOptionPane.showMessageDialog(this, message);
-	}
-
-	@Override
-	public void help() {
-		// Nothing
-		
-	}
-
-	@Override
-	public void help(String command) {
-		// Nothing	
-	}
-
-	@Override
-	public void run() 
-	{
-		// Nothing
 	}
 	
 	@Override
