@@ -1,6 +1,15 @@
 {
   "classes": [
     {
+      "name": "Food",
+      "fields": [],
+      "methods": [],
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    {
       "name": "Car",
       "fields": [
         {
@@ -31,15 +40,6 @@
       "position": {
         "x": 1000,
         "y": 500
-      }
-    },
-    {
-      "name": "Food",
-      "fields": [],
-      "methods": [],
-      "position": {
-        "x": 0,
-        "y": 0
       }
     },
     {
