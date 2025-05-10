@@ -2,6 +2,7 @@ package org.fingies.View;
 
 import java.awt.Color;
 import java.util.Objects;
+import java.util.Random;
 
 public class ColorUtil {
 	
@@ -102,15 +103,12 @@ public class ColorUtil {
 				
 				// otherwise, generate a random color
 				int hash = Objects.hash(str);
-		        int r = (Math.abs(hash) >> 16) & 0xFF;
-		        int g = (Math.abs(hash) >> 8) & 0xFF;
-		        int b = Math.abs(hash) & 0xFF;
+		        Random random = new Random(hash);
 
-		        // Clamp to minColor–240 range so that they aren't too dark
-		        r = darkestColor.getRed() + (r % (brightestColor.getRed() - darkestColor.getRed() + 1)); 
-		        g = darkestColor.getGreen() + (g % (brightestColor.getBlue() - darkestColor.getBlue() + 1));
-		        b = darkestColor.getBlue() + (b % (brightestColor.getGreen() - darkestColor.getGreen() + 1));
-		        // TODO: change color generation for dark mode
+		        // Generate a color clamped to the appropriate range
+		        int r = random.nextInt(brightestColor.getRed() - darkestColor.getRed()) + darkestColor.getRed();
+		        int g = random.nextInt(brightestColor.getGreen() - darkestColor.getGreen()) + darkestColor.getGreen();
+		        int b = random.nextInt(brightestColor.getBlue() - darkestColor.getBlue()) + darkestColor.getBlue();
 
 		        return new Color(r, g, b);
 		}

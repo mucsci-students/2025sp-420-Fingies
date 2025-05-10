@@ -115,6 +115,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     // The name of the last class to be dragged by the user
     private String lastClassTouched = null;
     private String secondToLastClassTouched = null;
+    
+    private final int DEFAULT_WIDTH = 1000;
+    private final int DEFAULT_HEIGHT = 1000;
 
     public GUIView ()
     {
@@ -252,7 +255,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         // Create the canvas (JLayeredPane)
         canvas = new JLayeredPane();
         canvas.setLayout(null);  // Absolute positioning
-        canvas.setPreferredSize(new Dimension(1500, 1500));  // Bigger than the frame
+        canvas.setPreferredSize(new Dimension(DEFAULT_WIDTH - 20, DEFAULT_HEIGHT - 100));
 
         // Scroll pane to hold the canvas
         scrollPane = new JScrollPane(canvas);
@@ -332,7 +335,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         theAllPanel.add(topPanel);
         theAllPanel.add(scrollPane);
         
-        this.setSize(1000, 1000);
+        this.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
         // Set JFrame attributes
         this.setTitle("UMLEditor");
@@ -384,6 +387,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuShortcutKeyMask));
         load.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuShortcutKeyMask));
         exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuShortcutKeyMask));
+        export.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuShortcutKeyMask | KeyEvent.SHIFT_DOWN_MASK));
     }
 
     public JLayeredPane getCanvas()
@@ -462,6 +466,23 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         String[] comboBoxInputs = comboBoxes.stream()
                 .map(comboBox -> (String) ((JComboBox<?>) comboBox).getSelectedItem())
                 .toArray(String[]::new);
+        
+        if (comboBoxes.size() > 0)
+        {
+        	if ("Class".equals(comboBoxes.get(0).getName()))
+        	{
+        		if (comboBoxes.size() > 1 && "Class".equals(comboBoxes.get(1).getName()))
+            	{
+            		secondToLastClassTouched = (String) comboBoxes.get(0).getSelectedItem();;
+                    lastClassTouched = (String) comboBoxes.get(1).getSelectedItem();
+            	}
+        		else
+        		{
+        			secondToLastClassTouched = lastClassTouched;
+                    lastClassTouched = (String) comboBoxes.get(0).getSelectedItem();
+        		}
+        	}
+        }
     
         // Concatenate both arrays
         String[] allInputs = Stream.concat(Arrays.stream(comboBoxInputs), Arrays.stream(textInputs))
@@ -612,7 +633,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     
             switch (placeholder) {
                 case "Class":
-                    classComboBox = createClassComboBox(i);
+                    classComboBox = createClassComboBox(i, a);
                     box = classComboBox;
                     break;
     
@@ -668,21 +689,22 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
      * Creates a combobox consisting of all current classes that exist within the model
      * @return a new combobox with all currect classes that exist within the model
      */
-    private JComboBox<String> createClassComboBox(int idx) {
+    private JComboBox<String> createClassComboBox(int idx, Action a) {
         String[] classes = GUIUMLClasses.keySet().toArray(String[]::new);
         JComboBox<String> classComboBox = new JComboBox<>(classes);
-        if (idx == 0 && lastClassTouched != null)
-        	classComboBox.setSelectedItem(lastClassTouched);
-        else if (idx == 1 && secondToLastClassTouched != null)
-        	classComboBox.setSelectedItem(secondToLastClassTouched);
+        if (a == Action.ADD_RELATIONSHIP || a == Action.CHANGE_RELATIONSHIP_TYPE || a == Action.REMOVE_RELATIONSHIP)
+        {
+        	if (idx == 0 && secondToLastClassTouched != null)
+            	classComboBox.setSelectedItem(secondToLastClassTouched);
+            else if (idx == 1 && lastClassTouched != null)
+            	classComboBox.setSelectedItem(lastClassTouched);
+        }
+        else
+        {
+        	if (idx == 0 && lastClassTouched != null)
+            	classComboBox.setSelectedItem(lastClassTouched);
+        }
         classComboBox.setName("Class");
-        classComboBox.addItemListener(new ItemListener() {
-
-			@Override
-			public void itemStateChanged(ItemEvent e) {
-				secondToLastClassTouched = lastClassTouched;
-                lastClassTouched = (String) classComboBox.getSelectedItem();
-			}});
         return classComboBox;
     }
     
@@ -893,22 +915,22 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     			a = Action.UNDO;
     		else
     			a = Action.REDO;
-    	}    	
+    	} 
     	showCommandBar(a);
     }
     
     /**
-     * Show the command bar with inputs for the specified action.
+     * Show the command bar with inputs for the specified action, or else calls runHelper() directly to perform the action.
      * 
      * @param a The action to allow the user to perform in the command bar.
      */
     private void showCommandBar(Action a)
     {
     	currentAction = a;
-    	currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
     	switch (a)
     	{
 			case ADD_CLASS:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeTextBoxes(a, new String [] {"Class Name"}, 0);
@@ -916,6 +938,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 		        topPanel.setVisible(true);
 		        break;
 			case ADD_FIELD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class"});
@@ -924,6 +947,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case ADD_METHOD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class"});
@@ -932,6 +956,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case ADD_PARAMETERS:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Method"});
@@ -940,6 +965,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case ADD_RELATIONSHIP:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Class", "Relationship"});
@@ -947,6 +973,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case REMOVE_CLASS:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class"});
@@ -954,6 +981,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case REMOVE_FIELD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Field"});
@@ -961,6 +989,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case REMOVE_METHOD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Method"});
@@ -968,6 +997,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case REMOVE_PARAMETERS:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
@@ -975,6 +1005,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case REMOVE_RELATIONSHIP:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Desination"});
@@ -982,6 +1013,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case RENAME_CLASS:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class"});
@@ -990,6 +1022,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case RENAME_FIELD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Field"});
@@ -998,6 +1031,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case RENAME_METHOD:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Method"});
@@ -1006,6 +1040,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case RENAME_PARAMETER:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
@@ -1014,6 +1049,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case CHANGE_FIELD_TYPE:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Field"});
@@ -1022,6 +1058,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case CHANGE_METHOD_RETURN_TYPE:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Method"});
@@ -1030,6 +1067,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case CHANGE_PARAMETER_TYPE:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Method", "Parameter"});
@@ -1038,6 +1076,7 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
 	            topPanel.setVisible(true);
 	            break;
 			case CHANGE_RELATIONSHIP_TYPE:
+				currentActionLabel.setText(Command.COMMANDS[a.ordinal()]);
 				if (!textBoxes.isEmpty() || !comboBoxes.isEmpty())
 		    		handleCancelAction();
 				makeComboBoxes(a, new String [] {"Class", "Desination", "Relationship"});
@@ -1083,6 +1122,8 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     public boolean requestFocusForCommandBar()
     {
     	Action a = currentAction;
+    	if (a == null)
+    		return false;
     	switch (a)
     	{
     		case ADD_CLASS:
