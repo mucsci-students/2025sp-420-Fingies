@@ -44,7 +44,7 @@ Type ``help`` for a list of commands and their arguments, or ``help command_name
 
 ### Code Coverage:
 A comprehensive code coverage report can be found in the directory coverage_report.
- - Open index.html in the directory for a web view
+ - Open target/site/index.html in the directory for a web view
  - Jacoco.csv provides a comma-seperated value version of the report
 
 ## Team Fingies
