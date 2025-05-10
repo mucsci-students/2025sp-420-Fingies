@@ -19,13 +19,14 @@ import java.util.Arrays;
 
 /**
  * Controller for UML Editor, handles user input
- * @author kdichter
+ * @author kdichter and friends
  */
 public class UMLController {
     private UMLView view;
     private JModel model;
     private boolean madeChange;
     private boolean hasSaved;
+    private Change topOfUndoStackLastSave;
     
     private Stack<Change> undoStack = new Stack<Change>();
     private Stack<Change> redoStack = new Stack<Change>();
@@ -36,6 +37,7 @@ public class UMLController {
         this.model = model;
         madeChange = false;
         hasSaved = false;
+        topOfUndoStackLastSave = null;
     }
     
     
@@ -617,7 +619,6 @@ public class UMLController {
     {
     	if (undoStack.isEmpty())
     	{
-    		// nothing to undo, don't bother giving an error message
     		return false;
     	}
     	else
@@ -643,11 +644,11 @@ public class UMLController {
     {
     	if (redoStack.isEmpty())
     	{
-    		// nothing to redo, don't bother giving an error message
     		return false;
     	}
     	else
     	{
+    		madeChange = true;
     		Change change = redoStack.pop();
     		undoStack.push(change);
     		UMLClass newClass = change.getCurrClass();
@@ -743,8 +744,6 @@ public class UMLController {
     {
         if (doSave(filepath))
         {
-            madeChange = false;
-            hasSaved = true;
             view.notifySuccess("Successfully loaded " + filepath);
             return true;
         }
@@ -767,8 +766,6 @@ public class UMLController {
     		return false;
         if (doLoad(filepath) != null)
         {
-            hasSaved = true;
-            madeChange = false;
             view.notifySuccess("Successfully loaded " + filepath);
             return true;
         }
@@ -1237,17 +1234,42 @@ public class UMLController {
                     {
                         doSave();
                         madeChange = false;
+                        if (undoStack.isEmpty())
+                        {
+                        	topOfUndoStackLastSave = null;
+                        }
+                        else
+                        {
+                        	topOfUndoStackLastSave = undoStack.peek();
+                        }
                         view.notifySuccess("Successfully saved to " + model.getFilepath());
                         return true;
                     }
                     else
                     {
-                    	return saveCheck(view.promptForSaveInput("Please designate a filepath to save to"));
+                    	String path = view.promptForSaveInput("Please designate a filepath to save to");
+                    	args = new String[] { path };
+                    	if (args[0] == null)
+                    	{
+                    		return false; // canceled saving
+                    	}
                     }
                 }
-                else if (args.length == 1)
+                
+                if (args.length == 1)
                 {
-                	return saveCheck(args[0]);
+                	boolean result = saveCheck(args[0]);
+                	madeChange = false;
+                	if (undoStack.isEmpty())
+                    {
+                    	topOfUndoStackLastSave = null;
+                    }
+                    else
+                    {
+                    	topOfUndoStackLastSave = undoStack.peek();
+                    }
+                	hasSaved = true;
+                	return result;
                 }
                 else
                 {
@@ -1261,10 +1283,9 @@ public class UMLController {
                 {
                 	String path = view.promptForOpenInput("Please designate a filepath to open");
                 	args = new String[] { path };
-                	if (args[0].equals(""))
+                	if (args[0] == null)
                 	{
-                		view.notifyFail("Invalid filepath");
-                        return false;
+                        return false; // canceled loading
                 	}
                 }
                 
@@ -1272,17 +1293,29 @@ public class UMLController {
                 {
                     if (madeChange)
                     {
-                        int result = view.promptForYesNoInput("Would you like to save before loading a file?", "Warning");
-                        if (result == 1)
+                        int ans = view.promptForYesNoInput("Would you like to save before loading a file?", "Warning");
+                        if (ans == 1)
                         {
-                            return loadCheck(args[0]);
+                        	boolean result = loadCheck(args[0]);
+                        	madeChange = false;
+                        	topOfUndoStackLastSave = null;
+                        	undoStack.clear();
+                        	redoStack.clear();
+                        	hasSaved = true;
+                        	return result;
                         }
-                        else if(result == 0)
+                        else if(ans == 0)
                         {
                             boolean saveResult = saveCheck(view.promptForSaveInput("Please designate a filepath to save to"));
                             if(saveResult)
                             {
-                            	return loadCheck(args[0]);
+                            	boolean result = loadCheck(args[0]);
+                            	madeChange = false;
+                            	topOfUndoStackLastSave = null;
+                            	undoStack.clear();
+                            	redoStack.clear();
+                            	hasSaved = true;
+                            	return result;
                             }
                             else
                             {
@@ -1299,7 +1332,11 @@ public class UMLController {
                         if (model.fileExist(args[0]))
                         {
                             doLoad(args[0]);
-                            hasSaved = true;
+                        	madeChange = false;
+                        	topOfUndoStackLastSave = null;
+                        	undoStack.clear();
+                        	redoStack.clear();
+                        	hasSaved = true;
                             view.notifySuccess("Successfully loaded " + args[0]);
                             return true;
                         }
@@ -1416,7 +1453,20 @@ public class UMLController {
             	{
             		if (doUndo())
             		{
-            			madeChange = true;
+            			if (undoStack.empty())
+                		{
+                			if (topOfUndoStackLastSave == null)
+                				madeChange = false;
+                			else
+                				madeChange = true;
+                		}
+                		else
+                		{
+                			if (topOfUndoStackLastSave == undoStack.peek()) // do the links match
+                				madeChange = false;
+                			else
+                				madeChange = true;
+                		}
             			return true;
             		}
             		else
@@ -1436,7 +1486,20 @@ public class UMLController {
             	{
             		if (doRedo())
             		{
-            			madeChange = true;
+            			if (undoStack.empty())
+                		{
+                			if (topOfUndoStackLastSave == null)
+                				madeChange = false;
+                			else
+                				madeChange = true;
+                		}
+                		else
+                		{
+                			if (topOfUndoStackLastSave == undoStack.peek()) // do the links match
+                				madeChange = false;
+                			else
+                				madeChange = true;
+                		}
             			return true;
             		}
             		else
@@ -1450,6 +1513,8 @@ public class UMLController {
             	{
             		String input = view.promptForSaveInput("Please designate a filepath to export to");
                 	args = new String[] { input };
+                	if (args[0] == null)
+                		return false;
             	}
             	
             	if (args.length == 1)

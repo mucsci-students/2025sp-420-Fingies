@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
+ * THIS FILE IS OUT OF DATE WITH THE CURRENT CLI
+ * 
  * A short test program for testing each of the methods in the CLIView class.
  * 
  * Enter the name of a method to test it.
@@ -34,10 +36,9 @@ public class CLITester {
 				+ "notify success 2\n"
 				+ "notify fail\n"
 				+ "display" + RESET);
-		while(true)
+		System.out.print(COLOR + "\nEnter the name of the method to test: \n> " + RESET);
+		while(sc.hasNext())
 		{
-			System.out.print(COLOR + "\nEnter the name of the method to test: \n> " + RESET);
-
 			int idx = Arrays.binarySearch(methods, sc.nextLine());
 			if (idx >= 0)
 			{
@@ -103,6 +104,9 @@ public class CLITester {
 				// the method entered does not exist
 				System.out.println(COLOR + "Unknown method." + RESET);
 			}
+			
+			if (sc.hasNext())
+				System.out.print(COLOR + "\nEnter the name of the method to test: \n> " + RESET);
 		}
 	}
 }

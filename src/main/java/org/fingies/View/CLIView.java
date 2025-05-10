@@ -119,24 +119,8 @@ public class CLIView implements UMLView
     	do
     	{
     		String in;
-    		
-    		try
-    		{
-    			in = lineReader.readLine(caret + " ");
-    		}
-    		catch (UserInterruptException e)
-    		{
-    			action = Action.EXIT;
-    			controller.runHelper(action, new String[] {});
-    			continue;
-    		}
-    		catch (EndOfFileException e)
-    		{
-    			action = Action.EXIT;
-    			controller.runHelper(action, new String[] {});
-    			continue;
-    		}
-            command = Command.parseCommand(in);
+    		in = nextLine();
+    		command = Command.parseCommand(in);
             while (command == null)
             {
             	if (in.equals(TOGGLE_COLOR_COMMAND) || in.equals(TOGGLE_COLOR_COMMAND_SHORTHAND))
@@ -157,19 +141,47 @@ public class CLIView implements UMLView
             		notifySuccess();
             	}
             	else
+            	{
             		notifyFail("Invalid command");
-					in = lineReader.readLine(caret + " ");
-                command = Command.parseCommand(in);
+            	}
+            	
+            	in = nextLine();
+            	command = Command.parseCommand(in);
             }
 			
-				action = command.action;
-				boolean result = controller.runHelper(action, command.arguments);
-				
-	        	if (action == Action.EXIT && result) // result only matters if the user entered the exit command
-	        	{
-	        		break;
-	        	}
+			action = command.action;
+			boolean result = controller.runHelper(action, command.arguments);
+			
+        	if (action == Action.EXIT && result) // result only matters if the user entered the exit command
+        	{
+        		break;
+        	}
     	} while (true);
+    }
+    
+    private String nextLine()
+    {
+    	String in;
+		try
+		{
+			in = lineReader.readLine(caret + " ");
+			
+			if (in == null)
+			{
+				// TODO remove debug message
+				System.err.println("lineReader.readLine just returned null! This should never happen, but somehow it did!!");
+				return Command.COMMANDS[Action.EXIT.ordinal()];
+			}
+		}
+		catch (UserInterruptException e)
+		{
+			return Command.COMMANDS[Action.EXIT.ordinal()];
+		}
+		catch (EndOfFileException e)
+		{
+			return Command.COMMANDS[Action.EXIT.ordinal()];
+		}
+        return in;
     }
 
     @Override
@@ -177,53 +189,16 @@ public class CLIView implements UMLView
     {
         try
         {
-        	return lineReader.readLine(message + " "); // appends an extra space to separate the message from the user's input
+        	return lineReader.readLine(message + " ");
         }
         catch (UserInterruptException e)
 		{
-			return "";
+			return null;
 		}
 		catch (EndOfFileException e)
 		{
-			return "";
+			return null;
 		}
-    }
-
-    @Override
-    public List<String> promptForInput(List<String> messages) 
-    {
-        List<String> result = new ArrayList<String>();
-        for(String m : messages)
-        {
-            result.add(promptForInput(m));
-        }
-        return result;
-    }
-
-   
-    @Override
-    public List<String> promptForInput(List<String> messages, List<InputCheck> checks) 
-    {
-        List<String> result = new ArrayList<String>();
-        for(int i = 0; i < messages.size(); ++i)
-        {
-            String ans = promptForInput(messages.get(i));
-            String checkMsg = checks.get(i).check(ans); // This will either be "" or "message"
-            while(!checkMsg.equals("")) // This loop will keep prompting the user until they input something that satisfies the check
-            {
-            	notifyFail(checkMsg);
-                ans = promptForInput(messages.get(i));
-                checkMsg = checks.get(i).check(ans);
-            }
-            result.add(ans);
-        }
-        return result;
-    }
-
-    @Override
-    public void notifySuccess() 
-    {
-        // System.out.println("Successful command"); // don't print anything
     }
 
     @Override
@@ -352,34 +327,8 @@ public class CLIView implements UMLView
 	}
 	
 	@Override
-	public String promptForSaveInput(String message) 
-	{
-		return promptForInput(message);
-	}
-
-	@Override
-	public String promptForOpenInput(String message) {
-		return promptForInput(message);
-	}
-
-	@Override
-	public int promptForYesNoInput(String message, String title) {
-		List<String> result = promptForInput(List.of(message), List.of(new InputCheck() {
-
-			@Override
-			public String check(String t) {
-				if (t.equalsIgnoreCase("Y") || t.equalsIgnoreCase("Yes") || t.equalsIgnoreCase("N") || t.equalsIgnoreCase("No"))
-					return "";
-				else
-					return "Please type either Y for Yes, or N for No.";
-			}}));
-		String ans = result.get(0);
-		return ans.equalsIgnoreCase("Y") || ans.equalsIgnoreCase("Yes") ? 0 : 1;
-	}
-	
-	@Override
 	public JComponent getJComponentRepresentation() {
-		throw new UnsupportedOperationException("The CLI doesn't support representing the diagram as a JComponent, how di this get called?");
+		throw new UnsupportedOperationException("The CLI doesn't support representing the diagram as a JComponent, how did this get called?");
 	}
     
 }

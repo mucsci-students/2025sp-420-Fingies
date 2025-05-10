@@ -17,7 +17,7 @@ import org.fingies.View.GUIView;
 public class Main {
   
 	public static void main(String[] args) {
-		// args = new String[] {"--cli"};
+		//args = new String[] {"--cli"};
         if (hasCLIFlag(args)) {
             CLIView view = new CLIView();
             UMLController controller = new UMLController(view, new JModel());
