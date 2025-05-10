@@ -1,6 +1,7 @@
 package org.fingies.View;
 
 import java.awt.BasicStroke;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -16,6 +17,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.LayoutManager;
+import java.awt.FlowLayout;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -41,7 +44,6 @@ import org.fingies.Model.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.font.GlyphVector;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -61,8 +63,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private GUIMenuItem load;
     private GUIMenuItem save;
     private GUIMenuItem export;
-    private GUIMenuItem undo;
-    private GUIMenuItem redo;
     private GUIMenuItem exit;
     
     private GUIMenuItem addClass;
@@ -86,6 +86,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     private GUIMenuItem changeMethodType;
     private GUIMenuItem changeParameterType;
     private GUIMenuItem changeRelatoinshipType;
+    
+    private JButton undo;
+    private JButton redo;
 
     private ArrayList<JTextField> textBoxes;
     private ArrayList<JComboBox<String>> comboBoxes;
@@ -120,26 +123,36 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         textBoxes = new ArrayList<JTextField>();
         comboBoxes = new ArrayList<JComboBox<String>>();
 
-        // Creates a JMenuBar and menus
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.setLayout(new BorderLayout()); // Needed for proper alignment
+
         menuBar = new JMenuBar();
         fileMenu = new JMenu("File");
         addMenu = new JMenu("Add");
         removeMenu = new JMenu("Remove");
         renameMenu = new JMenu("Rename");
         typeMenu = new JMenu("ChangeType");
+        undo = new JButton("Undo");
+        redo = new JButton("Redo");
 
-        // Adds menus to menubar
-        menuBar.add(fileMenu);
-        menuBar.add(addMenu);
-        menuBar.add(removeMenu);
-        menuBar.add(renameMenu);
-        menuBar.add(typeMenu);
+        // Right-side undo/redo buttons
+        JPanel rightMenuPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        rightMenuPanel.setOpaque(false);
+        rightMenuPanel.add(undo);
+        rightMenuPanel.add(redo);
+
+        // Add both panels to the menu bar
+        menuBar.add(fileMenu, BorderLayout.WEST);
+        menuBar.add(addMenu, BorderLayout.WEST);
+        menuBar.add(removeMenu, BorderLayout.WEST);
+        menuBar.add(renameMenu, BorderLayout.WEST);
+        menuBar.add(typeMenu, BorderLayout.WEST);
+        menuBar.add(rightMenuPanel, BorderLayout.EAST);
+
 
         // Creates JMenu submenus
         load = new GUIMenuItem("Open", Action.LOAD);
         save = new GUIMenuItem("Save", Action.SAVE);
-        undo = new GUIMenuItem("Undo", Action.UNDO);
-        redo = new GUIMenuItem("Redo", Action.REDO);
         export = new GUIMenuItem("Export", Action.EXPORT);
         exit = new GUIMenuItem("Exit", Action.EXIT);
         
@@ -172,8 +185,6 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         // Creates action listeners for the different submenu actions
         load.addActionListener(this);
         save.addActionListener(this);
-        undo.addActionListener(this);
-        redo.addActionListener(this);
         export.addActionListener(this);
         exit.addActionListener(this);
 
@@ -198,16 +209,16 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
         changeMethodType.addActionListener(this);
         changeParameterType.addActionListener(this);
         changeRelatoinshipType.addActionListener(this);
-
-        // Allows the press of a key to do the function of clicking the menu item WHILE in the menu
-        undo.setMnemonic(KeyEvent.VK_U); // Z for undo
-        redo.setMnemonic(KeyEvent.VK_R); // R for redo
+        
+        undo.addActionListener(this);
+        redo.addActionListener(this);
+        
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        save.setMnemonic(KeyEvent.VK_S);
 
         // Adds submenus to menu
         fileMenu.add(load);
         fileMenu.add(save);
-        fileMenu.add(undo);
-        fileMenu.add(redo);
         fileMenu.add(export);
         fileMenu.add(exit);
 
@@ -347,13 +358,11 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
             }
         });
         
-        // Add shortcuts for a bunch of actions
+        
+        // Add shortcuts for undo, redo, save, load, and exit
         int menuShortcutKeyMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
         theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuShortcutKeyMask), "undo");
         theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_Z, menuShortcutKeyMask | KeyEvent.SHIFT_DOWN_MASK), "redo");
-        theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuShortcutKeyMask), "save");
-        theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuShortcutKeyMask), "load");
-        theAllPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuShortcutKeyMask), "exit");
         theAllPanel.getActionMap().put("undo", new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -372,30 +381,9 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
                 }
             }
         });
-        theAllPanel.getActionMap().put("save", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	controller.runHelper(Action.SAVE, new String[] {});
-            }
-        });
-        theAllPanel.getActionMap().put("load", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	if (controller.runHelper(Action.LOAD, new String[] {}))
-                {
-                    loadGUIObjects();
-                }
-            }
-        });
-        theAllPanel.getActionMap().put("exit", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	if (controller.runHelper(Action.EXIT, new String[] {}))
-	        	{
-	        		System.exit(0);
-	        	}
-            }
-        });
+        save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuShortcutKeyMask));
+        load.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuShortcutKeyMask));
+        exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuShortcutKeyMask));
     }
 
     public JLayeredPane getCanvas()
@@ -894,8 +882,18 @@ public class GUIView extends JFrame implements ActionListener, UMLView {
     // Based on the action sent in, make the correct number of textboxes and comboboxes along with the Submit and Cancel buttons
     @Override
     public void actionPerformed(ActionEvent e) {
-    	Action a = ((GUIMenuItem) e.getSource()).action;
-    	
+    	Action a;
+    	if (e.getSource() instanceof GUIMenuItem)
+    	{
+    		a = ((GUIMenuItem) e.getSource()).action;
+    	}
+    	else
+    	{
+    		if (e.getSource() == undo)
+    			a = Action.UNDO;
+    		else
+    			a = Action.REDO;
+    	}    	
     	showCommandBar(a);
     }
     
