@@ -744,7 +744,7 @@ public class UMLController {
     {
         if (doSave(filepath))
         {
-            view.notifySuccess("Successfully loaded " + filepath);
+            view.notifySuccess("Successfully saved " + filepath);
             return true;
         }
         else
